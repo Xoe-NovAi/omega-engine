@@ -9,7 +9,6 @@
 
 from .providers import (
     StorageProvider,
-    RedisStorageProvider,
     FileStorageProvider,
     InMemoryStorageProvider,
     USMStorageProvider,
@@ -59,7 +58,6 @@ from .sleep_time import SleepTimeAgent as SleepTimeAgentV2, DaatDaemon, create_s
 __all__ = [
     # Providers
     "StorageProvider",
-    "RedisStorageProvider",
     "FileStorageProvider",
     "InMemoryStorageProvider",
     "USMStorageProvider",

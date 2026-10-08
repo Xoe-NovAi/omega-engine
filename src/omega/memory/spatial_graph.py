@@ -19,6 +19,7 @@ import json
 import math
 import logging
 import random
+import sqlite3
 import struct
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -227,19 +228,31 @@ class SpatialKnowledgeGraph:
                     except json.JSONDecodeError:
                         pass
 
-                # Try to get semantic vector from primary collection
+                # Try to get semantic vector from the canonical collection.
+                # [D-1024-DIM-NATIVE-20260926] canonical table first, then the
+                # pre-migration 768-dim table as a read-only fallback so nodes
+                # embedded before the cutover still get a semantic vector.
+                # Unpack width is derived from the blob itself, never hardcoded.
                 semantic_vector = None
-                try:
-                    vec_cursor = conn.execute(
-                        "SELECT embedding FROM omega_vec_qwen_768 WHERE rowid = ?",
-                        (rowid,)
-                    )
-                    vec_row = vec_cursor.fetchone()
-                    if vec_row and vec_row[0]:
-                        import struct
-                        semantic_vector = list(struct.unpack(f"{768}f", vec_row[0]))
-                except Exception:
-                    pass
+                for vec_table in ("omega_vec_qwen_1024", "omega_vec_qwen_768"):
+                    try:
+                        vec_cursor = conn.execute(
+                            f"SELECT embedding FROM {vec_table} WHERE rowid = ?",
+                            (rowid,)
+                        )
+                        vec_row = vec_cursor.fetchone()
+                        if not (vec_row and vec_row[0]):
+                            continue
+                        raw = vec_row[0]
+                        if len(raw) % 4:
+                            continue
+                        semantic_vector = list(struct.unpack(f"{len(raw) // 4}f", raw))
+                        break
+                    except (sqlite3.Error, struct.error) as e:
+                        logger.debug(
+                            "No semantic vector for row %s in %s: %s", rowid, vec_table, e
+                        )
+                        continue
 
                 nodes.append(SpatialNode(
                     rowid=rowid,

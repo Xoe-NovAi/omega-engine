@@ -37,6 +37,7 @@ import argparse
 import asyncio
 import fcntl
 import json
+import logging
 import os
 import signal
 import struct
@@ -56,6 +57,8 @@ from rich.panel import Panel
 from rich.table import Table
 
 from omega.observability.observability_reader import SovereignReader
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -456,7 +459,8 @@ class ResearcherTTYAgent(TTYAgent):
                 body_table.add_row("Research Sessions", str(status.get("research_sessions", 0)))
                 body_table.add_row("Cache Hits", str(status.get("cache_hits", 0)))
                 body_table.add_row("API Calls", str(status.get("api_calls", 0)))
-            except Exception:
+            except Exception as e:
+                logger.debug("Reader status report unavailable: %s", e)
                 body_table.add_row("Status", "Reader unavailable")
 
         body_table.add_row("Entity", self.config.entity_name)
@@ -641,7 +645,8 @@ class ObservabilityTTYAgent(TTYAgent):
                 "Memory", f"{mem.percent:.1f}% ({mem.used // 1024**3}G/{mem.total // 1024**3}G)"
             )
             metrics_table.add_row("Swap", f"{psutil.swap_memory().percent:.1f}%")
-        except Exception:
+        except Exception as e:
+            logger.debug("System metrics unavailable: %s", e)
             metrics_table.add_row("System", "psutil unavailable")
 
         metrics_table.add_row("Entity", self.config.entity_name)

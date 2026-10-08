@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # 🔱 GoogleCompatProvider — Gemma 4 Week 1 Step 2
-# ⬡ OMEGA ⬡ N6 ⬡ trc_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
+# ⬡ OMEGA ⬡ S6 ⬡ trc_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
 #
 # Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking support.
 # Heritage: [heritage: pi-2026] Gemma 4 Thinking Config (Pi PR #2903) — binary MINIMAL/HIGH + regex /gemma-?4/i
@@ -92,8 +92,15 @@ class GoogleCompatProvider:
             vault._load_sync()
             cred = vault._credentials.get("google:api_key")
             return cred.encrypted_blob if cred else ""
-        except Exception:
-            return self.config.get("api_key", "") or ""
+        except Exception as e:
+            logger.debug("Vault key resolution failed, falling back to config: %s", e)
+            get = getattr(self.config, "get", None)
+            if get is None:
+                return ""
+            try:
+                return get("api_key", "") or ""
+            except (AttributeError, TypeError):
+                return ""
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client with connection pooling."""

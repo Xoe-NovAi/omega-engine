@@ -17,6 +17,12 @@ import anyio
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
+# P0-1 knowledge-gap: the protocol version is declared once, in one module.
+# Re-exported here so the client's target version and the federation probe's
+# asserted version can never drift apart (M29 — a probe asserting a version
+# the client does not speak reports a liveness PASS over a protocol lie).
+from mcp_servers.omega_hub.protocol_version import PROTOCOL_VERSION
+
 logger = logging.getLogger("omega.hub.client")
 
 @dataclass

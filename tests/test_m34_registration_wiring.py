@@ -29,28 +29,24 @@ import pytest
 # Add src to path - import modules directly to avoid package chain
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-# Import directly from module files to avoid omega package import chain
+# Import via the normal omega package chain — direct spec_from_file_location
+# loading pollutes sys.modules with bare names that shadow the real
+# omega.oracle.* modules for subsequent tests (flaky-suite root cause).
+from omega.oracle.m34_registry import M34Registry, ActiveSubagent, SessionStatus
+from omega.oracle.subagent_dispatcher import m34_register_subagent, dispatch, HandoffPacket
+
+# Load dispatch_guard directly (scripts/ is not a package — qualified name
+# would fail; bare name is fine because dispatch_guard is not imported by
+# any omega.* module, so no sys.modules shadowing occurs).
 import importlib.util
 
 def _load_module(module_name: str, file_path: Path):
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module  # required by Python 3.13 @dataclass
     spec.loader.exec_module(module)
     return module
 
-# Load m34_registry directly
-m34_registry = _load_module("m34_registry", Path(__file__).parent.parent / "src/omega/oracle/m34_registry.py")
-M34Registry = m34_registry.M34Registry
-ActiveSubagent = m34_registry.ActiveSubagent
-SessionStatus = m34_registry.SessionStatus
-
-# Load subagent_dispatcher directly
-subagent_dispatcher = _load_module("subagent_dispatcher", Path(__file__).parent.parent / "src/omega/oracle/subagent_dispatcher.py")
-m34_register_subagent = subagent_dispatcher.m34_register_subagent
-dispatch = subagent_dispatcher.dispatch
-HandoffPacket = subagent_dispatcher.HandoffPacket
-
-# Load dispatch_guard directly
 dispatch_guard = _load_module("dispatch_guard", Path(__file__).parent.parent / "scripts/dispatch_guard.py")
 
 
@@ -96,7 +92,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -128,7 +124,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -161,7 +157,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -187,7 +183,7 @@ class TestM34RegistrationFunction:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -232,13 +228,17 @@ class TestDispatchGuardStep6b:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
     def test_step6b_skips_when_m34_disabled(self):
         """Step 6b passes without registering when M34 disabled."""
         import scripts.dispatch_guard as dg
+        import os
+
+        # Ensure M34 is disabled
+        os.environ.pop("OMEGA_M34_ENABLED", None)
 
         result = dg.GuardResult()
         dg.step6b_m34_register_subagent(
@@ -276,7 +276,7 @@ class TestDispatchGuardStep6b:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -316,7 +316,7 @@ class TestDispatchIntegration:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 
@@ -377,7 +377,7 @@ class TestEndToEndDispatchGuard:
         finally:
             os.environ.pop("OMEGA_M34_REGISTRY", None)
             os.environ.pop("OMEGA_M34_ENABLED", None)
-            for p in [test_path, test_path + ".1.bak", test_path + ".lock"]:
+            for p in [test_path, str(test_path) + ".1.bak", str(test_path) + ".lock"]:
                 if os.path.exists(p):
                     os.unlink(p)
 

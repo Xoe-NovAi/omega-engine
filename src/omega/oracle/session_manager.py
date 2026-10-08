@@ -36,23 +36,35 @@ logger = logging.getLogger(__name__)
 
 logger = logging.getLogger(__name__)
 
-SESSION_DIR = (
-    Path(
-        os.environ.get(
-            "OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "data")
+def _default_session_dir() -> Path:
+    """Resolve the sessions directory at call time (not import time).
+
+    OMEGA_DATA_DIR may be set by test fixtures after this module is
+    imported; resolving lazily ensures the correct (isolated) path.
+    """
+    return (
+        Path(
+            os.environ.get(
+                "OMEGA_DATA_DIR",
+                str(Path(__file__).resolve().parent.parent.parent.parent / "data"),
+            )
         )
+        / "sessions"
     )
-    / "sessions"
-)
+
+
+# Back-compat module constant (import-time snapshot; prefer _default_session_dir)
+SESSION_DIR = _default_session_dir()
 
 
 class SessionManager:
     """Manages entity-scoped rolling sessions."""
 
     def __init__(self, session_dir: Optional[Path] = None):
-        self.session_dir = session_dir or SESSION_DIR
-        if os.environ.get("OMEGA_ENV") != "test":
-            self.session_dir.mkdir(parents=True, exist_ok=True)
+        self.session_dir = session_dir or _default_session_dir()
+        # Always ensure the directory exists — lock files and .active files
+        # are written here; a fresh checkout has no data/sessions/.
+        self.session_dir.mkdir(parents=True, exist_ok=True)
 
     async def get_session_id(self, entity_name: str) -> str:
         """Get or create the active session ID for an entity.

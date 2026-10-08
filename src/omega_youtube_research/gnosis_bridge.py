@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L5 Relational Gnosis Graph — Cross-Modal Knowledge Topology (Graphiti-style)
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L5 ⬡ GNOSIS_BRIDGE

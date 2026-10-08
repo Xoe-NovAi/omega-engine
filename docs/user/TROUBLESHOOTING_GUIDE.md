@@ -17,15 +17,14 @@ SPDX-License-Identifier: Apache-2.0
 
 ### Run Health Check First
 ```bash
-make health
+make infer-status                 # native-gguf server: PIDs, health, memory
+make infer-health                 # status + memory + log tail
+omega model-status                # providers + models
+curl -s http://127.0.0.1:8016/health   # Omega Hub (if running)
 ```
-This checks: Ollama connectivity, LM Studio, Redis, Qdrant, PostgreSQL, Caddy, provider status, circuit breakers, and test status.
-
-### Check System Status
-```bash
-make doctor
-```
-Full system diagnosis including: UID guard, test suite, infrastructure, providers, and configuration validation.
+This reports local inference state, provider status and (for the Hub) uptime.
+**There is no `make health` or `make doctor` target in this release** — use the
+`infer-*` targets and the `omega` CLI shown above.
 
 ---
 
@@ -35,10 +34,13 @@ Full system diagnosis including: UID guard, test suite, infrastructure, provider
 
 #### "Permission denied" on files/directories
 ```bash
-# Fix ownership drift (UID 1000)
-make guard
+# Inspect ownership
+ls -la data/ config/ | head -20
+
+# Fix project file ownership (UID 1000)
+sudo chown -R "$(id -u):$(id -g)" data/ config/
 ```
-**Root cause**: Container operations or manual file edits changed ownership changes caused UID drift.
+**Root cause**: container operations or manual edits changed file ownership. M6 rule: containers run with `UserNS=keep-id` (never `:U`), which prevents drift.
 
 #### "UID drift detected" warnings
 ```bash
@@ -46,8 +48,8 @@ make guard
 ls -la data/
 ls -la config/
 
-# Fix with guard
-make guard
+# Fix with chown
+sudo chown -R "$(id -u):$(id -g)" data/ config/
 ```
 
 ### 2. Python Environment Issues
@@ -58,7 +60,7 @@ make guard
 source .venv/bin/activate
 
 # Reinstall dependencies
-make setup
+pip install -e ".[native,cli]"
 ```
 
 #### "ModuleNotFoundError" for specific packages
@@ -70,7 +72,7 @@ grep "package_name" requirements.txt
 .venv/bin/pip install package_name
 
 # Or reinstall all
-make setup
+pip install -e ".[native,cli,dev]"
 ```
 
 #### "Event loop is closed" warnings
@@ -82,17 +84,17 @@ make setup
 
 #### Tests failing after changes
 ```bash
-# Stop on first failure
-make test ARGS='-x'
+# make test already stops on first failure (-x)
+make test
 
-# Verbose output for debugging
-make test ARGS='-v'
+# Single test, verbose output
+make test-debug TEST=test_entity_registry
+make test-debug TEST=test_oracle
+make test-debug TEST=test_health_monitor
+make test-debug TEST=test_error_gauntlet
 
-# Run specific test pattern
-make test ARGS='-k test_entity_registry'
-make test ARGS='-k test_oracle'
-make test ARGS='-k test_health_monitor'
-make test ARGS='-k test_error_gauntlet'
+# Whole suite, parallel
+make test-all
 
 # Run with coverage
 make test-cov
@@ -102,39 +104,39 @@ make test-cov
 | Test Pattern | Common Cause | Fix |
 |--------------|--------------|-----|
 | `test_entity_registry` | YAML syntax in entities.yaml | Check YAML syntax |
-| `test_oracle` | Provider not available | Check `make health` |
-| `test_health_monitor` | Circuit breaker state | Wait for cooldown or `make health` |
+| `test_oracle` | Provider not available | `omega model-status` |
+| `test_health_monitor` | Circuit breaker state | Wait for cooldown, then `omega model-status` |
 | `test_error_gauntlet` | Missing error handling | Check error hierarchy |
 
-#### All tests passing but count changed
-```bash
-# Verify test count
-make test-badge
-cat TEST_STATUS.md
-```
+#### Test count changed
+
+Counts vary by environment (markers, skips, optional deps). **CI is the single
+source of truth** for the full-suite result — read the `pytest` job on the PR.
+There is no `make test-badge` target and no `TEST_STATUS.md` in this release.
 
 ### 4. Inference & Provider Issues
 
-#### Ollama not responding
+#### Local inference not responding
 ```bash
-# Check if Ollama is running
-ollama list
+# Engine-side provider + model status
+omega model-status
+omega backends
 
-# Check engine connectivity
-make ollama-status
-
-# Common fix: endpoint format
-# config/providers.yaml → ollama endpoint: http://127.0.0.1:11434 (NO /v1 suffix)
+# native-gguf server state (primary local provider)
+make infer-status
+make infer-health
 ```
+> **Ollama is enabled by default** in this release (`config/providers.yaml` →
+> `providers.ollama.enabled: true`).
 
 #### Provider always falls back to mock
 ```bash
 # Check local inference backends
-ollama list
-make lmster-status
+make infer-status
+make infer-models
 
-# Check model overrides exist
-grep -A5 "ollama" config/providers.yaml
+# Check which providers are enabled
+grep -A2 'enabled:' config/providers.yaml | head -30
 
 # Try direct inference
 omega talk "hello"
@@ -143,7 +145,8 @@ omega talk "hello"
 #### Circuit breaker tripping too often
 ```bash
 # Check provider health
-make health
+make infer-status
+omega model-status
 
 # Circuit breaker auto-recovers after cooldown (default: 60s)
 # Check circuit breaker state in health output
@@ -166,22 +169,24 @@ grep -A10 "native-gguf" config/models.yaml
 #### Entity not found ("default" response)
 ```bash
 # Check active IWAD
-make wad-status
+grep active_iwad config/omega.yaml
 
-# Switch to IWAD that has your entity
-make wad NAME=arcana_novai
+# Load a different IWAD for one invocation
+omega talk "hello" --iwad arcana_novai
 
 # List available entities
-make entities
+omega list-entities
 ```
 
-#### WAD switching seems stuck
-```bash
-# Force reset
-make wad-reset
+#### IWAD switching seems stuck
 
-# Verify
-make wad-status
+IWADs are selected in `config/omega.yaml` — there is **no `make wad*` target**:
+```bash
+grep -A2 'omega:' config/omega.yaml
+
+# Switch by editing: omega.entity.active_iwad: "_omega_default" | "arcana_novai"
+# Or override per invocation:
+omega talk "hello" --iwad arcana_novai
 ```
 
 #### Custom entity not loading
@@ -198,10 +203,10 @@ grep "name:" config/wads/arcana_novai/entities.yaml
 #### Soul not updating
 ```bash
 # Check proposed lessons (staging area)
-cat data/entities/sekhmet/proposed_lessons.yaml
+cat data/entities/kali/proposed_lessons.yaml
 
 # Check soul file
-cat data/entities/sekhmet/soul.yaml
+cat data/entities/kali/soul.yaml
 
 # Force distillation
 # (happens automatically at session end)
@@ -233,14 +238,14 @@ rm -f data/memory/None.json
 # Check Podman status
 podman ps -a
 
-# Check container logs
+# Check container logs (containers present on this host)
 podman logs omega-redis
 podman logs omega-qdrant
-podman logs omega-postgres
-podman logs omega-caddy
+podman logs omega-searxng
+podman logs omega-iris
 
-# Restart infrastructure
-make restart-infra
+# Containers are quadlet-managed — restart via podman or systemd
+podman restart omega-redis
 ```
 
 #### "Port already in use"
@@ -254,15 +259,12 @@ ss -tlnp | grep 6333
 ```
 
 #### Caddy not serving
+
+This release ships **no Caddy container and no `config/caddy/Caddyfile`**.
+If you added one locally:
 ```bash
-# Check Caddy logs
-podman logs omega-caddy
-
-# Check Caddyfile syntax
-cat config/caddy/Caddyfile
-
-# Restart Caddy
-podman restart omega-caddy
+podman ps -a | grep -i caddy
+podman logs <caddy-container>
 ```
 
 ### 8. Hivemind & Coordination Issues
@@ -298,11 +300,11 @@ cat data/coordination/OTHER_ENTITY_WORKSPACE_LOCK_20260706.md
 # Check which config is active
 cat config/omega.yaml
 
-# Verify WAD is active
-make wad-status
+# Verify the active IWAD
+grep active_iwad config/omega.yaml
 
-# Restart services after config changes
-make restart-infra
+# Restart a container after config changes (quadlet-managed)
+podman restart omega-redis
 ```
 
 #### Model not found errors
@@ -313,8 +315,8 @@ grep "model_name" config/models.yaml
 # Check provider overrides
 grep -A10 "model_overrides" config/providers.yaml
 
-# Verify model is pulled
-ollama list | grep model_name
+# Verify the GGUF model is present
+make infer-models | grep model_name
 ```
 
 ### 10. Performance Issues
@@ -322,10 +324,11 @@ ollama list | grep model_name
 #### Slow inference
 ```bash
 # Check hardware stats
-omega-hub_get_hardware_stats
+omega hardware-stats
+make infer-memory
 
 # Check if using correct thread count
-grep "LLAMA_CPP_N_THREADS" /etc/environment
+grep -rn 'n_threads' config/models.yaml | head
 
 # Check CPU governor
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
@@ -336,21 +339,21 @@ cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 # Check memory pressure
 free -h
 
-# Check for memory leaks
-make health
+# Check model memory footprint
+make infer-memory
 
-# Restart if needed
-make restart-infra
+# Unload models if needed
+make infer-stop
 ```
 
 #### Slow test execution
 ```bash
 # Run specific test subsets
-make test ARGS='-k test_entity_registry'
-make test ARGS='-k test_oracle'
+make test-debug TEST=test_entity_registry
+make test-debug TEST=test_oracle
 
-# Skip slow tests
-make test ARGS='-k "not slow"'
+# Skip slow tests (no ARGS= passthrough on make test)
+.venv/bin/pytest -k "not slow" tests/
 ```
 
 ---
@@ -377,47 +380,48 @@ grep "trc_xxx" data/traces/*.jsonl
 
 ### Inspect Memory Store
 ```bash
-# Hot tier (RAM)
-# Not directly inspectable - use make health
+# Memory tiers live in data/memory/
+ls data/memory/
 
-# Warm tier (JSON files)
-ls data/memory/warm/
+# FTS index (keyword recall)
+ls data/memory/fts_*.db
 
-# Cold tier (archives)
-ls data/memory/cold/
+# Archive
+ls data/memory/archive/ | head
 ```
 
 ### Inspect Soul Files
 ```bash
 # View entity's soul
-cat data/entities/sekhmet/soul.yaml
+cat data/entities/kali/soul.yaml
 
 # View proposed lessons
-cat data/entities/sekhmet/proposed_lessons.yaml
+cat data/entities/kali/proposed_lessons.yaml
 ```
 
 ### Check Provider Health
 ```bash
-# Full health check
-make health
+# Local inference state
+make infer-status
+make infer-health
 
-# Just provider status
-make health | grep -A20 "Provider"
+# Provider + model status
+omega model-status
 ```
 
 ### Database Inspection
+
+The databases that exist in this release:
 ```bash
-# Sessions database
-sqlite3 data/sessions.db ".tables"
-sqlite3 data/sessions.db "SELECT * FROM sessions LIMIT 5;"
+# Memory + FTS databases
+sqlite3 data/memory/omega_memory.db ".tables"
+sqlite3 data/memory/fts_memory.db ".tables"
 
-# Metrics database
-sqlite3 data/metrics.db ".tables"
-sqlite3 data/metrics.db "SELECT * FROM events ORDER BY timestamp DESC LIMIT 10;"
-
-# Research database
-sqlite3 data/research.db ".tables"
+# All databases present
+ls data/*.db data/memory/*.db 2>/dev/null
 ```
+> `data/sessions.db`, `data/metrics.db` and `data/research.db` are **not** created by
+> this release — do not look for them.
 
 ---
 
@@ -425,21 +429,21 @@ sqlite3 data/research.db ".tables"
 
 ### Complete System Reset
 ```bash
-# 1. Stop everything
-make stop-infra
+# 1. Stop the Hub and local inference servers
 pkill -f "mcp_servers.omega_hub.server"
+make infer-stop
 
 # 2. Clean artifacts
 make clean
 
 # 3. Fix permissions
-make guard
+sudo chown -R "$(id -u):$(id -g)" data/ config/
 
-# 4. Restart infrastructure
-make start-infra
+# 4. Restart a container (quadlet-managed)
+podman restart omega-redis
 
 # 5. Verify
-make health
+make infer-status
 make test
 ```
 
@@ -454,7 +458,7 @@ git pull origin main
 
 # 3. Reinstall
 make clean
-make setup
+pip install -e ".[native,cli,dev]"
 
 # 4. Verify
 make test
@@ -474,9 +478,9 @@ scripts/backup_to_8tb.sh
 ## 📞 Getting Help
 
 ### Self-Service
-1. Run `make doctor` for full diagnosis
-2. Check `make health` for system status
-3. Search logs in `data/events/` and `data/traces/`
+1. Run `make infer-health` for native-gguf server diagnosis
+2. Run `omega model-status` for provider status
+3. Search logs in `data/traces/`, `data/crashes/` and via `make infer-logs`
 4. Review this troubleshooting guide
 
 ### Community Support
@@ -485,9 +489,9 @@ scripts/backup_to_8tb.sh
 
 ### When Reporting Issues
 Include:
-1. Output of `make doctor`
-2. Output of `make health`
-3. Relevant log excerpts from `data/events/` or `data/traces/`
+1. Output of `make infer-health`
+2. Output of `omega model-status`
+3. Relevant excerpts from `make infer-logs` or `data/traces/`
 4. Steps to reproduce
 5. Environment details (OS, Python version, hardware)
 
@@ -497,20 +501,20 @@ Include:
 
 ### Essential Commands
 ```bash
-make health          # System health check
-make doctor          # Full diagnosis
-make test            # Run all tests
-make guard           # Fix permissions
-make menu            # Interactive menu
-make wad-status      # Check active IWAD
-omega talk "q"       # Quick query
-omega summon E "q"   # Summon entity
+make infer-status    # native-gguf server status
+make infer-health    # status + memory + log tail
+make test            # unit-tier test suite
+make test-cov        # coverage report
+make check-mandate-compliance   # 28-row mandate meter
+grep active_iwad config/omega.yaml   # active IWAD
+omega talk "q"       # quick query
+omega summon ma'at "q"   # summon an entity
 ```
 
 ### Key Log Locations
 | Log Type | Location |
 |----------|----------|
-| Events | `data/events/events.log` |
+| Inference events | `make infer-events` (events.jsonl) |
 | Traces | `data/traces/YYYY-MM-DD.jsonl` |
 | Sessions | `data/sessions/` |
 | Crash Dumps | `data/crash_dumps/` |
@@ -527,7 +531,7 @@ omega summon E "q"   # Summon entity
 
 ---
 
-*When in doubt: `make doctor` → `make health` → check logs → ask community.*
+*When in doubt: `make infer-health` → `omega model-status` → check logs → ask community.*
 
 ⬡ OMEGA ⬡ NEMOTRON-3-ULTRA ⬡ opencode ⬡ trc_doc_user ⬡ DOCUMENTATION-HARDENING
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit

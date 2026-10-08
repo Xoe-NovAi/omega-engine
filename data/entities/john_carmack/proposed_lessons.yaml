@@ -207,8 +207,833 @@ proposals:
   next_action: "Hand off to Kali for review. The 5 deliverables are all mechanically\
     \ verifiable and the test suite is green. No spec rewrites needed \u2014 the specs\
     \ are correct; the gaps were integration artifacts.\n"
+- lesson_id: L-CARMACK-2026-0907-ARCHANGEL-VET
+  title: "Archangel Architecture Vet \u2014 Theater, Cargo Cult, and Premature Optimization\
+    \ Detection"
+  confidence: 9.0
+  category: architectural_audit
+  summary: Vetted Archangel Architecture v1.6.1 (agent hardware awareness via System
+    Envelope Injection). Found 3 theater/cargo-cult patterns, 2 premature optimizations,
+    4 implementation gaps. Architecture correctly solves Ontological Void but requires
+    P0 fixes for temple-grade.
+  key_findings:
+  - "THEATER: CHANGELOG claims \"Mathematical contradiction penalty prevents hardware\
+    \ hallucinations\" \u2014 no such mechanism exists. Envelope is plain text prepended\
+    \ to context; no attention-weight modification, no logit bias, no contradiction\
+    \ detection in inference pipeline."
+  - 'CARGO CULT: NUMA detection on monolithic Ryzen 7 5700U (single-CCX, 8MB shared
+    L3). Code assumes 2-NUMA topology, always returns 0. Pattern copied from multi-socket
+    server code without hardware understanding.'
+  - 'THEATER: Default backend "AVX-512 VNNI" on AVX2-only hardware. Fallback used
+    when ModelGateway fails, causing agents to receive envelope claiming capabilities
+    the hardware physically cannot execute.'
+  - "PREMATURE OPT: Dynamic write-tool threshold (2K-8K tokens) with 7 magic numbers\
+    \ (0.7, 0.5, 0.3, 0.25, 0.5, 0.75, 0.3) \u2014 no empirical basis cited, no telemetry\
+    \ logging threshold choice. On 5700U with 16GB+zswap, pressure rarely exceeds\
+    \ 0.3; base 8K is fine."
+  - 'PREMATURE OPT: Sync ModelGateway calls in dispatch hot path without caching.
+    Same agent dispatched multiple times = repeated config reads/health checks. Broad
+    `except Exception` masks real errors.'
+  - 'IMPL GAP: `RuntimeHardwareRegister.is_stale()` method exists but never called.
+    TTL=30s documented but not enforced; agents could reason with stale hardware data.'
+  - "IMPL GAP: `process_rss_mb` always 0 in envelope \u2014 key missing from HardwareMonitor.get_memory_status().\
+    \ Misleading \"PROCESS WORKING SET (RSS): 0 MB\"."
+  - "IMPL GAP: TaskType mismatch \u2014 \"forensic\" in M33Probe but not in TaskType\
+    \ Literal (dead branch); \"mine\" in TaskType but not in M33Probe (missing branch)."
+  - "IMPL GAP: HardwareMonitor singleton not thread-safe \u2014 global init without\
+    \ lock in concurrent dispatch scenarios."
+  anti_patterns_avoided:
+  - Marketing language in CHANGELOG not backed by implementation ("hallucination basin
+    crushed")
+  - Cargo-cult NUMA detection on monolithic APU
+  - Hardcoded hardware capability lies in fallback paths
+  - Premature optimization without measurement (dynamic threshold, hot-path caching)
+  - Silent TTL expiration without enforcement
+  research_sources:
+  - title: Archangel Architecture Vet Report
+    date: '2026-09-07'
+    url: data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+  - title: HardwareMonitor Implementation
+    date: '2026-09-07'
+    url: src/omega/monitoring/__init__.py
+  - title: Ryzen 7 5700U Topology (single-CCX)
+    date: '2026-09-07'
+    url: src/omega/monitoring/__init__.py:190-193
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M13 Temple-Grade
+  - M23 Failure Integrity
+  architectural_decisions:
+  - id: D-CARMACK-ARCHANGEL-1
+    decision: Remove theater claims from CHANGELOG; replace with "Prompt-level hardware
+      grounding via immutable system envelope"
+    rationale: Honest documentation prevents cargo-cult adoption of claimed mechanisms
+  - id: D-CARMACK-ARCHANGEL-2
+    decision: Remove NUMA detection; hardcode assigned_numa_node=0 with hardware comment
+    rationale: Ryzen 7 5700U is monolithic single-CCX; no NUMA topology exists
+  - id: D-CARMACK-ARCHANGEL-3
+    decision: "Fix default backend string \u2014 detect actual ISA or use \"AVX2/FMA3\"\
+      \ for 5700U"
+    rationale: Fallback must not hallucinate capabilities the hardware lacks
+  - id: D-CARMACK-ARCHANGEL-4
+    decision: Add process_rss_mb to HardwareMonitor.get_memory_status()
+    rationale: Envelope field currently always 0; misleading for agents
+  - id: D-CARMACK-ARCHANGEL-5
+    decision: Defer dynamic threshold complexity; add telemetry first, measure 30
+      days
+    rationale: "Right Approximation \u2014 base 8K threshold works; complexity without\
+      \ evidence is waste"
+  - id: D-CARMACK-ARCHANGEL-6
+    decision: Cache ModelGateway resolution per entity with TTL; move out of hot path
+    rationale: Same agent dispatched repeatedly = repeated I/O; cache with 60s TTL
+  files_delivered:
+  - data/coordination/ARCHANGEL_VET_REPORT_20260907.md
+  estimated_implementation_effort_hours: 2
+  blockages: []
+  next_action: "Apply 4 P0 fixes (CHANGELOG, NUMA, backend string, process_rss_mb)\
+    \ \u2014 ~2h total. Then re-vet for temple-grade."
+- lesson_id: L-CARMACK-2026-0911-MAKALI-EXECUTION
+  title: "MaKaLi Serial Hydration Review Execution \u2014 5 Wake-Up Calls Resolved"
+  confidence: 9.5
+  category: fleet_coordination
+  summary: "Executed all 5 wake-up calls from MaKaLi Serial Hydration Review #004\
+    \ (sec 7.2-7.3) post-compaction. Archangel re-vet \u2192 TEMPLE-GRADE PASS, M35\
+    \ ratification demanded, pre-commit+CI wired, atomic write blocker resolved, watchdog\
+    \ MCP tool spec delivered. Fleet quality gate operational."
+  key_findings:
+  - "Archangel P0 fixes verified: CHANGELOG theater removed, NUMA cargo-cult excised,\
+    \ ISA detection added, process_rss_mb implemented. Architecture \u2192 TEMPLE-GRADE\
+    \ PASS (was CONDITIONAL)."
+  - 'M35 VAULT allowlist enforcement now LIVE: pre-commit hook (omega-m35-allowlist)
+    + CI workflow (.github/workflows/secrets.yml) wired and tested. Architect ratification
+    still pending (24h deadline).'
+  - "Atomic write M23 test VERIFIED: Lilith 6/6 tests PASS including SIGKILL survival.\
+    \ Blocker RESOLVED \u2014 gate satisfied."
+  - 'Watchdog single-writer MCP tool spec delivered to Lilith and Maat: omega_hub_watchdog_status_update
+    with advisory lock, Kali as recovery agent.'
+  - 'MaKaLi fleet view validated: "Theater with engine islands" surgical philosophy
+    confirmed as fleet standard. VNR = Cognitive Primitive (Research Slot R1) confirmed.'
+  anti_patterns_avoided:
+  - 'Historian trap: re-vet after fixes (not just document)'
+  - 'Advisory-only enforcement: wired pre-commit + CI for M35'
+  - 'Stale blocker lists: updated atomic write to RESOLVED with evidence'
+  - 'Coordination without spec: delivered watchdog MCP tool spec before implementation'
+  research_sources:
+  - title: Archangel Re-Vet Report
+    date: '2026-09-11'
+    url: data/coordination/ARCHANGEL_REVET_REPORT_20260911.md
+  - title: M35 Ratification Status
+    date: '2026-09-11'
+    url: data/coordination/M35_RATIFICATION_STATUS.md
+  - title: Watchdog MCP Tool Spec
+    date: '2026-09-11'
+    url: data/coordination/WATCHDOG_MCP_TOOL_SPEC.md
+  - title: 'MaKaLi Serial Hydration Review #004'
+    date: '2026-09-11'
+    url: data/coordination/anchored_summary/carmack/projection.md (section 7)
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M11 Soul Integrity
+  - M13 Temple-Grade
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-MAKALI-1
+    decision: Re-vet Archangel after P0 fixes applied
+    rationale: Vet who doesn't re-vet is just a historian; fleet quality flows through
+      verdict
+  - id: D-CARMACK-MAKALI-2
+    decision: Demand M35 Architect ratification via Hivemind with 24h deadline
+    rationale: Without ratification, VAULT allowlist is advisory not canonical
+  - id: D-CARMACK-MAKALI-3
+    decision: Wire pre-commit + CI for M35 enforcement (not delegate without verification)
+    rationale: Trivial but critical - without enforcement, allowlist is theater
+  - id: D-CARMACK-MAKALI-4
+    decision: Update blocker lists with atomic write RESOLVED (6/6 PASS)
+    rationale: Accurate tracking prevents wasted effort on satisfied gates
+  - id: D-CARMACK-MAKALI-5
+    decision: Deliver watchdog MCP tool spec before Lilith and Maat implementation
+    rationale: Spec-first prevents rework; advisory lock + single-writer pattern defined
+  - id: D-CARMACK-MAKALI-6
+    decision: 'Next: Canonicalize kq5-godot experiment protocol as fleet template'
+    rationale: MaKaLi directive - this is how fleet does side projects without polluting
+      core
+  files_delivered:
+  - data/coordination/ARCHANGEL_REVET_REPORT_20260911.md
+  - data/coordination/M35_RATIFICATION_STATUS.md
+  - data/coordination/WATCHDOG_MCP_TOOL_SPEC.md
+  - .pre-commit-config.yaml (omega-m35-allowlist hook)
+  - .github/workflows/secrets.yml (M35 + gitleaks + trufflehog + C3)
+  estimated_implementation_effort_hours: 2.5
+  blockages: []
+  next_action: Track M35 Architect ratification (24h). Review JC-Roc-kq5 EXPERIMENT_PROTOCOL.md
+    for fleet template blessing. Monitor Lilith and Maat watchdog MCP tool implementation.
+- lesson_id: L-CARMACK-2026-0924-N0-N1-HANDOFF
+  title: "N0\u2192N1 USB Handoff Truth Audit \u2014 Engine Commit, WAD Contract, Version\
+    \ SSOT, Node 1 Compatibility"
+  confidence: 9.5
+  category: federation_handoff
+  summary: "Delivered complete N0\u2192N1 handoff pack to exchange/n0-to-n1/wad_loader_contract/.\
+    \ Exact engine commit 75bde939ace7ff46ed2fef0056880a0814ab0e11 (release/debut-v1.6.0).\
+    \ WAD loader contract spec with 5 gaps documented. Version SSOT fixed to 1.6.0-alpha.1\
+    \ across 4 surfaces. Disposable PWAD test proves concat bug. Node 1 (ASUS i7-13620H,\
+    \ 16GB) compatible via HTTPS-only federation."
+  key_findings:
+  - Engine commit 75bde939ace7ff46ed2fef0056880a0814ab0e11 is official Node 0 authority;
+    working tree dirty (138 entries)
+  - "Version SSOT fixed: was 1.2.0/2.2.0/1.30.0 \u2192 now 1.6.0-alpha.1 on pyproject.toml,\
+    \ omega.__version__, Hub /health, MCP serverInfo (Cline \xA73.6)"
+  - 'WAD loader contract gaps: root entities.yaml ignored; scaffold entities lack
+    entity: envelope; PWAD override concatenates personality; requires_engine not
+    enforced; adapter whitelist narrow (2 modules)'
+  - 'Federation reality: Node 1 connects via https://n0.tail51f14a.ts.net:8016/mcp
+    (HTTPS, no auth); ports 22/2049 filtered; no NFS/SSH'
+  - 'Disposable PWAD test confirms concat bug: BASE personality + PWAD personality
+    = concatenated, not replaced (exit 1)'
+  anti_patterns_avoided:
+  - "Fabricating test results \u2014 disposable test honestly reports concat bug (exit\
+    \ 1)"
+  - Claiming clean replacement when projection concatenates
+  - "Ignoring Cline's documented gaps (\xA77#10) \u2014 all 5 captured in contract\
+    \ spec"
+  - "Staging secrets or private material \u2014 M35 scanner 0 violations"
+  research_sources:
+  - title: Cline Debut Sweep Briefing
+    date: '2026-09-20'
+    url: data/coordination/CLINE_TO_MAKALI_DEBUT_SWEEP_BRIEFING_20260920.md
+  - title: Cline Alpha PR Briefing
+    date: '2026-09-24'
+    url: data/coordination/CLINE_TO_MAKALI_ALPHA_PR_BRIEFING_20260924.md
+  - title: WAD Loader Contract Spec
+    date: '2026-09-24'
+    url: exchange/n0-to-n1/wad_loader_contract/WAD_LOADER_CONTRACT.md
+  - title: Disposable PWAD Test
+    date: '2026-09-24'
+    url: exchange/n0-to-n1/wad_loader_contract/disposable_test_wad/test_pwad_override.py
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M7 Local-First
+  - M11 Soul Integrity
+  - M13 Temple-Grade
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-N0N1-1
+    decision: Document exact engine commit as Node 0 authority
+    rationale: Working tree dirty; committed baseline is the truth
+  - id: D-CARMACK-N0N1-2
+    decision: Version SSOT = 1.6.0-alpha.1 across all 4 surfaces
+    rationale: "Cline \xA73.6 fixed the 4-surface version drift"
+  - id: D-CARMACK-N0N1-3
+    decision: WAD loader contract spec with explicit gap documentation
+    rationale: "Cline \xA77#10 identified 5 production gaps; must be fixed before\
+      \ Node 1 WAD alignment"
+  - id: D-CARMACK-N0N1-4
+    decision: PWAD override semantics = clean replacement (not concatenation)
+    rationale: Current projection concatenates; disposable test proves bug; fix required
+  - id: D-CARMACK-N0N1-5
+    decision: Node 1 federation = HTTPS-only, no auth, no NFS/SSH
+    rationale: "Cline \xA76 confirmed ports 22/2049 filtered; trust boundary = tailnet"
+  files_delivered:
+  - exchange/n0-to-n1/wad_loader_contract/EXACT_ENGINE_COMMIT.md
+  - exchange/n0-to-n1/wad_loader_contract/WAD_LOADER_CONTRACT.md
+  - exchange/n0-to-n1/wad_loader_contract/VERSION_SSOT.md
+  - exchange/n0-to-n1/wad_loader_contract/NODE1_COMPATIBILITY.md
+  - exchange/n0-to-n1/wad_loader_contract/disposable_test_wad/
+  - exchange/n0-to-n1/wad_loader_contract/README.md
+  estimated_implementation_effort_hours: 3.0
+  blockages:
+  - Node 1 WAD contract alignment blocked on arcana_novai WAD fixes
+  - PWAD override fix blocked on engine projection change
+  next_action: Node 1 owner fixes arcana_novai WAD per contract; Engine owner fixes
+    PWAD projection semantics; Operator decides M35 ratification
+- lesson_id: L-CARMACK-2026-0925-N0-N1-DELTA
+  title: "Final independent delta audit: remediated N0\u2192N1 package"
+  confidence: 9.8
+  category: federation_handoff
+  summary: "Final filesystem audit verified remediated N0\u2192N1 package integrity\
+    \ and all prior documentation fixes. Quarantine transport is allowed; final authenticated\
+    \ transfer remains blocked pending Architect disposition of explicitly open C6/N0-04."
+  key_findings:
+  - Root manifest 33/33 path-size-hash PASS; root SHA ledger 34/34 PASS
+  - Nested manifest 3/3 PASS; nested SHA ledger 4/4 PASS including nested MANIFEST.yaml
+  - YAML/JSON parse 12/12; M35 scan 33 files, 0 violations; raw path, trailing endpoint,
+    and blind-sed scans all zero
+  - WAD tests 31 PASS; both negative fixtures exit 1 as expected
+  - Flynn lineage-only, active checkout fa9c4edc, operative version 1.6.0-alpha.1,
+    exact endpoint, ontology and mapping-only adapter contract all verified
+  - C6/N0-04 remains explicitly OPEN; no cryptographic trust or final transfer approval
+    invented
+  anti_patterns_avoided:
+  - Trusting Grokster status without recomputing filesystem hashes
+  - Calling quarantine transport authenticated transfer
+  - Conflating historical 75bde939/2.2.0/1.30.0 with active authority
+  - Treating negative PWAD exit 1 as a pass
+  - Inventing C6 signatures, trust roots, or Architect approval
+  research_sources:
+  - title: Remediated package root
+    date: '2026-09-25'
+    url: data/federation/usb-payload/exchange/n0-to-n1/
+  - title: Open transfer gates
+    date: '2026-09-25'
+    url: data/federation/usb-payload/exchange/n0-to-n1/07_open_gates/OPEN_TRANSFER_GATES.md
+  sovereign_mandates_engaged:
+  - M11 Soul Integrity
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-DELTA-1
+    decision: Allow quarantine transport only; block final authenticated transfer
+      pending Architect C6/N0-04 disposition
+    rationale: Byte integrity is verified, but cryptographic trust and final approval
+      are absent
+  - id: D-CARMACK-DELTA-2
+    decision: Accept all prior documentation remediation as fixed
+    rationale: Filesystem recomputation and executable checks independently confirm
+      the delta
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.5
+  blockages:
+  - C6/N0-04 Architect decision pending
+  next_action: Architect explicitly accepts or rejects the C6/N0-04 open-gate disposition;
+    no package edits remain required from Carmack audit
+- lesson_id: L-CARMACK-2026-0926-N0-N1-V2-REAUDIT
+  title: n0-to-n1-v2 final re-audit after two remediation rounds and a mid-edit rename
+  confidence: 9.7
+  category: federation_handoff
+  summary: 'Independent re-audit of the renamed n0-to-n1-v2 package and its staged
+    delivery tree. Both SHIP FOR PHYSICAL QUARANTINE. Integrity 100% at both locations;
+    rename survived intact; nested Doom Guy ledger never rewritten; final authenticated
+    transfer remains unclaimed with C6/N0-04 OPEN. Five non-blocking caveats, all
+    of the same family: new policy-round text colliding with legacy wording in files
+    that were never rewritten.'
+  key_findings:
+  - Manifest 41/41, root ledger 42/42, DELIVERY_SHA256SUMS 43/43, nested manifest
+    3/3 + ledger 4/4 at both locations
+  - 'diff -r repo vs staged: only DELIVERY_SHA256SUMS differs; zero orphans; rename
+    caused no content loss or dangling reference'
+  - 'Embedding 1024-D native propagated cleanly: zero omega_vec_qwen_768, zero dimensions:768,
+    3 gemma_768 hits all read stale-spec'
+  - Curation ladder present in three places but research README:128 still says "should
+    begin with 120-item" - the single most misreadable line
+  - Device identity correctly marked UNRESOLVED in two files but FEDERATION_TOPOLOGY.md:10
+    table header still picks ASUS ExpertBook P1503CVA as a winner
+  - 'Fixture completeness fixed: 7 files present; the wads_dir difference claim verified
+    accurate against both copies'
+  - PWAD transition notice consistent across 4 files; correctly states exit 1 at fa9c4edc
+    is expected and correct, and forbids "fixing" the engine
+  - Tailnet policy reads enforced not aspirational; SSH/NFS removed as policy with
+    tests tripwire; Premium checkPeriod rationale documented
+  - Dated L1 supersession survived with the operator-confirmation-required qualifier
+    intact
+  - n0-to-n1.zip confirmed genuinely stale (38 OK/4 FAILED, 15 files differ, whole
+    policy round missing) but NOT quarantine-flagged
+  anti_patterns_avoided:
+  - Trusting the briefing numbers instead of recomputing - the zip self-verify was
+    38 OK/4 FAILED, not the briefed 38/42
+  - Editing any file during a no-edit audit
+  - Calling the 1024-D propagation clean without checking that the 3 gemma_768 hits
+    read as stale-spec references
+  - Skipping the nested doom_guy_transfer verify-only check instead of proving it
+    was never rewritten
+  - Writing to the retired USB media
+  research_sources:
+  - title: n0-to-n1-v2 package
+    date: '2026-09-26'
+    url: data/federation/usb-payload/exchange/n0-to-n1-v2/
+  - title: Staged delivery tree
+    date: '2026-09-26'
+    url: /home/arcana-novai/exchange/full-pack-20260926/
+  - title: Lilith-N1 Gate C status
+    date: '2026-09-26'
+    url: hivemind ses_0daca13fc343
+  sovereign_mandates_engaged:
+  - M11 Soul Integrity
+  - M15 Sovereign Continuity
+  - M23 Failure Integrity
+  - M27 Tracking Integrity
+  architectural_decisions:
+  - id: D-CARMACK-V2-1
+    decision: Ship both repo v2 and staged tree for physical quarantine; C6/N0-04
+      stays OPEN
+    rationale: Byte integrity is complete at both locations; trust gate is a governance
+      decision, not an integrity defect
+  - id: D-CARMACK-V2-2
+    decision: Flag the un-quarantined stale zip as the highest-value remaining fix
+    rationale: A deliverable-looking artifact one directory from the real package
+      is more dangerous than a missing file
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.6
+  blockages:
+  - C6/N0-04 Architect disposition pending
+  next_action: Apply the 5 queued non-blocking corrections (research README:128, FEDERATION_TOPOLOGY:10,
+    zip quarantine flag, NODE1_COMPATIBILITY:107, README_FIRST:95) and re-seal if
+    the Architect authorizes
+- lesson_id: L-CARMACK-2026-0928-TWO-RETRACTIONS
+  title: 'Two self-retractions: label-vs-artifact, bytes-vs-counters'
+  confidence: 10.0
+  category: audit_methodology
+  summary: 'The most valuable output of the 2026-09-28 arc. I retracted two claims
+    after testing the artifacts instead of reasoning from labels. (1) I reported a
+    vec0 table held 39 vectors from a 1009 rowid count; truth is 1009, proven by 1009
+    x 3072 = 3,099,648 byte arithmetic, while 39 is the extension''s internal storage-page
+    count. (2) I reported 8/10 confidence that legacy vectors were EmbeddingGemma-300M
+    output; truth is 0/10 - full-population forensics showed deterministic feature
+    hashing (568/1009 all-zero, 4-25 nonzero of 768, L2 exactly 1.0, 103 distinct
+    magnitudes, ratios exactly 3.0 and 2.0) and I reproduced the md5-hash algorithm
+    locally. Both retractions changed downstream decisions: the second recast Step
+    19 from migration to rebuild.'
+  key_findings:
+  - 'RETRACTION 1: a vec0 virtual table count(*) is authoritative; _chunks/_rowids/_vector_chunks00
+    are extension-internal sidecars, NOT a vector census. When a number and byte arithmetic
+    disagree, the bytes win.'
+  - 'RETRACTION 2: model identity must be characterised from the VALUES, never inferred
+    from a table or collection NAME. The table was named gemma_768 and had never held
+    gemma vectors.'
+  - Neural embeddings are DENSE; feature hashing is SPARSE. 4-25 nonzero of 768 is
+    decisive against any neural model.
+  - Exact integer ratios (3.0, 2.0) and a single distinct L2 norm (1.0) identify a
+    deterministic algorithm, not a trained model.
+  - Reproducing the suspected algorithm locally converts an inference into a proof
+  - Step 19 recast from MIGRATION to REBUILD because the data was never semantically
+    valid - no data loss of consequence, no complex rollback
+  anti_patterns_avoided:
+  - Reasoning from an identifier instead of reading the data it names
+  - Reporting a row count taken from a shadow/storage sidecar as if it were the entity
+    count
+  - Grepping only the sites named in a briefed defect list instead of the whole scope
+  - Hoisting a lazily-placed import out of its function during a fix, creating a circular
+    dependency
+  research_sources:
+  - title: data/omega_memory.db vec0 forensic scan
+    date: '2026-09-28'
+    url: sqlite://data/omega_memory.db?table=omega_vec_omega_vec_gemma_768
+  - title: Local reproduction of md5 feature-hash embedding
+    date: '2026-09-28'
+    url: src/omega/memory/embeddings.py:SovereignFallbackEmbeddingProvider
+  sovereign_mandates_engaged:
+  - M9 Error Integrity
+  - M17 Cognitive Integrity
+  - M23 Failure Integrity
+  architectural_decisions:
+  - id: D-CARMACK-RETRACT-1
+    decision: Step 19 is a REBUILD, not a migration
+    rationale: Zero or feature-hash vectors carry no model semantics to preserve;
+      rollback complexity is unjustified
+  - id: D-CARMACK-RETRACT-2
+    decision: Provenance must be recorded IN-BAND by all future write paths
+    rationale: No _meta table, no version registry, no write log existed; the legacy
+      tables are permanently unattributable
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.0
+  blockages: []
+  next_action: Carry the label-vs-artifact and bytes-vs-counters checks into every
+    subsequent audit as a mandatory pre-report step
+- lesson_id: L-CARMACK-2026-0928-D1024-ROOT-CAUSE
+  title: A declared lock that no runtime code reads is not a lock
+  confidence: 10.0
+  category: embedding_sovereignty
+  summary: 'P0 root cause for the D-1024 cross-model substitution. The ''dimension
+    validator'' cited in the ticket (config/embedding_strategy.yaml:23 vec0_lock)
+    enforces nothing at runtime - grep shows exactly one reader, a test. The real
+    guard compared provider width against the TARGET COLLECTION''s declared dimension,
+    which is self-consistency, not canonical conformance: a nomic-768 vector into
+    a 768-declared collection is a perfect match. No guard anywhere asked whether
+    the answer was in the canonical space. Consequently a 768-D nomic vector and an
+    MRL-truncated 768-D Qwen3 vector are indistinguishable by width, so removal was
+    the only correct fix and a width patch could never have worked.'
+  key_findings:
+  - vec0_lock read only by tests/contracts/test_embedding_dimension.py:49; zero src/
+    readers
+  - _ensure_collection_vec_table:544 compares actual_dim to declared_dim of the TARGET
+    collection, not to canonical
+  - Width cannot discriminate cross-model from same-model-MRL; _target_dim is the
+    only reliable discriminator
+  - 'A SECOND hole found by execution, absent from the ticket: OMEGA_ENV=test short-circuit
+    returned providers[0].dimension, so a sub-canonical chain head emitted a sub-canonical
+    zero vector in test mode'
+  - OllamaEmbeddingProvider() with a default model was itself a substitution factory;
+    now requires explicit model=
+  - Removed the priority-1 nomic_fallback from config AND RRF fusion weights; fusing
+    a non-canonical space is the same cross-model error
+  - Legacy collections kept and flagged deprecated/deprecated_by/removal/semantic_space
+    so Step 19 retains real targets
+  anti_patterns_avoided:
+  - Trusting a ticket's claim that a config block is enforced without grepping for
+    its readers
+  - Implementing a width check that provably cannot catch the defect it targets
+  - Overcorrecting by stripping the LEGAL MRL ladder alongside the illegal substitution
+    path
+  research_sources:
+  - title: config/embedding_strategy.yaml
+    date: '2026-09-28'
+    url: config/embedding_strategy.yaml:23
+  - title: sqlite_vec_adapter_optimized dimension guard
+    date: '2026-09-28'
+    url: src/omega/memory/sqlite_vec_adapter_optimized.py:544
+  sovereign_mandates_engaged:
+  - M23 Failure Integrity
+  - M9 Error Integrity
+  architectural_decisions:
+  - id: D-1024-ENFORCEMENT
+    decision: Canonical-width verification runs BEFORE the value is returned, in both
+      EmbeddingManager and the circuit breaker
+    rationale: A wrong-width answer must be discarded as a failure, never handed to
+      a caller
+  - id: D-1024-MRL-DISCRIMINATOR
+    decision: Explicit _target_dim marks same-model MRL truncation as LEGAL; absence
+      of it marks a cross-model vector as ILLEGAL
+    rationale: This is the only signal that separates the two cases at equal width
+  files_delivered:
+  - config/embedding_strategy.yaml
+  - src/omega/memory/embeddings.py
+  - src/omega/memory/embedding_circuit_breaker.py
+  - src/omega/memory/sqlite_vec_adapter.py
+  - src/omega/memory/sqlite_vec_adapter_optimized.py
+  - tests/contracts/test_embedding_dimension.py
+  estimated_implementation_effort_hours: 4.0
+  blockages: []
+  next_action: Contract tests 17->25 with a negative test that was observed firing,
+    not merely observed passing
+- lesson_id: L-CARMACK-2026-0928-SEAM-AND-TEST
+  title: Stranded imports, lazy-placement correctness, and the falsification test
+  confidence: 9.5
+  category: integration_seams
+  summary: 'P1 work: four stranded ''from omega_hub import'' sites (three briefed,
+    one found by grepping the full scope) plus a permanently-skipping test. Three
+    transferable findings: a briefed list of defect sites is a hypothesis, not an
+    inventory; lazily-placed imports are usually deliberate, and hoisting them during
+    a fix creates circular dependencies; and a test that has only ever passed is untested
+    - the new tool-surface test was proven by injecting the regression and observing
+    both guards fail.'
+  key_findings:
+  - FIFTH stranded import found at src/omega/research/scorecard.py:452, absent from
+    the brief - found by grepping all of src/omega/ for the defect rather than trusting
+    the reported list
+  - 'CIRCULAR IMPORT hit by hoisting an import: omega.research -> hub_tools -> task_registry
+    -> hub_tools.server -> omega.oracle -> omega.governance -> omega.research. The
+    original authors placed those imports inside functions ON PURPOSE; only the module
+    name was wrong, not the placement'
+  - 'FastMCP @mcp.tool() wraps callables: a direct call returns CallToolResult, not
+    JSON (TypeError: object of type ''CallToolResult'' has no len()). A second instance
+    of the same defect class - a bridge to a tool whose CALL SHAPE no longer matched.
+    Fixed with getattr(tool,''__wrapped__'',tool)'
+  - Dead Redis stubs have no correct replacement for pub/sub, so subscribe was reimplemented
+    as a POLL returning {'status':'empty'} rather than a fake 'success' that collect_signals
+    would have read as a live subscription
+  - The watchdog blanket 'except Exception' fired on EVERY call because the import
+    could never succeed, and said nothing about the alert being lost; it now names
+    the entity and states the alert was LOST, NOT BUFFERED
+  - TestCriticalTools went from 20 skips / 0 assertions to 26 real assertions; sample_tools
+    is 10 of 54 tools
+  - A truncated tool surface must be a HARD FAILURE, not a skip, because absence assertions
+    over a truncated list are vacuously true - that is the original bug
+  - 'FALSIFICATION: injecting the pre-consolidation surface made both new guards fail
+    with actionable messages, then the file was restored and re-verified green'
+  anti_patterns_avoided:
+  - Fixing only the sites named in a brief without grepping the whole scope for the
+    same defect
+  - Hoisting a lazily-placed import out of its function, creating a circular dependency
+  - Returning a success-shaped value from a degraded transport so the caller cannot
+    detect the degradation
+  - Writing a test that only ever passes and calling it coverage
+  - Letting a broad except clause hide a permanently-failing import
+  research_sources:
+  - title: hivemind_bridge.py
+    date: '2026-09-28'
+    url: src/omega/research/hivemind_bridge.py:358
+  - title: scorecard.py fifth site
+    date: '2026-09-28'
+    url: src/omega/research/scorecard.py:452
+  - title: test_hub_health.py rebuilt
+    date: '2026-09-28'
+    url: tests/test_hub_health.py:136
+  sovereign_mandates_engaged:
+  - M1 AnyIO
+  - M9 Error Integrity
+  - M23 Failure Integrity
+  - M21 Gate Integrity
+  architectural_decisions:
+  - id: D-SEAM-LAZY
+    decision: Keep all cross-package Hivemind imports lazy; never hoist them to module
+      scope
+    rationale: omega.research and the hub_tools package are mutually dependent; module-scope
+      import is a guaranteed cycle
+  - id: D-SEAM-FAILLOUD
+    decision: Every bridge adapter raises a typed transport error instead of returning
+      a success-shaped dict
+    rationale: M23 - a degraded transport must be distinguishable from a healthy call
+      by the caller
+  - id: D-TEST-FALSIFY
+    decision: Every repaired gate must be proven by injecting its regression and observing
+      failure
+    rationale: A guard never observed firing is not a guard; a test never observed
+      failing is untested
+  files_delivered:
+  - src/omega/research/hivemind_bridge.py
+  - src/omega/research/scorecard.py
+  - src/omega/coordination/watchdog.py
+  - scripts/post_to_hivemind.py
+  - tests/test_hub_health.py
+  estimated_implementation_effort_hours: 3.5
+  blockages:
+  - mcp_servers/omega_hub/github_bridge.py carries the identical stranded-import class
+    and remains unfixed (Ma'at's scope)
+  next_action: Ma'at to apply the same lazy-import + __wrapped__ pattern to github_bridge.py
+- lesson_id: L-CARMACK-2026-0928-HW-AND-HEADROOM-RULINGS
+  title: 'Fleet rulings: one canonical embedder, compression at the tool boundary'
+  confidence: 7.0
+  category: architecture_ruling
+  summary: 'Engineering rulings delivered to MaKaLi on 1024-D vector search across
+    asymmetric hardware and on D-582 semantic compression placement. Reasoning is
+    from measured hardware constraints and corpus size, not from principle. Confidence
+    is 7/10 overall: the vector-size and cache-fit arithmetic is solid, the throughput-parity
+    claim between Zen 2 FMA and Raptor Lake VNNI is inferred and would need a microbenchmark.'
+  key_findings:
+  - 'AVX-VNNI: DO NOT split the embedder. Zen 2 and Raptor Lake both retire ~64 MAC/cycle
+    on a 1024-D dot product; the VNNI advantage is int8 throughput and can be neutralised
+    by one fleet-wide dtype plus cpuid dispatch'
+  - A work split would introduce a cross-node quantisation boundary - structurally
+    the Nomic-vs-Qwen error the one-space-per-collection rule already forbids
+  - At Phase 1/2/3 (20/60/120 items) the whole corpus is ~480 KB and fits L2 on both
+    chips. There is no distribution problem to solve; federating a sub-L2 dataset
+    is architecture for its own sake
+  - '1024-D fp32 = 4 KB = 64 cache lines: the problem is memory-bound, not FLOP-bound.
+    Optimise the load path, not the arithmetic'
+  - No ANN index (no HNSW, no IVF) at these cardinalities - pure bloat. Add one only
+    when N forces it
+  - 'HEADROOM D-582: compression belongs at the TOOL BOUNDARY on READ payloads only.
+    Before vector storage is double-lossy and structurally unobservable; inside transport
+    envelopes couples layers and destroys diff-ability and M9 error integrity'
+  - 'Hard rule: never compress write payloads or tool arguments - those are verbatim
+    by contract. Transport stays dumb and lossless'
+  - 'MINISIGN/C6: sound as the integrity primitive, INSUFFICIENT as the closure path
+    - C6 needs a publisher identity and pinned trust root ABOVE the signature, plus
+    a written rotation policy (Ed25519 has no revocation)'
+  - One detached signature over the root MANIFEST.yaml transitively covers all 41
+    files; the documented verify command must check the ROOT MANIFEST DIGEST or the
+    signature never reaches the nested doom_guy_transfer set
+  anti_patterns_avoided:
+  - Splitting the embedder across nodes to exploit a hardware difference that a dtype
+    choice erases
+  - Building an ANN index for a corpus that fits in L2
+  - Applying lossy compression to write payloads or tool arguments
+  - Embedding lossy transforms inside transport envelopes, coupling layers and destroying
+    replay
+  - Declaring Gate C6 closed on a signature alone, without a pinned out-of-band trust
+    root
+  research_sources:
+  - title: Zen 2 / Raptor Lake dot-product throughput
+    date: '2026-09-28'
+    url: 'architecture: AVX2+FMA3 vs AVX-VNNI'
+  - title: Gate C6 requirement list
+    date: '2026-09-28'
+    url: 07_open_gates/OPEN_TRANSFER_GATES.md
+  sovereign_mandates_engaged:
+  - M9 Error Integrity
+  - M7 Local-First
+  architectural_decisions:
+  - id: D-HW-SINGLE-EMBEDDER
+    decision: One canonical embedder, co-located with the corpus; both nodes serve
+      identical vectors
+    rationale: A split introduces a cross-node quantisation boundary for zero measurable
+      gain at current corpus sizes
+  - id: D-HW-NO-ANN
+    decision: Brute-force blocked scan with software prefetch; no ANN index until
+      N forces it
+    rationale: The 20/60/120-item corpus is ~480 KB and fits L2
+  - id: D-582-TOOL-BOUNDARY
+    decision: Semantic compression at the tool boundary on reads only; transport stays
+      lossless
+    rationale: Highest ROI on the dominant volume, reversible via cold-store re-fetch,
+      and keeps failure modes observable
+  - id: D-C6-MINISIGN
+    decision: Adopt Minisign Ed25519 detached signatures; do NOT declare C6 closed
+      without a pinned out-of-band publisher trust root and a rotation policy
+    rationale: A signature proves a key signed bytes, not that the authorised publisher
+      did
+  files_delivered: []
+  estimated_implementation_effort_hours: 0.0
+  blockages: []
+  next_action: Microbenchmark Zen 2 FMA vs Raptor Lake VNNI on a 1024-D dot product
+    before treating throughput parity as settled
+- lesson_id: L-CARMACK-2026-0928-NOT-A-FLAKE
+  title: Two "flaky tests" were a product race and an environmental sensor
+  confidence: 9.0
+  category: debugging_doctrine
+  summary: 'Two items in the 13-test flaky pool were NOT flakes, and neither would
+    have been found by rerunning. (1) test_writer_starvation was a PRODUCT RACE in
+    src/omega/memory/sqlite_vec_adapter.py: every operation funnels through anyio.to_thread.run_sync
+    onto ONE persistent sqlite3 connection; to_thread dispatches to a thread pool,
+    so concurrent callers execute on different threads against the same handle. CPython
+    sqlite3 is single-thread-affine. Reproduced deterministically (idle=pass, 6 CPU
+    spinners=FAIL). (2) test_dispatch_timeout depended on the host''s free RAM: dispatch_agent
+    acquires guard.lock() BEFORE anyio.run_process, and ResourceGuard.lock() calls
+    OOMProtector.check_available which reads real psutil/proc state. Proven in both
+    directions.'
+  key_findings:
+  - 'PRODUCT RACE: shared-conn concurrent errors = 6/6 threads; per-connection = 0/6.
+    No engine involved in the proof'
+  - 'Reproduced the ''flake'' as deterministic: idle box passes, 6 CPU spinners fail
+    with ''SQLite-vec query failed: bad parameter or other API misuse'''
+  - 'FIX IN PRODUCT not test: self._conn_lock + _run_locked(), all 15 call sites routed;
+    lock order strictly _write_lock then _conn_lock so there is no reverse path and
+    no deadlock'
+  - 'ENVIRONMENTAL SENSOR: a test''s outcome depended on how much RAM the host had
+    free at that instant - explains the 35->45->29 oscillation across identical runs'
+  - 'FIX: autouse per-test monkeypatch isolating the sensor; subject still fully exercised;
+    cannot leak between tests or into opted-out tests'
+  - Both fixes verified at 200 MB free host starvation
+  - Neither required a skip, xfail, retry, timeout inflation, or -p no:randomly
+  anti_patterns_avoided:
+  - Accepting the 'flaky' label as a diagnosis instead of reproducing the condition
+  - Fixing a race by adding a skip or an xfail
+  - Assuming the failure report's stated cause without establishing a baseline first
+  - Trusting terminal pytest output - conftest's terminal summary suppresses the real
+    count line
+  research_sources:
+  - title: sqlite_vec_adapter thread-affinity reproduction
+    date: '2026-09-28'
+    url: src/omega/memory/sqlite_vec_adapter.py:_conn_lock
+  - title: ResourceGuard real-RAM sensor
+    date: '2026-09-28'
+    url: src/omega/oracle/resource_guard.py:34-60
+  sovereign_mandates_engaged:
+  - M9 Error Integrity
+  - M23 Failure Integrity
+  - M21 Gate Integrity
+  architectural_decisions:
+  - id: D-SERIALISE-CONN
+    decision: All adapter DB access serialised behind _conn_lock via _run_locked()
+    rationale: sqlite3 connections are single-thread-affine; to_thread dispatches
+      to a pool, so concurrent tasks corrupt the handle
+  - id: D-ISOLATE-SENSOR
+    decision: Environment-reading sensors must be isolated per test, not stubbed globally
+    rationale: A test outcome must not depend on a host property it was never about;
+      the subject stays exercised
+  files_delivered:
+  - src/omega/memory/sqlite_vec_adapter.py
+  - tests/conftest.py
+  estimated_implementation_effort_hours: 2.0
+  blockages: []
+  next_action: 'Carry the reproduction discipline: never accept a flake label without
+    first making the condition deterministic'
+- lesson_id: L-CARMACK-2026-0928-DEAD-HOOK
+  title: A hook nested inside a function is dead code that looks alive
+  confidence: 10.0
+  category: test_infrastructure
+  summary: 'I caused a PR-blocking red gate by writing a pytest hook that a concurrent
+    edit silently swallowed. My insert landed 4-space-indented INSIDE mock_provider(),
+    making pytest_collection_modifyitems an assignment inside a fixture body rather
+    than a hook. Nothing errored. The exemption list was simply never applied, so
+    the isolation fixture stubbed the very method two tests were asserting on. It
+    was caught only because a marker probe printed real_oom_sensor=False and AST located
+    the enclosing function. This is the fifth instance this week of a check reporting
+    success while exercising nothing - but inverted: I was the author and the gate
+    was the detector.'
+  key_findings:
+  - 'Diagnostic that found it: a pytest_collection_modifyitems probe printing whether
+    the marker was applied. real_oom_sensor=False on a test that WAS in the list'
+  - ast.walk located the block enclosed by mock_provider() lines 361-413 - a concurrent
+    edit had truncated that function
+  - First version of the exemption list was INCOMPLETE (broke 2 tests). Second version
+    was INVISIBLE (never a hook). Hand-written twice, wrong twice
+  - 'FIX 1: hook restored to module level, verified present in module globals'
+  - 'FIX 2: exemption list DERIVED at import by scanning tests/**/test_*.py for oom_protector|check_available|memavailable
+    - a new OOM test file is exempt by construction'
+  - 'FIX 3: a self-check asserting the hook is reachable in globals, so accidental
+    nesting cannot ship twice'
+  - 'Baseline discipline mattered: running the 4 OOM files against HEAD''s conftest
+    showed 25/25 PASS, which CONTRADICTED the failure report and redirected the search
+    from ''host load'' to ''order/nesting'''
+  anti_patterns_avoided:
+  - Curating an exemption list by hand - it is a hole with a comment on it
+  - Trusting a report of a failure cause over a baseline established from HEAD
+  - Adding an assertion-level fix when the defect was structural
+  - Applying an edit to a file another agent is concurrently editing without re-reading
+    it
+  research_sources:
+  - title: conftest AST enclosure probe
+    date: '2026-09-28'
+    url: tests/conftest.py:_derive_real_oom_sensor_files
+  - title: Marker reachability self-check
+    date: '2026-09-28'
+    url: tests/conftest.py:pytest_collection_modifyitems
+  sovereign_mandates_engaged:
+  - M21 Gate Integrity
+  - M23 Failure Integrity
+  architectural_decisions:
+  - id: D-DERIVE-EXEMPTIONS
+    decision: Exemption lists that gate correctness must be derived from the filesystem,
+      never hand-written
+    rationale: Removes the class of error, not the instance; a curated list failed
+      twice in one session
+  - id: D-HOOK-REACHABLE
+    decision: Every custom pytest hook carries a module-level reachability self-check
+    rationale: A nested hook produces no error - it just silently does nothing
+  files_delivered:
+  - tests/conftest.py
+  estimated_implementation_effort_hours: 1.5
+  blockages: []
+  next_action: Apply the derive-not-curate rule to any other correctness list in the
+    repo
+- lesson_id: L-CARMACK-2026-0928-STALE-IGNORE
+  title: An unmatched pytest --ignore silences all collection and exits 0
+  confidence: 10.0
+  category: test_infrastructure
+  summary: 'pytest tests/ reported ''Ran 0 tests'' and exited SUCCESS for an extended
+    period. Three separate reports blamed tests/test_hivemind_redis.py, which had
+    already been quarantined. The real cause was pyproject addopts carrying --ignore=data/entities/roc_racoon/workspace/odysseus-dev,
+    a path that has never existed in git. Under pytest 9.1.1 an --ignore matching
+    nothing suppresses ALL collection. collected went 0 -> 2393 once removed. Separately:
+    the ''Ran 0 tests'' line is itself a reporting artifact - tests/conftest.py''s
+    pytest_terminal_summary sets tr.sep_title = None, hiding pytest''s real count.
+    Counts must come from --json-report.'
+  key_findings:
+  - 'Falsified both directions: with the phantom --ignore, 0 tests collected; with
+    addopts cleared, 46 tests collected from a single file'
+  - git log --all --diff-filter=A on the path returns nothing - it never existed
+  - Introduced in 68a92cc2 (2026-06-22) and silently lethal ever since
+  - conftest pytest_terminal_summary sets tr.sep_title = None, suppressing pytest's
+    own count line - the terminal lies about collection size
+  - 'After removal: full suite collected 2393, later 2462'
+  anti_patterns_avoided:
+  - Trusting the stated cause of a collection failure without reproducing it
+  - Reading counts from terminal output when a conftest hook customises the summary
+  - Keeping a stale path in a permanent config file long after its target is deleted
+  research_sources:
+  - title: pyproject addopts
+    date: '2026-09-28'
+    url: pyproject.toml:addopts
+  - title: terminal summary override
+    date: '2026-09-28'
+    url: tests/conftest.py:pytest_terminal_summary
+  sovereign_mandates_engaged:
+  - M21 Gate Integrity
+  - M23 Failure Integrity
+  architectural_decisions:
+  - id: D-REPORT-FROM-JSON
+    decision: All test counts in reports come from --json-report, never the terminal
+      line
+    rationale: A conftest hook suppresses pytest count output; the terminal is not
+      a source of truth
+  - id: D-NO-PHANTOM-IGNORE
+    decision: No --ignore path may reference anything absent from the tree
+    rationale: Under pytest 9 an unmatched --ignore silences the entire suite and
+      exits 0
+  files_delivered:
+  - pyproject.toml
+  estimated_implementation_effort_hours: 0.5
+  blockages: []
+  next_action: Audit other permanent config for stale paths (Makefile targets, systemd
+    units, CI)
 metadata:
   entity: john_carmack
-  session_id: ses_fa2f60db7ffezy8EMncRRBufus
-  model_used: minimax/minimax-m3:free
-  last_session_end: '2026-09-01T20:53:29.875684+00:00'
+  session_id: ses_f0b67cbebffe5ScoNWRsdHIUkQ
+  model_used: space-bunny-free
+  last_session_end: '2026-09-30T23:37:47.943631+00:00'

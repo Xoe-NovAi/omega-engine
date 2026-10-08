@@ -39,7 +39,7 @@ ALLOWED_STATUSES = {"backlog", "ready", "in_progress", "blocked", "completed", "
 ALLOWED_EXECUTION_STATUSES = ALLOWED_STATUSES.union({"failed"})
 
 # GAP_REGISTRY allowed statuses
-ALLOWED_GAP_STATUSES = {"resolved", "outstanding", "partial", "lost"}
+ALLOWED_GAP_STATUSES = {"resolved", "outstanding", "partial", "lost", "cancelled"}
 
 # M1: staleness threshold (days). `in_progress` tasks whose last_checkpoint is
 # older than this are errors. 7d sits in the empirical gap of the age
@@ -152,11 +152,22 @@ def validate_gap_registry():
 
 def validate_active_sprint():
     print(f"\n���� Validating {ACTIVE_SPRINT_PATH.name}...")
-    if not ACTIVE_SPRINT_PATH.exists():
-        print_error(f"{ACTIVE_SPRINT_PATH.name} not found.")
-        return False
+    # [D-624] A public clone has no live ACTIVE_SPRINT.json — it is per-host runtime
+    # state (M27: state follows the Tracking Architecture, not the release). Fall back
+    # to the sanitized public template, which ships, so the tracking gate can still
+    # validate the SCHEMA on a fresh clone instead of hard-failing on absence.
+    # The template is schema-identical; only host identity is placeholdered.
+    sprint_path = ACTIVE_SPRINT_PATH
+    if not sprint_path.exists():
+        template = ROOT_DIR / "config" / "templates" / "ACTIVE_SPRINT.public.json"
+        if template.exists():
+            sprint_path = template
+            print(f"   ℹ️  live file absent; validating sanitized template {template.name}")
+        else:
+            print_error(f"{ACTIVE_SPRINT_PATH.name} not found (and no public template).")
+            return False
 
-    data = load_json(ACTIVE_SPRINT_PATH)
+    data = load_json(sprint_path)
     errors = 0
 
     # Load GAP_REGISTRY for R-ID cross-check
@@ -213,8 +224,10 @@ def validate_active_sprint():
 def validate_task_registry():
     print(f"\n���� Validating {TASK_REGISTRY_PATH.name}...")
     if not TASK_REGISTRY_PATH.exists():
-        print_error(f"{TASK_REGISTRY_PATH.name} not found.")
-        return False
+        # TASK_REGISTRY.json is a runtime artifact (gitignored) — absent in a
+        # fresh CI checkout. Skip gracefully instead of failing the gate.
+        print_warn(f"{TASK_REGISTRY_PATH.name} absent (runtime artifact) — skipped.")
+        return True
 
     data = load_json(TASK_REGISTRY_PATH)
     errors = 0

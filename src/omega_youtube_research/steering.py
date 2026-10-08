@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L8 Oracle Steering Queue — Human-in-the-Loop Task Injection
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L8 ⬡ STEERING
@@ -82,7 +85,7 @@ class ResearchTask:
     task_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     task_type: SteeringTaskType = SteeringTaskType.CUSTOM
     topic_filter: str = ""
-    node: str = "N6"  # Default to Cognition node
+    slot: str = "S6"  # Default to Cognition node
     priority: TaskPriority = TaskPriority.NORMAL
     status: TaskStatus = TaskStatus.QUEUED
     created_at: float = field(default_factory=time.time)
@@ -308,7 +311,7 @@ def create_steering_graph(
                 "task_id": task.task_id,
                 "task_type": task.task_type.value,
                 "topic": task.topic_filter,
-                "node": task.node,
+                "slot": task.node,
                 "prompt": task.human_prompt,
                 "result_preview": str(state.get("result", {}))[:500],
             })
@@ -374,7 +377,7 @@ def create_steering_graph(
 
 async def inject_steering(
     prompt: str,
-    node: str = "N6",
+    slot: str = "S6",
     task_type: SteeringTaskType = SteeringTaskType.YOUTUBE_DEEP_DIVE,
     priority: TaskPriority = TaskPriority.NORMAL,
     queue: Optional[BackgroundResearcherQueue] = None,
@@ -386,13 +389,13 @@ async def inject_steering(
     Usage:
         task_id = await inject_steering(
             "Hey Iris, have N6 deep-dive attention videos from today's batch",
-            node="N6",
+            slot="S6",
             priority=TaskPriority.HIGH
         )
     
     Args:
         prompt: Natural language instruction from human
-        node: Target node (N1-N10)
+        node: Target slot (S1-S10)
         task_type: Type of research task
         priority: Task priority (HIGH triggers human review)
         queue: Queue instance (creates default if None)
@@ -410,7 +413,7 @@ async def inject_steering(
     task = ResearchTask(
         task_type=task_type,
         topic_filter=topic_filter,
-        node=node,
+        slot=slot,
         priority=priority,
         human_prompt=prompt,
         parameters=parameters,
@@ -466,3 +469,11 @@ def assert_background_queue_type(obj: Any) -> None:
     assert callable(obj.get_task)
     assert hasattr(obj, "list_tasks")
     assert callable(obj.list_tasks)
+
+# ── Legacy alias ───────────────────────────────────────────────────────────
+# `OracleSteeringQueue` is advertised in omega_youtube_research.__all__ and
+# imported by cli.py, but was never given its own class. There is only one
+# queue implementation in this module, so alias the canonical class rather
+# than leave a phantom name that breaks `import omega_youtube_research.cli`.
+# Keep `BackgroundResearcherQueue` as the source of truth.
+OracleSteeringQueue = BackgroundResearcherQueue

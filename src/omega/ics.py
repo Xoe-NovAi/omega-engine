@@ -15,7 +15,7 @@ template is filled with live runtime state.
 The ICS system is:
     - **ICS-S** (Signature): ``⬡ OMEGA ⬡ [{node}] ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase} ⬡ {session_id}``
       — the agent's runtime header, auto-generated from live state.
-      ``[{node}]`` (PP-4) renders only when the agent acts under a Node;
+      ``[{node}]`` (PP-4) renders only when the agent acts under a Slot;
       ``{session_id}`` (P5) renders only when provided.
 
     (ICS-T code tags were DEPRECATED and REMOVED per Carmack review —
@@ -69,22 +69,28 @@ ICS_CHANNEL_RUN = "run"  # Run-side channel (Lilith)
 # names (kali, maat, lilith) live in config/wads/<iwad>/entities/dispatch.yaml
 # and are loaded at runtime via _load_dispatch_config().
 ROLE_CONSTANTS = {
-    "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",
-    "BUILD_OVERSOUL": "BUILD_OVERSOUL",
-    "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",
-    "N1": "N1",
-    "N2": "N2",
-    "N3": "N3",
-    "N4": "N4",
-    "N5": "N5",
-    "N6": "N6",
-    "N7": "N7",
-    "N8": "N8",
-    "N9": "N9",
-    "N10": "N10",
-    "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",
-    "MAKALI_COUNCIL": "MAKALI_COUNCIL",
-    "CONTAINING_FIELD": "CONTAINING_FIELD",
+    "GRAND_OVERSIGHT": "grand_oversight",
+    "BUILD_OVERSOUL": "build_oversoul",
+    "RUNTIME_OVERSOUL": "runtime_oversoul",
+    "MESSENGER_BRIDGE": "messenger_bridge",
+    "S3_DEDICATED_KEEPER": "s3_dedicated_keeper",
+    "LEGACY_MINER": "legacy_miner",
+    "RESEARCH_ORCHESTRATOR": "research_orchestrator",
+    "COUNCIL_ORCHESTRATOR": "council_orchestrator",
+    "COMPLIANCE_GNOSIS": "compliance_gnosis",
+    "HERITAGE_ATTRIBUTION": "heritage_attribution",
+    "DEEP_RESEARCH": "deep_research",
+    "FEDERATION_MESH": "federation_mesh",  # omega_federation (2026-09-16)
+    "S1": "infrastructure",
+    "S2": "persistence",
+    "S3": "engineering",
+    "S4": "integration",
+    "S5": "governance",
+    "S6": "cognition",
+    "S7": "context",
+    "S8": "observability",
+    "S9": "orchestration",
+    "S10": "validation",
 }
 
 # Default IWAD name (architecture constant, not entity logic)
@@ -161,10 +167,10 @@ class ICSContext:
     auto-detected from runtime state (model, phase) or generated
     (trace).
 
-    ``node`` (PP-4, 2026-08-22): Node designation when the agent acts
-        under a Node expert session (e.g., ``"N7"``). Rendered as
-        ``[N7]`` immediately after the entity. Provenance for shared-
-        file writes (soul, gnosis) made by Node-acting agents.
+    ``slot`` (PP-4, 2026-08-22): Slot designation when the agent acts
+        under a Slot expert session (e.g., ``"S7"``). Rendered as
+        ``[S7]`` immediately after the entity. Provenance for shared-
+        file writes (soul, gnosis) made by Slot-acting agents.
     ``session_id`` (P5, 2026-08-22): OpenCode session ID rendered as a
         trailing segment; also scopes the session-DB model lookup so
         multi-instance environments detect the CORRECT model (B1 fix).
@@ -176,7 +182,7 @@ class ICSContext:
     trace_id: Optional[str] = None
     phase: Optional[str] = None
     mode: str = "full"  # "full" | "compact" | "off"
-    node: Optional[str] = None
+    slot: Optional[str] = None
     session_id: Optional[str] = None
 
     def render(self) -> str:
@@ -186,10 +192,10 @@ class ICSContext:
         if self.mode == "compact":
             entity_upper = self.entity.upper()
             segments = [entity_upper]
-            if self.node:
-                sanitized_node = re.sub(r"[^A-Z0-9_-]", "", self.node.upper())
-                if sanitized_node:
-                    segments.append(f"[{sanitized_node}]")
+            if self.slot:
+                sanitized_slot = re.sub(r"[^A-Z0-9_-]", "", self.slot.upper())
+                if sanitized_slot:
+                    segments.append(f"[{sanitized_slot}]")
             segments.append(self.phase or _detect_phase())
             return "⬡ " + " ⬡ ".join(segments)
 
@@ -204,11 +210,11 @@ class ICSContext:
             "OMEGA",
             entity_upper,
         ]
-        # F1 fix: sanitize node value, insert after entity
-        if self.node:
-            sanitized_node = re.sub(r"[^A-Z0-9_-]", "", self.node.upper())
-            if sanitized_node:
-                segments.append(f"[{sanitized_node}]")
+        # F1 fix: sanitize slot value, insert after entity
+        if self.slot:
+            sanitized_slot = re.sub(r"[^A-Z0-9_-]", "", self.slot.upper())
+            if sanitized_slot:
+                segments.append(f"[{sanitized_slot}]")
         segments.extend([
             model,
             self.channel,
@@ -432,7 +438,7 @@ def render(
     trace_id: Optional[str] = None,
     phase: Optional[str] = None,
     mode: str = "full",
-    node: Optional[str] = None,
+    slot: Optional[str] = None,
     session_id: Optional[str] = None,
 ) -> str:
     """Render an ICS-S header string.
@@ -448,8 +454,8 @@ def render(
         phase: Optional phase string. If None, auto-detected from
             ACTIVE_SPRINT.json (M27) with blueprint fallback.
         mode: ``"full"`` | ``"compact"`` | ``"off"`` (default: ``"full"``)
-        node: Optional Node designation when acting under a Node expert
-            session (PP-4, e.g., ``"N7"``). Rendered as ``[N7]`` after
+        slot: Optional Slot designation when acting under a Slot expert
+            session (PP-4, e.g., ``"S7"``). Rendered as ``[S7]`` after
             the entity. Omit for prime-agent headers.
         session_id: Optional OpenCode session ID (P5). Rendered as a
             trailing segment AND scopes the session-DB model lookup.
@@ -461,8 +467,8 @@ def render(
         >>> from omega.ics import render
         >>> render("GRAND_OVERSIGHT", model="minimax-m3-free", trace_id="trc_abc123")
         '⬡ OMEGA ⬡ GRAND_OVERSIGHT ⬡ minimax-m3-free ⬡ opencode ⬡ trc_abc123 ⬡ H2-F'
-        >>> render("LILITH", node="N7", session_id="ses_x")  # doctest: +SKIP
-        '⬡ OMEGA ⬡ LILITH ⬡ [N7] ⬡ ... ⬡ ses_x'
+        >>> render("LILITH", slot="S7", session_id="ses_x")  # doctest: +SKIP
+        '⬡ OMEGA ⬡ LILITH ⬡ [S7] ⬡ ... ⬡ ses_x'
     """
     ctx = ICSContext(
         entity=entity,
@@ -471,7 +477,7 @@ def render(
         trace_id=trace_id,
         phase=phase,
         mode=mode,
-        node=node,
+        slot=slot,
         session_id=session_id,
     )
     return ctx.render()
@@ -500,7 +506,7 @@ def render_for_response(
         phase=response.phase,
         mode=mode,
         channel=getattr(response, "channel", ICS_CHANNEL_OPENCODE),
-        node=getattr(response, "node", None),
+        slot=getattr(response, "slot", None),
         session_id=getattr(response, "session_id", None),
     )
 

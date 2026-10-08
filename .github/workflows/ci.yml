@@ -16,6 +16,12 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
+      # [CUT-20261007] Both versions must report. Default fail-fast canceled
+      # the healthy 3.13 job mid-temple-grade whenever 3.12 failed first
+      # ("The operation was canceled" at 23:11:26 on 1f4c8410), destroying
+      # half the evidence a red run exists to provide. test.yml already
+      # opted out; this job now matches.
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
@@ -24,14 +30,19 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-        
-    - name: Install dependencies
+
+    - name: Create and activate virtualenv (M24 Venv Sovereignty)
+      run: |
+        python -m venv .venv
+        echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies into venv
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest anyio pyyaml
+        pip install flake8 pytest anyio pyyaml ruff reuse
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Ensure the omega package is importable
-        pip install -e .
+        # Ensure the omega package and dev tooling are importable in venv
+        pip install -e ".[cli,dev]"
         
     - name: Lint with flake8
       run: |
@@ -39,11 +50,6 @@ jobs:
         flake8 src tests --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    - name: Install REUSE tool
-      run: |
-        python -m pip install --upgrade pip
-        pip install reuse
 
     - name: REUSE Compliance (M37 — SPDX headers)
       run: |
@@ -55,6 +61,13 @@ jobs:
     - name: Mandate Compliance (Makefile gates — M1, M7, M8, M9, M23)
       run: |
         make check-mandates
+
+    - name: Temple-Grade (full release gate)
+      # D-620: require_clean=1 — CI checks out a clean tree, so the import gate
+      # must describe HEAD exactly. With an overlay it could pass on code that
+      # does not exist in the commit being gated.
+      run: |
+        make temple-grade require_clean=1 HUB_IMPORT_MODE=pristine
 
     - name: Test with pytest (Mock Mode)
       env:

@@ -10,7 +10,7 @@
 [Unit]
 Description=Omega YouTube Worker — Sovereign YouTube Ingestion & Synthesis
 Documentation=https://github.com/Xoe-NovAi/omega-engine
-After=network-online.target omega-searxng.service redis.service
+After=network-online.target omega-searxng.service
 Wants=network-online.target
 Requires=omega-searxng.service
 

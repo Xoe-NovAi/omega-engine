@@ -202,6 +202,7 @@ rag-v1/
 rag-v1/**/*
 scripts/omega-roc_racoon-entrypoint.py
 src/data/datasets/
+src/data/jobs/
 src/data/library/index/
 src/omega/entity_roc_racoon.py
 test_discovery.py
@@ -267,3 +268,156 @@ opencode/
 
 # Entity knowledge test fixtures (never commit)
 data/entities/test_*_entity/
+# Scoped markdown ignore — was blanket `*.md` (defect: hid all documentation).
+# Now scoped to transient markdown in data/ and archive/ only.
+data/**/*.md
+archive/**/*.md
+# Registry model cards are .yaml.md — un-ignore AFTER the scoped rule
+# (git uses the LAST matching pattern).
+!config/model_registry/models/**/*.yaml.md
+
+# .opencode/ is core project structure, NOT vendored/scratch content:
+#   * AGENTS.md (tracked, public) points every newcomer at
+#     .opencode/rules/*.md — 11 references, all dangling until now
+#   * M10 Fleet Integrity requires .opencode/agents/ to exist
+# The blanket *.md rule above silently swallowed both, so they were absent
+# from every clone: broken onboarding docs + a failing mandate. Un-ignore
+# AFTER the blanket rule (git uses the LAST matching pattern).
+# archive/ subdirs stay ignored — they are historical, not live surface.
+!.opencode/agents/*.md
+!.opencode/rules/*.md
+
+# Soul-contract evidence artifacts referenced by approved_lessons.yaml
+# (test_every_promoted_lesson_carries_resolvable_evidence requires them in CI).
+!docs/strategy/*.md
+!docs/strategy/**/*.md
+!docs/federation/node1_received/*.md
+# API reference is tracked because the pre-commit gate requires a docs/ change
+# whenever src/omega/ changes. With this ignored, that gate can never satisfy
+# itself for any engine change. Scoped to reference/ only -- docs/architecture
+# and docs/operations hold archaeology and are deliberately left ignored.
+!docs/reference/**/*.md
+!docs/specs/*.md
+!docs/decisions/PIVOT_LOG.md
+# Explicit un-ignore for ALL docs/ subdirectories — documentation is tracked.
+# (Parent-dir ignores like docs/research/evidence_*/ still win for their trees.)
+!docs/**/*.md
+!docs/reference/
+!docs/architecture/
+!docs/api/
+!docs/guides/
+!docs/archive/
+!data/coordination/MAKALI_COUNCIL_AUDIT_*.md
+!data/coordination/GAP_REGISTRY.json
+!data/coordination/meditations/records/MEDITATION_KALI_*.md
+!data/coordination/teamstudy_*/FINAL_SYNTHESIS.md
+!.opencode/skills/git-secret-scrub/SKILL.md
+
+# Frontier review package (2026-10-01) — Antigravity IDE peer-review chain.
+# THE FIFTH `.gitignore` DEFECT OF THIS SESSION, and the same class as the
+# other four: a rule written for a tree that has since grown a new kind of
+# content, so nothing catches it.
+#   1. blanket `docs/reference/` ignore made the pre-commit docs gate
+#      unsatisfiable for any src/omega/ change
+#   2. dangling `.opencode/rules/*.md` references + failing M10 mandate
+#   3. `data/coordination/sessions/` swept 637 transcripts, 2 with live tokens
+#   4. 81MB crash-looping error.log tracked under an agent workspace
+#   5. THIS: the blanket `*.md` at line 270 silently swallowed the entire
+#      frontier review package. I reported it as "committed to the repository"
+#      when git had never heard of it. A file that exists and is not tracked
+#      is the exact failure class of a check that cannot fail.
+# A briefing dispatched to three frontier models is a load-bearing governance
+# artifact. It is un-ignored here, AFTER the blanket rule (last match wins).
+!docs/federation/ANTIGRAVITY_REVIEW_BRIEFING_20261001.md
+!docs/federation/prompts/STAGE_*.md
+# The RETURNS from that chain. Retrieved 2026-10-01 from
+# ~/.gemini/antigravity-ide/brain/5bc0596f-.../ — a vendor scratch directory
+# no fleet agent can read, which is exactly the condition M30 warns about:
+# a claim that exists only on one machine is not a verified claim.
+# Both are filed with provenance headers and inline corrections.
+!docs/federation/ANTIGRAVITY_REVIEW_RETURN_20261001_*.md
+# The handoff primer — the agent-facing communication contract (2026-10-01).
+# Replaces the retired "Handoff for substance, Hivemind for presence" law.
+!docs/federation/HANDOFF_PRIMER.md
+!docs/federation/HIVE_SYNC_GUIDE_*.md
+!docs/federation/COMMS_CHANNEL_REVIEW_*.md
+
+# Governance artifacts (Phase 1 Federation Contract Refactor)
+!docs/governance/SAHS_RULE.md
+!docs/governance/HANDOFF_LIFECYCLE.md
+!config/handoff_policy.yaml
+!docs/strategy/FEDERATION_CONTRACT_REFACTOR_20260928.md
+
+# ── Local backups, atomic-write temps, node-local artifacts (keep on disk, never commit) ──
+*.backup.*
+*.backup
+*.bak
+*.tmp
+*.bak.*
+*.tmp
+*.lock
+config/wads/*/tmp*
+*.hujson
+!data/federation/tailnet-policy-OMEGA-DEFINITIVE-v2-20260928.hujson
+node0-collect-*/
+opencode.json.bak.*
+session-*.mdv
+
+# ── User-facing docs (un-ignore AFTER the blanket *.md rule above) ──
+!QUICKSTART.md
+!SECURITY.md
+!CHANGELOG.md
+!docs/USER_MANUAL.md
+!docs/user/*.md
+
+# ── Node-local operational scripts (Node 0 forge ops, not engine code) ──
+apply_node0_fix.sh
+collect_node0.sh
+opencode_provider_doctor.sh
+
+# Codex sources (required by `make codex`) + tracked config docs
+!ORACLE_STACK.md
+!CREDITS.md
+!scripts/codex/*.md
+!docs/kb/REFINEMENT_PROTOCOL.md
+!config/glossary.md
+!config/domains/**/*.md
+!docs/architecture/ORACLE_DEEP_DIVE.md
+!docs/architecture/HIVEMIND_TRANSPORT.md
+!docs/architecture/EMBEDDING_SOVEREIGNTY.md
+!docs/architecture/NES_EIS_FACET_PROTOCOL.md
+!data/entities/*/session_gnosis.md
+!data/entities/*/gnosis/session_gnosis.md
+!data/coordination/CLINE_*.md
+data/entities/*/knowledge/ACCOUNT_MAP.yaml
+data/metrics/*
+
+# Handoff packet corpus is RUNTIME STATE, not source. 723 live packets +
+# receipts. Never commit. Receipts/manifests for audit are in docs/ and PIVOT_LOG.
+data/handoff/**
+!data/handoff/*.md
+!data/handoff/**/MANIFEST.sha256
+!data/handoff/**/MANIFEST.json
+
+# Quarantined PACKET COPIES are runtime state, not source. The READMEs are the
+# audit record of the decision and ARE tracked; the packets are not.
+data/quarantine/**/*.json
+data/quarantine/**/*.md
+!data/quarantine/**/README.md
+!data/quarantine/**/*.sha256
+!data/quarantine/**/*.jsonl
+
+# Conversation ingest dumps — runtime transcript, not source.
+# Caught 2026-10-01: `git add -A data/coordination/` swept 637 of these in,
+# two of which carried real API tokens. GitHub push protection blocked the
+# push (repo is public). The tokens were rotated; nothing was ever exposed.
+# The class of defect is the same as the docs/reference/ blanket-ignore: the
+# rules predate this kind of content, so nothing caught it.
+data/coordination/sessions/
+!docs/federation/RESPONSE_TO_SONNET_4_6_*.md
+
+# ── Host-local LAN exposure allowlist overlay (D-616) ──
+# Real tailnet addresses / interface names for THIS node. Untracked by design:
+# the tracked config/lan_exposure_allowlist.yaml is a public placeholder-only
+# template, and the real values must never ship (D-612 closed that leak).
+config/lan_exposure_allowlist.local.yaml

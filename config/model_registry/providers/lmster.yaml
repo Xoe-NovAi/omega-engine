@@ -7,7 +7,7 @@
 
 provider: "lmster"
 priority: 1
-enabled: true
+enabled: false   # de-scoped until post-release update; Ollama is the other local provider
 description: "LM Studio local server (OpenAI-compatible API)"
 
 base_url: "http://localhost:1234/v1"

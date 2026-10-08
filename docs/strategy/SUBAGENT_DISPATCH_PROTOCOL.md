@@ -130,8 +130,8 @@ this to decide WHOM to dispatch.
 | Agent | Type | Capabilities | Domains | Task Tool Type |
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
-| `maat` | Primary | Build Oversight (N1-N5) | Build side, hardening | `general` |
-| `lilith` | Primary | Run Oversight (N6-N10) | Run side, operations | `general` |
+| `maat` | Primary | Build Oversight (S1-S5) | Build side, hardening | `general` |
+| `lilith` | Primary | Run Oversight (S6-S10) | Run side, operations | `general` |
 | `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
 | `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
@@ -139,7 +139,7 @@ this to decide WHOM to dispatch.
 | `jem` | Primary | Research orchestration | 3-tier knowledge pipeline | `general` |
 | `researcher` | Primary | Deep research, lattice reasoning | Web research, documentation | `general` |
 | `verity` | Primary | Unified compliance + gnosis distillation | Code review + soul.yaml updates | `scribe` |
-| `pillar` | Subagent | Slot-based domain agent | Parameterized by `--slot PX` | `pillar` |
+| `slot` | Subagent | Slot-based domain agent | Parameterized by `--slot NX` | `slot` |
 
 ---
 
@@ -469,24 +469,24 @@ The dispatch protocol has 4 patterns. Choose based on the task scope:
 
 ```
 Task received
-├── Spans 3+ pillars OR requires sequencing?
+├── Spans 3+ slots OR requires sequencing?
 │   ├── YES → @kali (Kali Dispatch)
-│   │         Kali decomposes, dispatches to pillars, sequences phases,
+│   │         Kali decomposes, dispatches to slot agents, sequences phases,
 │   │         verifies outputs, returns unified verdict.
 │   │         Best for: Wave 1.5+, cross-boundary initiatives.
-│   │         Cost: 1 (Kali) + N (nodes) inferences.
+│   │         Cost: 1 (Kali) + N (slot agents) inferences.
 │   │
-│   └── NO → Is it build-only (N1-N5) or run-only (N6-N10)?
-│       ├── Build-only (N1-N5) → @maat (Build Oversight Dispatch)
-│       │     Ma'at handles the node chain. Use when task stays
+│   └── NO → Is it build-side (S1-S5) or run-side (S6-S10)?
+│       ├── Build-side (S1-S5) → @maat (Build Oversight Dispatch)
+│       │     Ma'at handles the slot chain. Use when task stays
 │       │     in infrastructure/persistence/engineering/integration/governance.
 │       │
-│       ├── Run-only (P6-P10) → @lilith (Oversoul Dispatch)
-│       │     Lilith handles the pillar chain. Use when task stays
+│       ├── Run-side (S6-S10) → @lilith (Oversoul Dispatch)
+│       │     Lilith handles the slot chain. Use when task stays
 │       │     in cognition/context/observability/orchestration/validation.
 │       │
-│       └── Single node or specialist?
-│           ├── Known node task → @node NX: task (Direct Node)
+│       └── Single slot or specialist?
+│           ├── Known slot task → @slot NX: task (Direct Slot)
 │           ├── Research, archaeology, mining → @roc_racoon
 │           ├── Deep research, lattice reasoning → @jem
 │           ├── Code review, mandate audit, gnosis distillation → @scribe
@@ -496,10 +496,10 @@ Task received
 ### Key Rules
 
 1. **Kali owns sequencing** — if a task has phases (P0→P1→P2), Kali must dispatch.
-2. **Nodes own deliverables** — Kali does NOT modify node output. Reject and re-dispatch if tests fail.
-3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (N1-N5) and run-side (N6-N10), Kali dispatches directly to nodes. Ma'at and Lilith are activated for within-boundary work.
+2. **Slot agents own deliverables** — Kali does NOT modify slot agent output. Reject and re-dispatch if tests fail.
+3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (S1-S5) and run-side (S6-S10), Kali dispatches directly to slot agents. Ma'at and Lilith are activated for within-boundary work.
 4. **Hivemind post required** — every agent must post completion context before claiming the next task.
-5. **Sequencing is serial within phase** — pillars work in parallel within the same phase, but phases execute sequentially.
+5. **Sequencing is serial within phase** — slot agents work in parallel within the same phase, but phases execute sequentially.
 
 ---
 
@@ -586,13 +586,97 @@ The synthesis layer costs ~1-2% of Opus regeneration and **eliminates execution-
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ SUBAGENT-DISPATCH ⬡ v3.0.0*
+---
 
-<!-- PROVENANCE-CORRECTED 2026-09-01T03:07:00Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit
-claimed_model: deepseek-v4-flash | verdict: VERIFIED
-actual_models(Tier0): x-preview-f-free, nemotron-3-ultra-free, minimax/minimax-m3:free, mimo-v2.5-free, hy3-free, nvidia/nemotron-3-ultra-550b-a55b:free
-first_audit: 2026-08-31T03:09:52Z | updated: 2026-09-01T03:07:00Z
--->
+## §13 EIS Session Identity Doctrine (2026-09-28 — MaKaLi Fusion Round 3)
+
+**Authority:** MaKaLi Fusion Dialectic Round 3 — Kali Ruling  
+**Mandate Basis:** M29 (Sovereign Artifact Preservation), M27 (Tracking Integrity), M23 (Failure Integrity), M15 (Sovereign Continuity)
+
+### The Finding
+
+An agent needed a peer's live session id. The only artifact labelled "registry" — `data/coordination/EXPERT_SESSION_REGISTRY.md` — is a **generated** view dated **2026-08-23, five weeks stale**. It has no entry for the dispatcher. The agent concluded **no session existed** and refused to page. The session existed; it was the most recently updated EIS in the store.
+
+**Two distinct failure modes, and the doctrine forbids both:**
+
+| Mode | Failure | Cost |
+|------|---------|------|
+| **Generation** | A file that must be regenerated goes stale and is trusted anyway | Five weeks of a wrong answer, looking authoritative |
+| **Inference** | An agent guesses rather than querying | Context injected into the wrong conversation, silently |
+
+**Neither is acceptable. A roster that must be *regenerated* is a roster that will be wrong — so is one that must be *inferred*.**
+
+### The Ruling (Converged by MaKaLi and Carmack)
+
+> **Ask once per relationship. Carry the explicit id thereafter. The session id is the durable artifact; everything else is a cache of it.**
+
+#### 1. The Structural Test for an EIS is `parent_id IS NULL`
+It is exact, current, and needs no generator. Query the source of truth directly:
+```sql
+SELECT session_id, entity, model, title, time_updated
+FROM sessions
+WHERE parent_id IS NULL AND entity = '<target_entity>'
+ORDER BY time_updated DESC LIMIT 1;
+```
+This is the **only** authoritative answer to "what is the live EIS for entity X?"
+
+#### 2. An Agent Must Echo the Resolved Target Before Resuming It
+An agent that cannot see which session it just resumed cannot notice it was wrong. Every `task` tool invocation with a `task_id` must log:
+```
+Resuming session: {session_id} (entity: {entity}, model: {model}, updated: {time_updated})
+```
+If the echoed identity does not match the intended target, the agent must **REFUSE** and escalate.
+
+#### 3. Ambiguity Must Be Explicit and Must REFUSE, Never Be Resolved by Heuristic
+If more than one candidate is plausibly live (e.g., two sessions with `parent_id IS NULL` for the same entity), **stop**. Do not pick the "most recent" or "most likely." Escalate to Kali with the ambiguous set.
+
+#### 4. A Generated Artifact May Never Be the Answer to a Question the Source of Truth Can Answer Directly by Query
+`EXPERT_SESSION_REGISTRY.md` is a generated view. It is a cache. It is stale the moment it is written. The source of truth is the `opencode.db` sessions table. **Any agent-facing surface that resolves a live identity from a generated file is a violation of this doctrine.**
+
+---
+
+### Protocol Integration: Dispatch-Time Identity Verification
+
+**Before any `task` tool invocation with a `task_id` (EIS resume), the dispatching agent MUST:**
+
+1. **Query the source of truth** for the target entity's live EIS:
+   ```sql
+   SELECT session_id, entity, model, title, time_updated
+   FROM sessions
+   WHERE parent_id IS NULL AND entity = '<target_entity>'
+   ORDER BY time_updated DESC LIMIT 1;
+   ```
+
+2. **Echo the resolved target** in the dispatch prompt:
+   ```
+   Target EIS: {session_id} (entity: {entity}, model: {model}, updated: {time_updated})
+   ```
+
+3. **Verify the `task_id` matches the resolved session_id**. If not, **REFUSE** and escalate.
+
+4. **If multiple candidates exist** (more than one `parent_id IS NULL` for the entity), **stop**. Do not pick the "most recent." Escalate to Kali with the ambiguous set.
+
+---
+
+### Oversoul Self-Binding Rule (2026-09-28)
+
+**Authority:** MaKaLi Fusion Dialectic Round 3 — Kali Ruling (Self-Applied)
+
+> **A fact carried forward without a query is not a fact — and this binds the oversouls, not only the dispatched.**
+
+Three instances in a single exchange, one from the oversoul itself:
+1. Asserted "the server log has never shown a hit from 100.89.40.17" — about a log that does not exist.
+2. Repeated a claim made about a service that cannot log, and built a conclusion on it.
+3. Stated a child count read from a **truncated tool list** as a total.
+
+**The rule:** Any assertion about system state (logs, counts, reachability, existence) must be grounded in a **fresh query** at the moment of assertion. Cached knowledge, prior observations, or "I remember" are not evidence. This binds **all agents, including oversouls**. No exceptions for rank.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH-EXTENDED ⬡ 2026-09-28 ⬡ DOCTRINE-ROUND-3*
+
+
+
 
 
 

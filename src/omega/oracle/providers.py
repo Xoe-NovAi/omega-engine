@@ -641,10 +641,10 @@ class NativeGGUFProvider(BaseProvider):
         """
         try:
             self.shutdown()
-        except Exception:
+        except Exception as e:
             # ImportError: sys.meta_path is None during interpreter shutdown
             # Any other cleanup failure must NOT crash GC
-            pass
+            logger.warning("Provider shutdown failed (GC-safe): %s", e, exc_info=True)
 
     def __enter__(self) -> "NativeGGUFProvider":
         """Context manager entry — enables `with NativeGGUFProvider(...) as p:`.
@@ -839,7 +839,8 @@ class NativeGGUFProvider(BaseProvider):
 
                     if _lc.llama_supports_gpu_offload():
                         _flash_attn = True
-                except Exception:
+                except Exception as e:
+                    logger.warning("Flash attention GPU offload check failed: %s", e, exc_info=True)
                     _flash_attn = False
             if _flash_attn:
                 llama_kwargs["flash_attn"] = True

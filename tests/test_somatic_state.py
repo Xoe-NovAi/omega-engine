@@ -77,7 +77,8 @@ class TestSomaticStateManager:
         state_id = "test_state_004"
         mock_state_bytes = b"restored_state_data"
 
-        with patch("omega.oracle.somatic_state.anyio.to_thread.run_sync") as mock_run_sync:
+        with patch("omega.oracle.somatic_state.llama_cpp") as mock_llama, \
+                patch("omega.oracle.somatic_state.anyio.to_thread.run_sync") as mock_run_sync:
             # First call: read_bytes
             # Second call: llama_set_state_data
             mock_run_sync.side_effect = [

@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+# SPDX-License-Identifier: Apache-2.0
+# GitGuardian configuration for Omega Engine
+# Ignores internal AP tokens and other known-safe patterns
+
+paths-ignore:
+  - "data/**"
+  - "docs/archive/**"
+  - "docs/federation/node1_received/**"
+  - "docs/agents/archive/**"
+  - "data/entities/**/workspace/**"
+  - "data/coordination/**"
+  - "data/handoff/**"
+  - "data/federation/quarantine/**"
+  - "data/federation/usb-payload/**"
+  - "exchange/**"
+  - "deploy/**"
+  - "packages/**"
+  - "third-party/**"
+  - "*.log"
+  - "*.log.*"
+  - "*.db"
+  - "*.db-*"
+  - "*.sqlite"
+  - "*.sqlite-*"
+  - "*.jsonl"
+  - "*.jsonl.*"
+
+rules:
+  - description: "Ignore AP tokens (internal artifact identifiers, not credentials)"
+    regex: "AP-[A-Z0-9]+-[A-Z0-9-]+-[0-9]{8}-v[0-9]+\\.[0-9]+\\.[0-9]+"
+  - description: "Ignore session IDs"
+    regex: "ses_[a-f0-9]{20,}"
+  - description: "Ignore local/test API key fixtures"
+    regex: "sk-(test|local|1234)[a-zA-Z0-9]{20,}"
+  - description: "Ignore local LLM API keys"
+    regex: "sk-local-[a-zA-Z0-9]{20,}"

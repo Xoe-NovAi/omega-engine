@@ -63,7 +63,7 @@ provider_fabric:
   available_via:
   - provider: native-gguf
     priority: 0
-  - provider: lmster
+  - provider: ollama
     priority: 1
   - provider: ollama
     priority: 2

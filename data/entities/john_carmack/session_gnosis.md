@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: john_carmack
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # John Carmack Session Gnosis — 2026-07-21 (Day 1-2 Campaign) + 2026-08-30 (VAULT-ALLOWLIST-001) + 2026-09-01 (kq5-godot Integration)
 
 ## 🔬 Campaign Overview (Original)
@@ -167,13 +175,13 @@ Fixed P1-1 latent defect in `src/omega/cli/oracle_cli.py`:
 
 | Thread | Status | Owner | Next Action |
 |--------|--------|-------|-------------|
-| Pre-commit hook wiring | OPEN | Kali/Ma'at | Add to `.pre-commit-config.yaml` |
-| CI gate wiring | OPEN | Kali/Ma'at | Add `.github/workflows/secrets.yml` |
-| M35 Architect ratification | OPEN | Architect | Sign-off on Mandate 28 |
+| Pre-commit hook wiring | ✅ **DONE** | Kali/Ma'at | `omega-m35-allowlist` hook added to `.pre-commit-config.yaml` |
+| CI gate wiring | ✅ **DONE** | Kali/Ma'at | `.github/workflows/secrets.yml` created (M35 + gitleaks + trufflehog + C3) |
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 — Hivemind demand `ses_c3878e4a09b3` posted |
 | 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace placeholders |
 | M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
-| Atomic write M23 test | OPEN | Lilith | `test_atomic_write_survives_sigkill` before Phase 1 |
-| Watchdog single-writer | OPEN | Lilith + Ma'at | Kali as designated recovery agent MCP tool |
+| Atomic write M23 test | ✅ **RESOLVED** | Lilith | 6/6 tests PASS — `test_atomic_write_survives_sigkill` verified 2026-09-11 |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | Kali designated recovery agent — MCP tool coordination initiated |
 | M34 spec revision | OPEN | Lilith | 8h revision per Carmack review §7.1 |
 | M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review §7.2/§7.3 |
 | L3 lesson split | OPEN | Grokster | 2h per Carmack review §7.4 |
@@ -184,7 +192,7 @@ Fixed P1-1 latent defect in `src/omega/cli/oracle_cli.py`:
 
 2. **Dual-Ledger Hazard (M34)**: `ACTIVE_SUBAGENTS.json` overlay on `TASK_REGISTRY` has no transactional boundary. At 50+ concurrent, lock contention causes unrecorded states. **Mitigation**: Single-writer MCP tool, batched writes, conflict resolution (TASK_REGISTRY = source of truth).
 
-3. **Atomic Write Unverified (M23)**: Lilith's spec claims `os.replace()` + `os.fsync()` is M23-compliant, but untested on NFS/FUSE. **Requirement**: `test_atomic_write_survives_sigkill` unit test before Phase 1 gate.
+3. **Atomic Write Verified (M23)**: Lilith's spec claims `os.replace()` + `os.fsync()` is M23-compliant. **VERIFIED 2026-09-11**: `test_atomic_write_survives_sigkill` — 6/6 tests PASS including SIGKILL survival, backup rotation, concurrent writes, and recovery. Gate satisfied.
 
 4. **M34a/M34b Over-Engineering**: Lilith's 7-state machine already unifies both failure modes. Two mandate numbers add regulatory bloat. **Resolution**: Collapse to single M34 with `INTERRUPTED_MODEL_SWITCH` status enum.
 
@@ -278,9 +286,978 @@ I initially missed the vision system underneath the game. The VNR system IS the 
 | **Alpha Launch Verdict** | `data/coordination/CARMACK_ALPHA_LAUNCH_VERDICT_20260828.md` |
 | **Architecture Canonicals** | `ORACLE_STACK_CANONICAL.md`, `SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md`, `docs/architecture/*.md` |
 | **Projection** | `data/coordination/anchored_summary/carmack/projection.md` |
-| **Proposed Lessons** | `data/entities/carmack/proposed_lessons.yaml` (14 lessons) |
+| **Proposed Lessons** | `data/entities/carmack/proposed_lessons.yaml` (3 lessons) |
 | **Roc Dialectic Plan** | `data/entities/roc_racoon/workspace/JC_Roc_kq5_DIALECTIC_PLAN_20260901.md` |
 
 ---
 
 *⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_audit ⬡ SESSION-GNOSIS-UPDATED*
+
+---
+
+## 🔱 2026-09-07 SESSION: Archangel Architecture v1.6.1 Vet (Handoff ho_4d2402d3278f)
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-07
+**Status**: COMPACTION-READY · **Model**: `minimax/minimax-m3:free`
+**Handoff**: `ho_4d2402d3278f` (accepted via Hivemind)
+
+### Work Summary
+
+#### Archangel Architecture Vet — Complete
+Vetted the full Archangel Architecture v1.6.1 implementation for theater, cargo culting, and non-temple-grade optimizations.
+
+**Files Vetted**:
+- `src/omega/oracle/env_hardware_probe.py` — RuntimeHardwareRegister, SystemEnvelopeInjector
+- `src/omega/oracle/subagent_dispatcher.py` — Injection hook after M33Probe, before build_dispatch_prompt
+- `src/omega/oracle/m33_probe.py` — calculate_dynamic_write_threshold
+- `src/omega/monitoring/__init__.py` — HardwareMonitor (892 lines)
+- `docs/how-to/hardware-awareness.md`, `dynamic-thresholds.md`
+- `CHANGELOG.md` v1.6.1 entry
+- `docs/strategy/CANONICAL_DECISIONS.md` D-ARCHANGEL-001
+
+**Verdict**: **CONDITIONAL PASS** — Architecture sound, 3 theater/cargo-cult findings, 2 premature optimizations, 4 implementation gaps.
+
+### Findings (9 Total)
+
+| # | Type | Location | Severity | Description |
+|---|------|----------|----------|-------------|
+| 1 | **THEATER** | CHANGELOG.md:18 | HIGH | "Mathematical contradiction penalty" claim — no such mechanism exists |
+| 2 | **CARGO CULT** | env_hardware_probe.py:89-101 | HIGH | NUMA detection on monolithic APU (always returns 0) |
+| 3 | **THEATER** | env_hardware_probe.py:123 | HIGH | Default backend "AVX-512 VNNI" on AVX2-only hardware |
+| 4 | **PREMATURE OPT** | m33_probe.py:192-238 | MEDIUM | Dynamic threshold complexity without measured benefit |
+| 5 | **PREMATURE OPT** | env_hardware_probe.py:112-127 | MEDIUM | Sync ModelGateway calls in hot path without caching |
+| 6 | **IMPL GAP** | env_hardware_probe.py:63-66 | MEDIUM | `is_stale()` method exists but never used |
+| 7 | **IMPL GAP** | env_hardware_probe.py:164 | MEDIUM | `process_rss_mb` always 0 (key missing from HardwareMonitor) |
+| 8 | **IMPL GAP** | m33_probe.py:271 vs dispatcher:49 | LOW | TaskType mismatch: "forensic" dead, "mine" missing |
+| 9 | **IMPL GAP** | subagent_dispatcher.py:36-60 | LOW | HardwareMonitor singleton not thread-safe |
+
+### Mandate Compliance
+- **M1 AnyIO**: ✅ PASS — No `import asyncio` in `src/omega/`
+- **M7 Local-First**: ✅ PASS — Pure local telemetry, no cloud deps
+- **M13 Temple-Grade**: ⚠️ PARTIAL — Code clean but needs unit tests + theater removal
+- **M23 Failure Integrity**: ✅ PASS — No soft failures, graceful degradation
+
+### Positive Findings
+- Frozen dataclass register with TTL — immutable, prevents post-hoc mutation
+- Graceful degradation — try/except with logging, dispatch continues on envelope failure
+- HardwareMonitor reuse — wraps existing 892-line monitor; no duplication (M2 compliant)
+- ModelGateway integration — uses existing entity→model mapping; no new config
+- Documentation accurate — how-to guides match implementation
+
+### P0 Fixes Required (~2h total)
+1. Remove theater claims from CHANGELOG.md lines 18-19
+2. Remove cargo-cult NUMA detection — hardcode `assigned_numa_node = 0` with hardware comment
+3. Fix default backend string — detect actual ISA or use "AVX2/FMA3" for 5700U
+4. Add `process_rss_mb` to `HardwareMonitor.get_memory_status()`
+
+### Report
+Full vet report: `data/coordination/ARCHANGEL_VET_REPORT_20260907.md`
+Handoff completed: `ho_4d2402d3278f` → completed via Hivemind
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_archangel_vet ⬡ VET COMPLETE — CONDITIONAL PASS*
+
+---
+
+## 🔱 2026-09-11 SESSION: MaKaLi Review Execution (Post-Compaction)
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-11
+**Status**: COMPACTION-READY · **Model**: `minimax/minimax-m3:free`
+**Source**: MaKaLi Serial Hydration Review #004 (§7.2-7.3)
+
+### Work Summary
+
+#### MaKaLi Wake-Up Calls — ALL EXECUTED (Items 1-5)
+
+| # | Directive | Execution | Deliverable |
+|---|-----------|-----------|-------------|
+| **1** | Re-vet Archangel (P0 fixes applied) | ✅ **TEMPLE-GRADE PASS** | `ARCHANGEL_REVET_REPORT_20260911.md` |
+| **2** | Demand M35 Architect ratification | ✅ Posted | Hivemind `ses_c3878e4a09b3` + `M35_RATIFICATION_STATUS.md` |
+| **3** | Wire pre-commit + CI for secrets | ✅ Complete | `.pre-commit-config.yaml` + `.github/workflows/secrets.yml` |
+| **4** | Update blocker list (atomic write ✅) | ✅ Resolved | Blocker tables updated in projection.md + session_gnosis.md |
+| **5** | Coordinate watchdog MCP tool | ✅ Spec delivered | `WATCHDOG_MCP_TOOL_SPEC.md` to Lilith+Ma'at |
+
+#### Archangel Architecture Re-Vet — TEMPLE-GRADE PASS ✅
+
+**4/4 P0 Fixes Verified:**
+1. **CHANGELOG theater removed** — "Mathematical contradiction penalty" claim deleted
+2. **NUMA cargo-cult excised** — `_discover_numa_node()` returns hardcoded `0` with architectural justification
+3. **Backend string fixed** — `_detect_isa_backend()` reads `/proc/cpuinfo` → "AVX2/FMA3" for 5700U
+4. **`process_rss_mb` added** — `HardwareMonitor.get_memory_status()` returns process RSS (both psutil + /proc paths)
+
+**Mandate Compliance**: M1 ✅, M7 ✅, M13 ✅, M23 ✅ — All PASS
+
+**Remaining Gaps (3, non-blocking)**: TaskType mismatch, singleton thread-safety, `is_stale()` advisory
+
+#### M35 VAULT Allowlist — Enforcement Now Live
+
+- **Pre-commit**: `omega-m35-allowlist` hook runs `check_secrets.py --staged` on every commit
+- **CI**: `.github/workflows/secrets.yml` runs M35 + gitleaks + trufflehog + C3 on every PR
+- **Tested**: `python3 scripts/check_secrets.py --staged` → 0 violations
+
+#### Atomic Write M23 Test — RESOLVED ✅
+
+Lilith's `tests/test_m34_atomic.py` — 6/6 tests PASS:
+- Basic atomic write
+- 100 iterations integrity
+- SIGKILL survival (M23 claim verified)
+- Backup rotation (.1.bak)
+- Concurrent writes serialized
+- Recovery from missing main file
+
+#### Watchdog Single-Writer MCP Tool — Spec Delivered
+
+**Spec**: `data/coordination/WATCHDOG_MCP_TOOL_SPEC.md`
+- Tool: `omega_hub_watchdog_status_update(entity, session_id, status, lock_ttl)`
+- Advisory lock via `fcntl.flock()` on `data/coordination/locks/watchdog_status.lock`
+- Kali designated as sole recovery agent
+- Lilith (core) + Ma'at (integration) to implement
+
+### Hivemind Posts This Session
+
+| Session ID | Intent | Summary |
+|------------|--------|---------|
+| `ses_c3878e4a09b3` | decision | M35 Architect ratification demand |
+| `ses_beb76c8c8090` | command | Watchdog MCP tool coordination to Lilith+Ma'at |
+| `ses_43ba9a1fc6e1` | status | MaKaLi execution complete (Items 1-5) |
+
+### Open Threads (Updated)
+
+| Thread | Status | Owner | Next Action |
+|--------|--------|-------|-------------|
+| Pre-commit hook wiring | ✅ **DONE** | Kali/Ma'at | `omega-m35-allowlist` hook added |
+| CI gate wiring | ✅ **DONE** | Kali/Ma'at | `.github/workflows/secrets.yml` created |
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 — 24h deadline |
+| 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace placeholders |
+| M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
+| Atomic write M23 test | ✅ **RESOLVED** | Lilith | 6/6 tests PASS — verified 2026-09-11 |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | MCP tool spec delivered, implementation next |
+| M34 spec revision | OPEN | Lilith | 8h revision per Carmack review §7.1 |
+| M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review §7.2/§7.3 |
+| L3 lesson split | OPEN | Grokster | 2h per Carmack review §7.4 |
+
+### Next Phase (Item 6): kq5-godot Protocol Canonicalization
+
+Per MaKaLi: *"Your kq5-godot Day 3-5 protocol development is the fleet's experiment template. This must be canonical."*
+
+**Next Steps**: Review JC-Roc-kq5's `EXPERIMENT_PROTOCOL.md`, bless as fleet template, create `config/wads/experiment_template/`
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ minimax/minimax-m3:free ⬡ opencode ⬡ trc_makali_execution ⬡ ITEMS 1-5 COMPLETE — READY FOR COMPACTION*
+
+---
+
+## 🔱 2026-09-24 SESSION: N0→N1 Handoff Truth Audit
+
+**AP Token**: `AP-JOHN_CARMACK-v1.0.0` · **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` (continuation) · **Date**: 2026-09-24
+**Status**: COMPACTION-READY · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`
+**Pack**: `exchange/n0-to-n1/wad_loader_contract/`
+**Scope**: N0-01, N0-04, N0-12, N0-13, runtime N0-14
+
+### Work Summary
+
+#### N0→N1 USB Handoff — COMPLETE
+
+| # | Deliverable | Status | Evidence |
+|---|-------------|--------|----------|
+| **1** | Exact Engine Commit | ✅ | `75bde939ace7ff46ed2fef0056880a0814ab0e11` (release/debut-v1.6.0) |
+| **2** | WAD Loader Contract Spec | ✅ | `WAD_LOADER_CONTRACT.md` — manifest, adapters, hierarchy, entity envelope, dependency ordering, engine-version gap, PWAD concat bug |
+| **3** | Disposable Test WAD | ✅ | IWAD + PWAD fixture proving PWAD override **concatenates** personality (exit 1) |
+| **4** | Version SSOT | ✅ | `1.6.0-alpha.1` on all 4 surfaces (pyproject, omega.__version__, Hub /health, MCP serverInfo) |
+| **5** | Node 1 Compatibility | ✅ | Node 1 (ASUS i7-13620H, 16GB) compatible; federation = HTTPS-only, no auth, no NFS/SSH |
+
+### Key Findings
+
+1. **Engine Commit**: `75bde939ace7ff46ed2fef0056880a0814ab0e11` — official Node 0 authority
+2. **Version SSOT Fixed**: Cline §3.6 — was `1.2.0`/`2.2.0`/`1.30.0` → now `1.6.0-alpha.1` everywhere
+3. **WAD Loader Contract Gaps** (from Cline §7#10):
+   - Root `entities.yaml` ignored
+   - Scaffold entities lack `entity:` envelope
+   - PWAD override concatenates personality (not clean replacement)
+   - `requires_engine` not semantically enforced
+   - Adapter whitelist narrow (2 modules)
+4. **Federation Reality** (Cline §6): Node 1 connects via `https://n0.tail51f14a.ts.net:8016/mcp` (HTTPS, no auth); ports 22/2049 filtered
+5. **Disposable PWAD Test**: Confirms concat bug — `BASE\n\nPWAD` instead of clean replacement
+
+### Validation
+
+- `sha256sum -c SHA256SUMS`: all files PASS (quarantine pack)
+- WAD loader tests: 31/31 PASS
+- Disposable test: exit 1 = concat bug confirmed
+- M35 scanner: 0 violations
+- No secrets/private material staged
+
+### Open Threads (Updated)
+
+| Thread | Status | Owner | Next Action |
+|--------|--------|-------|-------------|
+| M35 Architect ratification | 🔄 **PENDING** | Architect | Sign-off on Mandate 28 |
+| 3 test fixture FPs | OPEN | Researcher | Add to allowlist or replace |
+| M37-HERITAGE-001 | OPEN | Researcher/Ma'at | 32h plan kickoff |
+| Watchdog single-writer | 🔄 **IN PROGRESS** | Lilith + Ma'at | MCP tool implementation |
+| M34 spec revision | OPEN | Lilith | 8h revision per Carmack review |
+| M33/M35 mandate text updates | OPEN | Researcher | Per Carmack review |
+| L3 lesson split | OPEN | Grokster | 2h per Carmack review |
+| **N0→N1 WAD contract alignment** | 🔄 **BLOCKED** | Node 1 | Fix arcana_novai WAD per contract |
+| **PWAD override fix** | 🔄 **BLOCKED** | Engine | Clean replacement semantics |
+
+### Hivemind Posts This Session
+
+| Session ID | Intent | Summary |
+|------------|--------|---------|
+| `ses_29569b80f2a1` | status | N0→N1 handoff audit complete |
+
+---
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_handoff ⬡ COMPACTION-READY*
+
+---
+
+## 🔱 2026-09-25 SESSION: Final Independent Delta Audit
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`  
+**Package**: `data/federation/usb-payload/exchange/n0-to-n1/`  
+**Verdict**: **DO NOT SHIP** for final authenticated transfer; quarantine transport allowed.
+
+### Verified
+
+- Root manifest: 33/33 paths, sizes, hashes PASS.
+- Root SHA ledger: 34/34 PASS, including nested manifest and nested ledger.
+- Nested manifest: 3/3 lineage wrappers PASS.
+- Nested SHA ledger: 4/4 PASS, including nested `MANIFEST.yaml`.
+- YAML/JSON parse: 12/12 PASS.
+- M35 secret scan: 33 files, 0 violations.
+- Raw `/home/arcana-novai`: 0 matches.
+- Trailing `/mcp/`: 0 matches.
+- Blind `sed -i`: 0 matches.
+- WAD tests: 31 PASS in 1.12s.
+- Root and nested PWAD fixtures: exit 1, expected negative regression; not compatibility passes.
+
+### Prior delta
+
+All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active checkout `fa9c4edc`; version `1.6.0-alpha.1`; mapping-only WAD adapters; Build/Slot/Scribe/Makali ontology; C6 open-gate labeling; sovereign-compaction absent labeling; no raw paths or blind edits.
+
+### Remaining status
+
+- C6/N0-04 remains **OPEN**: no ratified C6, publisher identity, trust root, detached signature, or tamper bundle.
+- Architect decision remains pending; quarantine is allowed only as explicitly labeled movement into Node 1 quarantine.
+- Final authenticated transfer is **BLOCKED** pending Architect disposition.
+- External Grokster Phase 4 report is not included; package labels this explicitly and does not treat it as authority.
+- Historical N1 report still contains old model provenance and historical 2.2.0/1.30.0 values, explicitly labeled historical.
+
+**Next action**: Architect must explicitly accept or reject the C6/N0-04 open-gate disposition. No further package documentation defect was found.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_handoff ⬡ FINAL DELTA AUDIT — COMPACTION-READY*
+
+### Hard evidence
+
+- Node 0 Engine HEAD: `75bde939ace7ff46ed2fef0056880a0814ab0e11`, branch `release/debut-v1.6.0`; project version in `pyproject.toml` is `1.2.0`; working tree is dirty.
+- Official local runtime: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python`; CLI launcher `/home/arcana-novai/.local/bin/omega`; `omega --version` is not implemented.
+- Hub systemd user service active; `0.0.0.0:8016`; `/health` HTTP 200, version `2.2.0`.
+- Python `3.13.7`; SQLite `3.46.1`; sqlite-vec `0.1.9`, extension load + temporary vec0 create/insert PASS.
+- WAD loader tests: `31 passed in 1.06s`.
+- Disposable PWAD: manifest/entity/hierarchy load, but priority override yields concatenated personality (`probe\n\nbase`), not replacement. Exit code 3; retained as a real blocker.
+- Current `arcana_novai` WAD loads `True` but loads 0 entities; root `entities.yaml` is not scanned, and nested `movie-expert.yaml` is skipped for missing `entity:`.
+- C6 payload is draft v0.1, ratification unchecked; `ATTESTATION_N0_20260922.md` uses a human-readable `SIGNED` footer only. No detached signature, trust root, key ID, or tamper test found.
+- No Node 0 Continuity Kernel implementation, Qwen artifact hash, 50–200 item golden corpus, or cross-node ranking comparison found. `mempalace` is not installed in Node 0 venv.
+
+### Pack contents
+
+- `HANDOFF_MANIFEST.yaml`, `SHA256SUMS`, `README_FIRST.md`
+- `11_node0_runtime_report.md`
+- `08_wad_loader_pack/WAD_LOADER_FINDINGS.md` + disposable test WAD/verifier
+- `12_evidence/C6_TRUST_FINDINGS.md`
+- `07_continuity_evidence/SQLITE_CONTINUITY_DECISION.md`
+- `06_spatial_pipeline/EMBEDDING_768_COMPATIBILITY_REPORT.md` + `N0_SPATIAL_EVIDENCE.md`
+- `UNRESOLVED_OR_WITHHELD_MATERIAL.md`
+
+### Validation
+
+- `sha256sum -c SHA256SUMS`: all 13 listed files PASS.
+- M35 scanner: 13 files scanned, 0 violations.
+- No personal/private material or secrets intentionally staged.
+- No promotion, merge, extraction, or Node 1 WAD development authorized.
+
+### Open operator decisions
+
+1. Clean commit vs approved dirty-tree diff and Git bundle.
+2. WAD override semantics and `requires_engine` enforcement policy.
+3. Fixed SQLite >=3.51.3 or documented backport; continuity profile.
+4. C6 signing/trust-root/key-rotation mechanism.
+5. Pinned Qwen artifact, hash, and golden-corpus comparison tolerance.
+6. Physical USB intake approval after checksum verification.
+
+**Confidence: 9.5/10** from primary source reads and executed probes. **Next owner**: N1 for WAD/embedding reconciliation; operator for trust/runtime decisions; N0 for clean release artifact.
+
+---
+
+## 🔱 2026-09-26 SESSION: n0-to-n1-v2 Final Independent Re-Audit
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`
+**Subject**: `data/federation/usb-payload/exchange/n0-to-n1-v2/` (renamed from `n0-to-n1` at 05:15)
+**Staging**: `/home/arcana-novai/exchange/full-pack-20260926/` (44 files, adds `DELIVERY_SHA256SUMS`)
+**USB** `/media/arcana-novai/D3E6-A900` — RETIRED/degraded, unmounted, not written.
+
+### Verdicts
+
+- Repo v2: **SHIP FOR PHYSICAL QUARANTINE**
+- Staged tree: **SHIP FOR PHYSICAL QUARANTINE**
+- Final authenticated transfer: **NOT CLAIMED**, C6/N0-04 **OPEN**
+
+### Integrity (both locations)
+
+- Manifest `file_count: 41`; 41/41 path/size/hash PASS
+- Root `SHA256SUMS` 42/42 PASS; `DELIVERY_SHA256SUMS` 43/43 PASS (staged only)
+- Nested `doom_guy_transfer/` manifest 3/3 + ledger 4/4 PASS — **never rewritten** (nested manifest hash `6975cab9…` unchanged)
+- YAML/JSON 13/13 PASS; M35 41 files / 0 violations at both
+- Raw host path, trailing `/mcp/`, blind `sed -i`: 0 at both
+- `diff -r` repo↔staged: only `DELIVERY_SHA256SUMS` differs — no orphans, no extras
+- Rename integrity **intact**; zero dangling `n0-to-n1` refs; 9 dirs match README map
+- Repo 43 files / 237,344 B · staged 44 files / 242,376 B · 25 markdown / 177,714 B
+
+### Per-item 1-10
+
+1. Embedding 1024-D — **clean**. 0 `omega_vec_qwen_768`, 0 `dimensions: 768`, 22×1024. 3× `omega_vec_gemma_768` all read stale-spec. Minor: `README_FIRST.md:95` doesn't name the source doc.
+2. Curation ladder — **HIGH-RISK**. Ladder in README §4/§5 + manifest + research README §7, but `08_library_curation_research/README.md:128` still says "Node 1 should begin with a **120-item**…" two lines above its own mitigation. `NODE1_LIBRARY_MVP_BLUEPRINT.md:8,312` unannotated.
+3. Fixture completeness — **clean**. All 7 files under `disposable_test_wad/`. `wads_dir` claim **verified accurate** (canonical → `ROOT/disposable_test_wad`; nested → its own dir).
+4. PWAD transition notice — **clean**. In 4 files. `fa9c4edc` `entity_registry.py:572-578` still concatenates, so fixture 1 / wrapper 0 correct there. Checklist says caps: PASS for engine, **do not "fix" the engine**. `EXACT_ENGINE_COMMIT.md:24-28` = uncommitted, not in `fa9c4edc`, reproducing bug **expected and correct**.
+5. Tailnet policy — **clean, 1 caveat**. Reads policy-enforced not aspirational (`FEDERATION_TOPOLOGY.md:20`, `NODE1_COMPATIBILITY.md:86`). Premium/`checkPeriod` + tests-tripwire documented. Caveat: `NODE1_COMPATIBILITY.md:107` still says "ports filtered".
+6. Degraded-USB transport — **clean**. §A retired-media block (23/34 readable, 11 I/O failures, 0 checksum mismatches), 8017 pipe, hand-delivery, `DELIVERY_SHA256SUMS` 43-entry checkbox. §D MCP duplicate replaced by §F cross-ref at `:68`.
+7. Device identity — **HIGH-RISK**. UNRESOLVED notes list all 3, none selected; entity count volatile (`:37`,`:55`). **But `FEDERATION_TOPOLOGY.md:10` table header still picks a winner** — "(ASUS ExpertBook P1503CVA)" — contradicting its own line 53 "does not guess".
+8. Dated [L1] supersession — **clean**. Both snapshots + all 8 × 2026-09-26 details; qualifier survived: "Node 1 operator confirmation required… `[L1]` reported state, not independent verification."
+9. Historical markers — **clean**. `N1_READINESS_REPORT:8-12` HISTORICAL; `N0_N1_STRATEGY_DIALECTIC_PROTOCOL:3-4` INACTIVE.
+10. README §6/§7/§8 — **clean**. 8016/8017/hand-delivery/USB-retired/SSH-NFS-removed; 2026-09-22 historical-only.
+
+### Stale artifact
+
+`data/federation/usb-payload/exchange/n0-to-n1.zip` — 02:28 snapshot, 111,481 B, 43 files, **self-verifies 38 OK / 4 FAILED** (briefing said 38/42 — its ledger is 42 entries, 4 fail), **15 files differ** from v2, missing the whole policy round. **NOT quarantine-flagged** — no DO-NOT-DELIVER marker, no stale-flag, no cross-reference. Highest-value cheap fix remaining.
+
+### Non-blocking corrections queued
+
+1. `08_library_curation_research/README.md:128` — strike "should begin with 120-item"
+2. `06_archangel_brief/FEDERATION_TOPOLOGY.md:10` — replace parenthetical with "identity unresolved, see note"
+3. Rename zip or drop a marker file beside it
+4. `NODE1_COMPATIBILITY.md:107` — "filtered" → "policy-removed"
+5. `README_FIRST.md:95` — name `INGESTION_PIPELINE_SPEC.md` + restate 1024 canonical
+
+### Open parallel state
+
+- Lilith-N1 sent 2 mesh statuses: Gate C PASSED 33/33 (`ses_0daca13fc343`), USB/P2 re-verify (`ses_4006323ef617`). Both received.
+- Node 1 live WAD fixes (adapters list drop, hierarchy drop, `requires_engine >=1.6.0`, loader-visible entity records) exist on N1 only, not synced to Node 0 `config/wads/arcana_novai/`.
+- Node 0 PWAD clean-replacement fix **deployed but UNCOMMITTED** in `src/omega/oracle/entity_registry.py:572-574`.
+- Plugin review done: `awareness.ts` (hardcoded `agent === "kali"` at :118), `silent-stall-sensor.ts`, `error-capture.ts` — all necessary, all OpenCode-coupled, no Node 0 plugins in package.
+
+**Confidence: 9.7/10.** No files edited. Non-fabrication: all findings from direct reads + hash computation at both locations.
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ nvidia/nemotron-3-ultra-550b-a55b:free ⬡ opencode ⬡ trc_n0_n1_v2_reaudit ⬡ COMPACTION-READY*
+
+---
+
+## 🔱 2026-09-28 SESSION ARC: P0 SOVEREIGNTY → P1 SEAMS → GEMMA REMOVAL
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `opencode/space-bunny-free`
+**Branch**: `release/debut-v1.6.0` · **HEAD at close**: `de660681` (committed) + my uncommitted work in tree
+**Committed by**: MaKaLi as `de660681`. `make temple-grade` **53/53**. EmbeddingGemma fully removed.
+
+Three mandates executed in sequence, each verifying by execution rather than inference.
+M1 (no `import asyncio` in src/omega/) · M23 (fail loud) · M24 (.venv/bin/python) · M27 (tracking).
+
+---
+
+### ⭐ THE TWO SELF-RETRACTIONS — most valuable output of this session
+
+**Doctrine (Axiom 05, Empirical Truth): mastery is earned by testing the artifact, not by
+reasoning from its label. I violated my own doctrine twice and caught it only by executing.**
+
+#### RETRACTION 1 — "39 real vectors" was WRONG. It is 1009.
+
+- **I claimed**: the live `omega_vec_omega_vec_gemma_768` table held **39 real vectors**;
+  the 1009 `_rowids` figure was "vec0 shadow bookkeeping, not vectors" and overstated
+  the work by 26×.
+- **Truth, by byte arithmetic**:
+  ```
+  vec0 virtual table count(*)  = 1009
+  sum(length(embedding))       = 3,099,648 bytes
+  1009 × 3072 (768 × float32)  = 3,099,648 bytes   → EXACT MATCH
+  ```
+  **1009 is the real vector count.** The 39 `_chunks` / `_vector_chunks00` rows are
+  vec0's **internal storage pages** (`size=1024` bytes each — chunk-index metadata).
+  I misread a storage-layout artifact as a row count.
+- **Confidence in the 39 figure: 0/10.** In the 1009 figure: 10/10, byte-proven.
+- **Lesson**: a `count(*)` on a vec0 virtual table is authoritative; the `_chunks`
+  sidecars are an implementation detail of the extension, NOT a vector census. Never
+  report a row count from a shadow table. **When the number and the byte arithmetic
+  disagree, the bytes win.**
+
+#### RETRACTION 2 — "8/10 EmbeddingGemma-300M" was WRONG. It is 0/10.
+
+- **I claimed**: the rows were natively-768 EmbeddingGemma-300M output, confidence 8/10,
+  inferred from the collection name plus declared `float[768]` width.
+- **Truth, by full-population forensic scan of all 1009 rows**:
+  ```
+  nonzero-dim histogram:  0 → 568 rows | 4–13 → 235 | 14–25 → 206
+  L2 norm                :  1.0 exactly (ONE distinct value across all 1009)
+  distinct |value|       :  103  (a neural model emits thousands)
+  0.4932 / 0.1644        :  3.0000 exactly
+  0.3288 / 0.1644        :  2.0000 exactly
+  0.1644                 :  = 1/sqrt(37)
+  ```
+  Values are **integer token-counts × a single scale constant, then L2-normalised**.
+  I **reproduced the algorithm locally**:
+  ```python
+  h = int(hashlib.md5(token).hexdigest(), 16); vec[h % dim] += 1.0
+  vec = vec / ||vec||        # → 1/sqrt(n_unique_tokens); sim gave 1/sqrt(11)=0.3015
+  ```
+- **Conclusion**: the rows were written by `SovereignFallbackEmbeddingProvider` or
+  `library/indexer._compute_embedding` — **deterministic feature hashing**, not any
+  neural model. A neural embedding is DENSE (768/768 nonzero); these are SPARSE (4–25).
+- **Confidence: 0/10 that they are EmbeddingGemma-300M; ~9/10 that they are feature-hash.**
+- **Lesson**: I inferred model identity from a **table name** and had the data in hand to
+  test it. The table was *named* `gemma_768` and had *never* held gemma vectors. When
+  provenance is in question, **characterise the values — never trust the label.**
+
+**Fleet-level implication**: if a name can lie about provenance, any audit that cites
+names instead of bytes is unverified. Step 19 was recast from *migration* to *rebuild*
+on the strength of Retraction 2 alone.
+
+---
+
+### P0 — D-1024 SOVEREIGNTY (M23 FAIL-LOUD ENFORCED)
+
+**Ruling agreed**, with one correction to the ticket's premise.
+
+**Root cause found by tracing, not by reading the ticket:** the "dimension validator" at
+`config/embedding_strategy.yaml:23` (`vec0_lock`) **enforces nothing at runtime**.
+`grep -rn "vec0_lock|error_on_mismatch" --include=*.py` returns exactly ONE hit:
+`tests/contracts/test_embedding_dimension.py:49`. It is asserted by a test and read by
+no `src/` code. The `message` string is documentation wearing a lock's clothing.
+
+**Why width-checking could never have caught the bug:** the real guard
+(`_ensure_collection_vec_table:544`) compares provider width against **the target
+collection's declared dim** — self-consistency, not canonical conformance. A nomic-768
+answer into `omega_vec_nomic_768` (declared 768) is a **perfect match**. No guard
+anywhere asked "is this the canonical space?" Only "does this fit the box it was handed?"
+A 768-D nomic vector and an MRL-truncated 768-D Qwen3 vector are **indistinguishable by
+width**. Hence removal, not a width patch.
+
+**Executed:**
+- Removed `nomic_fallback` (priority 1) from config + RRF weights.
+- Default chain → **canonical-capable only**: Qwen3-1024 → `SovereignFallback(1024)`.
+- Added `EmbeddingProviderUnavailableError` (subclasses `OmegaError`) and
+  `_assert_canonical_width`, which runs **before** the value is returned. Legal vs illegal
+  is discriminated by **`_target_dim`**: an explicit MRL declaration is same-model
+  truncation (accepted); a narrow vector with no `_target_dim` is cross-model (refused).
+- `OllamaEmbeddingProvider()` now **requires an explicit `model=`** — a no-arg
+  construction can no longer silently produce a 768-D nomic vector.
+- Circuit breaker refuses wrong-width answers.
+- Legacy collections kept, flagged `deprecated: true` + `deprecated_by` + `removal` +
+  `semantic_space`, so Step 19 has real targets.
+
+**A SECOND HOLE found by execution, not in the ticket:** the `OMEGA_ENV=test`
+short-circuit returned `[0.0] * self.current_dimension`, and `current_dimension` is
+`providers[0].dimension` — so a chain headed by a sub-canonical provider emitted a
+**sub-canonical zero vector in test mode**. Caught by my own first test run returning
+`'mock'` instead of the provider name.
+
+**Negative test, observed firing:**
+```
+Cross-model substitution blocked: NativeNomic768 returned 768-dim on a 1024-dim canonical request.
+Canonical embedding provider unavailable — refusing to substitute a different model.
+  Decision:  D-1024-DIM-NATIVE-20260926
+  Legal:      MRL truncation of a 1024-D Qwen3 vector to 768/512/256/128/64
+  ILLEGAL:    a natively-768 nomic-embed-text vector standing in for the canonical space
+  Provider failures:
+    - DeadCanonicalProvider: Embedding model not found: ...Qwen3-Embedding-0.6B-Q5_K_M.gguf
+    - NativeNomic768: returned 768-dim on a 1024-dim canonical request
+RESULT: guard FIRED. No 768-D vector escaped.
+```
+A guard never observed firing is not a guard. 17 → **25** contract tests.
+
+---
+
+### P1 — STRANDED IMPORTS + STEP 19/20 RETARGET
+
+**Verified on entry:** `import omega_hub` → `ModuleNotFoundError: No module named 'omega_hub'`.
+Real paths are `mcp_servers.omega_hub.*`. Live registered surface enumerated —
+**54 tools**; Hivemind set is exactly `hivemind_awareness, hivemind_get_metrics,
+hivemind_handoff, hivemind_lock`. Both Redis stubs resolve to `AttributeError: DEAD`.
+
+**Dispositions, each justified by what the real surface offers:**
+- `hivemind_bridge.py` publish → **repoint** to `hivemind_awareness(action="post")`.
+- `hivemind_bridge.py` subscribe → **cannot honestly be repointed**; no subscribe
+  primitive exists. Reimplemented as a **poll** returning `{"status":"empty"}` when
+  nothing is pending, because `collect_signals` branches on
+  `if result.get("status") == "success"`. Returning "success" from a poll would be a lie
+  the caller could not detect. Docstring says in bold: NOT a live subscription.
+- `watchdog.py` → **repoint, not deletion**. The *call* was dead; the *intent* maps
+  exactly onto `hivemind_awareness(action="post")`. Real damage was the blanket
+  `except Exception: logger.warning` — it fired on **every** call because the import
+  could never succeed, and said nothing about the alert being lost. Now names the entity
+  and states the alert was **lost, not buffered**.
+- `post_to_hivemind.py` → **repoint**. Proven live: `hivemind_post_context` returns
+  `Unknown tool`; `hivemind_awareness` returns real records. `tag` preserved in
+  `task_current`. Error message no longer misattributes a dead tool to connectivity.
+
+**⭐ FIFTH STRANDED IMPORT found — not in the brief.** `src/omega/research/scorecard.py:452`
+`from omega_hub import omega_hub_oracle_summon`. Found by grepping all of `src/omega/`
+for the defect rather than trusting the reported list. **A briefed list of defect sites
+is a hypothesis, not an inventory — grep the whole scope.**
+
+**⭐ CIRCULAR IMPORT I hit, and why the original lazy placement was CORRECT.**
+My first fix used a module-level import and broke the engine:
+```
+ImportError: cannot import name 'mcp' from partially initialized module mcp_servers.omega_hub.server
+  omega.research.__init__ → hivemind_bridge → hub_tools → task_registry
+    → hub_tools.server → omega.oracle → omega.governance → omega.research.types
+    → omega.research.__init__          ← BOOM
+```
+Fixed with a lazy resolver. **The original authors put those imports inside functions
+deliberately** — the placement was right, only the module name was wrong. I nearly
+"fixed" a correct design decision by hoisting an import out of the function.
+
+**⭐ Second defect found during the fix, by execution:** calling the tool directly
+returned a `CallToolResult`, not JSON — `TypeError: object of type 'CallToolResult'
+has no len()`. FastMCP's `@mcp.tool()` wraps callables. Same class of defect: a bridge to
+a tool whose **call shape** no longer matched. Fixed with
+`getattr(tool, "__wrapped__", tool)` at every direct-call site.
+
+**All adapters now fail loud** (M23): `HivemindTransportError` instead of returning a
+dict the caller would read as a successful publish.
+
+---
+
+### TASK 3 — THE DEAD TEST, AND THE FALSIFICATION PROOF
+
+**Verified on entry:** `pytest tests/test_hub_health.py::TestCriticalTools` →
+**`OK (skipped=20)`** — 20 skips, **0 assertions executed**. `/debug/tools` returns
+`sample_tools`: 10 names of 54. It also asserted `library_search` and `memory_search`,
+neither in the surface, and `library_search` is rejected by the hub's own boot curation.
+
+**Rebuilt** against the complete in-process registry (`mcp.list_tools()`), with two
+structural safeguards:
+1. **A truncated surface is a hard failure, not a skip** (`assert len(names) >= 50`) —
+   because absence assertions over a truncated list are *vacuously true*, which is the
+   original bug.
+2. **Cross-check against the running hub's count** — divergence means callers cannot
+   reach what the test asserts.
+
+Added `test_retired_tool_absent` over 8 consolidated-away names. **26 real assertions,
+0 skips.**
+
+**⭐ FALSIFICATION TEST — the guard observed FAILING, not merely passing:**
+```
+AssertionError: hivemind_post_context was retired by the Hivemind consolidation
+  but is back in the registered surface. Either the shim and the real tool have
+  diverged, or the tool was resurrected without updating the callers.
+AssertionError: in-process registry has 55 tools but the running hub reports 54
+  — assertions would be against a surface that callers cannot reach
+```
+Both fired on the injected pre-consolidation surface. Then restored and re-confirmed
+green. **A test that has only ever passed is untested.**
+
+---
+
+### STEP 19/20 — REBUILD, NOT MIGRATE (the conclusion Retraction 2 forced)
+
+**Inventory (read from the DB, not from config):**
+
+| DB | Table | Width | Rows | Content | Re-embed? |
+|---|---|---|---|---|---|
+| `data/omega_memory.db` | `omega_vec_omega_vec_gemma_768` | 768 | **1009** (568 zero) | feature-hash | **No** — never semantically valid |
+| `data/memory/omega_memory.db` | `omega_memory_vec` | 256 | 584 | feature-hash | **No** — same |
+
+**No MRL-truncated canonical data existed anywhere in `data/`.** The nomic tiers exist
+in config and are **empty** — no tables at all.
+
+**Ruling: Step 19 is a REBUILD, not a migration.** There is no meaningful data to
+preserve, so no data-loss risk, no complex rollback — cheap and low-risk. Ordered
+19-then-20 (canonical table must exist before legacy drops; aliases must survive
+until no caller emits the old names). Rollback for each is enumerated in the delivered
+inventory.
+
+**Alias layer — all four mappings still correct** after the nomic removal (the P0
+change removed a *provider*, not a collection). One nuance recorded: `omega_vec_gemma_768`
+was both a live `COLLECTIONS` key **and** an alias source — the adapter resolves the
+alias first, so the `COLLECTIONS` entry was reachable only by explicit use.
+
+**Provenance is unrecoverable** — no `_meta`, no version registry, no write log. The
+byte-level forensic answer is stronger than any bookkeeping record, but it means Step 20
+must treat those rows as **unattributable**, and future write paths must record model
+identity **in-band** or this question recurs.
+
+---
+
+### GEMMA REMOVAL (officially deprecated, executed)
+
+Removed: `GemmaGGUFEmbeddingProvider` class; `omega_vec_gemma_768` from config, both
+adapters' `COLLECTIONS`, and `LEGACY_COLLECTION_ALIASES`; all 5 gemma tables in
+`data/omega_memory.db`; all 5 `omega_memory_vec` tables in `data/memory/omega_memory.db`.
+
+**Kept:** the Qwen3 MRL ladder (1024→768→512→256→128→64 — canonical), the nomic tiers
+(still Step 19/20 targets), minilm/static tiers.
+
+**Remaining "gemma" strings are legitimate and were not touched:** historical decision
+IDs (`D-768-DIM-MODEL-SWAP`, `D-768-DIM-RENAME-GEMMA`); `gemma-4-31b` in
+`block_tools.py`/`sleep_time.py` — **a different model** (Google Gemma 4 LLM, not
+EmbeddingGemma-300M); a generic "sub-canonical model" circuit-breaker docstring example.
+
+---
+
+### ARCHITECT RULINGS (given to MaKaLi)
+
+**AVX-VNNI asymmetry — DO NOT SPLIT THE EMBEDDER; one canonical embedder.**
+Three concrete reasons, not principles:
+1. **The arithmetic does not justify a split.** 1024-D fp32 = 4 KB. Both chips retire
+   ~64 MAC/cycle on the dot product (Zen 2: 8-wide FMA ≈ 32 FMA/cycle; Raptor Lake:
+   `vpdpbusd` int8). The VNNI advantage is *int8 throughput*; Zen 2's lack of VNNI only
+   matters if you quantize — and you can make the kernels equivalent with a `cpuid`
+   dispatch flag and one fleet-wide dtype.
+2. **A work split destroys the thing just legislated.** D-1024-DIM-NATIVE establishes a
+   *single canonical space*. If N1 embeds and N0 serves, cosine scores are computed in
+   one quantisation regime and consumed in another — structurally the same failure as
+   Nomic-vs-Qwen, just smaller, and already forbidden by one-space-per-collection.
+3. **4 KB/vector makes distribution trivial.** At Phase 1/2/3 (20/60/120 items) the
+   whole corpus is ~480 KB — it fits L2 on both chips. **There is no distribution
+   problem to solve.** Federation for a dataset smaller than the L2 cache is
+   architecture for its own sake.
+
+**Right approximation:** one shared SIMD kernel, `cpuid` runtime dispatch, ONE
+canonical dtype fleet-wide (int8 with identical scales/zero-points, or fp32 both sides),
+brute-force blocked scan with software prefetch. **No ANN index** (no HNSW, no IVF) —
+pure bloat at these cardinalities. Add one only when N forces it, never before.
+
+**Headroom (D-582) — semantic compression belongs AT THE TOOL BOUNDARY, ON READ
+PAYLOADS ONLY.** Failure mode per placement:
+- *Tool boundary (correct)*: lossy semantics leaking into a decision-critical value — a
+  compressed result drops a version string, an error code, or a numeric bound and
+  becomes a wrong action. Mitigation: compress only what is destined for model context;
+  keep the raw retrievable from cold store so any consumer can re-fetch verbatim.
+- *Before vector storage*: **double lossy.** The embedder is already a lossy projection;
+  compressing source text first corrupts the projection's input and yields a degraded
+  index that *looks valid*. Structurally unobservable failure — the worst kind.
+- *Inside transport envelopes*: coupled layers and silent corruption. Buried in
+  serialization it breaks `diff`-ability, replay, and M9 error integrity — you can no
+  longer prove what bytes produced a result. Also poor ROI: envelope structure is
+  low-entropy, so entropy coding buys little and costs all debuggability.
+
+**Hard rule: never compress write payloads or tool arguments.** Those are verbatim by
+contract. Lossy belongs on reads, in the consumer's context, with raw retained.
+Transport stays dumb and lossless.
+
+**Minisign / Gate C6 — confirmed sound as the primitive, CHALLENGED as the closure
+path.** Detached signing over a tarball satisfies only the **integrity** half of C6:
+it proves *a* holder of *a* key signed *these bytes*, not that *the authorised
+publisher* did. An attacker who swaps payload AND key produces a valid package that
+passes verification. C6 additionally needs a **publisher identity and trust root
+above** the signature: (a) the verification key pinned **out-of-band** (shipping it
+inside the bundle signs nothing), (b) a written rotation/revocation policy (Ed25519
+has no revocation), (c) a documented verification command that checks the **root
+manifest digest**, not just file-level `SHA256SUMS`, or the signature never reaches the
+nested `doom_guy_transfer/` set. The existing hierarchy does the heavy lifting: one
+signature over `MANIFEST.yaml` transitively covers all 41 files. **Adopt Minisign; do
+not declare C6 closed on the signature alone.**
+
+---
+
+### STANDING STATE AT CLOSE
+
+- `make temple-grade` **53/53** · contract tests 25 · full touched-file sweep **118 PASS**
+- `mcp_servers/**` and `data/federation/**` untouched throughout (Ma'at's and Grokster's)
+- HEAD `de660681` committed by MaKaLi; my work left in the working tree as instructed
+- **Open:** Ma'at's `mcp_servers/omega_hub/github_bridge.py` carries the SAME stranded-
+  import class I fixed in `src/omega/` and is still unfixed; the whole webhook bridge is
+  dead until he does it. **Provenance in-band recording** is unrecoverable for legacy
+  tables and should be a Step 20 requirement.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_p0_p1_gemma_arc ⬡ COMPACTION-READY ⬡ 53/53*
+
+---
+
+## 🔱 2026-09-28 (LATE SESSION) — REDIS REMOVAL, FLAKY POOL, GREEN GATES
+
+**Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `opencode/space-bunny-free`
+**HEAD at close**: `b8c82eba` (fed tailnet policy) · my work committed in `51d07148`
+**Mandates**: M1, M23, M24, M27 · **No `git add`/`commit`/`push` performed by me**
+
+### FINAL GATE NUMBERS (observed, not assumed)
+
+```
+make check-engine   175 collected / 175 passed / 0 failed / 0 errors    10s
+make temple-grade   TOTAL: 53  PASS: 53  FAIL: 0                        299s
+full suite (JSON)   2462 collected / 2407 passed / 0 failed / 0 error
+                    47 skipped / 8 xfailed
+```
+
+Full suite vs Ma'at's re-baseline (2462/2403/**4 failed**/0): **collected identical,
++4 passed, −4 failed.** Zero tests added, removed or skipped to get there.
+
+---
+
+### ⭐ THE THREE FINDINGS THAT MATTER MOST
+
+#### 1. `test_writer_starvation` was NEVER A FLAKE — IT WAS A PRODUCT RACE
+
+Ma'at removed a stale `xfail`; the test passed alone and failed in-suite. **I reproduced it
+deterministically and it is my layer.**
+
+| Condition | Before fix |
+|---|---|
+| idle box | passed |
+| **6 CPU spinners** | **FAILED** |
+
+```
+AssertionError: Errors occurred: ['Reader 1 failed: [ProviderError]
+  SQLite-vec query failed: bad parameter or other API misuse']
+```
+
+**Root cause — `src/omega/memory/sqlite_vec_adapter.py`:** every op is funnelled through
+`anyio.to_thread.run_sync(...)` onto **ONE persistent `sqlite3` connection**.
+`to_thread` dispatches to a thread pool, so concurrent callers run on *different threads
+against the same handle*. CPython sqlite3 is single-thread-affine; vec0 virtual-table
+iteration is worse.
+
+Proved with no engine involved — 6 threads, 1 connection, 40 reads each:
+```
+shared-conn concurrent errors:   6   ProgrammingError('SQLite objects created in a thread...')
+per-connection concurrent errors: 0
+```
+
+**FIX (product, not test):** `self._conn_lock` + `_run_locked()`; all 15 call sites routed
+through it. Lock order strictly `_write_lock` → `_conn_lock`, no reverse path, no deadlock.
+Verified: starvation test **passes under the same 6 spinners that made it fail**. No xfail
+re-added. **`/tmp/opencode` scratch: the falsification is the table above.**
+
+**Doctrine: a "flaky test" label is a DECISION, not a diagnosis.** Two of the three
+supposedly-flaky items this session were not flakes at all — one was an environmental
+sensor, one was a shared-handle race. Neither would have been found by rerunning.
+
+#### 2. THE OOM FLAKY POOL — ROOT CAUSE, PROVEN BOTH WAYS
+
+`test_orchestrator::test_dispatch_timeout` passes alone, fails in-suite. **Root cause is
+also mine, in `src/omega/oracle/`.**
+
+`Orchestrator.dispatch_agent` (`orchestrator.py:555`) acquires `self.guard.lock()` BEFORE
+reaching `anyio.run_process`. `ResourceGuard.lock()` calls
+`OOMProtector.check_available()`, which reads **the real host**
+(`psutil.virtual_memory().available`, fallback `/proc/meminfo`,
+`resource_guard.py:34-60`). So the outcome depended on **how much RAM the box had free at
+that instant** — load-dependent, not random. Explains the 35→45→29 oscillation.
+
+**Proof, same test, no skip/retry:**
+| Condition | Result |
+|---|---|
+| control | 1 passed |
+| `check_available` → False | 🔴 `InferenceOOMError: Refusing model load: available RAM below 1.0 GB` |
+| **host starved to 200 MB** (psutil boundary) | **1 passed after fix** |
+
+**FIX:** `tests/conftest.py` autouse per-test `monkeypatch` isolating the sensor. **A test's
+outcome must not depend on a property of the host it was never about.** Subject (concurrency
+gate, `enforce()`, token lifecycle) still fully exercised; only the environmental sensor is
+neutralised, and it cannot leak between tests or into opted-out tests.
+
+#### 3. ⭐ I SHIPPED A DEAD HOOK AND MY OWN GATE CAUGHT IT
+
+The two OOM tests failed again after I "fixed" them. **Not a concurrent-edit conflict — the
+hook was never running.**
+
+A marker probe showed `real_oom_sensor=False` on a test that *was* in the exemption list.
+AST located it: my block was **nested inside `mock_provider()`** — a concurrent edit had
+truncated that function and swallowed my insert whole. `pytest_collection_modifyitems` was
+indented 4 spaces, i.e. **dead code inside a fixture**. Nothing errored; the exemption
+simply never applied.
+
+**This is the same defect class as everything else this week, but inverted: I was the
+author and the gate was the detector.**
+
+Three structural fixes so it cannot recur:
+1. **Hook restored to module level** (verified: present in module globals).
+2. **Exemption list DERIVED, not curated** — computed by scanning `tests/**/test_*.py` for
+   `oom_protector`/`check_available`/`memavailable`. A curated list is a hole with a comment
+   on it; deriving removes the class of error. My hand-written list was wrong TWICE —
+   once incomplete, once invisible.
+3. **A self-check asserting the hook is reachable**, so "accidentally nested" cannot ship
+   twice.
+
+**Final state:** 25/25 OOM tests pass; **35/35 at 200 MB starved**; 4 OOM files exempt.
+
+---
+
+### THE COLLECTION BLOCKER WAS NOT WHERE ANYBODY SAID
+
+Three separate reports pointed at `tests/test_hivemind_redis.py` blocking collection. **The
+file was already quarantined** by Doom Guy at `data/quarantine/redis_tests_20260928/`.
+
+The **real** blocker: `pyproject.toml:149` carried
+`--ignore=data/entities/roc_racoon/workspace/odysseus-dev` — a path that **has never
+existed in git** (`git log --all --diff-filter=A` → empty). Under pytest 9.1.1 an unmatched
+`--ignore` **silences all collection and exits 0**. Falsified both directions:
+
+| Condition | Result |
+|---|---|
+| phantom `--ignore` present | `Ran 0 tests`, exit 0 |
+| `-o addopts=""` | 46 tests, all pass |
+
+**A green build over a suite that never ran.** Removed. `collected` went **0 → 2393**.
+
+Also: `"Ran 0 tests"` in terminal output is a **reporting artifact** —
+`tests/conftest.py:75` `pytest_terminal_summary` sets `tr.sep_title = None`, suppressing
+pytest's real count. **Always report counts from `--json-report`, never the terminal line.**
+
+---
+
+### REDIS REMOVAL — WHAT WENT WHERE
+
+| Group | File | Disposition |
+|---|---|---|
+| A | `memory_store.py` | `OMEGA_REDIS_*` gate **deleted**; chain now USM→File→InMemory |
+| B | `memory/providers.py` | `RedisStorageProvider` **excised** (~154 lines) |
+| B | `ingestion/worker.py` | **DELETED, 220 lines** — proven unreachable (see below) |
+| B | `workers/youtube_worker.py` | class **kept** (a contract test instantiates it); transport removed, `_require_queue()` **raises** |
+| B | `governance/budget_guard.py` | class **kept** (live: `ingestion/pipeline.py:142` + 9 tests); remote INCR/TTL tier removed → **process-local** |
+| C | `governance/budget_guard.py` | unused guarded import deleted |
+| C | `research/hivemind_bridge.py` | `redis_channels`→`hivemind_channels`; params→`publish_sink`/`subscribe_source` (proven 0 keyword callers) |
+| pkg | `pyproject.toml` ×2 + `Dockerfile.iris` ×1 | **3** declarations removed (report named 2; `Dockerfile.iris:48` was missed by everyone) |
+
+**`ingestion/worker.py` — nothing reachable was lost.** Restored to
+`src/omega/ingestion/_probe_worker.py`, imported, constructed: `OmegaError: redis package
+not installed`. Every method was an instance method; the three non-redis helpers
+(`_save/_load_somatic_state`, `stop()`) were reachable only from a constructed instance.
+Zero references anywhere. Logic preserved in git history at `HEAD:src/omega/ingestion/worker.py`.
+
+**Gate:** `tests/contracts/test_no_redis.py`, 17 tests, **observed failing twice** by
+injecting (a) `os.environ.get("OMEGA_REDIS_HOST")` and (b) `try: import redis.asyncio` —
+both caught, both restored, green confirmed.
+
+**Left deliberately:** `.backup.1789094727` (not live); `d593` governance record;
+`vault_config_resolver.resolve_redis_password()` (public symbol, marked dead);
+`check_hardcoded_secrets.py:84` — a **secret-scanner regex**, excluded by path with the
+reason recorded; `test_hub_health.py` absence-assertions.
+
+---
+
+### ⚠️ STILL OPEN — DOOM GUY'S, NOT MINE
+
+**`deploy/infra/docker-compose.yml` defines a live `omega-redis` service:**
+`restart: unless-stopped`, `127.0.0.1:6379` published, and **the hardcoded password
+`${REDIS_PASSWORD:-omega}` duplicated 4×** (L39, 56, 176, 210, 249). Lines 176/210/249 inject
+`REDIS_URL=...@omega-redis:6379` into **three other services**, each with
+`depends_on: redis: condition: service_healthy`.
+
+**A code-only redis sweep is COSMETIC until that service block is removed.** Container
+layer, Doom Guy's to land. Also: check `config/lan_exposure_allowlist.yaml` does not
+*allowlist* 6379, or `check-lan-exposure` will never flag it.
+
+---
+
+### REVIEW OF MA'AT'S FEDERATION WORK — **REVIEWED, SOUND, NO DEFECTS**
+
+Read `federation_envelope.py`, `federation_store.py`, `federation_session.py`. Verified
+against the team ruling:
+
+| Ruling | Verified at |
+|---|---|
+| Envelope in `envelopes/` at birth, **never moved** | `query()` globs `envelopes/*.json`; **zero** `move`/`replace`/`unlink`/`rmtree` in the store |
+| `read_by` in envelope → answers offline, drive unplugged | `build_envelope:279`; `fe.unread_for()`; drive never consulted |
+| `retention_expires_at` **derived, never stored** | not in schema; `RETENTION_DAYS = 90` constant |
+| `seq` **global** | `new_seq_file()` — one counter, reason documented |
+| `inbox` **raises** `StoreUnreachable` | `query():83` raises; `OSError`→`StoreUnreachable`; never `{entries:[]}` |
+| `list` **cannot** bare-list | `list_packets():158` raises without `target_entity`; `scope=all` bumps counter + `deprecated` |
+| ASCII/`cat`-readable, no floats/NaN | stated as correctness property |
+| `created_at_utc` frozen, disagreement preserved | `:269-270` + `time_diagnostics()` |
+
+**Two review notes, neither a blocker:** (1) `LEGACY_CLASSIFICATION` maps `archive/` →
+`cold/legacy-archive` **not** `retired/` — correct, but record it in the migration manifest
+so nobody "helpfully" re-merges them; (2) `scope=all` is deprecated but live — needs a
+removal date or "deprecated" outlives the decision.
+
+---
+
+### COORDINATION NOTES FOR THE NEXT SESSION
+
+- **`tests/conftest.py` is mine and Ma'at's** — both edited it, we collided. He reverted his
+  OOM fix rather than paper over it and stopped; that was correct. **Current state: +241/−2,
+  all 16 of his fixtures and his 3 hooks intact**, only the OOM block is mine.
+- `mcp_servers/**` = Ma'at's. `data/federation/**` = Grokster's. `deploy/infra/**`,
+  quadlets, systemd, `check-lan-exposure` = Doom Guy's.
+- Doom Guy's original redis inventory was **60% wrong**: 3 of his 5 named sites never
+  imported redis (`memory_store.py`, `hivemind_bridge.py`, `failure_registry.py`), and
+  `src/omega/watchdog.py` **does not exist** (real path `coordination/watchdog.py`, no
+  redis import). **A briefed list of defect sites is a hypothesis, not an inventory.**
+- `data/quarantine/redis_tests_20260928/` — Doom Guy's quarantine of the redis test.
+
+### THE FIVE OF THIS WEEK, ONE SHAPE
+
+53/53 over a crash-looping hub · 20 skips asserting nothing · `vec0_lock` with no reader ·
+a `--ignore` making the suite exit 0 while running nothing · a flaky pool that was an
+environmental sensor. Plus, inverted: **my own dead hook that only a gate caught.**
+
+Every one reported success while exercising nothing. The pattern is not carelessness — it
+is that our gates assert on *outcomes* rather than on *the thing being guarded*. The two
+fixes built the other way this session are the derivable exemption list and the
+`_conn_lock`: both make the correct thing happen by construction rather than by vigilance.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ opencode/space-bunny-free ⬡ trc_redis_flaky_green ⬡ check-engine 175/175 ⬡ temple-grade 53/53 ⬡ 2462/2407/0/0 ⬡ COMPACT-READY*
+
+---
+
+## ⚠️ CORRECTION TO MY OWN STATUS CLAIM — temple-grade is NO LONGER GREEN
+
+I reported `make temple-grade → TOTAL: 53 PASS: 53 FAIL: 0` at 299s earlier in this
+session. **That observation was true when I made it. It is no longer true, and I must
+not let a stale green survive into compaction.**
+
+### What happened
+
+The final re-run returned:
+
+```
+make: *** [Makefile:102: check-codex-stale] Error 1     (96s, gate aborts early)
+```
+
+**Cause — a wall-clock gate, not my work.** `scripts/check_codex_stale.py` reads the
+`⬡ CODEX ⬡ <timestamp> ⬡` marker inside `OMEGA_CODEX.md` and fails if the doc is older
+than `STALE_THRESHOLD_HOURS = 24`.
+
+```
+codex generated : 2026-09-29T22:26:18
+now             : 2026-09-30T23:02:52
+age             : 24.61 hours   (threshold 24)
+```
+
+**I did not cause it and I cannot fix it from my layer.** I edited only
+`data/entities/john_carmack/*` and `data/coordination/anchored_summary/carmack/*`.
+The gate reads `OMEGA_CODEX.md` at repo root. Nothing I touched is on its path.
+
+### The finding, which matters more than the red
+
+**`make temple-grade` is not a durable statement — it is a timestamp.**
+
+A 53/53 means "green as of the moment it ran, modulo a 24-hour clock that nothing in the
+gate controls." The gate will go red on its own roughly once a day, for a reason that has
+nothing to do with code quality, and it aborts the run before the 53 checks are reached —
+so a stale codex doc *masks* every other check behind it. Two consequences:
+
+1. **"temple-grade is green" is only meaningful with its wall-clock.** Any handoff,
+   status report or PR claim that says 53/53 without the timestamp is asserting
+   something that expires in under 24 hours.
+2. **This is the same defect class as the week, wearing a clock.** A check that reports
+   pass/fail for a property it did not measure. Here the property is freshness, and
+   the check fires red without telling the operator *that the only thing wrong is the
+   clock*.
+
+### Ruling for whoever picks this up
+
+- **Immediate:** `make codex` (or `make check-codex-fix`) regenerates and clears it.
+- **Structurally, my recommendation:** staleness should not be able to *gate* a release
+  check at all. Either demote it to a warning, or — better — have `temple-grade` run the
+  53 checks **first** and report codex freshness as an advisory line, so a stale doc
+  never hides 53 real results. A gate that aborts at 96s and shows you one timestamp
+  error has told you nothing about the other 52 checks.
+- **For handoffs:** quote gate results WITH their timestamp, always.
+
+**What remains true:** `make check-engine` is green **right now** (175/175, re-confirmed
+10s after the docs were written), and the full suite is 2462/2407/0 failed/0 error.
+Only `check-codex-stale` is red, and it is red because a date rolled over.
+
+*⬡ OMEGA ⬡ JOHN_CARMACK ⬡ CORRECTION: 53/53 was TRUE WHEN OBSERVED, NOT NOW ⬡ temple-grade RED on check-codex-stale (24.61h > 24h), NOT MY LAYER ⬡ "green" IS A TIMESTAMP*

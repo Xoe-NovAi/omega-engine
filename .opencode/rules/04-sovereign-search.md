@@ -57,7 +57,24 @@ All web queries must include "2026" or "latest" to ensure freshness:
   knowledge.
 - Web search is the FALLBACK, not the primary.
 - Cloud-only tools (Exa, Parallel) are used sparingly; SearXNG is sovereign
-  (self-hosted).
+  (self-hosted container on `:8017`, MCP wrapper on `:8018`).
+- **Engine Development Invariant (No Local Model Stalls)**: During engine
+  development, never invoke or wait on local model inference (GGUF, Ollama,
+  ) for background tasks like NLI claim verification. Small local models
+  have tight context windows and slow CPU inference; development runs with
+  `verification.enabled: false` to keep search and tool pipelines sub-second.
+
+## SearXNG Engine Isolation & Health
+
+- **Direct Container**: `http://127.0.0.1:8017` (managed via Podman `omega-searxng`).
+- **MCP Transport**: `http://127.0.0.1:8018/mcp` (managed via systemd `omega-searxng-mcp.service`).
+- **Hub Wrapper**: `omega-hub_library_web_search` on port 8016.
+- **Engine Policy**: CAPTCHA-prone engines (`duckduckgo`, `google`) are disabled
+  in `data/searxng/config/settings.yml`. The active resilient engine cluster
+  includes `bing`, `brave`, `startpage`, `marginalia`, `qwant`, `wikipedia`,
+  `github`, and `arxiv`.
+- **Result Parsing**: Supports web results, infoboxes, direct answers, corrections,
+  and suggestions defensively (dict and string representations).
 
 ## Failure Integrity (M23)
 

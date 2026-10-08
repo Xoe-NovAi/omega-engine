@@ -4,7 +4,7 @@
 
 """
 Ω-Research Shared Types — Breaks circular imports between sandbox and budget_guard
-⬡ OMEGA ⬡ MA'AT ⬡ N2/N3 ⬡ TYPES
+⬡ OMEGA ⬡ MA'AT ⬡ S2/S3 ⬡ TYPES
 AP Token: AP-MAAT-TYPES-v1.0.0
 """
 

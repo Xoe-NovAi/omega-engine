@@ -484,9 +484,110 @@ async def test_adapter_whitelist_rejects_unknown_module(wad_env):
             }
         }
         (stack_path / "manifest.yaml").write_text(yaml.dump(manifest))
-        
+
         result = await loader.load_wad(stack_name)
         assert result[0] is True  # WAD loads, but adapter is rejected
         # No adapter should be registered
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+# ── §6.2 requires_engine Semver Enforcement (M23 fail-loud) ──────────
+
+@pytest.mark.anyio
+async def test_requires_engine_compatible_passes(wad_env):
+    """A WAD whose requires_engine is satisfied by the running engine loads."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "compat_engine_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text(
+            "name: compat_engine\nversion: 1.0.0\nentities: []\nrequires_engine: '>=0.4.0'"
+        )
+        assert (await loader.load_wad(stack_name))[0] is True
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_requires_engine_incompatible_fails_loud(wad_env):
+    """An incompatible requires_engine must FAIL LOUD with required vs running versions."""
+    from omega import __version__ as _engine_v
+    from omega.oracle.wad_loader import enforce_engine_compatibility
+
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "incompat_engine_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text(
+            "name: incompat_engine\nversion: 1.0.0\nentities: []\nrequires_engine: '>=99.0.0'"
+        )
+        assert (await loader.load_wad(stack_name))[0] is False
+        with pytest.raises(ValueError, match=">=99.0.0"):
+            enforce_engine_compatibility(stack_name, ">=99.0.0")
+        try:
+            enforce_engine_compatibility(stack_name, ">=99.0.0")
+        except ValueError as e:
+            assert _engine_v in str(e)
+            assert ">=99.0.0" in str(e)
+        else:  # pragma: no cover - helper must raise
+            raise AssertionError("enforce_engine_compatibility did not raise")
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_requires_engine_missing_passes(wad_env):
+    """Missing requires_engine means no constraint (contract default >=0.0.0)."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "no_constraint_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: no_constraint\nversion: 1.0.0\nentities: []")
+        assert (await loader.load_wad(stack_name))[0] is True
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_requires_engine_empty_passes(wad_env):
+    """Empty requires_engine behaves as no constraint (contract silent; SpecifierSet('') matches all)."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "empty_constraint_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text(
+            "name: empty_constraint\nversion: 1.0.0\nentities: []\nrequires_engine: ''"
+        )
+        assert (await loader.load_wad(stack_name))[0] is True
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_requires_engine_invalid_spec_fails_loud(wad_env):
+    """A malformed requires_engine specifier must FAIL LOUD, not soft-pass."""
+    from omega.oracle.wad_loader import enforce_engine_compatibility
+
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "invalid_spec_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text(
+            "name: invalid_spec\nversion: 1.0.0\nentities: []\nrequires_engine: 'not-a-spec!!!'"
+        )
+        assert (await loader.load_wad(stack_name))[0] is False
+        with pytest.raises(ValueError, match="invalid requires_engine"):
+            enforce_engine_compatibility(stack_name, "not-a-spec!!!")
     finally:
         Path(cfg).unlink(missing_ok=True)

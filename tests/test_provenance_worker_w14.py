@@ -99,14 +99,21 @@ def test_resolver_db_down_graceful(monkeypatch):
     assert prov.db_session_models(con, "ses_whatever00000") is None
 
 
-def test_open_db_ro_never_writes(fixture_db):
-    """Safety Engineer: connection must be read-only at the SQLite level."""
+def test_open_db_ro_never_writes(worker_env):
+    """Safety Engineer: connection must be read-only at the SQLite level.
+
+    Uses worker_env so prov.DB_PATH points at the tmp fixture db — NOT the
+    real ~/.local/share/opencode/opencode.db (WAL mode with writable side
+    files makes PRAGMA wal_checkpoint succeed on a read-only connection).
+    """
     con = prov.open_db_ro()
     assert con is not None
     with pytest.raises(sqlite3.OperationalError):
         con.execute("CREATE TABLE evil (x int)")
+    # journal_mode=WAL requires write access — reliably raises on a
+    # read-only connection (wal_checkpoint is a no-op in DELETE mode).
     with pytest.raises(sqlite3.OperationalError):
-        con.execute("PRAGMA wal_checkpoint")
+        con.execute("PRAGMA journal_mode=WAL")
     con.close()
 
 

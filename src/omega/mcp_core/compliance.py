@@ -524,7 +524,8 @@ class SubscriptionManager:
         for stream in self._subscribers[category]:
             try:
                 await stream.send(notification)
-            except Exception:
+            except Exception as e:
+                logger.debug("Error sending notification to subscriber: %s", e)
                 dead.append(stream)
 
         for stream in dead:

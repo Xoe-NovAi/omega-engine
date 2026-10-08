@@ -27,11 +27,40 @@ import anyio
 from omega.errors import (
     OmegaError,
     ProviderError,
+    ProviderAuthError,
+    ProviderRateLimitError,
     OmegaPersistenceError,
 )
-from omega.vault import VaultCore
+from omega.observability.bleg import BLEGMiddleware
 
 logger = logging.getLogger(__name__)
+
+# [D-565 / M2 — vault is FORGE on the public cut]
+# `src/omega/vault/` is excluded from the public release by D-565. This module
+# is RETAINED (it sits under the broad `src/omega/` allow pattern) and is
+# imported at module scope by `mcp_servers/omega_hub/state.py`, which the
+# `check-hub-imports` temple-grade gate imports in a CLEAN worktree.
+#
+# A hard `from omega.vault import VaultCore` therefore made `make temple-grade`
+# fail with ModuleNotFoundError on every allowlist cut — including the already
+# published release/debut (3c051021).
+#
+# Resolution: vault is an OPTIONAL capability. Absent vault => no credential
+# resolution => discovery degrades to its non-vault path (mock/web sources).
+# D-565 is NOT weakened: vault is still cut, and it is still the single source
+# of truth for credentials whenever it IS present.
+try:
+    from omega.vault import VaultCore
+
+    VAULT_AVAILABLE = True
+except ImportError as _vault_import_error:  # pragma: no cover - env dependent
+    VaultCore = None  # type: ignore[assignment,misc]
+    VAULT_AVAILABLE = False
+    logger.debug(
+        "omega.vault unavailable (%s) — discovery runs without VaultCore "
+        "credential resolution (expected on public cuts per D-565)",
+        _vault_import_error,
+    )
 
 DATA_DIR = Path(
     os.environ.get("OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data"))
@@ -91,28 +120,47 @@ class DiscoveryOrchestrator:
         # Use gateway's provider chain: local → antigravity → ... → gemini.
         # The gateway will try local inference first (M7 Local-First).
         self.default_model = default_model  # None = let gateway decide
-        try:
-            vault = VaultCore()
-            vault._load_sync()
-            exa_cred = vault._credentials.get("exa:api_key")
-            self.exa_key = exa_cred.encrypted_blob if exa_cred else None
-            if not self.exa_key:
-                logger.warning("VaultCore exa resolution failed - no key in vault")
-        except (OmegaError, KeyError) as e:
-            logger.warning(f"VaultCore exa resolution failed: {e}")
-            self.exa_key = None
-        try:
-            vault = VaultCore()
-            vault._load_sync()
-            fc_cred = vault._credentials.get("firecrawl:api_key")
-            self.firecrawl_key = fc_cred.encrypted_blob if fc_cred else None
-            if not self.firecrawl_key:
-                logger.warning("VaultCore firecrawl resolution failed - no key in vault")
-        except (OmegaError, KeyError) as e:
-            logger.warning(f"VaultCore firecrawl resolution failed: {e}")
-            self.firecrawl_key = None
+        # [D-565] VaultCore is OPTIONAL. On a public cut `omega.vault` does not
+        # exist; resolve to no credential rather than raising. `ImportError` is
+        # deliberately included in the caught set below because the original
+        # handler caught only (OmegaError, KeyError) and would have propagated
+        # ModuleNotFoundError out of __init__.
+        self._resolve_vault_credentials()
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
+
+    def _resolve_vault_credentials(self) -> None:
+        """Resolve Exa/Firecrawl keys from VaultCore, degrading to None.
+
+        Sets `self.exa_key` and `self.firecrawl_key`. When vault is absent
+        (public cut, D-565) or fails to load, both are set to None and
+        discovery continues on its non-vault path.
+        """
+        if not VAULT_AVAILABLE or VaultCore is None:
+            logger.debug(
+                "VaultCore unavailable — Exa/Firecrawl keys unresolved "
+                "(expected on public cuts per D-565)"
+            )
+            self.exa_key = None
+            self.firecrawl_key = None
+            return
+
+        for attr, provider in (("exa_key", "exa:api_key"), ("firecrawl_key", "firecrawl:api_key")):
+            try:
+                vault = VaultCore()
+                vault._load_sync()
+                cred = vault._credentials.get(provider)
+                key = cred.encrypted_blob if cred else None
+                setattr(self, attr, key)
+                if not key:
+                    logger.warning(f"VaultCore {provider} resolution failed - no key in vault")
+            except ImportError as e:
+                # Belt-and-braces: vault vanished between import and call.
+                logger.warning(f"VaultCore {provider} resolution failed (import): {e}")
+                setattr(self, attr, None)
+            except (OmegaError, KeyError) as e:
+                logger.warning(f"VaultCore {provider} resolution failed: {e}")
+                setattr(self, attr, None)
 
     def _job_path(self, job_id: str, status: str = "") -> Path:
         """Get the path for a job file based on its status."""
@@ -328,6 +376,73 @@ class DiscoveryOrchestrator:
         )
         return result
 
+    async def _phase_discovery(self, query: str) -> List[Dict[str, Any]]:
+        """Phase 2: Semantic discovery via Exa (Free Tier).
+
+        [P0-2026-07-22] RESTORED. This method was lost when 3418f854 extracted
+        `_try_generate` out of `_phase_synthesize`: the extraction deleted the
+        `async def _phase_discovery(...)` signature line and left its body
+        stranded below `_try_generate`'s `return`, where it became unreachable
+        dead code. `_research_subtopic` kept calling it, so every subtopic
+        research raised `AttributeError: 'DiscoveryOrchestrator' object has no
+        attribute '_phase_discovery'`. Body recovered verbatim from the parent
+        of 3418f854 (ca825b5e).
+
+        Return contract (why this cannot simply delegate to ExaProvider):
+        `_research_subtopic` does `report.sources.extend(sources)` and
+        `DiscoveryReport.sources` is `List[Dict[str, Any]]`.
+        `ExaProvider.search()` returns `Optional[str]` — a flattened highlight
+        string — so delegating would corrupt `report.sources` with raw `str`.
+        This method therefore owns the HTTP call and returns Exa's native
+        per-result dicts.
+
+        Returns:
+            A list of source dicts (each with at least `title`/`url`), suitable
+            for `DiscoveryReport.sources`.
+        """
+        if not self.exa_key:
+            # [D-565] Vault is absent on the public cut, so there is no Exa
+            # credential. Degrade to an explicitly-labelled mock source rather
+            # than failing the whole pipeline — matching the graceful-
+            # degradation contract established by `_try_generate`.
+            logger.warning("EXA_API_KEY missing. Using mock discovery.")
+            return [{"title": "Mock Source", "url": "https://example.com", "score": 0.9}]
+
+        url = "https://api.exa.ai/search"
+        headers = {"x-api-key": self.exa_key, "Content-Type": "application/json"}
+        payload = {
+            "query": query,
+            "type": "deep",
+            "numResults": 10,
+            "contents": {"highlights": True},
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                # Status taxonomy mirrors ExaProvider (search_providers.py) so
+                # auth/rate-limit failures stay distinguishable from 5xx.
+                if resp.status_code == 401:
+                    raise ProviderAuthError("exa", "Exa API key invalid")
+                if resp.status_code == 429:
+                    raise ProviderRateLimitError("exa", "Exa rate limit exceeded")
+                resp.raise_for_status()
+                # [IW-3] BLEG: inspect 200 OK bodies for error signatures.
+                BLEGMiddleware().inspect(
+                    status_code=resp.status_code,
+                    body=resp.text,
+                    provider="exa",
+                    trace_id="unknown",
+                    url=url,
+                )
+                data = resp.json()
+                return [r for r in data.get("results", []) if isinstance(r, dict)]
+        except OmegaError:
+            raise
+        except (httpx.HTTPError, OSError) as e:
+            logger.error(f"Exa Phase failed: {e}", exc_info=True)
+            raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
+
     async def _try_generate(
         self,
         system_prompt: str,
@@ -372,31 +487,6 @@ class DiscoveryOrchestrator:
             f"Note: No inference provider was available. This research phase "
             f"was skipped. Results will be based on web-sourced data only."
         )
-        """Phase 2: Semantic discovery via Exa (Free Tier)."""
-        if not self.exa_key:
-            logger.warning("EXA_API_KEY missing. Using mock discovery.")
-            return [{"title": "Mock Source", "url": "https://example.com", "score": 0.9}]
-
-        url = "https://api.exa.ai/search"
-        headers = {"x-api-key": self.exa_key, "Content-Type": "application/json"}
-        payload = {
-            "query": user_query,
-            "type": "deep",
-            "numResults": 10,
-            "contents": {"highlights": True},
-        }
-
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.post(url, json=payload, headers=headers)
-                resp.raise_for_status()
-                data = resp.json()
-                return data.get("results", [])
-        except OmegaError:
-            raise
-        except (httpx.HTTPError, OSError, OmegaError) as e:
-            logger.error(f"Exa Phase failed: {e}", exc_info=True)
-            raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
 
     # Brave (_phase_validation) and Tavily (_phase_extraction) removed
     # per D-kal-164 sovereign dependency purge.

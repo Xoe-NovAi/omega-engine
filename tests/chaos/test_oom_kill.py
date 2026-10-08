@@ -10,12 +10,43 @@ import tempfile
 import os
 from unittest.mock import patch, AsyncMock
 
-from omega.oracle.oom_protector import AdmissionResult
+# [CUT-20261007] Hermetic: check() fuses THREE live signals (MemAvailable +
+# PSI stalls + cgroup pressure). The RAM mock freezes only one leg — on a host
+# whose real PSI full-stall exceeds 5% (a busy dev box), check() honestly
+# reports DENY_THRASHING. Freeze the pressure legs too so the test asserts the
+# RAM arithmetic it was written for, on every host.
+from omega.oracle.oom_protector import AdmissionResult  # noqa: E402
+
+
+@pytest.fixture
+def _calm_pressure(oom_protector, monkeypatch):
+    from omega.oracle.psi_monitor import PSISnapshot
+
+    # Freeze the container leg too: real cgroup memory.pressure on a busy
+    # runner can exceed the thrashing thresholds and deny leg 2 of the RAM
+    # test (mem=8.0, PSI calm, cgroup DENY). All three signals must be pinned.
+    monkeypatch.setattr(oom_protector, "_cgroup_available", False)
+    with patch.object(
+        oom_protector.psi, "get_all_metrics", new_callable=AsyncMock
+    ) as m_psi:
+        m_psi.return_value = PSISnapshot(
+            resource="memory",
+            some_avg10=0.0, some_avg60=0.0, some_avg300=0.0, some_total_us=0,
+            full_avg10=0.0, full_avg60=0.0, full_avg300=0.0, full_total_us=0,
+        )
+        yield m_psi
 
 @pytest.mark.chaos
 @pytest.mark.anyio
 async def test_oom_protector_handles_sigkill(admission_controller):
     """Simulate OOM killer sending SIGKILL — admission should fail-fast."""
+    # [CUT-20261007] This test's subject is semaphore release semantics after a
+    # crash, not RAM arithmetic. acquire() consults live MemAvailable first
+    # (2.16GB + reserve) — a busy runner or a 7GB CI box denies BEFORE the
+    # semaphore is ever reached. Freeze the OOM leg so the contract under test
+    # is the slot, not the host's free RAM at this instant.
+    admission_controller._oom_protector.check_available = AsyncMock(return_value=True)
+
     # In a real OOM scenario, the kernel kills the process.
     # This test verifies that admission controller releases resources on unexpected exit.
     
@@ -38,7 +69,21 @@ async def test_oom_protector_handles_sigkill(admission_controller):
 
 @pytest.mark.chaos
 @pytest.mark.anyio
-async def test_oom_protector_RAM_check_under_pressure(oom_protector):
+# [maat 2026-09-29] RESIDUAL — I TRIED to mark this `isolated_oom_ram` and REVERTED IT.
+#
+# The brief said `test_oom_protector_RAM_check_under_pressure` was the failing
+# one. Measured against both legs, it is not:
+#     baseline origin/main : RAM_check_under_pressure PASSED, handles_sigkill PASSED
+#     full-suite run       : RAM_check_under_pressure PASSED, handles_sigkill FAILED
+# This test mocks `get_memavailable_gb` and asserts the decision arithmetic, so
+# it is deterministic. It was never the problem.
+#
+# Marking it `isolated_oom_ram` made it WORSE: the conftest's isolation fixture
+# patches `OOMProtector.check_available` to always return True, and this test
+# asserts on exactly that method — so the isolation overrode the subject under
+# test and turned a passing test red. Recorded because "the brief said X" is not
+# evidence, and the fix that looked responsive would have shipped a new failure.
+async def test_oom_protector_RAM_check_under_pressure(oom_protector, _calm_pressure):
     """Verify OOMProtector correctly detects low RAM conditions (C-2' API)."""
     # [C-2'] OOMProtector uses check_available(required_gb) for memory checks.
     # Mock MemAvailableReader to simulate low/high RAM.

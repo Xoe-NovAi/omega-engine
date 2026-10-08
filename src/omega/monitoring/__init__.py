@@ -325,6 +325,8 @@ class HardwareMonitor:
         if _PSUTIL_AVAILABLE:
             vm = _psutil.virtual_memory()
             swap = _psutil.swap_memory()
+            # Current process RSS (resident set size) in MB
+            process_rss_mb = round(_psutil.Process().memory_info().rss / 1048576, 1)
             result = {
                 "total_mb": round(vm.total / 1048576, 1),
                 "available_mb": round(vm.available / 1048576, 1),
@@ -333,6 +335,7 @@ class HardwareMonitor:
                 "swap_total_mb": round(swap.total / 1048576, 1),
                 "swap_used_mb": round(swap.used / 1048576, 1),
                 "swap_percent": swap.percent,
+                "process_rss_mb": process_rss_mb,
             }
         else:
             data = _read_proc("/proc/meminfo")
@@ -340,6 +343,14 @@ class HardwareMonitor:
             for line in data.splitlines():
                 k, v = line.split(":", 1)
                 mem[k.strip()] = int(v.strip().split()[0]) // 1024
+            # Fallback: read current process RSS from /proc/self/statm (pages)
+            try:
+                statm = _read_proc("/proc/self/statm").split()
+                rss_pages = int(statm[1]) if len(statm) > 1 else 0
+                page_size_kb = os.sysconf("SC_PAGE_SIZE") // 1024
+                process_rss_mb = round(rss_pages * page_size_kb / 1024, 1)
+            except (ValueError, IndexError, OSError):
+                process_rss_mb = 0.0
             result = {
                 "total_mb": mem.get("MemTotal", 0),
                 "available_mb": mem.get("MemAvailable", 0),
@@ -357,6 +368,7 @@ class HardwareMonitor:
                 )
                 if mem.get("SwapTotal", 0) > 0
                 else 0,
+                "process_rss_mb": process_rss_mb,
             }
 
         # OOM risk assessment

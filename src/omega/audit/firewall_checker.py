@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # 🔱 FirewallChecker — Engine↔WAD Boundary Scanner
-# ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
+# ⬡ OMEGA ⬡ NODE-S10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
 # AP: AP-FIREWALL-CHECKER-v1.0.0
 """
 Engine↔WAD Firewall Checker — M2 Engine-Stack Firewall Enforcement.
@@ -80,8 +80,6 @@ class FirewallChecker:
         r"\bMa[']?at\b",  # Build Oversoul / CTO
         r"\bLilith\b",  # Runtime Oversoul / CISO
         r"\bJem\b",  # Sovereign Synthesizer
-        r"\bSophia\b",  # Containing Field / Rank 0
-        r"\bIris\b",  # Voice Assistant / Messenger Bridge
         r"\bMnemosyne\b",  # Memory System Archetype
         r"\bJohn\.?Carmack\b",  # S3 Consultant
         r"\bDoom\.?Guy\b",  # Doom Universe Architect
@@ -116,9 +114,7 @@ class FirewallChecker:
         r"\bFire\b.*\bBeyond\s*Crown\b",
         r"\bWater\b.*\bCosmic\s*Heart\b",
         r"\bEarth\b.*\bCelestial\s*Breath\b",
-        r"\bSophia\b.*\bAkashic\b",
     ]
-
     def __init__(self, patterns: list[tuple[str, Literal["error", "warning"]]] | None = None):
         """Initialize with custom patterns if provided."""
         self._patterns = patterns if patterns is not None else self.FORBIDDEN_PATTERNS

@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0
 -->
 
+<!-- GNOSIS-META:BEGIN
+  entity: verity
+  stamped_at: 2026-09-28T08:01:55Z
+  stamped_by: maat
+  supersedes: adoption-2026-09-28
+  schema_version: 1.0.0
+<!-- GNOSIS-META:END -->
+
 # 🔱 VERITY — Unified Session Gnosis
 
 ## Session: Dual-Subagent Audit & Distillation — roc_racoon + jem

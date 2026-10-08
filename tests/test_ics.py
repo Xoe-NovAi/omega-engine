@@ -51,20 +51,20 @@ def test_render_compact_mode() -> None:
 
 
 def test_node_renders_immediately_after_entity() -> None:
-    out = render("LILITH", model="m", trace_id="t", phase="P", node="N7")
-    assert out == "⬡ OMEGA ⬡ LILITH ⬡ [N7] ⬡ m ⬡ opencode ⬡ t ⬡ P"
+    out = render("LILITH", model="m", trace_id="t", phase="P", slot="S7")
+    assert out == "⬡ OMEGA ⬡ LILITH ⬡ [S7] ⬡ m ⬡ opencode ⬡ t ⬡ P"
 
 
 def test_entity_uppercased_before_node_insertion() -> None:
     """Node insertion must key on the UPPERCASED entity, not raw input."""
-    out = render("lilith", model="m", trace_id="t", phase="P", node="N7")
-    assert "[N7]" in out
-    assert out.startswith("⬡ OMEGA ⬡ LILITH ⬡ [N7] ⬡")
+    out = render("lilith", model="m", trace_id="t", phase="P", slot="S7")
+    assert "[S7]" in out
+    assert out.startswith("⬡ OMEGA ⬡ LILITH ⬡ [S7] ⬡")
 
 
 def test_compact_mode_includes_node_for_provenance() -> None:
-    out = render("lilith", mode="compact", phase="P", node="N7")
-    assert "[N7]" in out
+    out = render("lilith", mode="compact", phase="P", slot="S7")
+    assert "[S7]" in out
 
 
 def test_node_with_session_id_both_render() -> None:
@@ -73,10 +73,10 @@ def test_node_with_session_id_both_render() -> None:
         model="m",
         trace_id="t",
         phase="P",
-        node="N7",
+        slot="S7",
         session_id="ses_abc123",
     )
-    assert out == "⬡ OMEGA ⬡ LILITH ⬡ [N7] ⬡ m ⬡ opencode ⬡ t ⬡ P ⬡ ses_abc123"
+    assert out == "⬡ OMEGA ⬡ LILITH ⬡ [S7] ⬡ m ⬡ opencode ⬡ t ⬡ P ⬡ ses_abc123"
 
 
 # ── P5: session_id segment ────────────────────────────────────────────
@@ -92,8 +92,8 @@ def test_session_id_trailing_segment_only() -> None:
 
 
 def test_context_dataclass_accepts_new_fields() -> None:
-    ctx = ICSContext(entity="kali", node="N3", session_id="ses_q")
-    assert ctx.node == "N3"
+    ctx = ICSContext(entity="kali", slot="S3", session_id="ses_q")
+    assert ctx.slot == "S3"
     assert ctx.session_id == "ses_q"
 
 
@@ -187,15 +187,15 @@ def test_session_scoped_lookup_missing_id_returns_none(
 
 
 def test_node_sanitization_strips_invalid_chars() -> None:
-    out = render("KALI", model="m", trace_id="t", phase="P", node="n7@bad!")
-    assert "[N7BAD]" in out
+    out = render("KALI", model="m", trace_id="t", phase="P", slot="s7@bad!")
+    assert "[S7BAD]" in out
     assert "@" not in out
     assert "!" not in out
 
 
 def test_node_sanitization_preserves_valid_chars() -> None:
-    out = render("KALI", model="m", trace_id="t", phase="P", node="N7-B_1")
-    assert "[N7-B_1]" in out
+    out = render("KALI", model="m", trace_id="t", phase="P", slot="S7-B_1")
+    assert "[S7-B_1]" in out
 
 
 # ── F5: DB fallback warning ────────────────────────────────────────────

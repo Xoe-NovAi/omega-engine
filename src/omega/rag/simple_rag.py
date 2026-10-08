@@ -41,7 +41,8 @@ class SimpleRAG:
                 def _retrieve():
                     try:
                         return self.memory_store.search_fts(query, limit=k)
-                    except Exception:  # noqa: BLE001 — retrieval is best-effort
+                    except Exception as e:  # noqa: BLE001 — retrieval is best-effort
+                        logger.debug("FTS retrieval failed: %s", e)
                         return []
 
                 results = await anyio.to_thread.run_sync(_retrieve)

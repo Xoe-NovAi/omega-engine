@@ -4,7 +4,7 @@
 
 # 🔱 Omega Engine — AxiomRegistry (Five-Fold Foundation mechanism)
 # AP: AP-AXIOM-REGISTRY-v1.0.0
-# ⬡ OMEGA ⬡ MAAT ⬡ N1-N5 ⬡ opencode ⬡ trc_axiom_registry ⬡ ACTIVE
+# ⬡ OMEGA ⬡ MAAT ⬡ S1-S5 ⬡ opencode ⬡ trc_axiom_registry ⬡ ACTIVE
 #
 # [heritage: id-soft-1996] cvar system split — the engine holds the cvar
 #   *mechanism*; the game holds the cvar *values*. AxiomRegistry is the

@@ -4,7 +4,7 @@
 
 """
 Ω-Research Scorecard — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator
-⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCORECARD
+⬡ OMEGA ⬡ LILITH ⬡ S6-S10 ⬡ SCORECARD
 
 Mandate Compliance:
 - M1 AnyIO: All async via AnyIO
@@ -18,6 +18,8 @@ Mandate Compliance:
 
 from __future__ import annotations
 import anyio
+import logging
+logger = logging.getLogger(__name__)
 import json
 import time
 from dataclasses import dataclass, field
@@ -136,7 +138,8 @@ class CalibratedJudge:
 
             if ISOTONIC_REGRESSION_PATH.exists():
                 self._calibrator = joblib.load(ISOTONIC_REGRESSION_PATH)
-        except Exception:
+        except Exception as e:
+            logger.warning("Calibration load failed: %s", e)
             self._calibrator = None
 
     def calibrate(self, raw_scores: list[float], true_labels: list[int]) -> None:
@@ -446,9 +449,23 @@ async def oracle_summon(model: str, prompt: str) -> Any:
     Adapter for Omega Hub oracle_summon.
     Returns response with provider_name for M22 provenance.
     """
-    from omega_hub import omega_hub_oracle_summon
+    # [seam-fix 2026-09-28 carmack] Was `from omega_hub import
+    # omega_hub_oracle_summon` — a top-level module that does not exist
+    # (`ModuleNotFoundError: No module named 'omega_hub'`). This is a FOURTH
+    # stranded site the 2026-09-28 sweep did not list; found by grepping all
+    # of src/omega/ for the same defect rather than trusting the reported list.
+    #
+    # The real symbol is `oracle_summon` in
+    # `mcp_servers.omega_hub.hub_tools`. Imported lazily: a module-level
+    # import here would close the cycle
+    # omega.research -> omega_hub.hub_tools -> omega_hub.server
+    # -> omega.oracle -> omega.governance -> omega.research.
+    from mcp_servers.omega_hub.hub_tools import oracle_summon as _oracle_summon
 
-    result = await omega_hub_oracle_summon(entity_name="lilith", query=prompt, model=model)
+    # Unwrap the FastMCP decorator: `@mcp.tool()` makes the symbol return a
+    # CallToolResult, not the raw JSON string this adapter parses.
+    _oracle_summon = getattr(_oracle_summon, "__wrapped__", _oracle_summon)
+    result = await _oracle_summon(entity_name="lilith", query=prompt, model=model)
     # Parse result to extract provider_name
     import json
 

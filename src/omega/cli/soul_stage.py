@@ -137,5 +137,5 @@ class SoulStageApp(App):
 
 if __name__ == "__main__":
     # Example usage
-    app = SoulStageApp(entity_name="sophia")
+    app = SoulStageApp(entity_name="kali")
     app.run()

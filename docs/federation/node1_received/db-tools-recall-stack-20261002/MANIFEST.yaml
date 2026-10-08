@@ -1,0 +1,66 @@
+package_id: N1-DB-TOOLS-RECALL-STACK-20261002
+schema_version: '1.0'
+status: sealed_gates_green
+built_at_utc: '2026-10-02T18:00:00Z'
+built_by: researcher_humboldt (Node 1, XNAi-Asus)
+source_node: n1-vanguard
+destination_node: n0-bastion
+destination_entity: researcher (roc_racoon correspondent)
+transport: omega-exchange file drop (n1-to-n0/), ping via Route A handoff
+gates_at_seal:
+  lint: pass
+  test: 129/129 (2 skipped)
+  docs: 232/232 links
+files:
+- path: 01_tools/ocdb-ro
+  kind: executable script (bash)
+  scope: read-only SQLite wrapper, 6 safety layers
+- path: 01_tools/well_recurrence_check.py
+  kind: python script
+  scope: mechanical Well-recurrence detector, exit 0/1/66/2
+- path: 01_tools/lint_checks.py
+  kind: python script
+  scope: custom lint gates incl. with/for shadow check
+- path: 02_commands/recall.md
+  kind: opencode command
+  scope: /recall -> ochist grep, no agent pin
+- path: 02_commands/db.md
+  kind: opencode command
+  scope: /db -> ocdb-ro, no agent pin
+- path: 03_tests/test_recall_stack.py
+  kind: unittest TestCase
+  scope: 8 live recall-stack tests with skip guards
+- path: 03_tests/test_repo_hygiene.py
+  kind: unittest TestCase
+  scope: incl. TestDiscoveryCompleteness meta-test
+- path: 04_docs/HARDENING_PLAN.md
+  kind: strategy doc
+  scope: master hardening plan, recall claims corrected
+- path: 04_docs/OPENCODE_DB_MANAGEMENT_BRIEFING.md
+  kind: strategy doc
+  scope: DB strategy, FTS timeline note
+- path: 04_docs/HARDWARE.md
+  kind: machine spec
+  scope: canonical Node 1 spec, pin-trap rule
+- path: 04_docs/CODE_QUALITY.md
+  kind: invariants doc
+  scope: anyio, bare-except, torch, secrets
+- path: 05_well/new-records-20261002.jsonl
+  kind: well records (append to gnosis/well/well.jsonl)
+  scope: part_fts drop supersession + ref fix
+- path: 06_skills/opencode-db-SKILL.md
+  kind: skill definition
+  scope: ocdb-ro usage, schema, FTS timeline
+- path: 06_skills/agent-history-SKILL.md
+  kind: skill definition
+  scope: ochist usage, session recall
+- path: README_FIRST.md
+  kind: delivery note
+  scope: read first
+integrity_model:
+  root_scope: all payload files except root SHA256SUMS
+  root_ledger_scope: all payload files plus README_FIRST.md and MANIFEST.yaml
+  trust_boundary: byte integrity only; no detached signature or publisher trust root
+excluded_by_design:
+- opencode.db (1.9 GB, node-local; Node 0 keeps its own corpus)
+- ~/.config/opencode prompts (commit 3d51624, push pending separately)

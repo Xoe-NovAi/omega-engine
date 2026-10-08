@@ -279,12 +279,12 @@ class TestMandateAuditorWithTempFixture:
             entities_dir = Path(tmpdir) / "config" / "wads" / "test" / "entities"
             entities_dir.mkdir(parents=True)
             dispatch = entities_dir / "dispatch.yaml"
-            # Violation: MESSENGER_BRIDGE role with a pillar_slot
+            # Violation: MESSENGER_BRIDGE role with a pillar slot
             dispatch.write_text(
                 "entities:\n"
                 "  - name: iris\n"
                 "    role: MESSENGER_BRIDGE\n"
-                "    node_slot: N6\n"
+                "    slot: S6\n"
                 "    purpose: Test messenger in pillar\n"
             )
 
@@ -307,7 +307,7 @@ class TestMandateAuditorWithTempFixture:
                 "entities:\n"
                 "  - name: iris\n"
                 "    role: MESSENGER_BRIDGE\n"
-                "    node_slot: null\n"
+                "    slot: null\n"
                 "    purpose: Test messenger\n"
             )
 

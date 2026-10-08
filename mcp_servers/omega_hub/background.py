@@ -4,7 +4,7 @@
 
 # [id-soft: quake-1996] Hivemind Background — lazy thinker deletion / grace-period reap pattern for pruning stale agents
 
-"""Omega Hub — Background orchestration: pruning, reaping, metrics.
+"""Omega Hub — Background orchestration: pruning, reaping, metrics, harvester.
 
 AP Token: AP-OMEGA-HUB-BACKGROUND-v1.0.0
 
@@ -46,15 +46,14 @@ async def _prune_awareness_background() -> None:
         # Pruning and metrics are independent — failure of one must not block the other.
         try:
             now = datetime.now(timezone.utc)
-            async with state._awareness_lock, state._extended_sessions_lock:
+            async with state._awareness_lock:
                 stale_clis = []
                 for cli, snap in state._awareness.items():
                     if not snap.get("timestamp"):
                         continue
                     age = (now - datetime.fromisoformat(snap["timestamp"])).total_seconds()
-                    # Check if agent has an extended check-in
-                    ext = state._extended_sessions.get(cli)
-                    effective_ttl = ext["ttl_seconds"] if ext else state.HEARTBEAT_TTL
+                    # Check if agent has an extended check-in (stored in awareness)
+                    effective_ttl = snap.get("extended_ttl", state.HEARTBEAT_TTL)
                     if age > effective_ttl:
                         stale_clis.append(cli)
                 for cli in stale_clis:
@@ -120,13 +119,30 @@ async def _reap_stale_locks() -> None:
 # ═══════════════════════════════════════════════════════════════════════════
 
 async def _reap_stale_handoffs() -> None:
-    """Reap stale handoff packets.
+    """Reap stale handoff packets by MOVING them. Never by deleting.
 
-    - pending/ older than 24h -> stale/ with {ttl_expired: true}
-    - active/ older than 48h -> stale/
-    - completed/ older than 7 days -> archive/
-    - stale/ older than 14 days -> delete (M12)
-    - archive/ older than 30 days -> delete (M12)
+    - pending/   older than 24h -> stale/   with {ttl_expired: true}
+    - active/    older than 48h -> stale/
+    - completed/ older than  7d -> archive/
+
+    ══ M29 SOVEREIGN ARTIFACT PRESERVATION — deletion removed 2026-09-28 ══
+    The previous version of this docstring read:
+
+        - stale/   older than 14 days -> delete (M12)
+        - archive/ older than 30 days -> delete (M12)
+
+    and implemented both via `_delete_dir()`. That was a 37-day annihilation
+    with no tombstone: a packet that aged out of `stale/` simply stopped
+    existing, so an agent could not distinguish "never existed" from "purged",
+    and no continuity reference to it could ever be resolved again. The "M12"
+    citation was decoration — M12 is a token-state mandate, not a retention
+    licence, and no mandate authorises silent destruction of the only record.
+
+    `_delete_dir` and BOTH call sites are deleted, not commented out. There is
+    now no code path in the Hivemind that unlinks an envelope. Retention is a
+    query over timestamps against a policy constant (see
+    `derived_retention_expires_at` in the envelope spec), never a transition
+    some other process can trigger on a timer.
     """
     now = datetime.now(timezone.utc)
 
@@ -148,34 +164,34 @@ async def _reap_stale_handoffs() -> None:
                         json.dump(packet, fh, indent=2)
                         fcntl.flock(fh, fcntl.LOCK_UN)
                     f.unlink()
+                    # P0-4: carry the receipt journal alongside the packet.
+                    # Without this, every journaled read becomes invisible the
+                    # moment the packet reaps — the fix un-fixes itself.
+                    journal = f.with_name(f.stem + ".receipts.jsonl")
+                    if journal.is_file():
+                        journal.replace(dst_dir / journal.name)
                     reaped += 1
                 except Exception as e:
                     logger.debug("Failed to reap handoff %s: %s", f, e)
         return reaped
 
-    def _delete_dir(src_dir: Path, max_age_seconds: int):
-        deleted = 0
-        for f in src_dir.glob("*.json"):
-            age = (now - datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc)).total_seconds()
-            if age > max_age_seconds:
-                try:
-                    f.unlink()
-                    deleted += 1
-                except Exception as e:
-                    logger.debug("Failed to delete handoff %s: %s", f, e)
-        return deleted
-
-    reaped_and_deleted = await anyio.to_thread.run_sync(
+    # [M29 2026-09-28] `_delete_dir` DELETED, not commented out, and both of its
+    # call sites removed with it. It is defined nowhere in the Hivemind now.
+    # Three MOVES remain, all of which preserve the packet:
+    #   pending/   > 24h -> stale/    {ttl_expired: true}
+    #   active/    > 48h -> stale/    {ttl_expired: true}
+    #   completed/ >  7d -> archive/
+    # Nothing is ever unlinked from a queue that still holds live envelopes.
+    reaped = await anyio.to_thread.run_sync(
         lambda: (
             _reap_dir(state.HANDOFF_PENDING, state.HANDOFF_STALE, 86400, {"ttl_expired": True})
             + _reap_dir(state.HANDOFF_ACTIVE, state.HANDOFF_STALE, 172800, {"ttl_expired": True})
             + _reap_dir(state.HANDOFF_COMPLETED, state.HANDOFF_ARCHIVE, 604800)
-            + _delete_dir(state.HANDOFF_STALE, 14 * 86400)
-            + _delete_dir(state.HANDOFF_ARCHIVE, 30 * 86400)
         )
     )
-    if reaped_and_deleted:
-        logger.info("Reaped/deleted %d handoff(s)", reaped_and_deleted)
+    if reaped:
+        # [M29] Wording is "reaped", never "reaped/deleted": nothing is deleted.
+        logger.info("Reaped %d handoff(s) to a later queue (nothing deleted)", reaped)
         # Rebuild index after reaping to prevent drift
         try:
             count = await handoff_index_rebuild()
@@ -269,9 +285,9 @@ async def _write_metrics() -> Dict[str, Any]:
 
     active_locks, expired_locks = await anyio.to_thread.run_sync(_scan_locks)
 
-    # Count extended sessions
-    async with state._extended_sessions_lock:
-        extended_count = len(state._extended_sessions)
+    # Count extended sessions (from awareness hot store)
+    async with state._awareness_lock:
+        extended_count = sum(1 for snap in state._awareness.values() if "extended_ttl" in snap)
 
     metrics: Dict[str, Any] = {
         "hivemind": {
@@ -308,3 +324,35 @@ async def _write_metrics() -> Dict[str, Any]:
 
     await anyio.to_thread.run_sync(_persist)
     return metrics
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BACKGROUND: HIVEMIND HARVESTER LOOP
+# ═══════════════════════════════════════════════════════════════════════════
+
+async def run_harvester_loop() -> None:
+    """Background coroutine running the zero-inference harvester every 300s ± jitter.
+
+    Invariant: Must use anyio, NEVER asyncio.
+    Runs the blocking filesystem harvest in an AnyIO worker thread.
+    Error isolation: background task must not crash the hub.
+    """
+    # Initial short delay for clean server startup
+    await anyio.sleep(5)
+    while True:
+        try:
+            # Run blocking filesystem harvest in AnyIO worker thread
+            await anyio.to_thread.run_sync(_harvest_once_sync)
+        except Exception as exc:
+            # Fail-safe: background task must not crash the hub
+            logger.warning(f"Hivemind harvester cycle encountered error: {exc}")
+
+        # Sleep 300s (with small ±15s deterministic jitter if desired)
+        await anyio.sleep(300)
+
+
+def _harvest_once_sync() -> int:
+    """Synchronous wrapper for harvest_once to run in AnyIO worker thread."""
+    # Import here to avoid circular imports at module load time
+    from scripts.hivemind_harvest import harvest_once
+    return harvest_once()

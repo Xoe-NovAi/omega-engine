@@ -125,7 +125,7 @@ class CohortType(str, Enum):
 
 VALID_DISPATCHERS = frozenset({
     "kali", "grokster", "lilith", "maat", "researcher",
-    "roc_racoon", "node", "sophia", "verity",
+    "roc_racoon", "slot", "verity",
 })
 
 

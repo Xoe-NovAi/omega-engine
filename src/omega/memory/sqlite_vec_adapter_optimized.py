@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """SQLite-vec Unified Memory Fabric Adapter for Omega Memory — OPTIMIZED.
-AP: AP-SQLITEVEC-ADAPTER-v3.0.0-OPTIMIZED
+AP: AP-SQLITEVEC-ADAPTER-v3.1.0-OPTIMIZED
 
-Canonical Embedding Strategy: 768-dim locked, multi-collection architecture.
+Canonical Embedding Strategy: 1024-dim NATIVE, multi-collection architecture.
 One `omega_memory.db` (FTS5 + multiple vec0 collections + SQL graph edges + R-tree spatial).
 
 Optimizations (v3.0):
@@ -15,13 +15,17 @@ Optimizations (v3.0):
 - Read connection pool: Separate read connections for concurrent queries
 - Configurable HNSW: Tunable index parameters per collection
 - WAL optimization: Smart checkpoint scheduling
-- MRL truncation pipeline: 768→512→256→128→64 automatic
+- MRL truncation pipeline: 1024→768→512→256→128→64 automatic (NOT canonical)
 - INT8 quantization with rescore: Fast ANN + exact rerank
 - Spatial R-tree: 3D coordinates for VR navigation
 - O(1) delete: rowid→collection mapping
 - Metrics persistence: Survives restarts
 
-AP: AP-SQLITEVEC-ADAPTER-v3.0.0-OPTIMIZED
+AP: AP-SQLITEVEC-ADAPTER-v3.1.0-OPTIMIZED
+
+[D-1024-DIM-NATIVE-20260926] Canonical collection is `omega_vec_qwen_1024`.
+Pre-migration `*_768` canonical names are explicit aliases; see
+sqlite_vec_adapter.LEGACY_COLLECTION_ALIASES.
 """
 # [heritage: sqlite-fts5 2015] SQLite FTS5 — BM25 full-text search with Porter stemmer
 # [heritage: sqlite-vec 2024] sqlite-vec — vector similarity search extension
@@ -41,6 +45,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import anyio
 
 from .vector_adapters import IVectorStoreAdapter
+from .sqlite_vec_adapter import (
+    CANONICAL_COLLECTION as BASE_CANONICAL_COLLECTION,
+    get_vec_table_declared_dim,
+    resolve_collection_name,
+)
 from omega.errors import ProviderError, ProviderUnavailableError
 from omega.infra.sqlite_policy import get_sqlite_connection
 
@@ -51,63 +60,95 @@ logger = logging.getLogger(__name__)
 # Source: docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md
 # ============================================================================
 
-CANONICAL_DIMENSION = 768
+# [D-1024-DIM-NATIVE-20260926] Native 1024-dim is canonical; MRL optional.
+CANONICAL_DIMENSION = 1024
 
-MRL_DIMENSIONS = [768, 512, 256, 128, 64]
+# Canonical collection
+CANONICAL_COLLECTION = "omega_vec_qwen_1024"
+
+# Both adapters must agree on the canonical name — single D-1024 decision.
+assert BASE_CANONICAL_COLLECTION == CANONICAL_COLLECTION
+
+# MRL truncation targets (available, NOT canonical). 1024 = identity.
+MRL_DIMENSIONS = [1024, 768, 512, 256, 128, 64]
 
 COLLECTIONS = {
-    # [D-768-DIM-RENAME-GEMMA] Primary: Qwen3-Embedding-0.6B at 768-dim
-    "omega_vec_qwen_768": {
-        "dimension": 768,
+    # [D-1024-DIM-NATIVE-20260926] Primary: Qwen3-Embedding-0.6B at native 1024-dim
+    CANONICAL_COLLECTION: {
+        "dimension": 1024,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
-    # [D-768-DIM-UNIFIED] Library: Qwen3-Embedding-0.6B at 768-dim (unified)
-    "omega_vec_library_768": {
-        "dimension": 768,
+    # [D-1024-DIM-NATIVE-20260926] Library: Qwen3-Embedding-0.6B at native 1024-dim (unified)
+    "omega_vec_library_1024": {
+        "dimension": 1024,
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
+    # [D-1024-DIM-NATIVE-20260926] Retained so Step 19 (D-1024 full re-embed)
+    # has real targets and Step 20 (legacy alias removal) has names to remove.
+    # `nomic` is nomic-embed-text — a DIFFERENT MODEL from the canonical
+    # Qwen3-Embedding-0.6B, natively 768-D. Vectors already stored in these
+    # tables are not comparable with the canonical space and are why the
+    # priority-1 nomic FALLBACK was removed: a 768 answer landing in a 768
+    # collection passes every width check while silently corrupting cross-model
+    # semantics.
+    # REMOVAL: Step 19 (D-1024 full re-embed) + Step 20 (legacy alias removal).
     "omega_vec_nomic_768": {
         "dimension": 768,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_nomic_512": {
         "dimension": 512,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_nomic_256": {
         "dimension": 256,
         "metric": "cosine",
         "quantization": "int8_rescore",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "nomic-embed-text (native 768-D) — NOT canonical",
     },
     "omega_vec_minilm_384": {
         "dimension": 384,
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "all-MiniLM-L6-v2 (native 384-D) — NOT canonical",
     },
     "omega_vec_static_64": {
         "dimension": 64,
         "metric": "cosine",
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+        "deprecated": True,
+        "deprecated_by": CANONICAL_COLLECTION,
+        "semantic_space": "potion-base-2M (native 64-D) — NOT canonical",
     },
-    # [D-768-DIM-DELETE-LIBRARY-256] DELETED: dead code, replaced by library_768 above
+    # [D-768-DIM-DELETE-LIBRARY-256] DELETED: dead code, replaced by library_1024 above
 }
 
 # Per-collection RRF weights (configurable) — GAP-004
 # [D-768-DIM-LIBRARY-RRF] Library shifted from 0.8/0.2 → 0.6/0.4 for proper semantic weight
 COLLECTION_RRF_WEIGHTS = {
-    "omega_vec_qwen_768": {"fts": 0.5, "vec": 0.5},
-    "omega_vec_library_768": {"fts": 0.6, "vec": 0.4},  # FTS-primary, more semantic weight
+    CANONICAL_COLLECTION: {"fts": 0.5, "vec": 0.5},
+    "omega_vec_library_1024": {"fts": 0.6, "vec": 0.4},  # FTS-primary, more semantic weight
     "omega_vec_nomic_768": {"fts": 0.5, "vec": 0.5},
     "omega_vec_nomic_512": {"fts": 0.4, "vec": 0.6},   # MRL: trust vector more
     "omega_vec_nomic_256": {"fts": 0.3, "vec": 0.7},   # MRL: trust vector more
@@ -128,7 +169,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
     - Read connection pool: Separate read connections for concurrent queries
     - Configurable HNSW: Tunable index parameters per collection
     - WAL optimization: Smart checkpoint scheduling
-    - MRL truncation pipeline: 768→512→256→128→64 automatic
+    - MRL truncation pipeline: 1024→768→512→256→128→64 automatic
     - INT8 quantization with rescore: Fast ANN + exact rerank
     - Spatial R-tree: 3D coordinates for VR navigation
     - O(1) delete: rowid→collection mapping
@@ -159,6 +200,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
 
         self._collections = collections or COLLECTIONS
         self._vec_tables_created: Dict[str, bool] = {}
+        # [D-1024] Pre-migration vec0 tables found in this DB: {table: rows}.
+        self._legacy_vec_tables: Optional[Dict[str, int]] = None
 
         # Write connection (single, serialized)
         self._write_conn: Optional[sqlite3.Connection] = None
@@ -255,9 +298,10 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
 
     @staticmethod
     def generate_mrl_variants(vector: List[float]) -> Dict[int, List[float]]:
-        """Generate all MRL variants from a 768-dim canonical vector.
+        """Generate all MRL variants from the 1024-dim canonical vector.
 
-        Returns: {512: [...], 256: [...], 128: [...], 64: [...]}
+        Returns: {768: [...], 512: [...], 256: [...], 128: [...], 64: [...]}
+        MRL is AVAILABLE but NOT canonical (D-1024-DIM-NATIVE-20260926).
         """
         if len(vector) != CANONICAL_DIMENSION:
             raise ValueError(f"Input must be {CANONICAL_DIMENSION}-dim, got {len(vector)}")
@@ -365,8 +409,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             logger.warning("Read conn %d broken, reopening", idx)
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error closing broken read conn: %s", e)
             conn = self._open_read_conn()
             self._read_connections[idx] = conn
         return conn
@@ -456,6 +500,46 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                 "sqlite_vec", f"SQLite-vec initialization failed: {e}", raw_error=e
             ) from e
 
+    async def _scan_legacy_vec_tables(self) -> Dict[str, int]:
+        """Detect pre-D-1024 vec0 tables with no canonical successor.
+
+        Non-destructive inventory (name -> row count) so migration state is
+        visible in get_status() instead of old vectors vanishing silently.
+        """
+        if self._legacy_vec_tables is not None:
+            return self._legacy_vec_tables
+
+        def _sync_scan() -> Dict[str, int]:
+            conn = self._get_write_conn()
+            found: Dict[str, int] = {}
+            rows = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table' "
+                "AND sql LIKE '%vec0%' ORDER BY name"
+            ).fetchall()
+            for (name,) in rows:
+                if name in self._collections:
+                    continue
+                if get_vec_table_declared_dim(conn, name) is None:
+                    continue
+                try:
+                    count = conn.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
+                except sqlite3.Error:
+                    count = -1
+                found[name] = count
+            return found
+
+        self._legacy_vec_tables = await anyio.to_thread.run_sync(_sync_scan)
+        if self._legacy_vec_tables:
+            logger.warning(
+                "D-1024 migration: %d pre-1024 vec0 table(s) present in %s: %s. "
+                "Their vectors are not reachable from the 1024-dim collections; "
+                "metadata + FTS5 rows remain intact.",
+                len(self._legacy_vec_tables),
+                self.db_path,
+                self._legacy_vec_tables,
+            )
+        return self._legacy_vec_tables
+
     async def _ensure_all_collections(self) -> None:
         """Eagerly create all declared vec0 collections at initialization.
 
@@ -475,10 +559,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         Note: sqlite-vec v0.1.9 doesn't support int8 + auxiliary columns.
         v0.1.10+ supports: embedding int8[dim] distance_metric=cosine, embedding_fp32 float[dim] auxiliary
         """
-        if collection_name not in self._collections:
-            raise ValueError(
-                f"Unknown collection: {collection_name}. Valid: {list(self._collections.keys())}"
-            )
+        collection_name = resolve_collection_name(collection_name, self._collections)
 
         collection_config = self._collections[collection_name]
         declared_dim = collection_config["dimension"]
@@ -504,7 +585,31 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             conn = self._get_write_conn()
             # Note: sqlite-vec 0.1.9 doesn't support HNSW options in CREATE TABLE
             # HNSW parameters are set via PRAGMA after table creation if supported
-            
+
+            # [D-1024] A vec0 table is typed at CREATE time (`float[N]`) and
+            # cannot accept a different width. If the table already exists but
+            # was built at another dimension (e.g. the pre-D-1024 768-dim layout),
+            # DROP + recreate instead of raising forever on every write.
+            existing_dim = get_vec_table_declared_dim(conn, table_name)
+            if existing_dim is not None and existing_dim != declared_dim:
+                try:
+                    old_rows = conn.execute(
+                        f"SELECT COUNT(*) FROM {table_name}"
+                    ).fetchone()[0]
+                except sqlite3.Error:
+                    old_rows = -1
+                logger.warning(
+                    "D-1024 migration: vec0 table %r was created at %d-dim but "
+                    "collection declares %d-dim. Dropping and recreating "
+                    "(%d row(s) discarded; metadata/FTS rows preserved — "
+                    "re-embed to restore vector search).",
+                    table_name,
+                    existing_dim,
+                    declared_dim,
+                    old_rows,
+                )
+                conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+
             # Check sqlite-vec version for int8 + auxiliary support
             try:
                 import sqlite_vec
@@ -574,7 +679,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
     async def batch_upsert(
         self,
         items: List[Dict[str, Any]],
-        collection: str = "omega_vec_qwen_768",
+        collection: str = CANONICAL_COLLECTION,
     ) -> List[str]:
         """Insert or update multiple vectors in a single transaction.
         
@@ -593,8 +698,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
 
         await self._ensure_initialized()
 
-        if collection not in self._collections:
-            raise ValueError(f"Unknown collection: {collection}")
+        # Resolve legacy (pre-D-1024) names onto their canonical successors.
+        collection = resolve_collection_name(collection, self._collections)
 
         # Validate all vectors have the same dimension (F-05).
         # All items in a batch must share the collection's expected dimension;
@@ -632,7 +737,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                     embeddings_int8.append(None)
                     scales.append(1.0)
 
-        # GAP-002: Generate MRL variants for fallback collections (only for canonical 768-dim)
+        # GAP-002: Generate MRL variants for fallback collections (only for canonical 1024-dim)
         # Use the first item with a vector as the reference for MRL generation.
         # All items in the batch must share the same MRL structure (F-05).
         mrl_variants = {}
@@ -825,7 +930,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
-        collection: str = "omega_vec_qwen_768",
+        collection: str = CANONICAL_COLLECTION,
     ) -> List[Tuple[float, Dict[str, Any]]]:
         """Optimized query with JOIN-based metadata fetch (eliminates N+1).
 
@@ -836,8 +941,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         if not vector:
             return []
 
-        if collection not in self._collections:
-            raise ValueError(f"Unknown collection: {collection}")
+        # Resolve legacy (pre-D-1024) names onto their canonical successors.
+        collection = resolve_collection_name(collection, self._collections)
 
         coll_config = self._collections[collection]
         expected_dim = coll_config["dimension"]
@@ -944,7 +1049,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
-        collection: str = "omega_vec_qwen_768",
+        collection: str = CANONICAL_COLLECTION,
     ) -> str:
         """Single upsert - delegates to batch_upsert for consistency."""
         result = await self.batch_upsert([{
@@ -960,13 +1065,12 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
     # ========================================================================
 
     async def delete(
-        self, entity_name: str, ids: List[str], collection: str = "omega_vec_qwen_768"
+        self, entity_name: str, ids: List[str], collection: str = CANONICAL_COLLECTION
     ) -> bool:
         """Delete vectors by UUID with O(1) collection lookup (GAP-006)."""
         if not ids:
             return False
-        if collection not in self._collections:
-            raise ValueError(f"Unknown collection: {collection}")
+        collection = resolve_collection_name(collection, self._collections)
 
         await self._ensure_initialized()
 
@@ -1014,11 +1118,10 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                 raise ProviderError("sqlite_vec", f"Delete failed: {e}", raw_error=e) from e
 
     async def delete_session(
-        self, entity_name: str, session_id: str, collection: str = "omega_vec_qwen_768"
+        self, entity_name: str, session_id: str, collection: str = CANONICAL_COLLECTION
     ) -> bool:
         """Delete all vectors for a session with O(1) collection lookup (GAP-006)."""
-        if collection not in self._collections:
-            raise ValueError(f"Unknown collection: {collection}")
+        collection = resolve_collection_name(collection, self._collections)
 
         await self._ensure_initialized()
 
@@ -1065,6 +1168,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         try:
             await self._ensure_initialized()
 
+            await self._scan_legacy_vec_tables()
+
             def _sync_status():
                 conn = self._get_read_conn()
                 data_count = conn.execute("SELECT COUNT(*) FROM omega_memory_data").fetchone()[0]
@@ -1090,6 +1195,11 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
                     "db_path": str(self.db_path),
                     "embedding_dim": self._embedding_dim,
                     "canonical_dimension": self._canonical_dim,
+                    "canonical_collection": CANONICAL_COLLECTION,
+                    "legacy_vec_tables": dict(self._legacy_vec_tables or {}),
+                    "legacy_vec_rows": sum(
+                        n for n in (self._legacy_vec_tables or {}).values() if n > 0
+                    ),
                     "vector_count": total_vec_count,
                     "collection_counts": collection_counts,
                     "fts_count": fts_count,
@@ -1125,7 +1235,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         limit: int = 20,
         fts_weight: Optional[float] = None,
         vec_weight: Optional[float] = None,
-        collection: str = "omega_vec_qwen_768",
+        collection: str = CANONICAL_COLLECTION,
     ) -> List[Dict[str, Any]]:
         """Hybrid search with per-collection configurable RRF weights (GAP-004)."""
         await self._ensure_initialized()
@@ -1462,7 +1572,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         spatial_weight: float = 0.3,
         radius: float = 50.0,
         limit: int = 20,
-        collection: str = "omega_vec_qwen_768",
+        collection: str = CANONICAL_COLLECTION,
     ) -> List[Dict[str, Any]]:
         """Hybrid semantic + spatial query for VR-aware retrieval.
 
@@ -1472,8 +1582,7 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         """
         await self._ensure_initialized()
 
-        if collection not in self._collections:
-            raise ValueError(f"Unknown collection: {collection}")
+        collection = resolve_collection_name(collection, self._collections)
 
         # 1. Spatial pre-filter
         spatial_candidates = await self.spatial_range_query(
@@ -1671,8 +1780,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
             # Await the task to let the group exit cleanly.
             try:
                 await self._checkpoint_task
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error awaiting checkpoint task: %s", e)
             self._checkpoint_task = None
             self._checkpoint_cancel_scope = None
             logger.info("Stopped periodic WAL checkpoint task")
@@ -1695,8 +1804,8 @@ class SQLiteVecAdapterOptimized(IVectorStoreAdapter):
         for conn in self._read_connections:
             try:
                 await anyio.to_thread.run_sync(conn.close)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Error closing read conn: %s", e)
         self._read_connections.clear()
         self._initialized = False
         self._vec_tables_created.clear()

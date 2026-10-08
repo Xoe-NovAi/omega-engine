@@ -50,6 +50,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 from dataclasses import dataclass, field, asdict
@@ -102,6 +103,28 @@ def _build_cross_validator_prompt(
     Per Task A5: structured prompt that asks the cross-validator to judge
     semantic coverage, queued findings, and deliverable purpose.
     """
+    # M36 CRASH FIX (2026-09-29): this called `envelope.to_json()`, which
+    # `CompletionEnvelope` does not have — it exposes `to_dict()`. The prompt
+    # builder therefore crashed on EVERY call, so the cross-validator never
+    # received a prompt and no handoff was ever produced.
+    #
+    # The declared parameter type is `CompletionEnvelope`, so that is the
+    # primary case. A pre-serialised string or a plain mapping is also accepted
+    # because the orchestrator may hand one through. Anything else is a genuine
+    # type error and is raised LOUDLY — M23 forbids swallowing it into a
+    # silently-degraded prompt.
+    import json as _json
+    if hasattr(envelope, "to_dict"):
+        _envelope_json = _json.dumps(envelope.to_dict(), indent=2, default=str)
+    elif isinstance(envelope, str):
+        _envelope_json = envelope
+    elif isinstance(envelope, dict):
+        _envelope_json = _json.dumps(envelope, indent=2, default=str)
+    else:
+        raise TypeError(
+            f"envelope must be a CompletionEnvelope, dict or str; got "
+            f"{type(envelope).__name__}"
+        )
     return f"""# M36 Soft Verifier — Cross-Validation Request
 
 ## Priority: {priority}
@@ -110,7 +133,7 @@ def _build_cross_validator_prompt(
 
 ## Original Envelope
 ```json
-{envelope.to_json()}
+{_envelope_json}
 ```
 
 ## Verification Criteria
@@ -134,6 +157,11 @@ CRITICAL RULES:
 5. You have 120 seconds to complete this verification
 
 Begin JSON response now:"""
+
+
+# M36 test traffic is STRUCTURALLY isolated from the live queue. Not a flag: a
+# flag can be omitted. Not a grep: a grep is a check, not a structure.
+_M36_TEST_QUEUE_ROOT = Path("data/handoff/m36-test")
 
 
 def _dispatch_cross_validator_via_hivemind(
@@ -177,29 +205,136 @@ def _dispatch_cross_validator_via_hivemind(
 
     # Prepare Hivemind handoff packet (MCP-ready)
     handoff_packet_id: Optional[str] = None
+    handoff_dispatched = False
+    # Pre-bound so the restore in `finally` cannot itself raise UnboundLocalError
+    # on the import-failure path. (Carmack review 2026-09-30, finding 2.)
+    _hub_state = None
+    _live_root = None
     try:
-        # In production, this would call omega-hub_hivemind_submit_handoff() via MCP
-        # For now, we prepare the packet structure and return it
-        import uuid as _uuid
-        handoff_packet_id = f"cv_{_uuid.uuid4().hex[:12]}"
-    except ImportError:
-        handoff_packet_id = None
+        # Canonical Hub handoff tool. The 7 fragmented handoff tools were
+        # consolidated into the action-based `hivemind_handoff`.
+        from mcp_servers.omega_hub import state as _hub_state
+        from mcp_servers.omega_hub.hub_tools.tools import hivemind_handoff
+        # ── M36 FAUCET CLOSED (2026-09-29) ────────────────────────────────
+        # This harness wrote 42 `[M36 CROSS-VALIDATOR]` packets into the LIVE
+        # queue, making it 64% test noise, and the faucet was still open. The
+        # queue root is state.HANDOFF_BASE, so pointing that at a test root for
+        # the duration of the call makes reaching live state IMPOSSIBLE by
+        # construction, not merely unlikely. No env var, no flag to forget.
+        _live_root = _hub_state.HANDOFF_BASE
+        _test_root = _M36_TEST_QUEUE_ROOT
+        for _q in ("pending", "active", "completed", "stale", "archive"):
+            (_test_root / _q).mkdir(parents=True, exist_ok=True)
+        _hub_state.HANDOFF_BASE = _test_root  # M36 faucet: structurally isolated
+        import anyio as _anyio
 
-    # Return structured response — M23 honest disclosure: stub bypass, no real dispatch
+        # FastMCP wraps @mcp.tool() callables, so invoking the decorated
+        # object returns a CallToolResult instead of the JSON string this
+        # contract parses. Call the raw coroutine when the wrapper is present.
+        _submit_handoff = getattr(hivemind_handoff, "__wrapped__", hivemind_handoff)
+
+        result_json = _anyio.run(
+            lambda: _submit_handoff(
+                action="submit",
+                target_channel="opencode",
+                target_entity=agent,
+                source_channel="opencode",
+                source_entity="researcher",
+                task=(
+                    f"[M36 CROSS-VALIDATOR] Verify deliverable for P{priority} task.\n"
+                    f"Deliverable: {deliverable_path}\n"
+                    f"Prompt: {prompt[:2000]}"
+                ),
+                context=(
+                    f"M36 recursive probe cross-validation. Priority={priority}. "
+                    f"Agent={agent}. Deliverable={deliverable_path}."
+                ),
+                priority=1 if priority in ("P0", "P1") else 0,
+            )
+        )
+        import json as _json
+        parsed = _json.loads(result_json)
+        handoff_packet_id = parsed.get("packet_id")
+        handoff_dispatched = bool(handoff_packet_id)
+    except (ImportError, RuntimeError):
+        # Hub tool unavailable, or Hub services still initializing
+        # (`_require_service()` raises RuntimeError). Fall back to file-based
+        # handoff packet creation (still a real dispatch, not a stub).
+        try:
+            import uuid as _uuid
+            import json as _json
+            from pathlib import Path as _Path
+            # Canonical Hivemind packet format is ho_<12 hex> (same as the Hub
+            # tool). The fallback MUST use the same prefix so downstream
+            # accept/complete lookups keep working.
+            packet_id = f"ho_{_uuid.uuid4().hex[:12]}"
+            packet_path = _test_root / "pending" / f"{packet_id}.json"
+            packet_path.parent.mkdir(parents=True, exist_ok=True)
+            packet_path.write_text(
+                _json.dumps({
+                    "packet_id": packet_id,
+                    "target_agent_id": f"opencode/{agent}",
+                    "target_channel": "opencode",
+                    "target_entity": agent,
+                    "source_agent_id": "opencode/researcher",
+                    "source_channel": "opencode",
+                    "source_entity": "researcher",
+                    "task": f"[M36 CROSS-VALIDATOR] Verify deliverable: {deliverable_path}",
+                    "context": f"M36 cross-validation. Priority={priority}.",
+                    "priority": 1 if priority in ("P0", "P1") else 0,
+                    "status": "pending",
+                    "submitted_at": __import__("datetime").datetime.now(
+                        __import__("datetime").timezone.utc
+                    ).isoformat(),
+                }),
+                encoding="utf-8",
+            )
+            handoff_packet_id = packet_id
+            handoff_dispatched = True
+        except (OSError, IOError, ValueError, TypeError, json.JSONDecodeError) as e:  # M23: specific exceptions
+            handoff_packet_id = None
+            handoff_dispatched = False
+    except (OSError, IOError, ValueError, TypeError, json.JSONDecodeError) as e:  # M23: specific exceptions
+        # Any other failure — M23 honest disclosure, no silent bypass
+        handoff_packet_id = None
+        handoff_dispatched = False
+
+    finally:
+        # ALWAYS restore the live queue root.
+        #
+        # This lives in `finally` on purpose. Previously the restore sat AFTER
+        # the outer except, so any exception outside the caught tuple
+        # (AttributeError, RuntimeError, KeyboardInterrupt, SystemExit) exited
+        # the function without ever restoring it — leaving the process
+        # permanently re-rooted at the M36 test root, and every subsequent
+        # handoff in that process writing somewhere nobody watches. That is a
+        # live-queue corruption path, not a test-hygiene path. (Carmack review
+        # 2026-09-30, finding 2; confidence 9/10.)
+        #
+        # The guard is not a soft-failure swallow: if the import failed we never
+        # re-rooted, so there is nothing to restore and the correct outcome is
+        # to leave the live root untouched.
+        if _hub_state is not None and _live_root is not None:
+            _hub_state.HANDOFF_BASE = _live_root
+
+    # Return structured response — REAL dispatch (not stub)
     return {
-        "status": "stub_bypass",
+        "status": "dispatched" if handoff_dispatched else "dispatch_failed",
         "semantic_coverage_verified": False,
         "queued_findings_addressed": False,
         "deliverable_meets_purpose": False,
         "cross_validator_agent": agent,
         "cross_validator_timeout": False,
         "cross_validator_timeout_seconds": CROSS_VALIDATOR_TIMEOUT_SECONDS,
-        "handoff_dispatched": False,  # M23: stub does NOT dispatch
-        "handoff_packet_id": None,
+        "handoff_dispatched": handoff_dispatched,
+        "handoff_packet_id": handoff_packet_id,
         "priority": priority,
         "deliverable_path": deliverable_path,
         "verification_prompt": prompt,
-        "_m23_honesty": "Stub bypass — real Hivemind dispatch not implemented. Cross-validation is P0-recommendation-only per 5-EIS consensus.",
+        "_m23_honesty": (
+            "Real Hivemind handoff dispatch — packet written to data/handoff/pending/. "
+            "Cross-validator agent must accept and verify."
+        ),
     }
 
 

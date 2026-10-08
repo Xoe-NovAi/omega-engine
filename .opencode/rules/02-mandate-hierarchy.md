@@ -43,7 +43,7 @@ M15 (Sovereign Continuity), M23 (Failure Integrity).
 |---------|-------------------|
 | M1 AnyIO | No `import asyncio` in `src/omega/` (CI gate: `make check-m1-anyio`) |
 | M2 Engine-Stack Firewall | Core is `src/omega/`, Stacks is `config/wads/`. No stack logic in Core. |
-| M7 Local-First | `config/providers.yaml` strategy=`local_first`. Fabric order: native-gguf→lmster→Ollama→cloud. |
+| M7 Local-First | `config/providers.yaml` strategy=`local_first`. Fabric order: native-gguf → Ollama → cloud. |
 | M8 Zero Telemetry | No external analytics. Local observability in `data/` only. |
 | M11 Soul Integrity | Every session → `proposed_lessons.yaml` write. |
 | M13 Temple-Grade | `make temple-grade` exits 0 before any release. |

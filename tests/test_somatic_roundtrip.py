@@ -12,6 +12,8 @@ import pytest
 import anyio
 from unittest.mock import AsyncMock, MagicMock, patch
 
+pytest.importorskip("llama_cpp", reason="llama-cpp-python not installed (optional native backend)")
+
 from omega.state import get_usm, reset_usm
 from omega.state.somatic_state import SomaticStateManager
 

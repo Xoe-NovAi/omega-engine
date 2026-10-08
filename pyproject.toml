@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omega"
-version = "1.2.0"
+version = "1.6.0-alpha"
 description = "Omega Engine — Sovereign AI Runtime — Local-first, entity-centric, provider-agnostic AI council"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -28,11 +28,12 @@ dependencies = [
     "fastapi==0.136.1",
     "h11==0.16.0",
     "httpcore==1.0.9",
-    "httpx2==2.5.0",  # [Strike 7.1] Pydantic fork of httpx; API-compatible superset
+    "httpx2[http2]==2.5.0",  # [Strike 7.1] Pydantic fork of httpx; API-compatible superset
     "httpx-sse==0.4.3",
     "idna==3.18",  # relaxed from 3.15: httpx2 requires idna>=3.18
     "iniconfig==2.3.0",
     "jsonschema==4.26.0",
+    "json-repair>=0.30.0",  # used by src/omega/ingestion/extractors.py
     "jsonschema-specifications==2025.9.1",
     "markdown-it-py==4.2.0",
     "mdurl==0.1.2",
@@ -78,15 +79,19 @@ dependencies = [
 
 [project.optional-dependencies]
 native = ["llama-cpp-python>=0.3.0,<0.4.0"]
-cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0"]
+cli = ["typer[full]", "rich>=15.0.0", "shellingham>=1.5.0", "textual>=0.80.0"]
 # [INST-1-fix2] Optional subsystem extras — core install (.[native,cli]) must
 # NOT pull these; every module importing them carries an ImportError lazy-guard.
-memory = ["redis==7.4.1"]
+# [redis-20260928] `memory = ["redis==7.4.1"]` REMOVED (Architect ruling,
+# twice). The extra existed to satisfy RedisStorageProvider, which is gone.
+# An empty extra is kept so `.[memory]` does not break any existing install
+# command or CI step that still passes it — the flag now means "core memory
+# features", which are all local.
+memory = []
 vectors = ["qdrant-client==1.18.0"]
 youtube = [
     "youtube-transcript-api>=0.6.3",
     "yt-dlp>=2025.1.1",
-    "redis==7.4.1",
 ]
 warp = ["warp-proxy-pool"]
 dev = [
@@ -95,10 +100,13 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest-timeout>=2.4.0",
     "flake8>=7.0.0",
+    "ruff>=0.6.0",  # required by scripts/m23_gate.py (M23 CI gate)
+    "scikit-learn>=1.4.0",  # required by src/omega/eval/calibrate.py (isotonic regression)
     "hypothesis>=6.100.0",
     "pytest-xdist>=3.5",
     "pytest-testmon>=1.4",
     "pytest-clarity",
+    "pathspec>=0.12.1",  # used by tests/contract/test_context_packer*.py
     "pytest-json-report",
     "pytest-instafail",
     "pytest-tldr",
@@ -108,6 +116,7 @@ all = ["omega[native,cli,dev,memory,vectors,youtube]"]
 
 [project.scripts]
 omega = "omega.cli.oracle_cli:main"
+omega-install = "scripts.install_omega:main"
 
 [project.urls]
 Homepage = "https://github.com/Xoe-NovAi/omega-engine"
@@ -125,6 +134,8 @@ pythonpath = ["."]
 markers = [
     "unit: fast tests (<10s total), run by default",
     "integration: slow tests (DB, network, full stack), opt-in",
+    "chaos: fault-injection / host-destruction test",
+    "real_oom_sensor: exercises the real host RAM sensor; must not be neutralised",
 ]
 
 # Default: fast tier only, parallel, stop on first failure, short traceback
@@ -136,7 +147,19 @@ markers = [
 # MemAvailable at launch (350MB/worker + 2.5GB system reserve). Full speed on
 # an idle box; throttles only under real agent-session pressure. The earlier
 # hard -n 4 was symptom mitigation; this is the mechanism.
-addopts = "-n auto -x --tb=short --ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+# [carmack-20260928] The phantom --ignore below is REMOVED, not commented out.
+# It named `data/entities/roc_racoon/workspace/odysseus-dev`, a path that has
+# never existed in git. Under pytest 9.1.1 an `--ignore` matching nothing
+# SILENCES ALL COLLECTION and exits 0 — a green build masking a suite that
+# never ran. Verified in both directions here.
+# [maat-20260928] `-x` is ALSO REMOVED, with cause: it aborts at the first
+# failure, so the reported number is however many failed before the run died,
+# and with `-n auto` WHICH tests run first varies per run. This repo's true
+# failure state was 41 while a default `pytest` reported 4. Same defect class
+# as the phantom --ignore: a reporting surface that cannot go red.
+# Fail-fast still exists where it belongs — `pytest -x` in a deliberate local
+# run — just never as the default, because the default is what people quote.
+addopts = "-n auto --tb=short --timeout=60 --durations=15"
 
 # testmon config (incremental re-runs) — enabled per-target via --testmon flag
 # testmon = true        # REMOVED: caused PytestConfigWarning (invalid global option)

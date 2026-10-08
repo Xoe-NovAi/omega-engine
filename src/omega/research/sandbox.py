@@ -1,10 +1,16 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
-#
+
 # SPDX-License-Identifier: Apache-2.0
+
+from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 """
 Ω-Research Generic Sandbox Runtime — YAML-Driven, M2 Firewall-Compliant, AnyIO-Native
-⬡ OMEGA ⬡ MA'AT ⬡ N3 ⬡ SANDBOX
+⬡ OMEGA ⬡ MA'AT ⬡ S3 ⬡ SANDBOX
 AP Token: AP-MAAT-SANDBOX-v1.0.0
 
 Mandate Compliance:
@@ -18,7 +24,6 @@ Mandate Compliance:
 - M23 Failure Integrity: No soft-failures — sandbox crash = hard error
 """
 
-from __future__ import annotations
 import anyio
 import json
 import time
@@ -252,7 +257,7 @@ class SandboxSpec:
     ```yaml
     spec:
       name: "kernel_optimization"
-      node: "N3"
+      slot: "S3"
       infrastructure:
         benchmark_harness: "triton_perf"
         target_hw: "zen2_avx2"
@@ -267,7 +272,7 @@ class SandboxSpec:
     """
 
     name: str
-    node: str  # N1-N10
+    slot: str  # S1-S10
     infrastructure: dict[str, Any] = field(default_factory=dict)
     mutable_surface: list[str] = field(default_factory=list)
     metrics: list[SandboxMetric] = field(default_factory=list)
@@ -295,7 +300,7 @@ class SandboxSpec:
 
         return cls(
             name=spec_data["name"],
-            node=spec_data["node"],
+            slot=spec_data["slot"],
             infrastructure=spec_data.get("infrastructure", {}),
             mutable_surface=spec_data.get("mutable_surface", []),
             metrics=metrics,
@@ -553,8 +558,9 @@ class SandboxRuntime(ABC):
         if self._workspace and self._workspace.exists():
             try:
                 await anyio.to_thread.run_sync(shutil.rmtree, self._workspace)
-            except Exception:
-                pass  # Best effort cleanup
+            except Exception as e:
+                logger.warning("Workspace cleanup best-effort failed: %s", e, exc_info=True)
+                # Best effort cleanup
 
     async def _monitor_resources(self, budget_token: BudgetToken) -> None:
         """Background task to monitor RAM/CPU against budget."""
@@ -584,8 +590,9 @@ class SandboxRuntime(ABC):
                 break
             except (SandboxTimeoutError, SandboxResourceExhausted):
                 raise
-            except Exception:
+            except Exception as e:
                 # Log and continue monitoring
+                logger.warning("Monitor error: %s", e)
                 await anyio.sleep(0.5)
 
     @abstractmethod
@@ -700,7 +707,7 @@ def assert_sandbox_spec_type(obj: Any) -> None:
     """M21 Gate Integrity: Contract test for SandboxSpec type."""
     assert isinstance(obj, SandboxSpec), f"Expected SandboxSpec, got {type(obj)}"
     assert hasattr(obj, "name")
-    assert hasattr(obj, "node")
+    assert hasattr(obj, "slot")
     assert hasattr(obj, "infrastructure")
     assert hasattr(obj, "mutable_surface")
     assert hasattr(obj, "metrics")

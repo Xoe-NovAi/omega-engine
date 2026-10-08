@@ -21,16 +21,26 @@ from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-# Collections defined in sqlite_vec_adapter_optimized.py:54-97
+# Collections defined in sqlite_vec_adapter_optimized.py COLLECTIONS
+# [D-1024-DIM-NATIVE-20260926] canonical names moved to *_1024.
 MRL_COLLECTIONS = [
-    "omega_vec_qwen_768",
+    "omega_vec_qwen_1024",
     "omega_vec_nomic_768",
     "omega_vec_nomic_512",
     "omega_vec_nomic_256",
     "omega_vec_minilm_384",
     "omega_vec_static_64",
-    "omega_vec_library_768",
+    "omega_vec_library_1024",
 ]
+
+# Pre-D-1024 collection names whose `{name}_meta` provenance tables should be
+# RENAMED in place on migration (content_hash is model-agnostic sha256 of the
+# source text, so it survives the dimension change and keeps incremental
+# re-embedding cheap).
+LEGACY_META_RENAMES = {
+    "omega_vec_qwen_768": "omega_vec_qwen_1024",
+    "omega_vec_library_768": "omega_vec_library_1024",
+}
 
 # Drift thresholds — see CARMACK_VECTOR_VERSIONING_SPEC_20260829.md §L3
 DRIFT_THRESHOLD_INVESTIGATE = 0.10
@@ -44,7 +54,7 @@ class ModelVersion:
     """One row of the `omega_memory_versions` registry."""
     version_id: str       # e.g. 'nomic-embed-v1.5'
     model_name: str       # e.g. 'nomic-embed-text'
-    dimension: int        # 768
+    dimension: int        # 1024 (canonical, D-1024-DIM-NATIVE-20260926)
     status: str           # active | shadow | retired
     promoted_at: Optional[int] = None
     retired_at: Optional[int] = None
@@ -67,6 +77,11 @@ class VectorVersionRegistry:
 
         Creates the registry table + 7 per-collection meta tables + their
         indexes. No destructive operations.
+
+        [D-1024] Renames any pre-migration `{legacy}_meta` table onto its
+        canonical successor before creating the new one, so provenance rows
+        (model_version + content_hash) are preserved across the 768 -> 1024
+        collection rename. RENAME only — never drops a table.
         """
         self._conn.executescript(
             """
@@ -84,6 +99,30 @@ class VectorVersionRegistry:
                 ON omega_memory_versions(status);
             """
         )
+        # [D-1024] Carry pre-migration provenance forward: if the old
+        # `*_768_meta` table exists and the new `*_1024_meta` does not, rename
+        # it rather than starting from an empty provenance record.
+        for legacy, canonical in LEGACY_META_RENAMES.items():
+            legacy_table = f"{legacy}_meta"
+            canonical_table = f"{canonical}_meta"
+            legacy_exists = self._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
+                (legacy_table,),
+            ).fetchone()
+            canonical_exists = self._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
+                (canonical_table,),
+            ).fetchone()
+            if legacy_exists and not canonical_exists:
+                self._conn.execute(
+                    f'ALTER TABLE "{legacy_table}" RENAME TO "{canonical_table}"'
+                )
+                logger.info(
+                    "D-1024 migration: renamed %s -> %s (provenance preserved)",
+                    legacy_table,
+                    canonical_table,
+                )
+
         # Per-collection meta tables — store model_version + content_hash
         # so an embedding model upgrade can diff the corpus.
         for coll in MRL_COLLECTIONS:
@@ -91,7 +130,7 @@ class VectorVersionRegistry:
                 f"""
                 CREATE TABLE IF NOT EXISTS {coll}_meta (
                     rowid         INTEGER PRIMARY KEY,
-                    model_version TEXT NOT NULL DEFAULT 'nomic-embed-v1.5',
+                    model_version TEXT NOT NULL DEFAULT 'qwen3-embedding-0.6b',
                     content_hash  TEXT,
                     embedded_at   INTEGER NOT NULL DEFAULT (strftime('%s','now'))
                 )

@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0",
+  "document_type": "entity_canonicalization_merge_manifest",
+  "decision": "D-614",
+  "ruling": "Architect: `makali-n0` is the canonical entity alias for the MaKaLi seat, referred to like any other agent.",
+  "canonicalization_performed_at_utc": "2026-10-05T01:33:28+00:00",
+  "authority_surface": "config/entity_canonicalization.yaml",
+  "resolver": "mcp_servers/omega_hub/handoff_alias.py::canonical_entity_name",
+  "alias_map": [
+    {
+      "alias": "makali",
+      "canonical": "makali-n0",
+      "raw_spellings_observed": {
+        "makali": 17
+      },
+      "is_identity": false,
+      "resolved_via": "declared_canonical_identity (config/entity_canonicalization.yaml)"
+    },
+    {
+      "alias": "makali-fusion",
+      "canonical": "makali-n0",
+      "raw_spellings_observed": {
+        "makali_fusion": 32
+      },
+      "is_identity": false,
+      "resolved_via": "declared_canonical_identity (config/entity_canonicalization.yaml)"
+    },
+    {
+      "alias": "makali-n0",
+      "canonical": "makali-n0",
+      "raw_spellings_observed": {
+        "makali-n0": 14
+      },
+      "is_identity": true,
+      "resolved_via": "declared_canonical_identity (config/entity_canonicalization.yaml)"
+    }
+  ],
+  "affected_packet_count": 61,
+  "affected_packets_by_alias": {
+    "makali": [
+      "ho_0e826ca8b3be",
+      "ho_1e829a03832f",
+      "ho_1ecf72f40ea7",
+      "ho_30c192993630",
+      "ho_373ed1c6a418",
+      "ho_5cd94be376ed",
+      "ho_98ae17535622",
+      "ho_9d300dd38189",
+      "ho_a0f084940a25",
+      "ho_bf4fb42086bc",
+      "ho_c4a56d549372",
+      "ho_cd87ab8bc6ec",
+      "ho_d0879396999f",
+      "ho_d65d5a5a7fdb",
+      "ho_f36f4ee56894"
+    ],
+    "makali-n0": [
+      "ho_21185c98dc9d",
+      "ho_223918db14b5",
+      "ho_48edf2c93c91",
+      "ho_4958430f86dd",
+      "ho_7db7cfdb09ac",
+      "ho_8d1a2bfd808f",
+      "ho_980cba3b3341",
+      "ho_a32ab30083cf",
+      "ho_a92f1197ca1a",
+      "ho_b5f1ba16b5f6",
+      "ho_bc17acdb9a44",
+      "ho_bd32edae5e4d",
+      "ho_cf8b5c44e287",
+      "ho_d944f1582638"
+    ],
+    "makali_fusion": [
+      "ho_094745eca09e",
+      "ho_0f5762915654",
+      "ho_126e27b50c86",
+      "ho_2638c46a26ca",
+      "ho_264a9d6f459f",
+      "ho_2e994a27aaf1",
+      "ho_434884bc572f",
+      "ho_48f485a2a8f0",
+      "ho_4b04575d5233",
+      "ho_4b9ba1ef833a",
+      "ho_502a07e413db",
+      "ho_5050d3c4d03c",
+      "ho_5ac20d3923a0",
+      "ho_5c1a95fcef81",
+      "ho_63984a9dff59",
+      "ho_6704a09e2537",
+      "ho_76a0a6dc75c2",
+      "ho_812aeffcb378",
+      "ho_a031ff14c2dc",
+      "ho_a3c217991c66",
+      "ho_a3c43357b033",
+      "ho_b3ae94d22e12",
+      "ho_b562d4d076bb",
+      "ho_bf93151e43ef",
+      "ho_c0fa055c1f09",
+      "ho_c93cb094f290",
+      "ho_cbb9092c45b8",
+      "ho_d34dac3d3a2d",
+      "ho_e7e7a79b719a",
+      "ho_efdcc15a7d4b",
+      "ho_f6a3a67946c4",
+      "ho_fd84da362888"
+    ]
+  },
+  "affected_packet_ids": [
+    "ho_094745eca09e",
+    "ho_0e826ca8b3be",
+    "ho_0f5762915654",
+    "ho_126e27b50c86",
+    "ho_1e829a03832f",
+    "ho_1ecf72f40ea7",
+    "ho_21185c98dc9d",
+    "ho_223918db14b5",
+    "ho_2638c46a26ca",
+    "ho_264a9d6f459f",
+    "ho_2e994a27aaf1",
+    "ho_30c192993630",
+    "ho_373ed1c6a418",
+    "ho_434884bc572f",
+    "ho_48edf2c93c91",
+    "ho_48f485a2a8f0",
+    "ho_4958430f86dd",
+    "ho_4b04575d5233",
+    "ho_4b9ba1ef833a",
+    "ho_502a07e413db",
+    "ho_5050d3c4d03c",
+    "ho_5ac20d3923a0",
+    "ho_5c1a95fcef81",
+    "ho_5cd94be376ed",
+    "ho_63984a9dff59",
+    "ho_6704a09e2537",
+    "ho_76a0a6dc75c2",
+    "ho_7db7cfdb09ac",
+    "ho_812aeffcb378",
+    "ho_8d1a2bfd808f",
+    "ho_980cba3b3341",
+    "ho_98ae17535622",
+    "ho_9d300dd38189",
+    "ho_a031ff14c2dc",
+    "ho_a0f084940a25",
+    "ho_a32ab30083cf",
+    "ho_a3c217991c66",
+    "ho_a3c43357b033",
+    "ho_a92f1197ca1a",
+    "ho_b3ae94d22e12",
+    "ho_b562d4d076bb",
+    "ho_b5f1ba16b5f6",
+    "ho_bc17acdb9a44",
+    "ho_bd32edae5e4d",
+    "ho_bf4fb42086bc",
+    "ho_bf93151e43ef",
+    "ho_c0fa055c1f09",
+    "ho_c4a56d549372",
+    "ho_c93cb094f290",
+    "ho_cbb9092c45b8",
+    "ho_cd87ab8bc6ec",
+    "ho_cf8b5c44e287",
+    "ho_d0879396999f",
+    "ho_d34dac3d3a2d",
+    "ho_d65d5a5a7fdb",
+    "ho_d944f1582638",
+    "ho_e7e7a79b719a",
+    "ho_efdcc15a7d4b",
+    "ho_f36f4ee56894",
+    "ho_f6a3a67946c4",
+    "ho_fd84da362888"
+  ],
+  "historical_packets_deleted": 0,
+  "historical_packets_rewritten": 0,
+  "mutations": "none \u2014 canonicalization is applied at RESOLUTION time only",
+  "m28_basis": "Sovereign Artifact Preservation: no auto-deletion. Packets addressed to an alias remain on disk byte-identical and readable by their original packet_id.",
+  "deliberately_not_merged": [
+    {
+      "names": [
+        "lilith",
+        "lilith-n1"
+      ],
+      "reason": "distinct NODES; folding them is the P0 FIX 1 misdelivery"
+    },
+    {
+      "names": [
+        "researcher",
+        "researcher-humboldt"
+      ],
+      "reason": "distinct SEATS on distinct nodes; researcher_humboldt has its own continuity_id and assignment ids \u2014 NOT a spelling of researcher"
+    },
+    {
+      "names": [
+        "ge-n0",
+        "ge-n1"
+      ],
+      "reason": "distinct nodes"
+    },
+    {
+      "names": [
+        "john_carmack",
+        "john-carmack-n1"
+      ],
+      "reason": "distinct nodes; the underscore/hyphen difference is a mechanical separator fold"
+    }
+  ],
+  "evidence": {
+    "double_submit_pair": [
+      "ho_98ae17535622",
+      "ho_7db7cfdb09ac"
+    ],
+    "note": "byte-identical task+context, same sender, 6s apart; targets opencode/makali and opencode/makali-n0"
+  },
+  "open_work": [
+    "Canonical name `makali-n0` has no data/entities/ directory; its own deliverability rests on the derived queue spelling. A durable fix is an entity directory for the canonical seat \u2014 a data-layer change outside this commit's mandate."
+  ]
+}

@@ -32,9 +32,13 @@ forbidden:
   - id: d593-hardcoded-redis-password
     # Matches bare AND type-annotated defaults: password="omega",
     # password: str = 'omega', self.password: Optional[str] = "omega".
+    # RETAINED deliberately after the 2026-09-28 Redis removal. The literal
+    # "omega" was a plaintext credential committed to git history and is
+    # compromised regardless of the service being gone; this rule is the
+    # control that stops it (or any sibling credential) being reintroduced.
     pattern: 'password\s*(?::[^=\n]+)?=\s*["'']omega["'']'
     file_globs:
       - 'src/**/*.py'
       - 'tests/**/*.py'
       - 'scripts/**/*.py'
-    reference: 'D-593 / DC-29 — use OMEGA_REDIS_PASSWORD env lookup; never a literal default'
+    reference: 'D-593 / DC-29 — never a literal default; use an env lookup (OMEGA_REDIS_PASSWORD pattern) or the vault'

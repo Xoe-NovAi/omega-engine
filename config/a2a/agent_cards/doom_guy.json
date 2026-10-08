@@ -1,0 +1,188 @@
+{
+  "name": "Doom Guy — Infrastructure and Temporal-Contrast Custodian",
+  "description": "Sovereign id Software Architect of the Omega fleet, reporting to Ma'at. Custodian of infrastructure: systemd units, the Tailscale/WireGuard mesh, zone memory, BSP and WAD container layout, performance and heritage attribution.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://n0.tail51f14a.ts.net:8016/",
+      "protocolBinding": "https://xoe-novai.dev/bindings/omega-hub-mcp/v1",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false,
+    "extensions": [
+      {
+        "uri": "https://xoe-novai.dev/a2a/extensions/omega-hub/v1",
+        "description": "Non-normative Omega Engine provenance extension. Declares that the card describes a seat of the Omega sovereign fleet and that the card's x-omega block is Omega-specific and not part of the A2A specification.",
+        "required": false,
+        "params": {
+          "a2a_conformance": "informed-not-compliant",
+          "spec_conformance_claims": []
+        }
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/markdown"
+  ],
+  "skills": [
+    {
+      "id": "infrastructure-supervision",
+      "name": "Infrastructure and Service Supervision",
+      "description": "Supervise host services and their systemd units, and diagnose per-core CPU, memory pressure, OOM risk, thermal state and thread contention.",
+      "tags": [
+        "infrastructure",
+        "systemd",
+        "supervision",
+        "hardware",
+        "diagnostics",
+        "performance"
+      ],
+      "examples": [
+        "Is the hub service unit healthy and listening on 8016?",
+        "Report per-core utilisation and OOM risk before we start a run."
+      ]
+    },
+    {
+      "id": "mesh-connectivity",
+      "name": "Tailscale/WireGuard Mesh Diagnostics",
+      "description": "Diagnose the sovereign mesh: peer reachability, whether paths are direct WireGuard, MagicDNS health, and the zero-inference-egress invariant. Owns the LAN exposure allowlist.",
+      "tags": [
+        "network",
+        "tailscale",
+        "wireguard",
+        "mesh",
+        "federation",
+        "security",
+        "magicdns"
+      ],
+      "examples": [
+        "Are all federation peers direct or is traffic relayed?",
+        "Verify MagicDNS is active and no inference egresses the tailnet."
+      ]
+    },
+    {
+      "id": "zone-and-wad-layout",
+      "name": "Zone Memory and WAD Layout",
+      "description": "Maintain BSP zone-memory partitioning and the Xoe-NovAi WAD container layout, and attribute heritage tags on legacy-sourced assets under M14.",
+      "tags": [
+        "zone-memory",
+        "bsp",
+        "wad",
+        "containers",
+        "heritage",
+        "m14"
+      ],
+      "examples": [
+        "How are zones partitioned for this memory layout?",
+        "This asset carries a heritage tag — is there a vet record?"
+      ]
+    }
+  ],
+  "provider": {
+    "organization": "Xoe-NovAi",
+    "url": "https://github.com/Xoe-NovAi/omega-engine"
+  },
+  "securitySchemes": {
+    "meshIdentity": {
+      "mtlsSecurityScheme": {
+        "description": "APPROXIMATION - NOT AN mTLS CLAIM. Omega seat identity is enforced at the Tailscale/WireGuard MESH layer (tailnet-only, ACL-gated; tailnet IPv4 <TAILNET_IP> and IPv6 <TAILNET_IPV6>; enforced by tailscaled Serve routes and recorded in config/lan_exposure_allowlist.yaml). It is NOT HTTP-layer mutual TLS and NOT an API key. The A2A SecurityScheme oneof (§4.5.1) has no member that expresses mesh-layer network identity, so mtlsSecurityScheme (§4.5.6) is used as the nearest available marker. Per §4.5.6 that member carries only an optional `description`, which is why it cannot encode mesh specifics - hence this field. A client MUST NOT read this scheme as evidence of negotiated mTLS on the transport."
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "meshIdentity": {
+          "list": []
+        }
+      }
+    }
+  ],
+  "x-omega": {
+    "namespace": "https://xoe-novai.dev/a2a/extensions/omega-hub/v1",
+    "normative": false,
+    "statement": "NON-NORMATIVE. No field in this block is defined by the A2A v1.0 specification. The card as a whole is a descriptive manifest, not a claim of protocol conformance.",
+    "a2a_conformance": "informed-not-compliant",
+    "conformity_gaps": [
+      "No A2A method set is implemented: message/send, message/stream, tasks/get, tasks/list, tasks/cancel, tasks/subscribe, tasks/pushNotificationConfig/* and authenticatedExtendedCard are all absent (A2A v1.0 §3.1.1-§3.1.11).",
+      "Nothing serves the registered well-known discovery URI /.well-known/agent-card.json (§8.2, §14.3). Probed: 8016 and 8019 both return HTTP 404 for that path.",
+      "No Task, Message, Part or Artifact objects exist in the runtime, so the §4.1 core data model is unimplemented.",
+      "No JWS signing is performed. The `signatures` field (§4.4.7) is absent because Omega has no signing key and no RFC 8785 canonicalizer; emitting a placeholder signature would be forgery. See §8.4 for what is required.",
+      "capabilities.streaming / pushNotifications / extendedAgentCard are all false (§4.4.3) because none of those behaviours exists in an A2A sense.",
+      "No protocol version negotiation (§3.6, §8.3.2) and no A2A-Version header (§14.2.1) is emitted.",
+      "No tenant routing (§4.4.6) is implemented, so `tenant` is omitted."
+    ],
+    "seat": {
+      "id": "doom_guy",
+      "display_name": "Doom Guy",
+      "role": "Sovereign id Software Architect — reports to Ma'at",
+      "domains": [
+        "infrastructure",
+        "systemd",
+        "network",
+        "performance",
+        "attribution",
+        "heritage",
+        "optimization",
+        "bsp",
+        "zone-memory",
+        "wad"
+      ],
+      "slot": "unassigned",
+      "slot_authority": "Recorded under entities.yaml key `doom guy` (with a space, not an underscore) with no `slots:` key. Reported as `unassigned`."
+    },
+    "endpoints": {
+      "hub": {
+        "url": "https://n0.tail51f14a.ts.net:8016/",
+        "binding": "https://xoe-novai.dev/bindings/omega-hub-mcp/v1",
+        "reachable": true,
+        "listen_port": 8016,
+        "transport_observed": "MCP over SSE (text/event-stream) + JSON-RPC 2.0",
+        "real_paths": [
+          "/sse",
+          "/messages/?session_id=<id>"
+        ],
+        "probe": "GET /sse -> HTTP 200 (SSE stream held open); GET / -> HTTP 404; GET /.well-known/agent-card.json -> HTTP 404",
+        "serves_agent_card": false,
+        "speaks_a2a": false,
+        "registry": "config/omega.yaml (mcp.hub_port: 8016)"
+      },
+      "exchange": {
+        "url": "https://n0.tail51f14a.ts.net:8019/",
+        "binding": "https://xoe-novai.dev/bindings/omega-exchange/v1",
+        "reachable": true,
+        "listen_port": 8019,
+        "transport_observed": "HTTP JSON (omega-exchange/2.0), read-only",
+        "real_paths": [
+          "/",
+          "/manifest.json"
+        ],
+        "probe": "GET / -> HTTP 200 (service: omega-exchange/2.0); GET /.well-known/agent-card.json -> HTTP 404 (body: \"No artifact at '.well-known/agent-card.json'\")",
+        "serves_agent_card": false,
+        "speaks_a2a": false,
+        "registry": "config/lan_exposure_allowlist.yaml (8019, tailscaled)"
+      }
+    },
+    "hub_tools": [
+      "system_stats",
+      "get_hardware_stats",
+      "get_system_stats",
+      "check_podman_storage",
+      "check_models_directory",
+      "omega_federation_status",
+      "omega_federation_diagnose"
+    ],
+    "entity_workspace": "data/entities/doom_guy/",
+    "documentation_path": "docs/architecture/A2A_AGENT_CARDS_20261003.md",
+    "notes": "Role and reporting line are taken verbatim from the entities.yaml `role` field for key `doom guy`: 'Sovereign id Software Architect — Reports to Ma'at (...)'. Domains list is the real entities.yaml domains array; the infrastructure/systemd/network framing is the same remit expressed as A2A skill tags."
+  }
+}

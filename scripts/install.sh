@@ -96,19 +96,18 @@ pip install --quiet -e ".[native,cli]"
 ok "Omega installed with native-gguf backend (llama-cpp-python)"
 
 # ── 4. Model download (M7 Local-First) ─────────────────────────────────────
-# Qwen3-1.7B-Q6_K.gguf — 1.67 GB, CPU-only, sovereign inference
-# Source: lmstudio-community (has exact Qwen3-1.7B-Q6_K.gguf filename matching config)
-MODELS_DIR="${OMEGA_MODELS_DIR:-$ROOT_DIR/models}"
-MODEL_PATH="$MODELS_DIR/Qwen3-1.7B-Q6_K.gguf"
-HF_URL="https://huggingface.co/lmstudio-community/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q6_K.gguf"
+# LFM2.5-2.6B-Q4_K_M.gguf — 1.67 GB, CPU-only, sovereign inference
+# Source: lmstudio-community (has exact LFM2.5-2.6B-Q4_K_M.gguf filename matching config)
+MODEL_PATH="$MODELS_DIR/LFM2.5-2.6B-Q4_K_M.gguf"
+HF_URL="https://huggingface.co/lmstudio-community/LFM2.5-2.6B-GGUF/resolve/main/LFM2.5-2.6B-Q4_K_M.gguf"
 
 mkdir -p "$MODELS_DIR"
 if [ -f "$MODEL_PATH" ]; then
     info "Model already present: $MODEL_PATH ($(du -h "$MODEL_PATH" | cut -f1))"
 else
-    info "Downloading Qwen3-1.7B-Q6_K.gguf (1.67 GB) — sovereign local inference..."
+    info "Downloading LFM2.5-2.6B-Q4_K_M.gguf (1.67 GB) — sovereign local inference..."
     if command -v hf &>/dev/null; then
-        hf download lmstudio-community/Qwen3-1.7B-GGUF Qwen3-1.7B-Q6_K.gguf --local-dir "$MODELS_DIR" --local-dir-use-symlinks False
+        hf download lmstudio-community/LFM2.5-2.6B-GGUF LFM2.5-2.6B-Q4_K_M.gguf --local-dir "$MODELS_DIR" --local-dir-use-symlinks False
     else
         curl -L --fail --progress-bar "$HF_URL" -o "$MODEL_PATH"
     fi

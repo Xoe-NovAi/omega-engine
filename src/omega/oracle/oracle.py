@@ -82,19 +82,17 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",  # Iris role
     "MAKALI_COUNCIL": "MAKALI_COUNCIL",  # MaKaLi synthesis role
     "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",  # Kali role
-    "BUILD_OVERSOUL": "BUILD_OVERSOUL",  # Ma'at role (Build-side, N1-N5)
-    "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",  # Lilith role (Run-side, N6-N10)
-    "CONTAINING_FIELD": "CONTAINING_FIELD",  # Sophia role
-    "N1": "N1",
-    "N2": "N2",
-    "N3": "N3",
-    "N4": "N4",
-    "N5": "N5",
-    "N6": "N6",
-    "N7": "N7",
-    "N8": "N8",
-    "N9": "N9",
-    "N10": "N10",
+    "BUILD_OVERSOUL": "BUILD_OVERSOUL",  # Ma'at role (Build-side, S1-S5)
+    "RUNTIME_OVERSOUL": "RUNTIME_OVERSOUL",  # Lilith role (Run-side, S6-S10)
+    "S2": "S2",
+    "S3": "S3",
+    "S4": "S4",
+    "S5": "S5",
+    "S6": "S6",
+    "S7": "S7",
+    "S8": "S8",
+    "S9": "S9",
+    "S10": "S10",
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase C).

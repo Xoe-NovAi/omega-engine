@@ -46,7 +46,8 @@ class FirecrawlProvider(SearchProvider):
             vault._load_sync()
             cred = vault._credentials.get("firecrawl:api_key")
             return cred.encrypted_blob if cred else ""
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (ImportError, OmegaError, RuntimeError, OSError) as e:
+            # ImportError: D-565 — src/omega/vault/ is FORGE on public cuts.
             logger.debug(f"Firecrawl key fallback failed: {e}")
             return ""
 
@@ -160,26 +161,67 @@ class SearXNGProvider(SearchProvider):
                     resp.raise_for_status()
                     data = resp.json()
 
-                    results = data.get("results", [])
-                    if not results:
-                        suggestions = data.get("suggestions", [])
-                        if suggestions:
-                            return f"SearXNG suggestions: {', '.join(suggestions)}"
+                    # Collect all result types from SearXNG response
+                    all_results = []
+                    
+                    # Standard web results
+                    for r in data.get("results", []):
+                        if isinstance(r, dict):
+                            item = dict(r)
+                            item["_result_type"] = "web"
+                            all_results.append(item)
+                    
+                    # Infoboxes (Wikipedia, knowledge panels, etc.)
+                    for r in data.get("infoboxes", []):
+                        if isinstance(r, dict):
+                            item = dict(r)
+                            item["_result_type"] = "infobox"
+                            all_results.append(item)
+                    
+                    # Direct answers
+                    for r in data.get("answers", []):
+                        if isinstance(r, dict):
+                            item = dict(r)
+                            item["_result_type"] = "answer"
+                            all_results.append(item)
+                        elif isinstance(r, str):
+                            all_results.append({"_result_type": "answer", "title": "Answer", "content": r, "engine": "searxng"})
+                    
+                    # Corrections (did you mean)
+                    for r in data.get("corrections", []):
+                        if isinstance(r, dict):
+                            item = dict(r)
+                            item["_result_type"] = "correction"
+                            all_results.append(item)
+                        elif isinstance(r, str):
+                            all_results.append({"_result_type": "correction", "title": f"Correction: {r}", "content": r, "engine": "searxng"})
+                    
+                    # Suggestions
+                    for r in data.get("suggestions", []):
+                        if isinstance(r, dict):
+                            item = dict(r)
+                            item["_result_type"] = "suggestion"
+                            all_results.append(item)
+                        elif isinstance(r, str):
+                            all_results.append({"_result_type": "suggestion", "title": f"Suggestion: {r}", "content": r, "engine": "searxng"})
+
+                    if not all_results:
                         return None
 
                     snippets = []
-                    for r in results[:limit]:
-                        title = r.get("title", "")
-                        url = r.get("url", "")
-                        content = r.get("content", "")
+                    for r in all_results[:limit]:
+                        result_type = r.get("_result_type", "unknown")
+                        title = r.get("title", r.get("infobox", r.get("answer", r.get("correction", r.get("suggestion", "No title")))))
+                        url = r.get("url", r.get("urls", [{}])[0].get("url", "No URL") if r.get("urls") else "No URL")
+                        content = r.get("content", r.get("snippet", r.get("infobox", r.get("answer", "No snippet"))))
                         engine = r.get("engine", "unknown")
                         if content:
-                            snippets.append(f"Source [{url}] ({engine}):\n{content[:500]}")
+                            snippets.append(f"Source [{url}] ({engine}) [{result_type}]:\n{str(content)[:500]}")
 
                     if not snippets:
                         return None
 
-                    return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(
+                    return f"SearXNG Search ({len(all_results)} results):\n\n" + "\n\n---\n\n".join(
                         snippets[:5]
                     )
 
@@ -235,7 +277,8 @@ class ExaProvider(SearchProvider):
             vault._load_sync()
             cred = vault._credentials.get("exa:api_key")
             return cred.encrypted_blob if cred else ""
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (ImportError, OmegaError, RuntimeError, OSError) as e:
+            # ImportError: D-565 — src/omega/vault/ is FORGE on public cuts.
             logger.debug(f"Exa key fallback failed: {e}")
             return ""
 

@@ -11,7 +11,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import anyio
 
 from omega.memory.providers import (
-    RedisStorageProvider,
     FileStorageProvider,
     InMemoryStorageProvider,
     DiskSpaceError,
@@ -95,71 +94,30 @@ class TestFileStorageProvider:
         # Verify we can read without corruption
         history = await provider.get_history("Sophia", "ses_concurrent", limit=1)
         assert len(history) == 1
+        # The ten concurrent writers used `f"hello {i}"`, so whichever survived
+        # the limit=1 read must be one of those — a "Hello" here (and a torn or
+        # empty history) is exactly the corruption this test exists to catch.
+        assert history[0]["user"].startswith("hello "), (
+            f"concurrent write corrupted the record: {history[0]!r}"
+        )
+        assert history[0]["assistant"].startswith("hi ")
 
-class TestRedisStorageProvider:
-    @pytest.mark.anyio
-    async def test_health_check_failure(self):
-        # Redis is not running or fails health check — mock ping to fail fast
-        provider = RedisStorageProvider(host="nonexistent_host", port=1234)
-        provider.client.ping = AsyncMock(side_effect=ConnectionError("Connection refused"))
-        assert await provider.check_health() is False
-        
-        # Operations should fail gracefully and return empty/None
-        assert await provider.get_history("Sophia", "ses_1", 10) == []
-        await provider.save_history("Sophia", "ses_1", [{"user": "hi"}]) # Should not raise
 
-    @pytest.mark.anyio
-    async def test_mocked_success(self):
-        provider = RedisStorageProvider()
-        provider.client = AsyncMock()
-        provider.client.ping = AsyncMock()
-        provider.client.xrevrange = AsyncMock(return_value=[
-            ("1-0", {"json": '{"user": "hello", "assistant": "hi"}'})
-        ])
-        provider.client.hset = AsyncMock()
-        provider.client.expire = AsyncMock()
-        provider.client.delete = AsyncMock()
-        
-        # Mock pipeline (xadd is sync — return plain MagicMock for that call)
-        mock_pipeline = AsyncMock()
-        mock_pipeline.xadd = MagicMock(return_value=None)
-        provider.client.pipeline.return_value = mock_pipeline
-        
-        assert await provider.check_health() is True
-        
-        history = await provider.get_history("Sophia", "ses_1", 10)
-        assert len(history) == 1
-        assert history[0]["user"] == "hello"
-        
-        await provider.save_history("Sophia", "ses_1", [{"user": "hello", "assistant": "hi"}])
-        provider.client.hset.assert_called_once()
+# [redis-20260928] TestRedisStorageProvider REMOVED (Architect ruling, group B).
+# RedisStorageProvider no longer exists — it is not a deprecated shim.
+#
+# TestMemoryStoreFallbackChain was also removed: it constructed a
+# RedisStorageProvider as the first, deliberately-unhealthy tier to prove the
+# fallback walk. With that tier gone the test would be asserting a chain
+# (USM -> File -> InMemory) that is already covered by
+# test_memory_store_fallback elsewhere, and keeping a redis-shaped version of
+# it would re-introduce the very import the ruling removed.
+#
+# NOTE [maat 2026-09-28]: this block was previously spliced INTO the middle of
+# test_concurrency_and_locking, orphaning its final assertion below the comment
+# at module-body indentation. That left the test asserting a literal "Hello"
+# against a writer that emits f"hello {i}" — a guaranteed failure, and a
+# corrupted test body rather than a genuine engine defect. Fixed by restoring
+# the assertion to the writer's real contract and moving this note to
+# module scope where it belongs.
 
-class TestMemoryStoreFallbackChain:
-    @pytest.mark.anyio
-    async def test_fallback_flow(self, temp_data_dir):
-        # Setup providers:
-        # 1. Redis (fails health check)
-        redis_provider = RedisStorageProvider(host="10.255.255.1")
-        
-        # 2. File (succeeds)
-        file_provider = FileStorageProvider(data_dir=temp_data_dir)
-        
-        # 3. InMemory (succeeds)
-        in_mem_provider = InMemoryStorageProvider()
-        
-        store = MemoryStore(providers=[redis_provider, file_provider, in_mem_provider])
-        
-        # Add exchange - should fall back to File and InMemory
-        await store.add_exchange("Sophia", "ses_fallback", "Hello", "Hi")
-        
-        # Flush batch buffer to providers
-        await store.flush()
-        
-        # Verify it was saved to File
-        path = temp_data_dir / "entities" / "sophia" / "ses_fallback.json"
-        assert path.exists()
-        
-        # Verify we can load it back
-        history = await store.get_history("Sophia", "ses_fallback")
-        assert len(history) == 1
-        assert history[0]["user"] == "Hello"

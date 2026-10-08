@@ -430,9 +430,11 @@ class TestAllLocationsVerification:
 
     def test_step4_passes_for_existing_file(self):
         """Existing file in workspace root must pass cleanly."""
-        # Create a temporary file in workspace
+        # Create a temporary file in workspace (repo root — not a hardcoded
+        # local path, which breaks CI checkouts on other machines)
+        repo_root = Path(__file__).resolve().parent.parent.parent
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".py", dir="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine",
+            mode="w", suffix=".py", dir=str(repo_root),
             delete=False,
         ) as f:
             f.write("# temp test file\n")

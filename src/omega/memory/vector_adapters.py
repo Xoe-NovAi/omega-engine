@@ -33,6 +33,7 @@ class IVectorStoreAdapter(ABC):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
+        collection: str = "default",
     ) -> str:
         """Insert or update a vector and its metadata."""
         pass
@@ -44,6 +45,7 @@ class IVectorStoreAdapter(ABC):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
+        collection: str = "default",
     ) -> List[Tuple[float, Dict[str, Any]]]:
         """Query the vector store for the most similar entries."""
         pass
@@ -93,6 +95,7 @@ class MemoryVectorAdapter(IVectorStoreAdapter):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
+        collection: str = "default",
     ) -> str:
         if entity_name not in self._store:
             self._store[entity_name] = []
@@ -114,6 +117,7 @@ class MemoryVectorAdapter(IVectorStoreAdapter):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
+        collection: str = "default",
     ) -> List[Tuple[float, Dict[str, Any]]]:
         if entity_name not in self._store:
             return []

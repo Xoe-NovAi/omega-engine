@@ -364,6 +364,85 @@ The proxy URL is injected into the provider's config before each inference call.
 
 ---
 
+## §8 Archangel Architecture Integration (v1.6.1+)
+
+### 8.1 Dispatch Pipeline Hook
+
+The Oracle's `summon()` and `talk()` flows ultimately invoke the subagent dispatch pipeline (`src/omega/oracle/subagent_dispatcher.py`). As of v1.6.1, the **Archangel Architecture** injects a hardware awareness envelope at the dispatch point:
+
+```
+summon() / talk()
+    │
+    ├─ ... (existing pipeline)
+    │
+    └─ Subagent Dispatch (if entity dispatches subagent)
+         │
+         ├─ M34 Registry Registration (M34-HOOK-001)
+         │
+         ├─ M33Probe.should_require_write_tool()
+         │   └─ calculate_dynamic_write_threshold() → HardwareMonitor
+         │       ├─ memory_pressure > 0.7 → 2K tokens
+         │       ├─ thermal_throttling → 2K tokens
+         │       ├─ OOM risk CRITICAL/HIGH → 2K/4K tokens
+         │       └─ else → 8000 (base)
+         │
+         ├─ ARCHANGEL ENVELOPE INJECTION (NEW)
+         │   ├─ HardwareMonitor.collect_all()
+         │   ├─ ModelGateway.get_model_for_entity(target_agent)
+         │   ├─ ModelGateway.get_provider_for_entity(target_agent)
+         │   ├─ RuntimeHardwareRegister (frozen, TTL=30s)
+         │   └─ packet.context = envelope + "\n\n" + packet.context
+         │
+         └─ build_dispatch_prompt() → Task tool prompt
+```
+
+### 8.2 System Envelope
+
+Every dispatched subagent receives the `[SYSTEM REGISTER: BARE-METAL PHYSICAL BOUNDARY]` envelope prepended to its context:
+
+```
+[SYSTEM REGISTER: BARE-METAL PHYSICAL BOUNDARY]
+ - HOST OS: AMD Ryzen 7 5700U (Zen 2)
+ - ASSIGNED HARDWARE CORES: 16 Threads (NUMA Node: 0)
+ - CPU UTILIZATION: 8.5%
+ - AVAILABLE RAM REGISTERS: 7479 MB / 14793 MB
+ - PROCESS WORKING SET (RSS): 0 MB
+ - MEMORY PRESSURE INDEX: 0.015 (OOM RISK: SAFE)
+ - THERMAL STATE: 73.8°C (OK)
+ - COMPUTE ACTIVE MODEL: qwen3-1.7b-q6_k
+ - COMPUTE ENGINE BACKEND: NativeGGUFProvider
+ - METRIC TIMESTAMP MONOTONIC: 23951.68 | WALL-CLOCK: 2026-09-07T18:39:51.976502+00:00
+ - ENVELOPE METRIC TTL: 30 SECONDS
+CRITICAL INVARIANT: You are bound strictly to this runtime profile...
+```
+
+### 8.3 M33Probe Dynamic Threshold
+
+The M33Probe's `calculate_dynamic_write_threshold()` now consumes `HardwareMonitor` metrics:
+
+| Condition | Threshold | Reduction |
+|-----------|-----------|-----------|
+| `memory_pressure > 0.7` | 2000 tokens | 75% |
+| `memory_pressure > 0.5` | 4000 tokens | 50% |
+| `memory_pressure > 0.3` | 6000 tokens | 25% |
+| `thermal_throttling == True` | 2000 tokens | 75% |
+| `oom_risk == "CRITICAL"` | 2000 tokens | 75% |
+| `oom_risk == "HIGH"` | 4000 tokens | 50% |
+| `oom_risk == "MODERATE"` | 6000 tokens | 25% |
+| Base (SAFE) | 8000 tokens | — |
+
+### 8.4 References
+
+| Document | Reference |
+|----------|-----------|
+| `docs/architecture/ARCHANGEL_ARCHITECTURE.md` | Full specification (SPEC-ARCHANGEL-v1.0.0) |
+| `src/omega/oracle/env_hardware_probe.py` | `RuntimeHardwareRegister`, `SystemEnvelopeInjector` |
+| `src/omega/oracle/subagent_dispatcher.py` | Injection hook in `dispatch()` |
+| `src/omega/oracle/m33_probe.py` | `calculate_dynamic_write_threshold()` |
+| `src/omega/monitoring/__init__.py` | `HardwareMonitor` (892 lines) |
+
+---
+
 *🔱 OMEGA ⬡ KALI ⬡ trc_doc_deep ⬡ ORACLE-FACADE*
 
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit

@@ -16,24 +16,8 @@ import fcntl
 import anyio
 from omega.errors import (
     OmegaError,
-    OmegaError,
     OmegaPersistenceError,
 )
-from omega.errors import (
-    OmegaError,
-    OmegaPersistenceError,
-)
-# [INST-1-fix2/R1] Redis is an OPTIONAL dependency (omega[memory] extra).
-# Guard copied verbatim from src/omega/governance/budget_guard.py:23-29 —
-# a core-only install must not crash at import time (memory_store.py imports
-# this module at top level). Use-site guard in RedisStorageProvider.__init__.
-try:
-    import redis.asyncio as redis
-
-    REDIS_AVAILABLE = True
-except ImportError:
-    redis = None
-    REDIS_AVAILABLE = False
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
@@ -127,144 +111,11 @@ class StorageProvider(ABC):
         pass
 
 
-class RedisStorageProvider(StorageProvider):
-    """Hot storage provider using Redis Streams and Hashes."""
-
-    def __init__(
-        self,
-        host: str = "localhost",
-        port: int = 6379,
-        password: Optional[str] = None,
-    ):
-        # [D-593/DC-29] No hardcoded credential default. Callers pass an
-        # explicit password; the env lookup is a convenience fallback that
-        # returns None when unset — matching the hot path's semantics
-        # (memory_store.py gates construction on OMEGA_REDIS_HOST and passes
-        # the password explicitly).
-        password = password or os.environ.get("OMEGA_REDIS_PASSWORD")
-        if not REDIS_AVAILABLE:
-            # [INST-1-fix2/R1] Core install ships without redis. Fail loudly
-            # with a typed error instead of AttributeError on the None stub.
-            raise OmegaPersistenceError(
-                "redis package not installed — RedisStorageProvider unavailable. "
-                "Install the optional extra: pip install 'omega[memory]'"
-            )
-        self.client = redis.Redis(
-            host=host,
-            port=port,
-            password=password,
-            decode_responses=True,
-            socket_timeout=1.0,
-            socket_connect_timeout=1.0,
-        )
-        self.meta_prefix = "omega:session"
-        self.hist_prefix = "omega:session:hist"
-        self.is_available = False
-
-    async def check_health(self) -> bool:
-        """Check if Redis is available with a short timeout."""
-        import time
-
-        start = time.time()
-        try:
-            await self.client.ping()
-            self.is_available = True
-            elapsed = time.time() - start
-            logger.debug(f"Redis health check passed in {elapsed:.2f}s")
-            return True
-        except Exception as e:
-            # M9 carve-out: health probe may catch all to prevent crash loops
-            logger.warning(f"Redis health check failed: {e}")
-            self.is_available = False
-            elapsed = time.time() - start
-            logger.debug(f"Redis health check failed after {elapsed:.2f}s")
-            return False
-
-    async def get_history(
-        self, entity_name: str, session_id: str, limit: int
-    ) -> List[Dict[str, Any]]:
-        if not self.is_available:
-            if not await self.check_health():
-                return []
-        try:
-            key = f"{self.hist_prefix}:{session_id}"
-            raw_entries = await self.client.xrevrange(key, max="+", min="-", count=limit)
-
-            exchanges = []
-            for _, data in reversed(raw_entries):
-                try:
-                    exchanges.append(json.loads(data.get("json", "{}")))
-                except json.JSONDecodeError:
-                    logger.warning(f"Failed to parse history entry from Redis for {session_id}")
-                    continue
-            return exchanges
-        except OmegaError:
-            raise
-        except (redis.RedisError, RuntimeError) as e:
-            logger.error(f"Redis get_history failed for {session_id}: {e}", exc_info=True)
-            self.is_available = False
-            raise OmegaPersistenceError(f"Redis get_history failed: {e}", raw_error=e) from e
-
-    async def save_history(
-        self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]
-    ) -> None:
-        if not self.is_available:
-            if not await self.check_health():
-                return
-        try:
-            meta_key = f"{self.meta_prefix}:{session_id}"
-            await self.client.hset(
-                meta_key,
-                mapping={
-                    "entity": entity_name,
-                    "last_updated": datetime.now(timezone.utc).isoformat(),
-                    "count": len(exchanges),
-                },
-            )
-            await self.client.expire(meta_key, 86400)
-
-            hist_key = f"{self.hist_prefix}:{session_id}"
-            await self.client.delete(hist_key)
-
-            if exchanges:
-                pipeline = await self.client.pipeline()
-                for ex in exchanges:
-                    pipeline.xadd(hist_key, {"json": json.dumps(ex, default=str)})
-                await pipeline.execute()
-                await self.client.xtrim(hist_key, maxlen=100, approximate=True)
-
-            await self.client.expire(hist_key, 86400)
-        except OmegaError:
-            raise
-        except (redis.RedisError, RuntimeError) as e:
-            logger.error(f"Redis save_history failed for {session_id}: {e}", exc_info=True)
-            self.is_available = False
-            raise OmegaPersistenceError(f"Redis save_history failed: {e}", raw_error=e) from e
-
-    async def archive(self, entity_name: str, session_id: str) -> bool:
-        if not self.is_available:
-            if not await self.check_health():
-                return False
-        try:
-            await self.client.delete(f"{self.meta_prefix}:{session_id}")
-            await self.client.delete(f"{self.hist_prefix}:{session_id}")
-            return True
-        except OmegaError:
-            raise
-        except (redis.RedisError, RuntimeError) as e:
-            logger.error(f"Redis archive failed for {session_id}: {e}", exc_info=True)
-            self.is_available = False
-            raise OmegaPersistenceError(f"Redis archive failed: {e}", raw_error=e) from e
-
-    async def close(self) -> None:
-        try:
-            await self.client.close()
-        except OmegaError:
-            raise
-        except (redis.RedisError, RuntimeError) as e:
-            logger.error("Failed to close Redis connection: %s", e, exc_info=True)
-            raise OmegaError(f"Redis close failed: {e}", raw_error=e) from e
-
+# [redis-20260928] RedisStorageProvider REMOVED (Architect ruling, group B).
+# Replacement: USMStorageProvider (sovereign primary) + FileStorageProvider
+# (warm) + InMemoryStorageProvider (cold) — see the chain in memory_store.py.
+# Deliberately NOT retained as a deprecated shim: a capability gated behind an
+# env var nobody sets is not a capability, and leaving the name invites reuse.
 
 class FileStorageProvider(StorageProvider):
     """Warm storage provider using JSON files on disk with disk guard and file locking."""

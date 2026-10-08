@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
 """
 L1 Hybrid Extraction + L9 Somatic Checkpoints — Faster-Whisper + Resume
 ⬡ OMEGA ⬡ RESEARCHER ⬡ L1/L9 ⬡ TRANSCRIBER

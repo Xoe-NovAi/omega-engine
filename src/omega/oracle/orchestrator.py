@@ -19,8 +19,10 @@ Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
+import socket
 import subprocess
 import sys
+import time
 import anyio
 from omega.errors import (
     OmegaError,
@@ -152,6 +154,29 @@ class BackgroundWorker:
         }
 
 
+def _port_served(port: int, host: str = "127.0.0.1", timeout: float = 0.5) -> bool:
+    """Return True if something is already accepting TCP connections on host:port.
+
+    [D-619] The hub must not spawn a second MCP server onto a port that a
+    dedicated systemd unit already owns. Measured on n0:
+        127.0.0.1:8015  pid 2759  omega-firecrawl-mcp.service (active/running)
+        127.0.0.1:8018  pid 734049 omega-searxng-mcp.service  (active/running)
+
+    connect_ex() is used rather than a bind() probe on purpose. A bind() probe
+    answers a different question ("could I take this port?") and returns False
+    for a port that is very much in use, because SO_REUSEADDR lets the bind
+    succeed into the listen backlog. The question we need to ask is "is the
+    service already reachable?", and connect_ex answers exactly that.
+
+    A 0.5s ceiling keeps a black-holed port from stalling hub boot; a timeout
+    still returns non-zero, so an unresponsive port is correctly reported as
+    "not served" and we fall through to spawning.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(timeout)
+        return sock.connect_ex((host, port)) == 0
+
+
 class Orchestrator:
     """Spawns and manages headless CLI agents (Cline, OpenCode) and monitors MCP health."""
 
@@ -165,11 +190,24 @@ class Orchestrator:
         # Collect all Google API keys from the sovereign vault.
         # The vault is the single source of truth (no scattered
         # os.getenv reads for API keys).
-        from omega.vault import VaultCore
+        #
+        # [D-565] `src/omega/vault/` is FORGE on public cuts. An absent vault
+        # means zero google: keys, not a crash — the worker then runs with an
+        # empty key list. Previously the bare `from omega.vault import VaultCore`
+        # raised ModuleNotFoundError out of __init__ on every public cut.
+        google_creds = []
+        try:
+            from omega.vault import VaultCore
 
-        vault = VaultCore()
-        vault._load_sync()
-        google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
+            vault = VaultCore()
+            vault._load_sync()
+            google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
+        except (ImportError, OmegaError, RuntimeError, OSError, AttributeError) as e:
+            logger.warning(
+                "VaultCore unavailable while collecting Google API keys (%s) — "
+                "starting with an empty key list (expected on public cuts per D-565)",
+                e,
+            )
         keys = [c.encrypted_blob for c in google_creds]
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()), api_keys=keys
@@ -193,19 +231,60 @@ class Orchestrator:
         self.model_updater = None
 
         # Start EXTERNAL MCP servers only (firecrawl, searxng)
+        #
+        # [D-619] Only spawn when the port is NOT already served. Both of these
+        # are owned by dedicated systemd units (omega-firecrawl-mcp.service,
+        # omega-searxng-mcp.service). Spawning anyway produced two <defunct>
+        # children under the hub PID: the duplicate bound a port that was
+        # already taken, died immediately, and was never wait()ed — so it stayed
+        # in the process table as a zombie for the hub's entire uptime.
+        #
+        # The log then compounded it: `_start_mcp_server` logged "Started MCP
+        # <name> on port <p> (PID: ...)" immediately after Popen() returned,
+        # before the child had bound anything or exited. That is a false
+        # operational claim about a process that was already dead — the exact
+        # silent-degradation shape this codebase exists to catch, and it is why
+        # the zombie pair went unnoticed while the log looked healthy.
         for name in self.mcp_ports:
+            port = self.mcp_ports[name]
+            if _port_served(port):
+                logger.info(
+                    "MCP %s already served on port %d by an external owner — "
+                    "not spawning (no duplicate, no child to reap)",
+                    name,
+                    port,
+                )
+                self._mcp_status[name] = {
+                    "status": "external",
+                    "port": port,
+                    "owner": "external (systemd)",
+                }
+                continue
             proc = self._start_mcp_server(name)
             if proc:
                 self._mcp_processes[name] = proc
-                self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
+                self._mcp_status[name] = {"status": "starting", "port": port}
             else:
-                self._mcp_status[name] = {"status": "failed", "port": self.mcp_ports[name]}
+                self._mcp_status[name] = {"status": "failed", "port": port}
 
     def _start_mcp_server(self, name: str) -> subprocess.Popen | None:
         """Start an MCP server as a subprocess."""
         script = self._mcp_scripts.get(name)
         if not script:
             logger.warning(f"No script configured for MCP {name}")
+            return None
+
+        # [D-619] Defence in depth. __init__ already skips ports that are served,
+        # but _restart_mcp reaches this method from the watchdog loop, and a port
+        # can be claimed by systemd BETWEEN those two moments. Re-check here so
+        # no caller can ever race a duplicate spawn onto a live port.
+        port = self.mcp_ports.get(name)
+        if port is not None and _port_served(port):
+            logger.info(
+                "MCP %s not started: port %d is already served — skipping duplicate spawn",
+                name,
+                port,
+            )
             return None
 
         # Project root is 4 levels up from this file (src/omega/oracle/orchestrator.py)
@@ -218,7 +297,7 @@ class Orchestrator:
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(project_root / "src")
-        env["MCP_PORT"] = str(self.mcp_ports[name])
+        env["MCP_PORT"] = str(port)
 
         try:
             proc = subprocess.Popen(
@@ -227,14 +306,56 @@ class Orchestrator:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            logger.info(f"Started MCP {name} on port {self.mcp_ports[name]} (PID: {proc.pid})")
-            return proc
         except Exception as e:
             logger.error(f"Failed to start MCP {name}: {e}")
             return None
 
+        # [D-619] Do NOT log "Started" yet. Popen() returning proves only that
+        # fork/exec was issued — not that the process is alive, and certainly not
+        # that it bound `port`. On a busy port the child dies within milliseconds
+        # and the old code had already printed a success line naming its PID.
+        # Poll briefly: only a process still alive after the grace window gets
+        # the "Started" claim, and a dead child is reaped immediately so it
+        # cannot become a <defunct> entry under the hub PID.
+        for _ in range(10):
+            if proc.poll() is not None:
+                logger.error(
+                    "MCP %s exited immediately (rc=%s) after spawn on port %s — "
+                    "port already in use by another owner is the usual cause",
+                    name,
+                    proc.returncode,
+                    port,
+                )
+                proc.wait()  # reap, so no zombie is left behind
+                return None
+            time.sleep(0.05)
+
+        logger.info(f"Started MCP {name} on port {port} (PID: {proc.pid})")
+        return proc
+
     async def _restart_mcp(self, name: str):
         """Restart an MCP server."""
+        # [D-619] If the port is owned by an external process (systemd unit), the
+        # watchdog's "unhealthy" verdict is about THAT owner's health, not ours.
+        # Restarting would spawn a duplicate that instantly loses the port race
+        # and dies — re-creating the exact zombie this fix removes. The correct
+        # action is to change nothing and let the owning unit's own
+        # Restart=on-failure policy handle it.
+        port = self.mcp_ports.get(name)
+        if port is not None and _port_served(port):
+            logger.warning(
+                "MCP %s reported unhealthy but port %d is served by an external "
+                "owner — not restarting (systemd owns this service)",
+                name,
+                port,
+            )
+            self._mcp_status[name] = {
+                "status": "external",
+                "port": port,
+                "owner": "external (systemd)",
+            }
+            return
+
         # Kill existing process if any
         existing = self._mcp_processes.get(name)
         if existing and existing.poll() is None:
@@ -244,9 +365,15 @@ class Orchestrator:
             except TimeoutError:
                 existing.kill()
                 await anyio.to_thread.run_sync(existing.wait)
+        elif existing is not None:
+            # [D-619] Already exited: reap it. poll() alone does not clear the
+            # zombie; only wait() does.
+            await anyio.to_thread.run_sync(existing.wait)
 
-        # Start new process
-        proc = self._start_mcp_server(name)
+        # Start new process. _start_mcp_server now contains a bounded (max 0.5s)
+        # liveness poll, so it runs in a worker thread rather than blocking the
+        # event loop for the duration (M1 AnyIO — no blocking I/O on the loop).
+        proc = await anyio.to_thread.run_sync(self._start_mcp_server, name)
         if proc:
             self._mcp_processes[name] = proc
             self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
@@ -258,6 +385,23 @@ class Orchestrator:
         logger.info("Starting MCP watchdog loop...")
         async with httpx.AsyncClient(timeout=5.0) as client:
             while True:
+                # [D-619] Reap any spawned MCP child that exited on its own.
+                # subprocess.Popen.poll() observes the exit status but does NOT
+                # release the process table slot; only wait() does. Skipping this
+                # is what allowed the two <defunct> children to sit under the hub
+                # PID for its entire uptime. Runs before the health checks so a
+                # child that died since the last tick is cleared immediately.
+                for name, proc in list(self._mcp_processes.items()):
+                    if proc.poll() is not None:
+                        await anyio.to_thread.run_sync(proc.wait)
+                        logger.warning(
+                            "Reaped exited MCP %s child (rc=%s) — it had become a "
+                            "zombie under the hub PID",
+                            name,
+                            proc.returncode,
+                        )
+                        self._mcp_processes.pop(name, None)
+
                 for name, port in self.mcp_ports.items():
                     url = f"http://127.0.0.1:{port}/sse"
                     try:

@@ -72,7 +72,6 @@ thinking_schemas:
     providers:
       - native-gguf
       - ollama
-      - lmster
     example: '{"chat_template_kwargs": {"thinking": true}}'
   
   gemma_toggle:
@@ -80,7 +79,6 @@ thinking_schemas:
     providers:
       - native-gguf
       - ollama
-      - lmster
     example: '{"chat_template_kwargs": {"thinking": true}}'
 
 # ── Model Capabilities ───────────────────────────────────────
