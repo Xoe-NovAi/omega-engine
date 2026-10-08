@@ -217,5 +217,25 @@ extraction pipelines.
 - [ ] `bench-all` full sweep across all 8 installed models
 - [ ] 10-min sustained phi4-mini thermal validation — now privilege-free: `scripts/screening.py` TelemetryCollector (RAPL + thermal + freq sysfs, no sudo); turbostat optional for forensic runs (see `docs/TELEMETRY_PLAN.md`)
 - [ ] Q5_K_M vs Q4_K_M deepseek-r1:8b (tool-call quality vs speed)
+## Real-world engine evaluation (2026-10-08)
+
+Harness `scripts/realworld_eval.py`: 4 engine-representative tasks, deterministic\nexecutable/exact-match grading (OLMES format documented in output JSON;\nLatentEval rule: no LLM judge to bias the score). Full 3-sample data:
+
+`benchmarking/realworld/eval_2026-10-08.json` (quick: `eval_2026-10-08_quick.json`)
+
+| Model | code pass@1/pass@3 | extract | toolcall | instruct | tasks wall |
+|---|---|---|---|---|---|
+| **lfm25-8b-a1b** | **F/T** (0/8, 8/8, 8/8) | 0.0 | 1.0 | 0.0 | 60.3+29.5+9.4+56.3 = 155s |
+| Krikri | F/F (0/8, 7/8, 0/8) | 1.0 | 500-error (tag lacks `tools`) | 1.0 | 56.9+37.8+20.5+50.5 = 166s |
+| lfm25-t6 | F/F (0/8 ×3) | 0.0 | 1.0 | 0.0 | 113.9+38.3+6.3+50.7 = 209s |
+
+**Key findings** (n=3, single slot; harness has a known load-kill failure mode —\nsee single-slot diary in `logs/thermal/`):
+
+1. **8B is the strongest code model in the family**: only one to reach\n   `pass@3=1.0` on exact-match assertions — it fails once, then succeeds twice\n   with sampling. Krikri and t6 never pass code (0/24 and 0/24 opportunities).\n   In an agentic loop, retry-on-failure is where the MoE quality shows.
+2. **extract=0.0 for the 8B**: cannot emit a JSON literal at all (3/3 `no_json`).\n   Contradicts its task-model design (230M/350M are extraction specialists and\n   pass). Template/output-constraint failure (reasoning verbosity), not capacity.\n   Fix path: `response_format: {type: json_object}` or a\n   `tools: [{name: extract_json}]` wrapper.
+3. **toolcall is engine-level**: all three *return* tool calls on `/api/chat\n   tools=` even though only the 8B declares `tools`. The Krikri 500 is a tag\n   declaration mismatch, not a harness defect. Engine tool-calling solid.
+4. **instruct is template-level**: Krikri 4/4, 8B 0/3, t6 3/4 — spec-following on\n   adversarial markers, not model capacity.
+
+**Known harness failure mode**: the single-slot `llama-server` worker is health-killed\nunder sustained load, killing the eval mid-batch. Workaround in the harness:\nrestart the server between model batches + 30s warm-up.
 - [x] ZRAM 8GB active; NVMe-backed `/swap.img` disabled and retained for rollback (2026-09-23)
 - [ ] THP `madvise` vs `always` (latency spike measurement)

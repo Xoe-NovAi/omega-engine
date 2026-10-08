@@ -1,0 +1,327 @@
+{
+ "date": "2026-10-08",
+ "quick": false,
+ "harness": "scripts/realworld_eval.py",
+ "engine": "ollama /api/chat, single slot, ctx 8192",
+ "grading": "executable + exact match (no LLM judge)",
+ "models": {
+  "lfm25-8b-a1b:latest": {
+   "code": {
+    "pass@1": false,
+    "pass@3": true,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": false,
+      "tests": "0/8"
+     },
+     {
+      "pass": true,
+      "tests": "8/8"
+     },
+     {
+      "pass": true,
+      "tests": "8/8"
+     }
+    ],
+    "wall_s": [
+     24.96,
+     21.31,
+     13.9
+    ],
+    "task_wall_s": 60.3
+   },
+   "extract": {
+    "accuracy": 0.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": false,
+      "why": "no_json"
+     },
+     {
+      "pass": false,
+      "why": "no_json"
+     },
+     {
+      "pass": false,
+      "why": "no_json"
+     }
+    ],
+    "wall_s": [
+     11.23,
+     9.16,
+     9.11
+    ],
+    "task_wall_s": 29.5
+   },
+   "toolcall": {
+    "accuracy": 1.0,
+    "runs": 2,
+    "samples": [
+     {
+      "pass": true,
+      "why": "no_tool_calls"
+     },
+     {
+      "pass": true,
+      "why": "no_tool_calls"
+     }
+    ],
+    "wall_s": [
+     5.13,
+     4.24
+    ],
+    "task_wall_s": 9.4
+   },
+   "instruct": {
+    "rule_pass_rate": 0.0,
+    "avg_rules": 1.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass_all": false,
+      "score": 1,
+      "checks": {
+       "starts_verified": false,
+       "has_table": false,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 19.58
+     },
+     {
+      "pass_all": false,
+      "score": 1,
+      "checks": {
+       "starts_verified": false,
+       "has_table": false,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 18.25
+     },
+     {
+      "pass_all": false,
+      "score": 1,
+      "checks": {
+       "starts_verified": false,
+       "has_table": false,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 18.49
+     }
+    ],
+    "task_wall_s": 56.3
+   }
+  },
+  "Krikri-8b-Instruct-Q5_K_M:latest": {
+   "code": {
+    "pass@1": false,
+    "pass@3": false,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": false,
+      "tests": "7/8"
+     },
+     {
+      "pass": false,
+      "tests": "7/8"
+     },
+     {
+      "pass": false,
+      "tests": "0/8"
+     }
+    ],
+    "wall_s": [
+     28.14,
+     11.93,
+     16.73
+    ],
+    "task_wall_s": 56.9
+   },
+   "extract": {
+    "accuracy": 1.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": true,
+      "why": "no_json"
+     },
+     {
+      "pass": true,
+      "why": "no_json"
+     },
+     {
+      "pass": true,
+      "why": "no_json"
+     }
+    ],
+    "wall_s": [
+     20.81,
+     8.51,
+     8.43
+    ],
+    "task_wall_s": 37.8
+   },
+   "toolcall": {
+    "error": "HTTPError: HTTP Error 500: Internal Server Error",
+    "task_wall_s": 20.5
+   },
+   "instruct": {
+    "rule_pass_rate": 1.0,
+    "avg_rules": 4.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass_all": true,
+      "score": 4,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": true
+      },
+      "wall_s": 22.36
+     },
+     {
+      "pass_all": true,
+      "score": 4,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": true
+      },
+      "wall_s": 13.77
+     },
+     {
+      "pass_all": true,
+      "score": 4,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": true
+      },
+      "wall_s": 14.41
+     }
+    ],
+    "task_wall_s": 50.5
+   }
+  },
+  "lfm25-t6:latest": {
+   "code": {
+    "pass@1": false,
+    "pass@3": false,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": false,
+      "tests": "0/8"
+     },
+     {
+      "pass": false,
+      "tests": "0/8"
+     },
+     {
+      "pass": false,
+      "tests": "0/8"
+     }
+    ],
+    "wall_s": [
+     40.06,
+     36.89,
+     36.91
+    ],
+    "task_wall_s": 113.9
+   },
+   "extract": {
+    "accuracy": 0.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass": false,
+      "why": "no_json"
+     },
+     {
+      "pass": false,
+      "why": "no_json"
+     },
+     {
+      "pass": false,
+      "why": "no_json"
+     }
+    ],
+    "wall_s": [
+     13.88,
+     12.21,
+     12.2
+    ],
+    "task_wall_s": 38.3
+   },
+   "toolcall": {
+    "accuracy": 1.0,
+    "runs": 2,
+    "samples": [
+     {
+      "pass": true,
+      "why": "no_tool_calls"
+     },
+     {
+      "pass": true,
+      "why": "no_tool_calls"
+     }
+    ],
+    "wall_s": [
+     3.58,
+     2.76
+    ],
+    "task_wall_s": 6.3
+   },
+   "instruct": {
+    "rule_pass_rate": 0.0,
+    "avg_rules": 3.0,
+    "runs": 3,
+    "samples": [
+     {
+      "pass_all": false,
+      "score": 3,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 13.98
+     },
+     {
+      "pass_all": false,
+      "score": 3,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 18.35
+     },
+     {
+      "pass_all": false,
+      "score": 3,
+      "checks": {
+       "starts_verified": true,
+       "has_table": true,
+       "no_however": true,
+       "ends_marker": false
+      },
+      "wall_s": 18.35
+     }
+    ],
+    "task_wall_s": 50.7
+   }
+  }
+ }
+}
