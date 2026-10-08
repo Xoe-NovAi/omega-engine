@@ -1,0 +1,25 @@
+== lfm25-230m t=4 ==
+{"model": "lfm25-230m", "t": 4, "load_s": 0.21, "ttft_s": 0.03, "wall_s": 0.29, "ntok": 29, "dec_ts": 112.7, "prompt500_s": 0.91}
+== lfm25-230m t=6 ==
+{"model": "lfm25-230m", "t": 6, "load_s": 0.1, "ttft_s": 0.031, "wall_s": 0.25, "ntok": 29, "dec_ts": 133.3, "prompt500_s": 0.8}
+== lfm25-230m t=8 ==
+{"model": "lfm25-230m", "t": 8, "load_s": 0.1, "ttft_s": 0.027, "wall_s": 0.25, "ntok": 29, "dec_ts": 129.5, "prompt500_s": 0.8}
+== lfm25-230m t=12 ==
+{"model": "lfm25-230m", "t": 12, "load_s": 0.09, "ttft_s": 0.029, "wall_s": 0.31, "ntok": 29, "dec_ts": 103.0, "prompt500_s": 0.73}
+== lfm25-350m t=4 ==
+{"model": "lfm25-350m", "t": 4, "load_s": 0.21, "ttft_s": 0.065, "wall_s": 0.37, "ntok": 24, "dec_ts": 79.7, "prompt500_s": 1.43}
+== lfm25-350m t=6 ==
+{"model": "lfm25-350m", "t": 6, "load_s": 0.09, "ttft_s": 0.037, "wall_s": 0.32, "ntok": 24, "dec_ts": 83.8, "prompt500_s": 1.19}
+== lfm25-350m t=8 ==
+{"model": "lfm25-350m", "t": 8, "load_s": 0.09, "ttft_s": 0.04, "wall_s": 0.3, "ntok": 24, "dec_ts": 91.0, "prompt500_s": 1.16}
+== lfm25-350m t=12 ==
+{"model": "lfm25-350m", "t": 12, "load_s": 0.09, "ttft_s": 0.038, "wall_s": 0.33, "ntok": 24, "dec_ts": 83.4, "prompt500_s": 1.09}
+SAVED /home/xnai/Documents/Projects/omega-engine-alpha/logs/20261007-threads/tiny_sweep.json
+lfm25-230m  t= 4 load=0.21s TTFT=0.030s dec= 112.7 t/s prompt~500tok=0.91s
+lfm25-230m  t= 6 load=0.10s TTFT=0.031s dec= 133.3 t/s prompt~500tok=0.80s
+lfm25-230m  t= 8 load=0.10s TTFT=0.027s dec= 129.5 t/s prompt~500tok=0.80s
+lfm25-230m  t=12 load=0.09s TTFT=0.029s dec= 103.0 t/s prompt~500tok=0.73s
+lfm25-350m  t= 4 load=0.21s TTFT=0.065s dec=  79.7 t/s prompt~500tok=1.43s
+lfm25-350m  t= 6 load=0.09s TTFT=0.037s dec=  83.8 t/s prompt~500tok=1.19s
+lfm25-350m  t= 8 load=0.09s TTFT=0.040s dec=  91.0 t/s prompt~500tok=1.16s
+lfm25-350m  t=12 load=0.09s TTFT=0.038s dec=  83.4 t/s prompt~500tok=1.09s

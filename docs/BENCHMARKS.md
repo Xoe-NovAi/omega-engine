@@ -196,6 +196,22 @@ bandwidth — on a bandwidth-bound model the hammer itself gets heavier.
 - Thermals: no throttling in any run (max 86°C heat-soaked vs 97–100°C
   threshold; 18–35W package).
 
+### LFM2.5 tiny models (230M / 350M) — bonus sweep
+
+Imported to Ollama 2026-10-08: `lfm25-230m-q6k` (t=6), `lfm25-350m-q6k` (t=8),
+`lfm2-1.2b-extract` (t=6) — all with LFM2 chat template (`system/user/assistant`
+roles), ctx 8192, temp 0.1. Raw data: `logs/20261007-threads/tiny_sweep.*`.
+
+| Model | peak t | decode | TTFT | ~500-tok prefill | load |
+|---|---|---|---|---|---|
+| LFM2.5-230M Q6_K (183MB) | 6 | **133.3 t/s** | 0.031s | 0.80s | 0.10s |
+| LFM2.5-350M i1-Q6_K (280MB) | 8 | **91.0 t/s** | 0.040s | 1.16s | 0.09s |
+
+t=12 always falls (HT/scheduler overhead); 11.6W / 57°C package. 230M = 3.1×
+their Raspberry Pi claim. Use cases per Liquid: extraction/tool-calling/task
+models — **not** reasoning/code. Decision: use as WebUI task models and
+extraction pipelines.
+
 ## Pending benchmarks
 
 - [ ] `bench-all` full sweep across all 8 installed models

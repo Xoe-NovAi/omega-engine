@@ -1,0 +1,82 @@
+[
+ {
+  "model": "lfm25-230m",
+  "t": 4,
+  "load_s": 0.21,
+  "ttft_s": 0.03,
+  "wall_s": 0.29,
+  "ntok": 29,
+  "dec_ts": 112.7,
+  "prompt500_s": 0.91
+ },
+ {
+  "model": "lfm25-230m",
+  "t": 6,
+  "load_s": 0.1,
+  "ttft_s": 0.031,
+  "wall_s": 0.25,
+  "ntok": 29,
+  "dec_ts": 133.3,
+  "prompt500_s": 0.8
+ },
+ {
+  "model": "lfm25-230m",
+  "t": 8,
+  "load_s": 0.1,
+  "ttft_s": 0.027,
+  "wall_s": 0.25,
+  "ntok": 29,
+  "dec_ts": 129.5,
+  "prompt500_s": 0.8
+ },
+ {
+  "model": "lfm25-230m",
+  "t": 12,
+  "load_s": 0.09,
+  "ttft_s": 0.029,
+  "wall_s": 0.31,
+  "ntok": 29,
+  "dec_ts": 103.0,
+  "prompt500_s": 0.73
+ },
+ {
+  "model": "lfm25-350m",
+  "t": 4,
+  "load_s": 0.21,
+  "ttft_s": 0.065,
+  "wall_s": 0.37,
+  "ntok": 24,
+  "dec_ts": 79.7,
+  "prompt500_s": 1.43
+ },
+ {
+  "model": "lfm25-350m",
+  "t": 6,
+  "load_s": 0.09,
+  "ttft_s": 0.037,
+  "wall_s": 0.32,
+  "ntok": 24,
+  "dec_ts": 83.8,
+  "prompt500_s": 1.19
+ },
+ {
+  "model": "lfm25-350m",
+  "t": 8,
+  "load_s": 0.09,
+  "ttft_s": 0.04,
+  "wall_s": 0.3,
+  "ntok": 24,
+  "dec_ts": 91.0,
+  "prompt500_s": 1.16
+ },
+ {
+  "model": "lfm25-350m",
+  "t": 12,
+  "load_s": 0.09,
+  "ttft_s": 0.038,
+  "wall_s": 0.33,
+  "ntok": 24,
+  "dec_ts": 83.4,
+  "prompt500_s": 1.09
+ }
+]
