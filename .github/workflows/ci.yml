@@ -16,6 +16,12 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
+      # [CUT-20261007] Both versions must report. Default fail-fast canceled
+      # the healthy 3.13 job mid-temple-grade whenever 3.12 failed first
+      # ("The operation was canceled" at 23:11:26 on 1f4c8410), destroying
+      # half the evidence a red run exists to provide. test.yml already
+      # opted out; this job now matches.
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4

@@ -27,6 +27,24 @@ from mcp_servers.omega_hub import federation_store as fst  # noqa: E402
 SESSION = "ses_fb6cf6856ffes3wd3wmvyrm2IG"
 
 
+@pytest.fixture(autouse=True)
+def _deterministic_session_lookup(monkeypatch):
+    """Freeze opencode.db lookup — the known/unknown contract's precondition.
+
+    `resolve_session_id` classifies a well-formed id by querying
+    ~/.local/share/opencode/opencode.db (~45GB home-dir state). On a DB-less
+    runner `_lookup_readonly` returns None and the id resolves as
+    `db_unavailable_but_shape_valid` instead of `unknown`, so the unknown
+    counter cannot be asserted — and whether it passes depends on whether some
+    OTHER test happened to prime the module cache first (measured on
+    1f4c8410: failed in test-and-lint 3.12, passed in 3.13 and both pytest
+    jobs — same commit, three verdicts, order luck). [CUT-20261007] Declare
+    the precondition instead of hoping: SESSION is known; every other
+    well-formed id was queried and is absent (False)."""
+    monkeypatch.setattr(fs, "_lookup_readonly", lambda session_id: session_id == SESSION)
+    monkeypatch.setattr(fs, "_db_cache", {})
+
+
 @pytest.fixture
 def store(tmp_path):
     st = fst.FederationStore(tmp_path / "handoffs")
