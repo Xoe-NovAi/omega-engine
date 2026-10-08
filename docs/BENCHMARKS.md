@@ -217,6 +217,30 @@ extraction pipelines.
 - [ ] `bench-all` full sweep across all 8 installed models
 - [ ] 10-min sustained phi4-mini thermal validation — now privilege-free: `scripts/screening.py` TelemetryCollector (RAPL + thermal + freq sysfs, no sudo); turbostat optional for forensic runs (see `docs/TELEMETRY_PLAN.md`)
 - [ ] Q5_K_M vs Q4_K_M deepseek-r1:8b (tool-call quality vs speed)
+### A. WebUI ↔ Ollama connection — VERIFIED HEALTHY
+
+- `docker-compose.yml`: `OLLAMA_BASE_URL=http://host.docker.internal:11434`
+- Host: `OLLAMA_HOST=0.0.0.0:11434`, `OLLAMA_NUM_THREADS=8`, `OWUI_NUM_THREADS=8`,
+  `OLLAMA_MAX_LOADED_MODELS=1`, `OLLAMA_NUM_PARALLEL=1`, `KEEP_ALIVE=30m`, `AllowedCPUs=0-11`.
+- Verified live from **inside** the `open-webui` container:
+  `GET http://host.docker.internal:11434/api/version` → `{"version":"0.34.4"}` 200.
+- `ollama list` full (48 GB blobs): bench-tlfm25-t6-6, phi4-mini, Krikri, lfm25-t6,
+  emb-*, 230M/350M (created today), 1.2B extract, lfm25-8b-a1b (today), qwen3-embedding.
+
+### B. The missing GGUFs — they are not lost
+
+- Ollama's store is intact: `/usr/share/ollama/.ollama/models/` = 48 GB blobs,
+  `ollama list` full. Models load fine (Krikri, LFM verified).
+- `~/models/gguf/` now contains only `Krikri.Modelfile` (a 307-byte template,
+  now pointing at the unmounted `/mnt/omega_library/...`).
+- `~/models/vl-models/` still holds 3 `mmproj-*.gguf` (2.3 GB).
+- Root cause: Ollama **copies** GGUF bytes into content-addressed blobs at `ollama create`.
+  Deleting/moving the source afterward cannot affect an already-created model.
+- The ~50 GB of sources (2.6B, 8B, 1.2B, 350M, 230M GGUFs) are on an **ext4 partition
+  that is not mounted** right now: ~850G free macOS disk vs a 14 GB Linux box. A prior
+  session copied from the external drive into `~/.cache/ollama/`.
+- Decision: the sources are nice-to-have only. If a Modelfile is rebuilt, point it at
+  blob digests instead of the source path.
 ## Real-world engine evaluation (2026-10-08)
 
 Harness `scripts/realworld_eval.py`: 4 engine-representative tasks, deterministic\nexecutable/exact-match grading (OLMES format documented in output JSON;\nLatentEval rule: no LLM judge to bias the score). Full 3-sample data:
@@ -239,3 +263,118 @@ Harness `scripts/realworld_eval.py`: 4 engine-representative tasks, deterministi
 **Known harness failure mode**: the single-slot `llama-server` worker is health-killed\nunder sustained load, killing the eval mid-batch. Workaround in the harness:\nrestart the server between model batches + 30s warm-up.
 - [x] ZRAM 8GB active; NVMe-backed `/swap.img` disabled and retained for rollback (2026-09-23)
 - [ ] THP `madvise` vs `always` (latency spike measurement)
+### G. Tool audit → Makali (Node-0) — conclusions
+
+- The documented "93 tools" is stale vs `tools/list` = **55 live** (handshake 2026-09-18
+  consolidated fragments into unified action-tools).
+- Node-0-side removals for Makali (≈16): 6 `github_*` fragments (unified `github`
+  covers all 6), 2 stats fragments (`get_system_stats`, `get_hardware_stats` — unified
+  `system_stats` covers both), 8 tools with **empty descriptions** (likely unused),
+  4 node-local tools meaningless remotely (`spawn_local_worker`, `check_models_directory`,
+  `check_podman_storage`, `system_stats`).
+- Client-side (Node-1): add a `"tools"` allowlist to `opencode.json` so only
+  ~15 visible tools remain by default (task_registry_*, hivemind_*, library_fts_search,
+  omega_memory_*, omega_federation_*, control). ~40 stay task-scoped.
+- Full 55-tool catalog + schemas saved: `exchange/n1-to-n0/hub_tools_catalog_*.json`
+  and `exchange/n1-to-n0/hub_tools_full_*.json`, report `exchange/n1-to-n0/tool_audit_*.md`.
+- Follow-up handoff `ho_62f70e4051ae` + `ho_f53bfbad540a` pending on Node 0.
+
+### H. One-line reflight of the missing GGUF cause
+
+Ollama copies model bytes into blob storage at `ollama create`; deleting/moving the
+source afterward cannot affect an already-created model. All 48 GB of blobs are intact.
+Sources are on a partitioned external disk that is not mounted.
+
+### I. Remaining unknowns (open items)
+
+1. Whether Node-0's `local_ai_engine_core` Rust module is implemented (the ENGINEERING
+   brief is a proposal; `spawn_local_worker` uses `llama_cpp.Llama` + sqlite-vec).
+2. WebUI's `OLLAMA_NUM_THREADS` passes through (8 threads confirmed by the thread
+   sweep's special case); confirm under a long-thread test.
+3. Whether `deepseek-r1:8b` up to Q5_K_M trades tool-call reliability — planned item.
+4. Node-0's `local_ai_engine_core` implementation status — Makali's domain.
+
+Archive: `logs/20261007-threads/` (55 files; `logs/thermal/` gitignored with turbostat
+logs), `benchmarking/` (3 runs + harness + 8B JSON), `docs/research/` (this branch),
+`exchange/` (tool audit relay for Makali).
+
+### E. Thread curves, load, and performance governor — all measured
+
+**Engine parity (raw `llama-server` binary vs `llama-cpp-python` pip build)**:
+identical 25.1 vs 20.4 t/s on identical GGUFs (a1b 800MB, lfm 266 tensors, md5-verified).
+`llama-cpp-python` offes: 0.64 s mmap load vs Ollama 10–30 s page-in, kv-split
+(`-tb` does not change decode), flash-attn. PyO3 `local_ai_engine_core` is documented
+and *not yet implemented* on Node-0.
+
+**LFM2.5-2.6B thread sweep** (idle, 64 tokens, 6 runs): t=6 = **21.2 t/s peak**
+(t=5 21.2, t=8 20.5, t=10 20.3, t=12 20.1, t=4 19.5, t=16 19.4). Load-phase
+page-in at t=4 = 2.4 s (cold) vs 0.3 s re-warm at t=6. **Keep t=6 in the tag.**
+
+**Krikri 8B thread sweep** (4k ctx, 64 tokens): t=5 6.5, t=6 6.4, t=4 6.3, t=10 6.3,
+t=8 6.2 — flat at the bandwidth wall (5.9 GB weights ÷ 30 GB/s single-channel ≈ 5 t/s).
+**Keep t=4** (linear 8B/2.6B ÷ 3.3× speed check).
+
+**Performance governor rerun** (scaling_governor=performance): LFM loaded +5% and
+TTFT −25% (18.8 vs 19.6; 0.17 → 0.12–0.15s). Krikri loaded *dropped* 6.6→5.8 under
+performance mode: the faster E-cores make the embedder's hammer heavier, and a
+bandwidth-bound model dislikes it. Keep `performance` globally (LFM is compute-bound;
+Krikri is bandwidth-bound), but consider `powersave` on E-cores if embedding runs
+concurrently.
+
+**Tiny models**: 230M peak t=6 → **133.3 t/s** at temp 0.7, TTFT 0.031s; 350M peak
+t=8 → **91.0 t/s**, TTFT 0.040s. 6.3×/7.1× faster than their claimed Raspberry Pi
+figures. 11.6 W / 57 °C. Use as WebUI task models + extraction pipelines.
+
+### F. The LFM2.5-8B-A1B MoE — real capability in the engine
+
+- Imported: `lfm25-8b-a1b`, arch `lfm2moe`, 8.5B total / 1.0B active per token, 128k
+  context, `tools` + `thinking` capabilities, Q4_K_M (~5.4 GB).
+- Thread sweep (idle, 64 tokens): t=4 21.1, **t=6 23.1, t=8 25.1 peak**, t=10 24.9.
+- Engine-level reasoning: every 64-token run stopped mid-`think` (reasoning traces
+  inside the token budget). Prefill of 500 tokens = 5.9–7.3 s (~70–85 tok/s) — the
+  architecture's weak axis; short chat is fine, long threads will sit on prompt-eval.
+- Real-world harness (3 samples, executable/exact-match grading, no LLM judge):
+  code pass@3=1.0 (3 runs: 0/8, 8/8, 8/8), toolcall 1.0/2, extract 0.0/3 (cannot emit
+  a JSON literal — template verbosity), instruct 0.0/3 (adversarial markers).
+  Conclusion: **the 8B is a strong agentic *code* model, a weak strict-output model**;
+  use it with retry-on-failure and a JSON-forcing wrapper for extraction.
+### C. Why WebUI felt "drastically slower" than the terminal — DISSECTION
+
+Same engine (`llama-server` at 21.0–21.2 t/s loaded), same model. The difference was
+**six stacked layers**:
+
+1. **WebUI → Ollama path**: `/api/chat` (OpenAI shape) vs `/api/generate`; the chat
+   template prepends a system prompt + role markers before the tokens.
+2. **Prompt processing**: terminal /api/generate = 1 sentence (8–17 tokens, TTFT 0.07s,
+   70.9 tok/s prompt-eval); WebUI /api/chat with a system prompt + history = 155 tokens,
+   prompt-eval 1.69s before the first visible token — a 24× TTFT gap at identical
+   decode speed. LFM2.5's context is 128k spec'd but the tag caps at 8192.
+3. **Hidden background jobs**: each WebUI message triggers title/tag/follow-up
+   suggestions concurrently. `OLLAMA_NUM_PARALLEL=1, MAX_LOADED=1` = one slot, so
+   4 jobs serialize; theerno-run, a single message costs ~5 minutes of inference
+   (title 34s → answer 2m19s → follow-ups 1m38s → tags 25s). This alone caused
+   >95% of the perceived slowness.
+4. **Model reload tax**: `MAX_LOADED=1` + switching models unloads/reloads (10–30 s
+   on this box). Each command/chat with a different model pays a full warm-up.
+5. **Docker hops**: buffer-copy + single uvicorn worker (`--workers 1`).
+6. **Background load**: an E-core embedder instance running concurrently on the same
+   P-cores collapsed the box from 21.2 t/s to **4.6 t/s (−78%)** — the truly
+   catastrophic case, explained in §D.
+
+Verify in WebUI (extras off): fresh chat, same 1-sentence prompt → TTFT ~0.07–0.13s,
+21 t/s decode. With extras on → 5× slower to first token, 4× slower generation.
+
+### D. The embedder misplacement — root cause + fix (verified by measurement)
+
+`scripts/embed_service.py` (built 2026-09-26) documents the design: a second Ollama
+instance is mandatory because **a single Ollama process cannot pin embeddings to E-cores
+and generation to P-cores** (`AllowedCPUs=0-11` fixed by systemd). The fix:
+
+- `ollama-embed.service`: `:11435`, `AllowedCPUs=12-15`,
+  `OLLAMA_NUM_THREADS=4`, `OMP_NUM_THREADS=4`, 4 runner threads.
+- Runner affinity confirmed at runtime: `12-15` (Gracemont, 2.8 GHz).
+
+**Measured effect** (true load, E-core embedder + LFM): 21.2 → **18.8 t/s (+5%)**
+— a *margin*, not a tax, against the unisolated collapse (−78%). Under `performance`
+governor (§F) the hammer's own power draw made Krikri loaded dip 6.6→5.8 t/s, so
+the E-core design should be left on `powersave` on the E-cores.
