@@ -1,10 +1,13 @@
 {
+  "packet_id": "ho_7a4f2c9e1b",
+  "packet_uri": "exchange/n1-to-n0/handoff_lilith_n1_20261008_session_takeover.json",
+  "packet_sha256": "87a519c413f50728ef033b6068d8ae1879270981abc15822a5ce0f2840a1fd5a",
   "handoff_id": "ho_20261008_lilith_n1_session_takeover",
   "from": "Node-1 (composite session, 2026-10-08)",
   "to": "Lilith-N1 (Node-0 Hivemind)",
   "date": "2026-10-08",
   "kind": "handoff",
-  "summary": "Project takeover package for the Omega Engine (WebUI + Ollama + 93→55 tool curation). Verified healthy: WebUI→Ollama link confirmed live from inside the container; all blobs intact (48 GB store, OLLAMA_MODELS); engine bench complete (llama-server == llama-cpp-python 25.1 vs 20.4 t/s; thread curves LFM@t6 21.2 t/s, Krikri@t4 6.7 t/s; performance governor kept). Speed root cause dissected (chat template + 155-token prompt + 4 hidden jobs on 1 slot + model reload tax + Docker hop + E-core embedder); fixes applied (extras off, embedder on 2nd Ollama instance :11435, cpu 12-15, OMP_NUM_THREADS=4, powersave on E-cores). Tools: 93 tools documented = 55 live (Sep 18 handshake already consolidated fragments); Node-0 removals ≈16 (6 github_* fragments, 2 stats fragments, 8 empty-description tools, 4 node-local). Models: LFM2.5-2.6B t=6 21.2 t/s; Krikri 8B t=4 6.7 t/s; LFM2.5-230M 133 t/s, 350M 91 t/s, 1.2B-extract fine-tune; LFM2.5-8B-A1B MoE t=8 25.1 t/s, real-world: code pass@3=1.0, toolcall 1.0, extract 0.0, instruct 0.0. Open for Lilith: local_ai_engine_core (Rust) implementation status; deepseek-r1:8b Q5_K_M tool-call reliability; Node-1 opencode.json tool allowlist. See full record in docs/20261008_OMEGA_WEBUI_OLAMA_SPEED_AND_AUDIT_REPORT.md.",
+  "summary": "Project takeover package for the Omega Engine (WebUI + Ollama + 93->55 tool curation). Verified healthy: WebUI->Ollama link confirmed live from inside the container; all blobs intact (48 GB store, OLLAMA_MODELS); engine bench complete (llama-server == llama-cpp-python 25.1 vs 20.4 t/s; thread curves LFM@t6 21.2 t/s, Krikri@t4 6.7 t/s; performance governor kept). Speed root cause dissected (chat template + 155-token prompt + 4 hidden jobs on 1 slot + model reload tax + Docker hop + E-core embedder); fixes applied (extras off, embedder on 2nd Ollama instance :11435, cpu 12-15, OMP_NUM_THREADS=4, powersave on E-core). Tools: 93 tools documented = 55 live; Node-0 removals approx 16. Models: LFM2.5-2.6B t=6 21.2 t/s; Krikri 8B t=4 6.7 t/s; LFM2.5-230M 133 t/s, 350M 91 t/s, 1.2B-extract fine-tune; LFM2.5-8B-A1B MoE t=8 25.1 t/s, real-world: code pass@3=1.0, toolcall 1.0, extract 0.0, instruct 0.0. Open for Lilith: local_ai_engine_core (Rust) implementation status; deepseek-r1:8b Q5_K_M tool-call reliability; Node-1 opencode.json tool allowlist. See full record in docs/20261008_OMEGA_WEBUI_OLAMA_SPEED_AND_AUDIT_REPORT.md.",
   "context": [
     {
       "path": "docs/20261008_OMEGA_WEBUI_OLAMA_SPEED_AND_AUDIT_REPORT.md",
