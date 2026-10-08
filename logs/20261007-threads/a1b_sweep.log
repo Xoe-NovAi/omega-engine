@@ -1,0 +1,37 @@
+== lfm25-8b-a1b t=4 ==
+{"model": "lfm25-8b-a1b", "t": 4, "load_s": 11.2, "ttft_s": 0.605, "wall_s": 3.64, "ntok": 64, "dec_ts": 21.1, "prompt500_s": 7.3}
+== lfm25-8b-a1b t=6 ==
+{"model": "lfm25-8b-a1b", "t": 6, "load_s": 1.79, "ttft_s": 0.204, "wall_s": 2.97, "ntok": 64, "dec_ts": 23.1, "prompt500_s": 6.58}
+== lfm25-8b-a1b t=8 ==
+{"model": "lfm25-8b-a1b", "t": 8, "load_s": 1.23, "ttft_s": 0.152, "wall_s": 2.7, "ntok": 64, "dec_ts": 25.1, "prompt500_s": 6.31}
+== lfm25-8b-a1b t=10 ==
+{"model": "lfm25-8b-a1b", "t": 10, "load_s": 1.22, "ttft_s": 0.135, "wall_s": 2.7, "ntok": 64, "dec_ts": 24.9, "prompt500_s": 5.92}
+== lfm25-230m t=4 ==
+{"model": "lfm25-230m", "t": 4, "load_s": 0.75, "ttft_s": 0.029, "wall_s": 0.27, "ntok": 29, "dec_ts": 121.5, "prompt500_s": 0.86}
+== lfm25-230m t=6 ==
+{"model": "lfm25-230m", "t": 6, "load_s": 0.07, "ttft_s": 0.032, "wall_s": 0.27, "ntok": 29, "dec_ts": 120.5, "prompt500_s": 0.77}
+== lfm25-230m t=8 ==
+{"model": "lfm25-230m", "t": 8, "load_s": 0.07, "ttft_s": 0.025, "wall_s": 0.24, "ntok": 29, "dec_ts": 132.4, "prompt500_s": 0.76}
+== lfm25-230m t=10 ==
+{"model": "lfm25-230m", "t": 10, "load_s": 0.07, "ttft_s": 0.025, "wall_s": 0.25, "ntok": 29, "dec_ts": 131.2, "prompt500_s": 0.73}
+== lfm25-350m t=4 ==
+{"model": "lfm25-350m", "t": 4, "load_s": 1.83, "ttft_s": 0.061, "wall_s": 0.34, "ntok": 24, "dec_ts": 85.3, "prompt500_s": 1.32}
+== lfm25-350m t=6 ==
+{"model": "lfm25-350m", "t": 6, "load_s": 0.08, "ttft_s": 0.04, "wall_s": 0.29, "ntok": 24, "dec_ts": 95.4, "prompt500_s": 1.14}
+== lfm25-350m t=8 ==
+{"model": "lfm25-350m", "t": 8, "load_s": 0.07, "ttft_s": 0.041, "wall_s": 0.29, "ntok": 24, "dec_ts": 97.2, "prompt500_s": 1.11}
+== lfm25-350m t=10 ==
+{"model": "lfm25-350m", "t": 10, "load_s": 0.07, "ttft_s": 0.042, "wall_s": 0.3, "ntok": 24, "dec_ts": 93.4, "prompt500_s": 1.1}
+SAVED /home/xnai/Documents/Projects/omega-engine-alpha/logs/20261007-threads/a1b_sweep.json
+lfm25-8b-a1b t= 4 load=11.20s TTFT=0.605s dec=  21.1 t/s prompt~500tok=7.30s
+lfm25-8b-a1b t= 6 load=1.79s TTFT=0.204s dec=  23.1 t/s prompt~500tok=6.58s
+lfm25-8b-a1b t= 8 load=1.23s TTFT=0.152s dec=  25.1 t/s prompt~500tok=6.31s
+lfm25-8b-a1b t=10 load=1.22s TTFT=0.135s dec=  24.9 t/s prompt~500tok=5.92s
+lfm25-230m  t= 4 load=0.75s TTFT=0.029s dec= 121.5 t/s prompt~500tok=0.86s
+lfm25-230m  t= 6 load=0.07s TTFT=0.032s dec= 120.5 t/s prompt~500tok=0.77s
+lfm25-230m  t= 8 load=0.07s TTFT=0.025s dec= 132.4 t/s prompt~500tok=0.76s
+lfm25-230m  t=10 load=0.07s TTFT=0.025s dec= 131.2 t/s prompt~500tok=0.73s
+lfm25-350m  t= 4 load=1.83s TTFT=0.061s dec=  85.3 t/s prompt~500tok=1.32s
+lfm25-350m  t= 6 load=0.08s TTFT=0.040s dec=  95.4 t/s prompt~500tok=1.14s
+lfm25-350m  t= 8 load=0.07s TTFT=0.041s dec=  97.2 t/s prompt~500tok=1.11s
+lfm25-350m  t=10 load=0.07s TTFT=0.042s dec=  93.4 t/s prompt~500tok=1.10s
