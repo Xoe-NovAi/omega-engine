@@ -357,8 +357,9 @@ consolidated fragments into unified action-tools (your descriptions say so: "rep
 | `exchange/n1-to-n0/` | tool audit + 55-tool catalogs (queued to Lilith-N1) |
 | `scripts/` | `realworld_eval.py` (new), `embed_service.py`, `bench_threads.py` |
 
-**Commit:** `3e72a53f` docs: comprehensive session report (this file) · `acaa1f55`
-LFM25 research branch + QA log · `8140bc16` real-world eval · `3341ced8` thread sweep.
+**Commit:** `9cf01714` docs: comprehensive session report 2026-10-08 (this file), clean
+rewrite of the garbled `3e72a53f` (superseded); `acaa1f55` LFM25 research branch +
+QA log · `8140bc16` real-world eval · `3341ced8` thread sweep.
 Open commitments: report delivery to Lilith-N1 (Exchange), hardening of the
 single-slot eval harness (reserved, not blocking).
 
