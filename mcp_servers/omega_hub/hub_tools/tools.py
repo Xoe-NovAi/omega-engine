@@ -3144,3 +3144,325 @@ async def hivemind_lock(
         logger.warning("hivemind_lock %s failed: %s", action, e)
         return json.dumps({"error": str(e)})
 
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# SESSION SEARCH — FTS5 Lexical Search over Session Corpus
+# ════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+async def session_search(
+    query: str,
+    limit: int = 10,
+    entity: str = None,
+    rebuild: bool = False
+) -> str:
+    """
+    Search session corpus using FTS5 lexical index.
+    
+    Searches across HALL_OF_RECORDS session JSON files and session_gnosis.md files
+    for decisions, continuations, task_current, focus_chain, and entity.
+    
+    Args:
+        query: Search query (FTS5 syntax supported: "exact phrase", term1 term2, term*)
+        limit: Maximum results to return (default 10, max 50)
+        entity: Optional entity filter (e.g., "opencode_kali", "opencode_roc_racoon")
+        rebuild: Force rebuild index before search (default false)
+    
+    Returns:
+        JSON array of matching sessions with snippets and relevance ranking.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    # Add repo root to path for session_fts5 import
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_fts5 import SessionFTS5
+    except ImportError as e:
+        return json.dumps({"error": f"session_fts5 module not available: {e}"})
+    
+    try:
+        fts = SessionFTS5(repo_root)
+        
+        # Build index if needed
+        if rebuild:
+            build_result = fts.build_index(force_rebuild=True)
+            if build_result.get("status") == "error":
+                return json.dumps({"error": f"Index build failed: {build_result}"})
+        
+        # Validate limit
+        limit = max(1, min(limit, 50))
+        
+        # Search
+        results = fts.search(query, limit=limit, entity=entity)
+        
+        return json.dumps({
+            "query": query,
+            "entity_filter": entity,
+            "limit": limit,
+            "results": results,
+            "count": len(results)
+        }, indent=2)
+        
+    except Exception as e:
+        return json.dumps({"error": f"Search failed: {e}"})
+
+
+@mcp.tool()
+async def session_search_stats() -> str:
+    """
+    Get FTS5 session search index statistics.
+    
+    Returns:
+        JSON with index stats: total rows, by source, top entities, DB size.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_fts5 import SessionFTS5
+    except ImportError as e:
+        return json.dumps({"error": f"session_fts5 module not available: {e}"})
+    
+    try:
+        fts = SessionFTS5(repo_root)
+        stats = fts.get_stats()
+        return json.dumps(stats, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Stats failed: {e}"})
+
+
+@mcp.tool()
+async def session_search_build(force: bool = False) -> str:
+    """
+    Build or rebuild the FTS5 session search index.
+    
+    Args:
+        force: Force rebuild even if index exists (default false)
+    
+    Returns:
+        JSON with build result: status, row counts, errors.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_fts5 import SessionFTS5
+    except ImportError as e:
+        return json.dumps({"error": f"session_fts5 module not available: {e}"})
+    
+    try:
+        fts = SessionFTS5(repo_root)
+        result = fts.build_index(force_rebuild=force)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Build failed: {e}"})
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# SESSION SEMANTIC SEARCH — ONNX Embeddings + sqlite-vec
+# ════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+async def session_search_semantic(
+    query: str,
+    limit: int = 10,
+    entity: str = None,
+    rebuild: bool = False
+) -> str:
+    """
+    Semantic search over session corpus using ONNX embeddings + sqlite-vec.
+    
+    Uses all-MiniLM-L6-v2 (ONNX) for embeddings, sqlite-vec for vector similarity.
+    Pure local inference, no PyTorch required.
+    
+    Args:
+        query: Natural language search query
+        limit: Maximum results to return (default 10, max 50)
+        entity: Optional entity filter (e.g., "opencode_kali", "opencode_roc_racoon")
+        rebuild: Force rebuild index before search (default false)
+    
+    Returns:
+        JSON array of matching sessions with similarity scores.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_semantic import SessionSemanticSearch
+    except ImportError as e:
+        return json.dumps({"error": f"session_semantic module not available: {e}"})
+    
+    try:
+        semantic = SessionSemanticSearch(repo_root)
+        
+        # Build index if needed
+        if rebuild:
+            build_result = semantic.build_index(force_rebuild=True)
+            if build_result.get("status") == "error":
+                return json.dumps({"error": f"Index build failed: {build_result}"})
+        
+        # Validate limit
+        limit = max(1, min(limit, 50))
+        
+        # Search
+        results = semantic.search(query, limit=limit, entity=entity)
+        
+        return json.dumps({
+            "query": query,
+            "entity_filter": entity,
+            "limit": limit,
+            "results": results,
+            "count": len(results)
+        }, indent=2)
+        
+    except Exception as e:
+        return json.dumps({"error": f"Semantic search failed: {e}"})
+
+
+@mcp.tool()
+async def session_search_hybrid(
+    query: str,
+    limit: int = 10,
+    entity: str = None,
+    alpha: float = 0.5,
+    rebuild: bool = False
+) -> str:
+    """
+    Hybrid search: RRF fusion of FTS5 (lexical) + vec0 (semantic).
+    
+    Combines keyword matching (FTS5) with semantic similarity (ONNX embeddings)
+    using Reciprocal Rank Fusion (RRF).
+    
+    Args:
+        query: Search query
+        limit: Maximum results to return (default 10, max 50)
+        entity: Optional entity filter
+        alpha: Weight for semantic results (0.0 = lexical only, 1.0 = semantic only, default 0.5)
+        rebuild: Force rebuild indexes before search (default false)
+    
+    Returns:
+        JSON array of matching sessions with RRF scores.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_semantic import SessionSemanticSearch
+        from scripts.session_fts5 import SessionFTS5
+    except ImportError as e:
+        return json.dumps({"error": f"Search modules not available: {e}"})
+    
+    try:
+        semantic = SessionSemanticSearch(repo_root)
+        fts = SessionFTS5(repo_root)
+        
+        # Build indexes if needed
+        if rebuild:
+            semantic.build_index(force_rebuild=True)
+            fts.build_index(force_rebuild=True)
+        
+        # Validate limit
+        limit = max(1, min(limit, 50))
+        alpha = max(0.0, min(1.0, alpha))
+        
+        # Hybrid search
+        results = semantic.hybrid_search(query, limit=limit, entity=entity, alpha=alpha)
+        
+        return json.dumps({
+            "query": query,
+            "entity_filter": entity,
+            "limit": limit,
+            "alpha": alpha,
+            "results": results,
+            "count": len(results)
+        }, indent=2)
+        
+    except Exception as e:
+        return json.dumps({"error": f"Hybrid search failed: {e}"})
+
+
+@mcp.tool()
+async def session_search_semantic_stats() -> str:
+    """
+    Get semantic search index statistics.
+    
+    Returns:
+        JSON with index stats: total vectors, embedding dim, model, DB size.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_semantic import SessionSemanticSearch
+    except ImportError as e:
+        return json.dumps({"error": f"session_semantic module not available: {e}"})
+    
+    try:
+        semantic = SessionSemanticSearch(repo_root)
+        stats = semantic.get_stats()
+        return json.dumps(stats, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Stats failed: {e}"})
+
+
+@mcp.tool()
+async def session_search_semantic_build(force: bool = False) -> str:
+    """
+    Build or rebuild the semantic search index (ONNX embeddings + sqlite-vec).
+    
+    Args:
+        force: Force rebuild even if index exists (default false)
+    
+    Returns:
+        JSON with build result: status, row counts, model info.
+    """
+    import json
+    import sys
+    from pathlib import Path
+    
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    
+    try:
+        from scripts.session_semantic import SessionSemanticSearch
+    except ImportError as e:
+        return json.dumps({"error": f"session_semantic module not available: {e}"})
+    
+    try:
+        semantic = SessionSemanticSearch(repo_root)
+        result = semantic.build_index(force_rebuild=force)
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Build failed: {e}"})

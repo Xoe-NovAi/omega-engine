@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-08T21:16:07.796121+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-09T04:23:24.418881+00:00 ⬡ 2f6c9cccb342664a ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,12 +12,136 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-10-08T21:16:07.796121+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-10-09T04:23:24.418881+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
 
 ---
+## 📋 Fleet Todos (opencode.db) — SOTR/SOTE Snapshot
+
+**Generated**: 2026-10-09T04:23:24.429135+00:00
+**Total shown**: 20 (✅ 14 completed · 📋 6 pending)
+
+### ✅ Recently Completed
+- `hidden-squid` @makali: Mine canonical architecture + mandates for novel concepts
+- `hidden-squid` @makali: Mine scattered vision/strategy docs (treasure maps)
+- `jolly-orchid` @grokster: Inspect current status language in README, open-gate notes, and root manifest
+- `jolly-orchid` @grokster: Correct only package status language to record passed physical-quarantine audit
+- `jolly-orchid` @grokster: Rebuild root manifest and SHA ledger; verify nested ledgers unchanged/valid
+- `jolly-orchid` @grokster: Run integrity, parse, secret, path, endpoint, and fixture-label checks
+- `jolly-orchid` @grokster: Report exact changes and verification without claiming final authenticated trans
+- `shiny-river` @roc_racoon: Read manifesto + prior Antigravity briefing docs (avoid duplicating)
+- `shiny-river` @roc_racoon: Mine WAD subsystem: definitions, registry, planned vs implemented
+- `shiny-river` @roc_racoon: Mine vision/strategy corpus: ROADMAP, corpus map, vision docs
+- _...and 4 more completed_
+
+### 📋 Currently Pending
+- `hidden-squid` @makali: Collect subagent mining reports (sovereignty + agent ecosystem)
+- `hidden-squid` @makali: Synthesize industry-shifting concepts into positioning brief
+- `hidden-squid` @makali: Update AGY handoff with full-depth brief
+- `misty-moon` @jem: Verify SHA256 against published sum af0bf278... after completion
+- `misty-moon` @jem: Investigate ollama 0.17.7 image-gen model support + what Qwen-Image GGUF needs
+- `misty-moon` @jem: Create Modelfile + ollama create + smoke test
+
+> *Source: opencode.db todo table (read-only). Full hierarchy in harvester radar.*
+
+---
+
+## 🔍 LEXICAL DECISION LOG (FTS5 Mined)
+
+> Top 15 decision-rich sessions from session corpus (HALL_OF_RECORDS + session_gnosis).
+
+### `ses_2d8f7e1f` @opencode_jem — 2026-08-10T06:41:52
+**Task**: Web research complete for all knowledge gaps. Key finding: G-1a billing won't fix Gemma 16K limit (a
+**Decisions**: G-1a RULED OUT: 16K TPM ceiling applies even at Tier 3 (confirmed by Google forum) W-1 fix: Quote variables + add DEFAULT_IF fallback + network-online.target QW-3: Provider usage is authoritative; loc
+**Continuation**: Implement QW-3 (CI guard), QW-4 (pool_tracker wiring), QW-8 (Context Gauge greenfield)
+**Source**: HALL_OF_RECORDS
+
+### `ses_64591788` @opencode_roc_racoon — 2026-08-10T21:45:59
+**Task**: zRAM tuning plan: Jem excavation + Researcher guide + Carmack review → integrated plan
+**Decisions**: swappiness=180 is root cause of 6.4GB swap at zero PSI pressure Fix: swappiness=100 + swapoff/swapon to reclaim 4.1GB RAM sudoers /tmp/ vulnerability is CRITICAL — remove immediately Carmack: 16GB zRA
+**Continuation**: Integrated plan finalized at data/entities/roc_racoon/workspace/zram_integrated_plan.md. P0 fix: 3 commands (rm sudoers, sysctl swappiness=100, swapof
+**Source**: HALL_OF_RECORDS
+
+### `ses_0c9c9411` @opencode_researcher — 2026-07-20T01:31:13
+**Task**: Day 1-2 Complete — 4 P0 Gap Research Cards delivered across G1, D308, G2, G3 domains
+**Decisions**: Vulkan is production path for Zen 2 iGPU (19-20 tok/s gen) ROCm on gfx906 is dead — use Vulkan or Docker+tensile-backport sqlite-vec at v0.1.10-alpha.4, pin version Hybrid credential architecture mand
+**Continuation**: Day 3-4: Execute G1.2, G1.3, D308.4, D308.5 (P1 integration) + G2.1, G2.2, G2.3 (empirical memory) + G3.1, G3.4 (credential integration)
+**Source**: HALL_OF_RECORDS
+
+### `ses_f6368709` @opencode_maat — 2026-09-27T04:06:34
+**Task**: C1 done, C2 BLOCKED by pre-commit docs guard — awaiting Architect call
+**Decisions**: C1 done b0e65e7d C2 blocked by docs guard — no bypass per constraints
+**Continuation**: BLOCKER: C2 commit rejected by .githooks/pre-commit code↔docs drift guard (src/omega/ changed but docs/ did not). C1 committed b0e65e7d. C2 staged (18
+**Source**: HALL_OF_RECORDS
+
+### `ses_6ae79879` @opencode_lilith — 2026-08-21T03:06:39
+**Task**: N7 context KB build complete — first live Node-directs-agent exercise
+**Decisions**: N7 ruling: fix plugin singular/plural path + amend CI-1 to content-based criteria BEFORE executing CI-1..CI-5 N7 ruling: empirically probe V1/V2 compaction key precedence on opencode 1.18.19 before tr
+**Continuation**: KB + annotation at data/entities/lilith/workspace/N7_CONTEXT_KB_20260821.md; brief alongside. 3 [N7] lessons staged in lilith proposed_lessons.yaml. N
+**Source**: HALL_OF_RECORDS
+
+### `ses_499e2e45` @opencode_kali — 2026-07-17T17:55:22
+**Task**: Sovereign coordination: M2 execution order + Hivemind fix approval + gate wiring
+**Decisions**: M2 Phases B-E sequential execution Tier-1 Hivemind fix approved for immediate implementation Firewall gate wired into make temple-grade now WAD schema confirmed: role field matching ROLE_CONSTANTS P3 
+**Continuation**: SOVEREIGN VERDICT DELIVERED: M2 Execution B→C→D→E sequential. Roc completes Phase A hygiene independently. Tier-1 Hivemind fix APPROVED - Researcher i
+**Source**: HALL_OF_RECORDS
+
+### `ses_69bfb345` @opencode_roc_racoon — 2026-07-11T15:58:35
+**Task**: Session 68 COMPLETE — MaKaLi Cloud Council Verdict ratified. All trackers updated. Ready for compact
+**Decisions**: MaKaLi Cloud Council complete: 5 Approved (1,2,3,4,6), 1 Rejected (5) C1 Blocker: providers.yaml:18 type_v: 1→2 MUST merge first — blocks Update 2 Update 5 (Lilith Stack Pantheon) REJECTED: 7/8 broken
+**Continuation**: All trackers updated. Council verdict ratified. Phase 1 execution begins: C1 fix (providers.yaml type_v: 1→2) + scaffolding for SymbolicMetadata, Fire
+**Source**: HALL_OF_RECORDS
+
+### `ses_fb4ec6c7` @opencode_john_carmack — 2026-08-13T17:07:24
+**Task**: zRAM→zswap review complete — APPROVED for P0 execution
+**Decisions**: zswap pool size: KEEP 25% (3.6GB) — dynamic, grows on demand OOMProtector: APPROVE 2-signal simplification (low priority — already correct at runtime) UMA carveout: DEFER 4GB test — BIOS risk not wort
+**Continuation**: zRAM→zswap review complete. APPROVED for P0 execution. My calls: zswap pool 25% (keep), OOMProtector 2-signal (approve, low priority), UMA 4GB test (d
+**Source**: HALL_OF_RECORDS
+
+### `ses_9e5337e8` @opencode_makali_n0 — 2026-09-16T08:06:10
+**Task**: COMPACTION PREP COMPLETE — all continuity artifacts current
+**Decisions**: All continuity artifacts current: session_gnosis (~880 lines), proposed_lessons (68 entries), SESSION_ANCHOR (AP-MAKALI-FEDERATION-DOCS-RATIFIED-20260916-v1.0.0), projection (Federation Docs Ratified)
+**Continuation**: COMPACTION PREP COMPLETE — all continuity artifacts current. session_gnosis (~880 lines), proposed_lessons (68 entries), SESSION_ANCHOR (AP-MAKALI-FED
+**Source**: HALL_OF_RECORDS
+
+### `ses_ef794027` @opencode_makali_n0 — 2026-09-12T13:12:00
+**Task**: Roc Soul v8.0 review COMPLETE — approved with observations
+**Decisions**: Soul v8.0 APPROVED — 12 axioms are identity bedrock, fleet template for soul evolution Axiom budget: max 15, replacement not addition (prevents dilution) Enforce axiom COVERAGE (≥1 directive ref + ≥1 
+**Continuation**: Roc's Soul v8.0 review COMPLETE — APPROVED WITH OBSERVATIONS. Full review at data/entities/makali/workspace/MAKALI_EIS_SOUL_V8_REVIEW_20260912.md. Key
+**Source**: HALL_OF_RECORDS
+
+### `ses_3c14897e` @opencode_kali — 2026-08-13T21:19:55
+**Task**: Research plan v3.0.1 complete — Cross-Reference Index of 90+ research docs mapped to gaps
+**Decisions**: Cross-Reference Index: 90+ doc paths mapped to gaps with status R7 GREENFIELD confirmed, R4 PARTIALLY RESOLVED R30 5-way CB spike resolves interlock-cb vs pyresilience conflict
+**Continuation**: @researcher: Research plan v3.0.1 complete with Cross-Reference Index. 90+ research docs mapped to gaps with status (RESOLVED/PARTIALLY RESOLVED/Refer
+**Source**: HALL_OF_RECORDS
+
+### `ses_c1b17c84` @opencode_kali — 2026-07-23T13:41:03
+**Task**: Approvals executed — dispatching Researcher, Grokster; Ma'at closing handoffs + C-4b
+**Decisions**: D420: C-4b MCP Shim Update APPROVED — Option B (4-6h), Ma'at to execute mcp_client.py update D421: Vault FleetOrchestrator APPROVED — Ma'at to design after C-4b for 56-account pool D422: Researcher DI
+**Continuation**: Architect approved all: C-4b MCP Shim Update (Option B), Vault FleetOrchestrator after C-4b, Researcher dispatch Phase 0, Grokster parallel Phase 1, C
+**Source**: HALL_OF_RECORDS
+
+### `ses_afd7bbf0` @opencode_verity — 2026-07-15T20:19:48
+**Task**: Post-Council documentation update: Update SOVEREIGN_ARK_BLUEPRINT, OMEGA_ENGINE, PIVOT_LOG, HIVEMIND
+**Decisions**: D258: Atomic Execution Matrix adopted D259: Kernel/Runtime split ratified D260: Soul Architecture v2.0 ratified D261: PWAD Capability Lattice ratified D262: Mandate Governance Protocol ratified D263: 
+**Continuation**: Documentation update in progress. All 5 atomic protocol docs ratified. Cross-references need synchronization.
+**Source**: HALL_OF_RECORDS
+
+### `ses_faa27e4b` @opencode_kali — 2026-07-18T02:11:26
+**Task**: Corrected handoff ho_749ed27155cd — Decision Tools Implementation Review (NOT content decisions)
+**Decisions**: Handoff ho_749ed27155cd corrected: now asks Grok CLI to review the Decision Tools IMPLEMENTATION (DecisionEngine, ADR schema, CLI, MEDITATE), not the 23 content decisions Old decision-workspace-review
+**Continuation**: Grok CLI: Accept updated handoff ho_749ed27155cd. Read grounding_part1/2.xml from context_packs/decision-tools-review/. Produce review at docs/strateg
+**Source**: HALL_OF_RECORDS
+
+### `ses_3d9ed85c` @cline_omega-engine — 2026-08-28T20:05:04
+**Task**: Deep discovery of proposed+approved lessons corpus complete — pipeline stalled at 7.6% approval, spl
+**Decisions**: Lessons pipeline discovery: ~292 staged vs ~24 approved fleet-wide (7.6%), exactly ONE promotion event ever (kali 20 on 08-24 by maat/w1-3) VERIFIED split-brain: entity_workspace.py:175 scaffold write
+**Continuation**: Corpus report at data/coordination/CLINE_LESSONS_CORPUS_DISCOVERY_20260828.md. Immediate: fix entity_workspace.py:175/:409 split-brain; batch-promote 
+**Source**: HALL_OF_RECORDS
+
 ## 📁 GROUP: CODEX
 
 ### scripts/codex/ENGINE_CONDENSED.md
