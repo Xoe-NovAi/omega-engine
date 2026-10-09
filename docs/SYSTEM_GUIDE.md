@@ -700,7 +700,7 @@ opencode run "Find production Axum middleware examples. use grep_app"
 
 | Node | Role | Hardware | Key Service |
 |------|------|----------|-------------|
-| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U, 16GB DDR4-3200 dual-channel, Ubuntu 25.10 | `omega-hub` (FastMCP, 93 tools in the latest verified handshake, Streamable HTTP on `:8016`) |
+| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U, 16GB DDR4-3200 dual-channel, Ubuntu 25.10 | `omega-hub` (FastMCP, 55 tools live 2026-10-07, Streamable HTTP on `:8016`) |
 | **Node 1 (ASUS)** | Compute Vanguard | Intel i7-13620H, 16GB DDR5-5200 single-channel, Ubuntu 26.04 | Bare-metal Ollama, Open WebUI, OpenCode client |
 
 ### 15.2 Wire Protocols
@@ -775,7 +775,7 @@ python3 ~/hivemind_first_contact.py
 
 | Component | HP (Node 0) | ASUS (Node 1) | Status |
 |-----------|-------------|---------------|--------|
-| `omega-hub` | ✅ Running (93 tools in latest verified handshake) | — | Recheck live after Node 0 changes |
+| `omega-hub` | ✅ Running (55 tools live 2026-10-07) | — | Recheck live after Node 0 changes |
 | OpenCode | ✅ Custom agents, skills | ✅ Fresh + USB config | Connected |
 | MCP Servers | 5 (Exa, Firecrawl, omega-hub, SearXNG, parallel-search) | 7 (Exa, Context7, Grep.app, omega-hub, SearXNG, Firecrawl*) | Synced |
 | Git Repo | ✅ SSOT | ⏳ Pending clone | Phase 0 |

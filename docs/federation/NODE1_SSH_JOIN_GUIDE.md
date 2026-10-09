@@ -40,7 +40,7 @@ sudo tailscale up --authkey="${NODE0_MINTED_AUTHKEY}" \
 tailscale status          # both nodes online: tag:node0 + tag:node1
 tailscale ping node0      # → pong from Node 0 (mesh 21ms direct, zero DERP)
 ssh node0                 # Node 0 shell over mesh (Tailscale SSH as arcana-novai)
-curl http://100.123.51.67:8016/mcp  # Node 0 hub: 93 tools, task_registry_query works
+curl http://100.123.51.67:8016/mcp  # Node 0 hub: 55 tools live 2026-10-07, task_registry_query works
 ```
 
 ---

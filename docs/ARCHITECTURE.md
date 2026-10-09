@@ -9,7 +9,7 @@
 │  RAM: 16 GB Dual-Channel DDR4-3200  •  Storage: NVMe 512 GB                  │
 │  ──────────────────────────────────────────────────────────────────────────  │
 │  Git SSOT ................. omega-engine.bundle (authoritative repository)   │
-│  omega-hub ................ FastMCP; 93 tools in latest dated handshake on :8016 (Streamable) │
+│  omega-hub ................ FastMCP; 55 tools (live 2026-10-07) on :8016 (Streamable) │
 │  Stores ................... SQLite (rollback journal) + Qdrant Vector Stores │
 │  Council Orchestration .... 9-agent Cascading Serial Synchronization (CSS)   │
 │  Roles .................... Archival stability, Git SSOT, compliance, DHAL   │
@@ -52,7 +52,7 @@ The Omega Engine is an asymmetric, federated, dual-node sovereign artificial int
 | **Silicon Architecture** | AMD Ryzen 7 5700U (8C/16T, Zen 2, homogeneous) | Intel Core i7-13620H (6P+4E/16T, Raptor Lake-H hybrid) |
 | **Memory Topology** | 16 GB Dual-Channel DDR4-3200 (symmetrical bus) | 16 GB Single-Channel DDR5-5200 (high-latency bus) |
 | **Operating System** | Ubuntu 25.10 (Linux 6.x, Mesa, Wayland/GNOME) | Ubuntu 26.04 LTS "Resolute Raccoon" (Linux 7.0) |
-| **Primary Services** | `omega-hub` (FastMCP; 93 tools in latest dated handshake), Qdrant, SQLite | `ollama.service` (14.4 t/s), Open WebUI, OpenCode, SQLite continuity authority |
+| **Primary Services** | `omega-hub` (FastMCP; 55 tools live 2026-10-07), Qdrant, SQLite | `ollama.service` (14.4 t/s), Open WebUI, OpenCode, SQLite continuity authority |
 | **Tailscale Identity** | `omega-hub.tail51f14a.ts.net` (`100.123.51.67`) | `xnai-n1-asus.tail51f14a.ts.net` (`100.89.40.17`) |
 | **Shared Drive Role** | NFSv4.2 Client (`/mnt/node-drive`, automounted) | NFSv4.2 Server (`/home/xnai/node-drive`, TS-bound) |
 

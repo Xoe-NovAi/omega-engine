@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/well_curator/v1",
+  "type": "object",
+  "required": ["kind", "domain", "tags", "action", "superseded_by", "rationale"],
+  "properties": {
+    "kind": {"enum": ["correction", "anti_pattern", "insight", "preference", "dream", "measurement", "rule"]},
+    "domain": {"enum": ["local_ai", "gaming", "harness", "research", "consciousness", "general"]},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "action": {"enum": ["keep", "supersede", "merge", "drop"]},
+    "superseded_by": {"type": ["string", "null"]},
+    "rationale": {"type": "string", "maxLength": 200}
+  }
+}

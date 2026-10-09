@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/decomposition/supersede_decider/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action", "superseded_by"],
+  "properties": {
+    "action": {"enum": ["keep", "supersede"]},
+    "superseded_by": {"type": ["string", "null"]}
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/failure_classifier/v1",
+  "type": "object",
+  "required": ["class", "confidence", "evidence"],
+  "properties": {
+    "class": {"enum": ["parse_failure", "schema_violation", "truncation", "hallucinated_entity", "latency_spike", "wrong_tool", "abstained", "ok"]},
+    "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "evidence": {"type": "string"}
+  }
+}

@@ -61,7 +61,7 @@ docker compose up -d
 ┌─────────────────────────────────────────────────────────────────┐
 │  NODE 0 (HP Pavilion) — ARCHIVAL BASTION                        │
 │  • Git SSOT (omega-engine.bundle)                               │
-│  • omega-hub MCP (93 tools in latest verified handshake)         │
+│  • omega-hub MCP (55 tools live 2026-10-07)                                │
 │  • Qdrant + SQLite stores, Hivemind coordination                │
 │  • Council agents (kali, roc_racoon, grokster, ...)             │
 └──────────────────────────┬──────────────────────────────────────┘

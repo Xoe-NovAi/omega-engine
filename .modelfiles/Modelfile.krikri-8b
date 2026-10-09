@@ -1,11 +1,97 @@
+# Modelfile.krikri-omega
+# Build:  ollama create krikri-omega -f Modelfile.krikri-omega
+# Target: Ryzen 7 5700U, ~16 GB RAM, CPU-only (Vega iGPU unused), Ollama 127.0.0.1:11434
+# Base:   Llama-Krikri-8B-Instruct (Llama-3.1-8B lineage, 128k native context)
+#
+# NOTE: Ollama-only. llama-server (:8080) ignores this file, and a request that carries its
+# own system message replaces the SYSTEM below. Keep the STACK RULES in the agent prompt layer too.
+
 FROM /home/xnai/models/gguf/Krikri-8b-Instruct-Q5_K_M.gguf
-SYSTEM """You are Krikri-8B-Instruct, a precise and wise coding assistant.
-Prefer minimal, idiomatic changes. Quote the problematic line and explain why before suggesting fixes.
-Use presence_penalty 1.5 to prevent repetitive loops on low-bit quants.
-Think step-by-step for complex refactoring; be direct for simple fixes."""
+
+# --- Chat + tool-calling template (Llama 3.1 format) -------------------------------------
+# Reconstructed from the Llama 3.1 layout; NOT render-tested. Verify with the tool-call smoke
+# test. If `ollama show` on your current tag already lists "tools", delete this block.
+TEMPLATE """{{- if or .System .Tools }}<|start_header_id|>system<|end_header_id|>
+{{- if .System }}
+
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+You are a helpful assistant with tool calling capabilities. When you receive a tool call response, use the output to answer the original user question.
+{{- end }}<|eot_id|>
+{{- end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 }}
+{{- if eq .Role "user" }}<|start_header_id|>user<|end_header_id|>
+{{- if and $.Tools $last }}
+
+Given the following functions, respond with a JSON for a function call with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
+
+{{ range $.Tools }}
+{{- . }}
+{{ end }}
+{{ .Content }}<|eot_id|>
+{{- else }}
+
+{{ .Content }}<|eot_id|>
+{{- end }}{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- else if eq .Role "assistant" }}<|start_header_id|>assistant<|end_header_id|>
+{{- if .ToolCalls }}
+{{ range .ToolCalls }}
+{"name": "{{ .Function.Name }}", "parameters": {{ .Function.Arguments }}}{{ end }}
+{{- else }}
+
+{{ .Content }}
+{{- end }}{{ if not $last }}<|eot_id|>{{ end }}
+{{- else if eq .Role "tool" }}<|start_header_id|>ipython<|end_header_id|>
+
+{{ .Content }}<|eot_id|>{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- end }}
+{{- end }}"""
+
+# --- Default system prompt (agents may override per request) -----------------------------
+SYSTEM """You are a local coding assistant inside the Omega Stack: sovereign, offline-first, zero telemetry.
+You are a model, not an agent persona. Agent identity comes from the agent prompt. Never conflate agents and models.
+
+STACK RULES
+- Write Python 3.12-compatible code (containers run 3.12, host runs 3.13+).
+- Torch-free: ONNX and GGUF only. Never import torch or transformers.
+- No telemetry, cloud SDKs, or outbound network calls.
+- Async uses anyio, not raw asyncio. MCP means Model Context Protocol; use FastMCP.
+- Read model paths and settings from YAML config (models.yaml). Never hardcode them.
+- No bare except. Do not add new stack components unless asked.
+
+OUTPUT RULES
+- Zero fluff. Prefer tables, diffs, status reports, and action plans over prose.
+- Minimal, idiomatic changes. When fixing code, quote the faulty line, say why, then give the diff.
+- For complex refactors, give a 3-5 line plan first. For simple fixes, answer directly.
+- Deliver complete code. Never write "omitted for brevity" or leave placeholder bodies.
+- Do not invent APIs. If unsure an API exists, write "UNVERIFIED: <name>".
+- List every requirement you did not implement under "NOT DONE". Never claim features the code lacks.
+- When formatting or restructuring a document, preserve the original wording exactly. Change structure only.
+- End multi-step work with: Done / Pending / Files touched / Next."""
+
+# --- Hardware / context ------------------------------------------------------------------
+PARAMETER num_gpu 0
+PARAMETER num_thread 8
+PARAMETER num_ctx 16384
+PARAMETER num_predict 4096
+
+# --- Sampling (deterministic code; presence_penalty 1.5 removed) -------------------------
 PARAMETER temperature 0.1
 PARAMETER top_p 0.8
-PARAMETER presence_penalty 1.5
-PARAMETER num_ctx 16384
-PARAMETER num_thread 8
-PARAMETER num_gpu 0
+PARAMETER top_k 40
+PARAMETER repeat_penalty 1.05
+
+# --- Llama 3.1 turn boundaries -----------------------------------------------------------
+PARAMETER stop "<|start_header_id|>"
+PARAMETER stop "<|end_header_id|>"
+PARAMETER stop "<|eot_id|>"
+

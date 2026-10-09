@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/privacy_sentinel/v1",
+  "type": "object",
+  "required": ["pii_found", "action", "redacted_text"],
+  "properties": {
+    "pii_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "span"],
+        "properties": {
+          "type": {"enum": ["email", "ip", "api_key", "user_path", "ssn", "phone"]},
+          "span": {"type": "string"}
+        }
+      }
+    },
+    "action": {"enum": ["allow", "redact", "drop"]},
+    "redacted_text": {"type": ["string", "null"]}
+  }
+}

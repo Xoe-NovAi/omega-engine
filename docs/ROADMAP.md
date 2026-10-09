@@ -41,6 +41,9 @@ Current state at a glance:
 | P2 | The Vanguard studies | ✅ **done** (P2.1 Headroom rejected, P2.2 Odysseus scheduled future, P2.3-4 Gods Eyes toys, P2.5 agentmemory rejected) |
 | P3 | Synthesis + federation close-out | active |
 | P4 | Lilith persistent entity + Tarot factory | active (strategy locked 2026-09-23; implementation queued) |
+| P5 | Omega Memory module (the substrate) | active (priority-one R&D track) |
+| P6 | **Ollama Native MCP Technology** (Industry-First Engine Extension) | 🚀 **HIGH PRIORITY R&D TRACK** |
+| P7 | Local specialist small-model modules | `in-progress` (measuring) — phase 2 filed 2026-10-08: **no role is trainable yet**, do not LoRA |
 
 ---
 
@@ -1205,12 +1208,91 @@ verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
 
 ---
 
+## P6 — Ollama Native MCP Technology (Industry First) — HIGH PRIORITY R&D TRACK
+
+**Goal**: Build the industry's first true native Model Context Protocol (MCP) host integration for Ollama, bypassing intermediary bridges, proxy wrappers, and UI-layer workarounds to make Ollama a native MCP client/host from core inference to CLI/API.
+
+### Strategic Opportunity & Market Gap
+- **Upstream status**: Ollama upstream issue [#7865](https://github.com/ollama/ollama/issues/7865) has been open since Nov 2024. Upstream PR [#13700](https://github.com/ollama/ollama/pull/13700) (`x/tools/mcp`) was closed by maintainers wanting to keep surface area frozen for experimental packages.
+- **The Gap**: Every local LLM setup currently requires external translation bridges (`ollama-mcp-bridge`, `mcphost`, `ollmcp`, `mcpo`, or UI plugins in Open WebUI / LM Studio).
+- **Omega Opportunity**: Build a sovereign, native, embedded MCP host layer that embeds directly into the engine's inference loop, enabling any local GGUF/Ollama model to natively discover, negotiate, and execute tools across local stdio and remote Streamable HTTP MCP servers (including `omega-hub` on Node 0).
+
+### P6.1 — Core Architecture & Protocol Engine (v0 Native Spike)
+- **Why**: Establish the native JSON-RPC 2.0 / Streamable HTTP client inside the local inference path without external Python/Node daemon dependencies.
+- **Architecture**:
+  1. `mcp_client`: Streamable HTTP (`POST /mcp`, SSE) and `stdio` sub-process manager.
+  2. `tool_adapter`: Dynamic conversion of MCP `tools/list` schemas directly into Ollama native `tools` function-calling payload for `/api/chat`.
+  3. `agentic_loop`: Multi-turn tool execution loop with bounded recursion (`MAX_ROUNDS`), strict timeout guardrails, and sandboxed execution.
+  4. `tool_filter`: Precision allowlisting / schema pruning to prevent small-model context flooding (e.g., pruning `omega-hub`'s 55 tools (live 2026-10-07) to task-scoped sets).
+- **Done when**: A standalone native client executes a multi-turn chat session with `omega-hub` tools (`hivemind_awareness`, `mempalace_search`) using local `qwen2.5-coder` / `gemma4` on Node 1 with zero intermediary web UI.
+- **Status**: `active` (R&D opened 2026-10-07).
+
+### P6.2 — Security, Sandboxing & Tool Gate Integration
+- **Why**: Exposing 90+ tools to local models creates prompt injection, SSRF, and runaway iteration risks (OWASP MCP Top 10).
+- **Done when**:
+  - Fail-closed approval gates integrated via `omega-hub_control`.
+  - Sensitive tools (destructive FS, remote execute) require human-in-the-loop confirmation.
+  - Zero-egress network isolation verified for local-only MCP servers.
+- **Status**: `queued`.
+
+### P6.3 — Dual-Node Federation & Remote Streamable HTTP Support
+- **Why**: Allow seamless invocation of Node 0's `omega-hub` tools over Tailscale WireGuard mesh directly from Node 1 local inference CLI and scripts.
+- **Done when**: Node 1 inference harness connects natively to `https://n0.tail51f14a.ts.net:8016/mcp` with automatic token/auth handling, latency circuit-breakers, and fallback caching.
+- **Status**: `queued`.
+
+---
+
+## P7 — Local Specialist Small-Model Modules — backlog
+
+**Goal**: unlock Omega Engine's missing layer of **practical, local, tiny fine-tuned specialists**—models that do one job quickly, privately, and accurately instead of trying to be general assistants.
+
+**Strategic thesis**: since the vision began as a 100% local stack, tiny specialists can become the closest thing to a living organism inside Omega Engine:
+- reflexes for classification/routing;
+- memory organs that extract and structure;
+- sentinel organs that protect privacy;
+- curators that turn sessions into Well records;
+- voice/persona layers that preserve entity identity;
+- dispatchers that connect local inference to omega-hub.
+
+**Research basis**: `docs/research/LFM25_SPECIALIST_MODULES_HUMBOLDT_20261008.md`.
+**Strategy record**: `docs/research/LFM25_SMS_STRATEGY_20261008.md` — the 350M-as-single-turn-contract-executor thesis, role matrix, LoRA recipe, and quantization defaults.
+
+### P7.1 — Extraction/persona specialist pilot (`mempalace-extractor`)
+- **Why**: Small models could extract structured memory cards from raw transcripts at a fraction of large-model cost.
+- **First experiment E0**: no training; benchmark prompt+few-shot `LFM2.5-230M-Q6_K` and `LFM2.5-350M.i1-Q6_K` over 100 held-out transcript windows for JSON validity, schema conformance, extraction F1, and p95 latency.
+- **Decision gate**:
+  - If 350M already meets validity ≥95%, conformance ≥95%, F1 ≥0.70 → ship prompt-only Modelfile/OMER card; do **not** train.
+  - If it fails → E1: TRL/PEFT/LoRA on `LFM2.5-350M-Base`, merge, GGUF, eval.
+- **Done when**: OMER card exists, dataset hash recorded, eval report committed, and the model is behind a schema-validated fallback.
+- **Status**: `in-progress` — E0 smoke test run 2026-10-08; both `lfm25-230m-q6k` and `lfm25-350m-q6k` produce JSON with `format: "json"`, but exact schema fidelity needs a larger held-out benchmark before training. See `docs/research/LFM25_SMS_E0_RESULTS_20261008.md`. P7.1a: scored SMS gauntlet shipped 2026-10-08 (`scripts/sms/gauntlet.py`, schemas, scoring, 37-row synthetic smoke dataset); smoke benchmark on both models: 100% JSON validity, schema conformance 0–28.6% (230M) / 12.5–100% (350M), extractor F1 ≈ 0 — see `docs/research/LFM25_SMS_GAUNTLET_SMOKE_20261008.md`. P7.1b: real dataset capture shipped 2026-10-08 (`scripts/sms/capture_real_dataset.py` → 303 redacted rows from the Well corpus, the MemPalace palace, live gauntlet traces and documented rules; raw stays in `~/WanderGround/datasets/sms/`). Measured A/B on the holdout with 2 exemplars per role: few-shot lifts well-curator exact-match 0.000 → 0.767 and schema conformance 0% → 90%, and tool-router conformance 25% → 67%; extractor, failure-classifier and privacy-sentinel stay near zero. **well-curator was the only role close to trainable prompt-only** — see `docs/research/LFM25_SMS_REAL_DATASET_20261008.md`. Next: extractor/privacy prompt redesign, then LoRA on `LFM2.5-350M-Base` for the two roles that clear the gate.
+  **P7.1c (phase 2, 2026-10-08) — the P7.1b conclusion was WRONG and is withdrawn.** Echo instrumentation (`distinct_output_ratio`, `modal_output_share`, `copy_suspect`) now ships in every aggregate. Measured on `lfm25-350m-q6k`: few-shot well-curator exact-match **0.852 is below the 0.898 a constant predictor gets from the model's own modal output**, against a majority-gold `action_exact` floor of 0.972 — `copy_suspect` TRUE (distinct ratio 0.083, 34/36 identical), and `tags_f1` 0.013. Zero-shot on the same 20 cases gives 20 distinct answers and 0% conformance, so **the exemplars are the cause of the collapse**: they buy output shape and sell content. A paraphrase probe (`scripts/sms/paraphrase_probe.py`, deterministic, no LLM) confirms it by invariance, not collapse — accuracy did not move (Δ +0.034, inside the ±0.10 noise floor) because only **3/20** answers changed when the input was rewritten. **Tool-router scaled 20 → 88 rows (66 holdout) and went DOWN: `tool_exact` 0.136 vs a 0.242 majority floor.** Failure-classifier now has real 4-class gold from deliberate runner probes (`--inject-failure auto`: truncation / malformed JSON / forced HTTP timeout / dropped key) and scores 0.056 vs a 0.444 floor. The contract-decomposition hypothesis **lost its own verdict rule on all four pairs**: flat contracts cut output 4–13× and reach 100% conformance, but every one lands at or below the majority-gold floor, and the two that "beat" their parent collapsed into echo. Latency: neither `num_predict` (256 vs 512: −6.7% latency, 8.3% → 0.0% conformance) nor `num_thread` (6 vs 8: 0.1%) is a lever; the ~241 extractor tokens are a property of the contract, and p95 ≤ 2 s at this model ≈ 55–75 output tokens. **No role is trainable; nothing should be LoRA'd yet.** Full numbers and the per-role go/no-go table: `docs/research/LFM25_SMS_PHASE2_ECHO_DECOMPOSITION_20261008.md`. Next: exemplar diversification (N=4, spanning kinds/domains/tags/actions) with `copy_suspect=false` as the acceptance gate, adversarial supersession pairs to de-skew the curator gold, and only then a LoRA pilot on `failure_classifier` (the one role that is *not* echo-collapsed).
+
+### P7.2 — Well curator pilot
+- **Why**: turns sessions into durable corrections/preferences/anti-patterns without waiting for a human to manually run the Well sweep.
+- **Dataset**: `make well-export`, sessions, correction-labeled examples.
+- **Done when**: curator accuracy ≥0.80, supersession direction 100%, privacy scan clean, and Well write occurs only through explicit validation.
+- **Status**: `backlog` — **blocked, not ready.** Phase 2 (2026-10-08) measured the curator at exact-match 0.852, which is below the 0.898 a constant predictor achieves from the model's own modal output, with `copy_suspect` TRUE and `tags_f1` 0.013. The "accuracy ≥0.80" gate cannot currently distinguish capability from a copied prior. Two prerequisites before this leaves `backlog`: (a) exemplar diversification that lifts `distinct_output_ratio` above 0.35, (b) adversarial supersession gold — the holdout is 35/36 `keep`, so `action_exact` cannot separate a trained model from a constant one. See `docs/research/LFM25_SMS_PHASE2_ECHO_DECOMPOSITION_20261008.md` §8.
+
+### P7.3 — Encoder vs generative A/B
+- **Why**: classification/routing may be better served by `LFM2.5-Encoder-230M/350M` than generative models.
+- **Done when**: side-by-side eval on privacy-sentinel / failure-classifier / tool-router tasks picks a measured winner.
+- **Status**: `backlog`.
+
+### P7.4 — Specialist registry + Modelfile factory
+- **Why**: specialists must be versioned artifacts, not loose GGUFs. Every adapter gets a dataset hash, OMER card, eval report, and owner.
+- **Done when**: registry under `docs/models/specialists/` and factory scripts can produce/inspect a specialist Modelfile without hidden paths.
+- **Status**: `backlog`.
+
+---
+
 ## Dream log (kind: dream — captured, unpromised)
 
 1. **Beam-back continuity**: memory/skills learned inside Odysseus surviving
    the transfer back into Omega as first-class Well records.
 2. **Fine-tune seed**: turn `well-export` into an actual fine-tune of a small
-   model on Node 1, once RAM headroom (32GB) exists.
+   model on Node 1, once RAM headroom (32GB) exists. **Update 2026-10-08**:
+   for LFM2.5 ≤350M LoRA this blocker is likely stale; P7 becomes the path
+   from dream to measured specialist models.
 3. **Personal model training set**: the Well becomes the "customized ever more
    tightly to my unique insights" dataset — a personal calibration corpus.
 4. **Gods-Eye-B as federation surface**: one sovereign brain surfacing across

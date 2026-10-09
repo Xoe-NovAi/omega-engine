@@ -41,3 +41,6 @@ models/
 
 # gnosis state backups (timestamped, machine-local)
 gnosis/**/*.bak-*
+
+# SMS gauntlet run artifacts (raw outputs; commit scoring.json/report.md copies only)
+runs/

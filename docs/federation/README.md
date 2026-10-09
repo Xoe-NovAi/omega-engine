@@ -31,7 +31,7 @@
 ## 1. Executive Summary
 
 The **Omega Engine Federation Subsystem** bridges two distinct physical machines into a unified, resilient, sovereign AI computing cluster:
-- **Node 0 (`xnai-n0-hp` / HP Pavilion)**: Serves as the **Archival Bastion & Nexus**. It hosts the canonical Git repository (`omega-engine.bundle`), the multi-domain FastMCP hub (`omega-hub` on port 8016; 93 tools in the latest verified handshake), vector databases (Qdrant), relational memory stores (SQLite), and the Cascading Serial Synchronization (CSS) council orchestration engine.
+- **Node 0 (`xnai-n0-hp` / HP Pavilion)**: Serves as the **Archival Bastion & Nexus**. It hosts the canonical Git repository (`omega-engine.bundle`), the multi-domain FastMCP hub (`omega-hub` on port 8016; 55 tools live 2026-10-07), vector databases (Qdrant), relational memory stores (SQLite), and the Cascading Serial Synchronization (CSS) council orchestration engine.
 - **Node 1 (`xnai-n1-asus` / ASUS ExpertBook P1503CVA)**: Serves as the **Exploration Vanguard & Compute Engine**. It delivers bare-metal, CPU-only local neural inference via Ollama (14.4 t/s on 3B–4B models using Intel Raptor Lake-H AVX-VNNI), local MemPalace memory, and the Gnosis session-continuity engine. The WanderGround `sqlite-vec` atlas/viewer are target services and are not currently deployed.
 
 Federation is strictly peer-to-peer (P2P). Neither node is a subordinate worker; both retain local sovereignty and can operate disconnected. When connected, they pool capabilities: Node 1 provides high-throughput inference and shared scratch storage; Node 0 provides immutable state management, archival compliance, and tooling execution.

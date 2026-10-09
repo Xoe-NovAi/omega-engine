@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/mempalace_extractor/v1",
+  "type": "object",
+  "required": ["wing", "room", "items", "provenance"],
+  "additionalProperties": true,
+  "properties": {
+    "wing": {"type": "string"},
+    "room": {"type": "string"},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "content", "source_quote", "confidence"],
+        "properties": {
+          "kind": {"enum": ["corrections", "decisions", "measurements", "patterns", "narrative", "questions"]},
+          "content": {"type": "string"},
+          "source_quote": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source_file", "recorded_at", "window_id"],
+      "properties": {
+        "source_file": {"type": "string"},
+        "recorded_at": {"type": "string"},
+        "window_id": {"type": "string"}
+      }
+    }
+  }
+}

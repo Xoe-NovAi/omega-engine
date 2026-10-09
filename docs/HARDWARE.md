@@ -30,7 +30,7 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-23.
 - **Storage**: NVMe 512GB
 - **Strategic Role**: Archival stability, state consistency, compliance enforcement, orchestration, Git SSOT, Hall of Records
 - **Key Service**: `omega-hub` — FastMCP multi-domain core hub on `0.0.0.0:8016`;
-  93 tools were present in the latest verified handshake (2026-09-18); recheck
+  55 tools were present in the latest verified handshake (2026-10-07); recheck
   live after Node 0 changes.
 
 ## P2P Omegaverse Federation — Dual-Node Sovereign AI Cluster
@@ -38,7 +38,7 @@ so no re-discovery or re-research is needed. Last verified: 2026-09-23.
 ### Fleet Topography & Silicon Specialization
 | Node | Role | Silicon | Strength |
 |------|------|---------|----------|
-| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U (8C/16T, Zen 2), 16GB DDR4-3200 dual-channel | Archival stability, Git SSOT, SQLite DBs, Vector Stores, Council Orchestration, omega-hub (93 tools in latest verified handshake) |
+| **Node 0 (HP)** | Archival Bastion & Nexus | AMD Ryzen 7 5700U (8C/16T, Zen 2), 16GB DDR4-3200 dual-channel | Archival stability, Git SSOT, SQLite DBs, Vector Stores, Council Orchestration, omega-hub (55 tools live 2026-10-07) |
 | **Node 1 (ASUS)** | Compute Vanguard | Intel i7-13620H (6P+4E/16T, RPL-H), 16GB DDR5-5200 single-channel (32GB dual target) | Local neural inference, fast model execution, high-throughput context processing, bare-metal Ollama runner |
 
 ### Wire Protocols (Layer by Layer)

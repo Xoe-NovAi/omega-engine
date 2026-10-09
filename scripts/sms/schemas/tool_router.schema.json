@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "omega/sms/tool_router/v1",
+  "type": "object",
+  "required": ["tool", "args", "fallback"],
+  "properties": {
+    "tool": {"enum": ["mempalace_search", "mempalace_kg_query", "well_add", "web_search", "ochist_grep", "ocdb_ro", "none"]},
+    "args": {"type": "object"},
+    "fallback": {"enum": ["none", "ask_human", "deterministic_regex"]}
+  }
+}
