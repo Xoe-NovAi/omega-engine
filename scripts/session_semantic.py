@@ -8,6 +8,24 @@ Semantic Search for Omega Engine Session Corpus — Torch-Free.
 Uses ONNX Runtime with all-MiniLM-L6-v2 quantized model for embeddings.
 Integrates with sqlite-vec for vector similarity search.
 Pure local inference, M7-compliant.
+
+EMBEDDING STRATEGY NOTE:
+------------------------
+This session corpus search index is SEPARATE from the main Omega Engine
+vector store (which uses canonical Qwen3-Embedding-0.6B at 1024-dim native
+via GGUF + llama.cpp per D-1024-DIM-NATIVE-20260926).
+
+Rationale for all-MiniLM-L6-v2 (384-dim) here:
+- Session corpus = HALL_OF_RECORDS + session_gnosis metadata (decisions,
+  continuations, task_current, focus_chain) — NOT main document embeddings
+- Requires torch-free ONNX model for zero-dependency local inference
+- all-MiniLM-L6-v2 has official ONNX export on HuggingFace; Qwen3-Embedding-0.6B does not
+- 384-dim is sufficient for semantic similarity on session metadata text
+- Auto-downloads on first build (~90MB model + tokenizer)
+- Isolated index (session_semantic.db) — no collision with main vec0 collections
+
+If canonical 1024-dim embeddings are needed for session corpus in future,
+swap to Qwen3 GGUF via llama-cpp-python when available.
 """
 
 import json

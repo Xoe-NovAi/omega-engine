@@ -80,6 +80,25 @@ providers:
     priority: 5
     capabilities: ["zero_cost", "no_dependencies"]
 
+# Session Corpus Search Index (SEPARATE from main vector store)
+# -------------------------------------------------------------
+# Purpose: Semantic search over HALL_OF_RECORDS + session_gnosis metadata
+#          (decisions, continuations, task_current, focus_chain)
+# Model: all-MiniLM-L6-v2 (384-dim) via ONNX Runtime (torch-free)
+# Index: data/search/session_semantic.db (sqlite-vec, cosine similarity)
+# Rationale: Qwen3-Embedding-0.6B has no ONNX export; this index is isolated
+#            from canonical 1024-dim vector store. Auto-downloads ~90MB.
+# MCP Tools: session_search_semantic, session_search_hybrid, session_search_semantic_stats
+# Harvester: mine_semantic_patterns() → topic clusters in radar
+session_corpus_search:
+  enabled: true
+  model: "all-MiniLM-L6-v2"
+  format: "onnx"
+  dimension: 384
+  index_path: "data/search/session_semantic.db"
+  source: ["hall_of_records", "session_gnosis"]
+  note: "Separate from canonical Qwen3 1024-dim vector store (D-1024-DIM-NATIVE)"
+
 # Collection definitions (maps to vec0 tables)
 # D-1024-DIM-NATIVE-20260926: qwen_1024 is canonical
 collections:
