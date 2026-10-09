@@ -21,32 +21,39 @@ This is the **first public alpha** of Omega Engine. Honest state:
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
 | `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
-| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ `temple-grade` exits 2 at `check-codex-stale` — a doc-age gate, not a code defect |
+| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ `temple-grade` no longer gates on Codex freshness (that gate is content-hash based and runs standalone via `make check-codex-stale`) |
 | Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. M13 (Temple-Grade) requires a Codex less than 24h old — `make codex` refreshes it. We're shipping to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. Codex freshness is checked by content hash, not by age — `make codex` regenerates `OMEGA_CODEX.md`, and `make check-codex-stale` verifies it matches its inputs. We're shipping to get feedback before hardening the rest.
 
 ---
 
 ## Quick Start — 3 Commands, No Cloud Key Needed
  
  ```bash
- # 1. One-click install (Python 3.12+, venv auto-setup, local model bundled)
+ # 1. One-click install (Python 3.12+, venv auto-setup, downloads the local model)
  git clone https://github.com/Xoe-NovAi/omega-engine.git
  cd omega-engine
  ./scripts/install.sh
  
- # 2. (optional) Re-download / verify the default local model (Qwen3-1.7B-Q6_K, ~1.6GB)
- # The engine auto-discovers backends — no internet needed after the model is present.
- ./scripts/download_model.sh
- 
- # 3. Talk to it — entirely on your CPU, zero cloud calls
+ # 2. Talk to it — entirely on your CPU, zero cloud calls
  omega talk "hello"
  ```
  
  **No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in under 5 minutes.
+
+> **What "no cloud key" does and does not mean.** No API key is required, and once
+> installed nothing calls a cloud provider. But the ~1.67 GB model
+> (`LFM2.5-2.6B-Q4_K_M.gguf`) is **downloaded from HuggingFace on first run** —
+> it is not shipped in this repository. You need a network connection for that
+> one download; after it completes, the engine runs fully offline. Expect the
+> download to be the slowest step on a slow link (`install.sh` targets <300s
+> total and may exceed it). `curl` is a hard prerequisite of `install.sh`.
+>
+> To point at a different local model, set `OMEGA_NATIVE_GGUF_MODEL` — see
+> `config/providers.yaml`.
 
 Prefer manual install? `pip install -e ".[native,cli]"` — the same minimal set `install.sh` uses.
 
@@ -146,7 +153,7 @@ Omega auto-detects available inference backends. **Local providers are tried fir
   
 | Priority | Provider | Setup | Speed | Sovereign |
 |:--------:|----------|-------|-------|:---------:|
-| **1** | **Native GGUF** | `./scripts/download_model.sh` | 🏠 CPU, llama-cpp-python | ✅ Full |
+| **1** | **Native GGUF** | `./scripts/install.sh` (downloads the model) | 🏠 CPU, llama-cpp-python | ✅ Full |
 | **2** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
 
 
@@ -284,12 +291,12 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
 | `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
-| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ `temple-grade` exits 2 at `check-codex-stale` — a doc-age gate, not a code defect |
+| Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ `temple-grade` no longer gates on Codex freshness (that gate is content-hash based and runs standalone via `make check-codex-stale`) |
 | Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |
 | VR Omegaverse | 🔮 Vision only (bridge script exists, no renderer) |
 
-**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. M13 (Temple-Grade) requires a Codex less than 24h old — `make codex` refreshes it. We're shipping to get feedback before hardening the rest.
+**What this means for you**: Core local-inference + entity system works. You can clone, install, and run. The 4 untested mandates (M4, M17, M18, M19) are policy mandates with no mechanical check. Codex freshness is checked by content hash, not by age — `make codex` regenerates `OMEGA_CODEX.md`, and `make check-codex-stale` verifies it matches its inputs. We're shipping to get feedback before hardening the rest.
 
 ---
 
@@ -331,7 +338,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Gate | Status |
 |------|--------|
 | Test Suite (unit tier) | ⚠️ Dev-box green; CI has 4 red jobs on the published cut (`release/debut` @ D-625) |
-| Core CI Gates (M1, M7, M8, M9, M22, M23, M26, M27) | ⚠️ Blocked at `check-codex-stale` (doc-age gate, 24h threshold) — not a code defect |
+| Core CI Gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ Not blocked by Codex freshness — `check-codex-stale` is out of the `temple-grade` chain and is content-hash based (`make check-codex-stale`) |
 | Mandate Compliance | 26/30 passing; 0 failing; 4 untested (M4, M17, M18, M19) |
 | Agent Fleet | **13 agents** (canonical), M10 compliant (max 14) |
 | AnyIO Compliance | ✅ Zero `import asyncio` in core (M1) |

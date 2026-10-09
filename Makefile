@@ -5,16 +5,60 @@
 # Omega Engine Test Suite Makefile — Carmack Mode v2
 # First public release — this IS the legacy.
 
-# Configuration — M24: Always use project venv Python
-# Fall back to system python3 when .venv is absent (CI runners install
-# deps into the active interpreter, not a local .venv).
-PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
+# ═══════════════════════════════════════════════════════════════════════════
+# INTERPRETER RESOLUTION — M24 Venv Sovereignty (STRICT, no fallback)
+# ═══════════════════════════════════════════════════════════════════════════
+# [maat 2026-10-09, Phase 2.1] The previous line was:
+#
+#     PYTHON := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
+#
+# The `|| echo python3` branch is a SOFT FAILURE (M23). It reported a valid
+# interpreter when the venv sovereignty contract was violated, so a gate that
+# was meant to verify the venv would instead silently run against the system
+# interpreter and pass. A gate that cannot tell you which interpreter it ran is
+# not a gate — it is a coin toss with a green tick.
+#
+# There is no fallback here. If `.venv/bin/python` is absent, `make` STOPS and
+# says so. `make bootstrap` is the sanctioned way to create the venv, and it is
+# exempted from the check below so it can run on a fresh clone.
+#
+# `test -x` (not `wildcard`) is preserved deliberately: it tests EXECUTABILITY,
+# which is the property that actually matters. A `python` file present but
+# non-executable is a broken venv, and `wildcard` would treat it as valid.
+VENV_PY := $(shell test -x .venv/bin/python && echo .venv/bin/python)
+
+# Goals that must remain runnable on a fresh clone with no .venv at all.
+# bootstrap creates the venv; clean and help must never be blocked by a
+# missing venv, or a broken checkout could not be cleaned.
+VENV_EXEMPT_GOALS := bootstrap clean help
+
+ifneq ($(filter $(VENV_EXEMPT_GOALS),$(MAKECMDGOALS)),)
+  PYTHON := $(VENV_PY)
+else
+  ifeq ($(VENV_PY),)
+    $(error M24 VENV SOVEREIGNTY VIOLATED: .venv/bin/python not found or not executable. Refusing to fall back to system python3 (M23: no soft failures). Run `make bootstrap` first.)
+  endif
+  PYTHON := $(VENV_PY)
+endif
+
 PYTEST := $(PYTHON) -m pytest
+
 # [maat 2026-09-28] Absolute form, for recipes that `cd` off the repo root
 # before invoking the interpreter (check-kq5 checks an external checkout).
 # M24: venv sovereignty applies there too — a bare `python3` in a gate is
 # the same defect class as `--break-system-packages`.
 PYTHON_ABS := $(abspath $(PYTHON))
+
+# Sibling console scripts in the SAME venv. Derived from $(PYTHON) rather than
+# hardcoded so a relocated venv cannot desynchronise the interpreter from the
+# tools it was installed with (Phase 2.1 / 2.12: hardcoded-interpreter audit).
+# Only `reuse` is needed as a sibling script. There is deliberately NO `$(PIP)`:
+# every pip invocation in this file is either bootstrap's (which runs before
+# $(PYTHON) can be trusted to exist) or check-hub-imports' (which runs inside a
+# throwaway worktree with its OWN venv, where this repo's $(PYTHON) is the wrong
+# interpreter by construction).
+VENV_BIN := $(dir $(PYTHON))
+REUSE   := $(VENV_BIN)reuse
 
 # Use bash so targets can rely on [[ ]] / bash-isms (e.g. local inference lifecycle)
 SHELL := /bin/bash
@@ -25,13 +69,74 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: check-lan-exposure help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
+.PHONY: bootstrap check-lan-exposure help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
+
+# ═══════════════════════════════════════════════════════════════════════════
+# bootstrap — Phase 2.1. The sanctioned way to produce a compliant .venv.
+# ═══════════════════════════════════════════════════════════════════════════
+# WHY THIS TARGET EXISTS NOW. Interpreter resolution above is strict: no
+# `.venv/bin/python`, no `make`. Before Phase 2.1 there was a silent
+# `|| echo python3` fallback, so a fresh clone appeared to work while running
+# against the system interpreter — with none of the venv's dependencies. The
+# failure surfaced later, in an unrelated gate, as an ImportError that looked
+# like a code defect. Bootstrap converts that into an explicit, single command.
+#
+# IDEMPOTENT BY CONSTRUCTION (safe to re-run):
+#   - `test -x` guards venv creation, so an existing good venv is not clobbered.
+#   - the interpreter is re-resolved INSIDE the recipe (`$$VENV_PY`, shell-time),
+#     never via `$(VENV_PY)`. See the parse-time note below — this is a bug that
+#     was actually shipped and caught only by a fresh-clone run.
+#   - pip is invoked via the venv's own interpreter, never a bare `pip`, because
+#     a bare `pip` resolves against PATH and M24 forbids installing outside
+#     the venv.
+#
+# [maat 2026-10-09, FIXED AFTER FRESH-CLONE TEST] `$(VENV_PY)` is a PARSE-TIME
+# variable (`$(shell test -x ...)`). On a fresh clone the parse happens BEFORE
+# this recipe creates `.venv`, so `$(VENV_PY)` expanded to the EMPTY STRING and
+# every pip line became ` -m pip install ...` -> bash parsed that as the command
+# `m` -> "m: command not found" -> exit 127. The `||` guards fired and printed
+# FAIL, but make reported `Error 1 (ignored)` and the target still exited 0.
+# Both halves were wrong:
+#   1. WRONG INTERPRETER SOURCE — parse-time for a recipe whose whole purpose is
+#      to establish the thing being parsed for. The fix is `$$VENV_PY` (shell
+#      variable, expanded when the line runs, after venv creation).
+#   2. SILENT SUCCESS — see `.DELETE_ON_ERROR`-style reasoning in the helper
+#      below; a target that prints FAIL and returns 0 is the exact M23 defect
+#      this whole Phase 2 is about. Never ship that.
+bootstrap:
+	@echo "$(YELLOW)bootstrap: establishing venv sovereignty (M24)...$(NC)"
+	@if test ! -x .venv/bin/python; then \
+		echo "  creating .venv..."; \
+		python3 -m venv .venv || { echo "$(RED)FAIL: python3 -m venv .venv failed. Python 3.12+ required (M24).$(NC)"; exit 1; }; \
+	else \
+		echo "  .venv/bin/python present — reusing"; \
+	fi
+	@# Re-resolve at RECIPE time. $(VENV_PY) is empty here on a fresh clone.
+	@VENV_PY=.venv/bin/python; \
+	if test ! -x "$$VENV_PY"; then \
+		echo "$(RED)FAIL: $$VENV_PY still not executable after venv creation — refusing to continue.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "  upgrading pip toolchain..."; \
+	"$$VENV_PY" -m pip install --upgrade pip setuptools wheel \
+		|| { echo "$(RED)FAIL: pip upgrade failed in .venv$(NC)"; exit 1; }; \
+	echo "  installing engine (editable, [cli,dev])..."; \
+	"$$VENV_PY" -m pip install -e ".[cli,dev]" \
+		|| { echo "$(RED)FAIL: editable install failed. Check pyproject.toml extras (M24: no --break-system-packages).$(NC)"; exit 1; }; \
+	echo "  installing test toolchain..."; \
+	"$$VENV_PY" -m pip install pytest pytest-xdist \
+		|| { echo "$(RED)FAIL: pytest toolchain install failed$(NC)"; exit 1; }; \
+	echo "$(GREEN)bootstrap: .venv ready — interpreter is $$VENV_PY$(NC)"
+	@echo "  next: make temple-grade"
 
 help:
 	@echo "Omega Engine Makefile"
 	@echo ""
+	@echo "Setup:"
+	@echo "  bootstrap          Create .venv + install deps (FIRST RUN after clone)"
+	@echo ""
 	@echo "Available targets:"
-	@echo "  test              Fast offline unit tests (parallel), stop on first failure"
+	@echo "  test              Fast offline unit tests (parallel)"
 	@echo "  test-all          Full suite, parallel, short tracebacks"
 	@echo "  test-prepush      Fast + only affected tests (testmon incrementality)"
 	@echo "  test-clarity      Enhanced output: instafail + tldr + json-report + clarity"
@@ -75,8 +180,9 @@ help:
 	@echo ""
 	@echo "Codex Targets (D-277 Hydration):"
 	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
-	@echo "  check-codex-stale Check if Codex >24h old; exit 1 if stale"
-	@echo "  check-codex-fix   Check and auto-regenerate if stale"
+	@echo "  check-codex-stale Content-hash gate: exit 1 if Codex is out of date (NOT age-based)"
+	@echo "  check-codex-fix   Check and auto-regenerate if out of date"
+	@echo "  check-codex-force Force regenerate regardless of content hash"
 	@echo ""
 	@echo "SOTE Targets:"
 	@echo "  sote-index       Regenerate SOTE master index"
@@ -85,10 +191,16 @@ help:
 	@echo "  sote-pipeline    Full mechanical pipeline (index + digest + validate + temple-grade)"
 	@echo "  sote-week        Weekly pipeline (alias for sote-pipeline)"
 	@echo "  sote-full        Full SOTE including human steps reminder"
-
 # =============================================================================
 # Codex Targets (D-277 Hydration)
 # =============================================================================
+# [maat 2026-10-09, Phase 2.2] `check-codex-stale` was AGE-BASED (>24h) and has
+# been converted to CONTENT-HASH based in scripts/check_codex_stale.py. An age
+# gate is a clock, not a correctness check: it goes red every 24h on a repo
+# where nothing changed, and it goes green on a repo where the source changed
+# and the artifact did not. It is deliberately NOT in the temple-grade chain
+# (see that target) — the generated artifact is refreshed on its own cadence
+# via codex-refresh.yml.
 
 # Regenerate OMEGA_CODEX.md from groups.json
 codex:
@@ -96,9 +208,9 @@ codex:
 	@$(PYTHON) scripts/codex_cat.py
 	@echo "$(GREEN)OMEGA_CODEX.md regenerated successfully$(NC)"
 
-# Check if Codex is >24h old; exit 1 if stale (useful for CI/pre-commit)
+# Content-hash gate: exit 1 if OMEGA_CODEX.md is stale w.r.t. its inputs
 check-codex-stale:
-	@echo "$(YELLOW)Checking Codex staleness...$(NC)"
+	@echo "$(YELLOW)Checking Codex content-hash staleness...$(NC)"
 	@$(PYTHON) scripts/check_codex_stale.py
 
 # Check and auto-regenerate if stale
@@ -106,7 +218,7 @@ check-codex-fix:
 	@echo "$(YELLOW)Checking Codex staleness (auto-fix)...$(NC)"
 	@$(PYTHON) scripts/check_codex_stale.py --fix
 
-# Force regenerate regardless of age
+# Force regenerate regardless of content hash
 check-codex-force:
 	@echo "$(YELLOW)Force regenerating OMEGA_CODEX.md...$(NC)"
 	@$(PYTHON) scripts/check_codex_stale.py --force
@@ -156,11 +268,18 @@ sote-full: sote-week
 # =============================================================================
 # Test Suite Targets — Carmack Mode v2
 # =============================================================================
+# [maat 2026-10-09, Phase 2.7] `-x` (stop on first failure) is REMOVED from the
+# test targets. Rationale: `-x` makes a run report ONE failure per invocation,
+# so a suite with several independent defects requires N sequential runs to
+# enumerate. Worse, it makes the run ORDER-DEPENDENT in what it reveals — the
+# first failure hides everything after it, which reads as "one bug" when the
+# truth is "several". A gate that under-reports is worse than a slow one,
+# because the under-reporting is invisible. Full run, full picture, then fix.
 
-# Default: fast unit tests only (<10s), parallel, stop on first failure
+# Default: fast unit tests only (<10s), parallel
 .PHONY: test
 test:
-	$(PYTEST) -x --tb=short -m "not integration" tests/
+	$(PYTEST) --tb=short -m "not integration" tests/
 
 # Full suite: everything, parallel, short tracebacks
 .PHONY: test-all
@@ -175,7 +294,7 @@ test-prepush:
 # Enhanced output: instafail + json-report + clarity (auto)
 .PHONY: test-clarity
 test-clarity:
-	$(PYTEST) -x --tb=short --instafail --json-report --json-report-file=test-report.json -m "not integration" tests/
+	$(PYTEST) --tb=short --instafail --json-report --json-report-file=test-report.json -m "not integration" tests/
 
 # JSON report only (for tooling/CI)
 .PHONY: test-json
@@ -219,11 +338,11 @@ notify-test:
 # Flake detection: expose via randomization (don't mask with --reruns)
 .PHONY: test-random
 test-random:
-	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) -x --tb=short tests/
+	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) --tb=short tests/
 
 .PHONY: test-flake-hunt
 test-flake-hunt:
-	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) -x --tb=short tests/
+	$(PYTEST) --randomly-seed=$$(shuf -i 1-1000000 -n 1) --tb=short tests/
 
 # Coverage report
 .PHONY: test-cov
@@ -371,9 +490,9 @@ doc-chunk-sprint:
 	@$(PYTHON) scripts/chunk_sprint_plan.py docs/sprints/current/README.md
 	@echo "$(GREEN)Chunking complete$(NC)"
 
-# Temple-grade includes Codex freshness, LLM doc validation, mandate
-# compliance meter, and tracking state validation. (P0-1 fix 2026-08-28:
-# meter was decoupled — now gates the chain.)
+# Temple-grade includes LLM doc validation, mandate compliance meter, and
+# tracking state validation. (P0-1 fix 2026-08-28: meter was decoupled — now
+# gates the chain.)
 # R4 (maat): dashboard-self-test is now part of the chain — the dashboard
 # is M13 shippable only when its 53 adversarial tests pass.
 # [seam-fix 2026-09-27 maat] check-hub-imports is now the FIRST prerequisite.
@@ -383,14 +502,27 @@ doc-chunk-sprint:
 # the cheapest possible ground truth, so it runs FIRST and fails fast — there
 # is no value in validating 53 dashboard cases against a broken engine.
 # Cost ~30-45s (clean worktree + fresh venv + editable install).
+#
+# [maat 2026-10-09, Phase 2.2] check-codex-stale REMOVED from this chain.
+# It was age-based (>24h), which made it a clock rather than a correctness
+# check: it went red on a repo where nothing changed and green on a repo where
+# the input changed and the artifact did not. It is now content-hash based in
+# scripts/check_codex_stale.py and runs on its own cadence (codex-refresh.yml)
+# and as a standalone gate (`make check-codex-stale`). Keeping it here would
+# have coupled a generated-artifact refresh to the release gate.
 # ── check-engine: FAST, DETERMINISTIC engine-touching subset ────────────────
 # [maat 2026-09-28] Architect-ruled. `temple-grade` ran ZERO pytest tests: its
 # transitive closure had no pytest invocation at all, and the headline "53/53"
 # was `benchmark_dashboard.py --self-test`, a separate harness. So the release
 # gate could be green while the engine did not boot.
 #
-# This is a SUBSET, not the full 2410-test suite — temple-grade must stay
-# runnable in seconds. The full suite remains available as `make test-suite-full`.
+# This is a SUBSET, not the full suite — temple-grade must stay runnable in
+# seconds. The full suite remains available as `make test-suite-full`.
+# [maat 2026-10-09, Phase 2.8] Baseline count updated 175 -> 180. This is a
+# DOCUMENTED expectation of the subset's size, not a hard gate: the subset is
+# specified by PATHS below, so the count moves as tests are added. It is
+# recorded here so a reviewer noticing a drift asks "did a test get lost?" —
+# the answer lives in this comment, not in a failing CI run.
 #
 # DETERMINISM. No `-n auto` and no pytest-randomly here, on purpose. With xdist
 # the visible subset varies per run, so a red result could not be told apart
@@ -443,10 +575,10 @@ test-suite-full:
 # check-engine joins the chain FIRST, before check-hub-imports: it is the
 # cheapest signal that the engine boots, and there is no value in a 30-45s
 # clean-worktree import gate if the fast subset is already red.
-temple-grade: check-constraints check-engine check-hub-imports check-codex-stale doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+temple-grade: check-constraints check-engine check-hub-imports doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
 
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
-	@echo "$(GREEN)Temple-grade complete (Hub Imports + Codex + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Hub Imports + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"
 
 # SOUL_ARCHITECTURE_PROTOCOL v3.0 — Soul v8.0 CI gate (ratified by Kali-N0, ho_123f6ebff930)
 # Enforces: axiom coverage (>=1 directive + >=1 principle ref), flat-list approved_lessons.yaml
@@ -461,8 +593,10 @@ soul-validate:
 # per the REUSE specification v3.3. Wired into CI (.github/workflows/reuse-compliance.yml)
 # and pre-commit (.pre-commit-config.yaml: reuse-lint-file on pre-commit, reuse on pre-push).
 # Per RESEARCHER_GAP_FILL_PHASE_2_20260830.md MED-3.
-REUSE := .venv/bin/reuse
-
+# [maat 2026-10-09, Phase 2.1/2.12] Was a hardcoded `REUSE := .venv/bin/reuse`.
+# It now derives from $(PYTHON) via VENV_BIN, so the REUSE binary can never
+# come from a different interpreter than the one running the rest of the gates.
+# A hardcoded sibling path is a venv-desync bug waiting for a relocated venv.
 check-reuse:
 	@echo "$(YELLOW)Checking REUSE v3.3 compliance (M37 Heritage)...$(NC)"
 	@$(REUSE) --version
@@ -552,9 +686,12 @@ check-asyncio-import:
 	@echo "$(GREEN)M1 companion passed: No asyncio in anyio.run() modules$(NC)"
 
 # Check M9: Error integrity - no bare except:
+# [maat 2026-10-09, Phase 2.1/2.12] Was a hardcoded `.venv/bin/python`. Now
+# $(PYTHON), so this gate cannot execute against a different interpreter than
+# the one the rest of the chain resolved.
 check-m9-error-integrity:
 	@echo "$(YELLOW)Checking M9 (Error integrity)...$(NC)"
-	@.venv/bin/python scripts/check_m9_error_integrity.py src/omega
+	@$(PYTHON) scripts/check_m9_error_integrity.py src/omega
 	@echo "$(GREEN)M9 passed: No bare except in core (AST-verified, comments exempt)$(NC)"
 
 # Check M8: Zero telemetry - no telemetry SDK imports
@@ -583,9 +720,15 @@ check-m23-failure-integrity:
 	@echo "$(GREEN)M23 passed: No new soft-failure patterns$(NC)"
 
 # L3-MetaFrameVerification (0.92) — Cross-verification protocol for paged prompts
+# [maat 2026-10-09, Phase 2.1/2.12] BOTH ends of the pipe now use $(PYTHON).
+# The consumer was a bare `python3`, so the producer ran under the venv and
+# the parser ran under the system interpreter. A cross-verification gate whose
+# verifier is a different Python than the thing being verified is not
+# verifying anything — and if the system interpreter lacked a dependency, it
+# failed with an ImportError that looked like spoofed metadata.
 check-metaframe:
 	@echo "$(YELLOW)Running L3-MetaFrameVerification (0.92) cross-verification...$(NC)"
-	@$(PYTHON) scripts/metaframe_verification.py --stdin --agent kali --json < /dev/null 2>&1 | python3 -c "import sys, json; data=json.load(sys.stdin); sys.exit(0 if data.get('result')=='PASS' else 1)" || (echo "$(RED)FAIL: MetaFrame verification failed$(NC)" && false)
+	@$(PYTHON) scripts/metaframe_verification.py --stdin --agent kali --json < /dev/null 2>&1 | $(PYTHON) -c "import sys, json; data=json.load(sys.stdin); sys.exit(0 if data.get('result')=='PASS' else 1)" || (echo "$(RED)FAIL: MetaFrame verification failed$(NC)" && false)
 	@echo "$(GREEN)L3-MetaFrameVerification (0.92) passed: No spoofable metadata detected$(NC)"
 
 # P0 CI Gates — Broken imports detection
@@ -662,8 +805,12 @@ check-constraints:
 	    || (echo "$(RED)check-constraints FAILED: constraint re-assertion tests red.$(NC)"; exit 1)
 
 # M24b Venv Sovereignty Gate (P1-5): verify .venv matches pyproject requirements
+# [maat 2026-10-09, Phase 2.1/2.12] Was a hardcoded `.venv/bin/python`. Now
+# $(PYTHON). This gate exists to PROVE venv sovereignty — running it with a
+# hardcoded path meant it verified a path rather than the resolved interpreter,
+# so a relocated venv would be graded against a file it was not using.
 check-venv-sovereignty:
-	@.venv/bin/python scripts/check_venv_sovereignty.py
+	@$(PYTHON) scripts/check_venv_sovereignty.py
 
 # Claims harness (Team-Study #1 ruling S7, P0): claims-vs-disk gate +
 # sanitation / FP-11 / T0 detectors over changed files. WARN-ONLY phase
@@ -793,7 +940,7 @@ infer-stop:
 infer-restart:
 	@bash scripts/serve_native_gguf.sh restart
 
-# Show native-gguf server state: PIDs, health, and memory footprint
+# Show native-gguf server state — PIDs, health, and memory footprint
 infer-status:
 	@bash scripts/serve_native_gguf.sh status
 
@@ -850,7 +997,7 @@ infer-talk:
 	@curl -s --max-time 120 http://127.0.0.1:1235/v1/chat/completions \
 		-H "Content-Type: application/json" \
 		-d "{\"messages\":[{\"role\":\"user\",\"content\":\"$(MSG)\"}],\"max_tokens\":64}" \
-		| .venv/bin/python -c "import sys,json; d=json.load(sys.stdin); print(d['choices'][0]['message']['content'])" 2>/dev/null \
+		| $(PYTHON) -c "import sys,json; d=json.load(sys.stdin); print(d['choices'][0]['message']['content'])" 2>/dev/null \
 		|| echo "$(RED)infer-talk failed — is the reasoner server running? (make infer-status)$(NC)"
 
 # ── Observability ───────────────────────────────────────────────────────────
@@ -866,10 +1013,9 @@ infer-logs:
 
 # Show recent lifecycle events from events.jsonl (N=last N, default 20)
 infer-events:
-	@echo "$(YELLOW)Recent native-gguf lifecycle events:$(NC)"
 	@if [[ -f "$(INFER_LOG_DIR)/events.jsonl" ]]; then \
 		tail -n $(or $(N),20) "$(INFER_LOG_DIR)/events.jsonl" | \
-		.venv/bin/python -c "import sys,json;[print(f\"  {json.loads(l)['ts']}  {json.loads(l)['event']:<16} {json.loads(l)['server']:<10} {json.loads(l).get('detail','')}\") for l in sys.stdin if l.strip()]" 2>/dev/null \
+		$(PYTHON) -c "import sys,json;[print(f\"  {json.loads(l)['ts']}  {json.loads(l)['event']:<16} {json.loads(l)['server']:<10} {json.loads(l).get('detail','')}\") for l in sys.stdin if l.strip()]" 2>/dev/null \
 		|| tail -n $(or $(N),20) "$(INFER_LOG_DIR)/events.jsonl"; \
 	else echo "  (no events yet — run make infer-start)"; fi
 
@@ -955,10 +1101,6 @@ gate-secrets:
 # whose untracked files mask an import failure; Tier B cannot, because only
 # committed state exists in the detached worktree.
 #
-# This is the gold standard. It is deliberately NOT in the default pytest path
-# (~30-45s is too slow for every local run) and is wired as the FIRST
-# prerequisite of temple-grade, which is the release gate.
-#
 # WHAT IT IMPORTS — explicit list, never a glob. A `**/server.py` glob would
 # also match data/entities/roc_racoon/workspace/hlmc_ore/gap4_mcp_auth/hub_server.py
 # (carries the same stale import at its line 84) plus two deliberate
@@ -981,6 +1123,7 @@ gate-secrets:
 #     the index, and `git apply` runs in the throwaway worktree only.
 # If the diff does not apply cleanly, the gate fails loudly rather than
 # silently testing stale content.
+#
 # WHY THE INSTALL IS BOUNDED  [doom_guy 2026-10-03, P0 release-gate hang]
 # Measured, not assumed: `make temple-grade` exceeded 10 minutes and was killed.
 # Bisect of every sub-target isolated this recipe, and within it the stall was
