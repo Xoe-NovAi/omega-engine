@@ -22,6 +22,21 @@ from omega.oracle.axiom_registry import AxiomRegistry
 WAD_DIR = Path("config/wads/arcana_novai")
 MISSING_DIR = Path("config/wads/__nonexistent_axiom_wad__")
 
+# D-628 (Architect ruling 2026-10-09): the ANAi WAD is a CONCEPT and ships in no
+# public artifact — it is far from ready. AxiomRegistry itself already degrades
+# gracefully when the directory is absent (axiom_registry.py:74 logs and returns
+# an empty registry). These contracts describe the ANAi five-fold axiom set, so
+# they are only meaningful where that WAD exists. On a public clone the WAD is
+# absent by design and asserting its contents produced a DEAD GATE — a red test
+# whose subject intentionally does not ship (the D-624 failure class).
+#
+# Skip rather than delete: on this host, and on any deployment that installs the
+# ANAi WAD, the contract still has teeth.
+requires_anai_wad = pytest.mark.skipif(
+    not WAD_DIR.is_dir(),
+    reason="ANAi WAD is host-side only and is not shipped publicly (D-628)",
+)
+
 EXPECTED_IDS = [
     "ff1_truth",
     "ff2_sovereignty",
@@ -36,6 +51,7 @@ EXPECTED_NAMES = ["Truth", "Sovereignty", "Gnosis", "Continuity", "Liberation"]
 class TestAxiomRegistryContracts:
     """M21 Contract Tests — type validation for all public APIs."""
 
+    @requires_anai_wad
     def test_load_returns_dict_with_five_axioms(self) -> None:
         """load() returns a dict containing exactly 5 five_fold axioms."""
         registry = AxiomRegistry(WAD_DIR)
@@ -48,6 +64,7 @@ class TestAxiomRegistryContracts:
         assert isinstance(result["five_fold"], list), "five_fold must be a list"
         assert len(result["five_fold"]) == 5, f"Expected 5 axioms, got {len(result['five_fold'])}"
 
+    @requires_anai_wad
     def test_list_axioms_returns_expected_ids(self) -> None:
         """list_axioms() returns the expected id list."""
         registry = AxiomRegistry(WAD_DIR)
@@ -60,6 +77,7 @@ class TestAxiomRegistryContracts:
         # Contract: exact expected ids
         assert ids == EXPECTED_IDS, f"Expected {EXPECTED_IDS}, got {ids}"
 
+    @requires_anai_wad
     def test_get_preamble_nonempty_contains_names(self) -> None:
         """get_preamble() returns a non-empty str containing all axiom names."""
         registry = AxiomRegistry(WAD_DIR)
@@ -73,6 +91,7 @@ class TestAxiomRegistryContracts:
         for name in EXPECTED_NAMES:
             assert name in preamble, f"Preamble must contain axiom name '{name}'"
 
+    @requires_anai_wad
     def test_get_preamble_entity_tailored(self) -> None:
         """get_preamble(entity_name=...) includes the entity name in the header."""
         registry = AxiomRegistry(WAD_DIR)
