@@ -225,12 +225,6 @@
       "mode": "all",
       "description": "Ultimate Technical Consultant \u2014 id Software heritage, systems architecture, sovereign engineering",
       "temperature": 0.2
-    },
-    "grok_cli": {
-      "mode": "all",
-      "description": "Bridge to xAI Grok CLI \u2014 spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
-      "temperature": 0.1,
-      "prompt": "{file:.opencode/agents/archive/grok_cli.md}"
     }
   },
   "model": "lmstudio/qwen3-4b-thinking",
