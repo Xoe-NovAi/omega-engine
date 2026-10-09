@@ -65,11 +65,11 @@ async def _map_github_user_to_entity(username: str) -> str:
         username: The GitHub username from the event.
         
     Returns:
-        The mapped Omega entity name, or 'SOPHIA' as fallback.
+        The mapped Omega entity name, or 'makali' as fallback.
     """
     config_path = PROJECT_ROOT / "config" / "github_accounts.yaml"
     if not config_path.exists():
-        return "SOPHIA"
+        return "makali"
     
     def _read():
         with open(config_path, "r") as f:
@@ -81,11 +81,11 @@ async def _map_github_user_to_entity(username: str) -> str:
         accounts = config.get("accounts", [])
         for acc in accounts:
             if acc.get("username") == username:
-                return acc.get("entity", "SOPHIA")
+                return acc.get("entity", "makali")
     except Exception as e:
         logger.error(f"Failed to map GitHub user {username}: {e}")
         
-    return "SOPHIA"
+    return "makali"
 
 # ── Bridge Logic ──────────────────────────────────────────────────────────────
 
@@ -150,7 +150,7 @@ async def process_github_event(event_type: str, payload: Dict[str, Any], signatu
         action="post",
         channel="github-bridge",
         entity=entity,
-        model="SOPHIA",  # Bridge uses Sophia for general awareness
+        model="makali",  # Bridge uses the canonical seat as general-awareness actor
         task_current=f"GitHub Event: {event_summary}",
         focus_chain=["github-integration", event_type],
         decisions=[],

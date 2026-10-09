@@ -414,7 +414,7 @@ async def _debug_tools(request: Request) -> JSONResponse:
     })
 
 async def _entity_current(request: Request) -> JSONResponse:
-    entity_name = _current_entity.get() or "SOPHIA"
+    entity_name = _current_entity.get() or "makali"
     if registry is None:
         return JSONResponse({"entity": entity_name, "note": "services initializing"})
     entity = registry.get(entity_name)

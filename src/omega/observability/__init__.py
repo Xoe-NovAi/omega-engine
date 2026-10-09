@@ -592,7 +592,7 @@ class ForensicsManager:
             "total_events_in_trace": len(timeline),
         }
 
-    async def learn(self, trace_id: str, entity_name: str = "SOPHIA") -> Optional[str]:
+    async def learn(self, trace_id: str, entity_name: str = "makali") -> Optional[str]:
         """Extract a lesson from a crash and append to the entity's soul.yaml.
 
         Returns the lesson string if written successfully.

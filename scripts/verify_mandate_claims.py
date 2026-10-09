@@ -80,7 +80,7 @@ EMAIL_DOMAIN_ALLOWLIST = {
 # social-handle contamination (.opencode/MANIFEST.md roster).
 FLEET_HANDLE_ALLOWLIST = {
     "kali", "maat", "lilith", "roc_racoon", "researcher", "carmack",
-    "jem", "grokster", "doom_guy", "sophia", "verity", "node", "makali",
+    "jem", "doom_guy", "verity", "makali",
     "sysadmin", "pillar_p1", "iris", "oracle", "scribe", "ox_alpha",
 }
 

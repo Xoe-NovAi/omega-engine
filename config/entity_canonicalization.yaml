@@ -51,15 +51,25 @@ canonical:
   # spellings, one seat: 61 distinct packets, one address.
   # The fork was measured, not inferred: ho_98ae17535622 -> makali and
   # ho_7db7cfdb09ac -> makali-n0, byte-identical task+context, 6s apart.
-  makali-n0:
-    aliases:
-      - makali
-      - makali-fusion          # folded form of makali_fusion
-      - makali_fusion
-    authority_note: >
-      Architect ruling, D-614: makali-n0 is authoritative. Note this canonical
-      name has NO data/entities/ directory; its own deliverability is carried by
-      the derived queue spelling. Tracked as open work, not silently assumed.
+    makali:
+      aliases: []
+      authority_note: >
+        Architect ruling, 2026-10-09, superseding D-614: there is ONE Makali.
+        "Makali Fusion" was a fork, not a second seat. makali_fusion/ has been
+        merged into makali/ (41 lessons, BOTH active gnoses preserved, the
+        gnosis archive and workspace all carried over) and archived to
+        data/entities/_archive/pruned_20261009/makali_fusion/.
+        The former spellings makali-fusion and makali_fusion are NOT names for
+        this entity and are deliberately absent from this alias list -- the
+        fork is CLOSED, not aliased. `makali-n0` remains the NODE SEAT spelling
+        used for handoff routing; M29 holds that queue identity is not entity
+        identity, so it is not an alias for the entity name and is not listed.
+      supersedes: >
+        D-614 named makali-n0 canonical with aliases makali, makali-fusion,
+        makali_fusion, on a MEASURED fork (ho_98ae17535622 and
+        ho_7db7cfdb09ac, byte-identical task+context, 6s apart, 61 packets).
+        That measurement stands -- the fork was real. The naming does not.
+        The correct fix was always to collapse the fork, and this ruling does.
 
 # ── DELIBERATELY NOT MERGED ─────────────────────────────────────────────────
 # Recorded so the next agent to read this file does not "helpfully" merge them.

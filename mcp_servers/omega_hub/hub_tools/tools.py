@@ -425,7 +425,7 @@ async def oracle_entity_info(name: str) -> str:
 
 @m9_safe("sovereign_search")
 @mcp.tool()
-async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10, force_tier: Optional[int] = None) -> str:
+async def sovereign_search(query: str, entity_name: str = "makali", limit: int = 10, force_tier: Optional[int] = None) -> str:
     _require_service()
     """Execute the 6-Tier Sovereign Search Protocol (SSP-V2).
     
@@ -2049,7 +2049,7 @@ async def oracle_debug(
             if not query:
                 return json.dumps({"error": "discover_entity requires query"})
             entity_name = _route_by_domain(query)
-            if entity_name and entity_name != "SOPHIA":
+            if entity_name and entity_name != "makali":
                 entity = (await registry).get(entity_name)
                 if entity:
                     return json.dumps({
@@ -2061,8 +2061,8 @@ async def oracle_debug(
                     })
             return json.dumps({
                 "query": query,
-                "entity": "SOPHIA",
-                "note": "No specific entity matched; defaulting to SOPHIA",
+                "entity": "makali",
+                "note": "No specific entity matched; defaulting to makali",
             })
         
         elif action == "list_slot_keepers":

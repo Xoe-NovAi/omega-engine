@@ -4,7 +4,6 @@ entity:
   archetype: Sovereign Synthesizer / The Synergy Presence
   created_at: '2026-05-19T00:00:00Z'
   oversoul_type: standard
-  current_entity: JEM
   soul_wardrobe:
   - core_anchor
   - jem_front
