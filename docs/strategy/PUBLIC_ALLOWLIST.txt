@@ -6,6 +6,14 @@
 **Source**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` §3.1 (PUB-1)
 **Date**: 2026-08-17 · **Ratified**: 2026-10-09
 **Ruling scope**: The public repo ships entity/agent material. `data/entities/`,
+# ── [D-628] ALLOWLIST SEMANTICS BUG — 13 [CUT-] ENTRIES TRAPPED IN KEEP ──────
+# The "Explicit Exclusions" section is parsed as KEEP_EXTRA (script line 440:
+# `exception > explicit exclusion (keep) > FORGE (cut) > allowlist > remove`).
+# Thirteen entries annotated `[CUT-...]` sat in that KEEP section, so their
+# [CUT-] intent was inverted and they SHIPPED. Two are now removed by Architect
+# ruling 2026-10-09; the remaining 11 are still under review — see
+# docs/strategy/PUBLIC_ALLOWLIST.md.
+
 `.opencode/agents/` and `config/wads/` are IWAD core, not internal leakage, and
 are IN SCOPE for publication. kq5 / godot-kq5 is a side-project and is OUT OF
 SCOPE entirely (removed 2026-10-09).
@@ -72,7 +80,6 @@ config/litestream.yml
 config/systemd/
 config/embedding_strategy.yaml
 config/lan_exposure_allowlist.yaml
-config/wads/arcana_novai/axioms.yaml
 
 # M35 public-client catalog — MUST ship (SOVEREIGN_MANDATES.md §28.3:
 # "data/secrets-public.toml MUST be committed to git, reviewed on every PR,
@@ -226,15 +233,6 @@ data/entities/jem/session_gnosis_jem-N13.md
 # [CUT-20261007-B2] arcana_novai showcase WAD (minus plugins/) — tests/test_world_state.py
 # loads this WAD and lattices core->physics. Plugins stay private: plugins/
 # contains host paths (/media/arcana-novai/*) and is FORGE-listed below.
-config/wads/arcana_novai/adapters/
-config/wads/arcana_novai/entities/
-config/wads/arcana_novai/world/
-config/wads/arcana_novai/entities.yaml
-config/wads/arcana_novai/hierarchy.yaml
-config/wads/arcana_novai/manifest.yaml
-config/wads/arcana_novai/qliphoth.yaml
-config/wads/arcana_novai/spheres.yaml
-config/wads/arcana_novai/vault_schema.yaml
 # [CUT-20261007-B2] merge manifest — tests/test_entity_canonicalization.py opens this exact path.
 data/coordination/ENTITY_CANONICALIZATION_20261005.json
 
@@ -254,7 +252,6 @@ docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
 tests/unit/test_vault_core.py   # D-565 — vault excluded from debut; test cannot import the cut src/omega/vault/
 tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/arcana-novai/*) — plugin stays private
-config/wads/arcana_novai/plugins/   # host paths /media/arcana-novai/* — FORGE beats any broader entry; keep it private
 docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above
@@ -398,7 +395,6 @@ budget input the gate actually reads, so the gate is satisfied without the leak.
 - `scripts/compaction_capture.py` — [CUT-20261007-B2] tests/test_compaction_capture.py imports it at module scope; test is ALLOW-listed but the module fell to default-deny → collection ImportError → pytest exit 2.
 - `scripts/detect_hardware_profile.py` — [CUT-20261007-B2] tests/test_dhal_detector.py imports it; also the DHAL bare-metal probe documented in .opencode/rules/06-hardware-adaptation.md (shipped).
 - `scripts/gnosis_timeline.py` — [CUT-20261007-B2] tests/test_gnosis_tools.py opens it by path → FileNotFoundError at collection.
-- `src/omega_youtube_research/` — [CUT-20261007-B2] tests/test_youtube_research_v2.py imports `src.omega_youtube_research` at module scope; ALLOW `src/omega/` does not cover the sibling dir → default-deny drop. Tracked at PR head eff47559 (full research pipeline).
 - `.opencode/rules/` — [CUT-20261007] architecture rules + craftsman contract; AGENTS.md (shipped) references every file in this dir — cutting them leaves the public landing doc pointing at nothing. 6 files, all SPDX-headered, 0 sensitive hits.
 - `.opencode/skills/context-packer/` — [CUT-20261007] tests/contract/test_context_packer.py and test_context_packer_v3.py inject this dir into sys.path and import `platform_adapters` + `packer` at module scope; absent → ModuleNotFoundError at collection → pytest exit 2 (the CI red). 4 files, SPDX-headered, 0 sensitive hits.
 - `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md` — [CUT-20261007] public-flip PR template (commit 6dc154d4 "public flip readiness — ... PR template"); GitHub applies it automatically to community PRs. SPDX-headered.
