@@ -47,7 +47,7 @@ Checkpoint = _m34.Checkpoint
 
 REGISTRY_PATH = Path(os.environ.get(
     "OMEGA_M34_REGISTRY",
-    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json"
+    str(Path(__file__).parents[3] / "data" / "coordination" / "ACTIVE_SUBAGENTS.json")
 ))
 
 

@@ -13,6 +13,7 @@ import os
 import re
 import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import anyio
@@ -319,7 +320,10 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
 
     def __init__(
         self,
-        model_path: str = "/media/arcana-novai/omega_library/models/embeddings/all-MiniLM-L6-v2-Q4_K_M.gguf",
+        model_path: str = os.environ.get(
+            "OMEGA_MINILM_MODEL",
+            str(Path.home() / "omega_library" / "models" / "embeddings" / "all-MiniLM-L6-v2-Q4_K_M.gguf"),
+        ),
         dimension: int = 384,
         n_ctx: int = 512,
         n_threads: int = 6,
@@ -533,7 +537,10 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
 
     def __init__(self, target_dim: Optional[int] = None):
         super().__init__(
-            model_path="/media/arcana-novai/omega_library/models/embeddings/Qwen3-Embedding-0.6B-Q5_K_M.gguf",
+            model_path=os.environ.get(
+                "OMEGA_QWEN_EMBED_MODEL",
+                str(Path.home() / "omega_library" / "models" / "embeddings" / "Qwen3-Embedding-0.6B-Q5_K_M.gguf"),
+            ),
             dimension=1024,  # native == canonical
             target_dim=target_dim,  # None = emit native 1024
         )

@@ -20,7 +20,7 @@ from mcp_servers.omega_hub.server import mcp
 
 REGISTRY_PATH = Path(os.environ.get(
     "OMEGA_TASK_REGISTRY",
-    "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/TASK_REGISTRY.json"
+    str(Path(__file__).parents[3] / "data" / "coordination" / "TASK_REGISTRY.json")
 ))
 
 def _load_registry() -> dict:

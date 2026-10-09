@@ -21,6 +21,7 @@ Heritage:
 
 from __future__ import annotations
 
+import os
 import logging
 import time
 from dataclasses import dataclass, field
@@ -68,7 +69,9 @@ class SessionLifecycleConfig:
     external_after_days: int = 90
     delete_after_days: int = 365  # Optional: full deletion beyond retention
     external_storage_path: Path = field(
-        default_factory=lambda: Path("/media/arcana-novai/omega_library/archive/sessions")
+        default_factory=lambda: Path(os.environ.get(
+            "OMEGA_EXTERNAL_STORAGE", Path.home() / "omega_library" / "archive" / "sessions"
+        ))
     )
     enable_external_archive: bool = True
     enable_deletion: bool = False  # Disabled by default — data preservation

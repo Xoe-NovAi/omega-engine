@@ -2,9 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # 🔱 PUBLIC ALLOWLIST — What the Public `omega-engine` Repo Is
 **AP Token**: `AP-PUBLIC-ALLOWLIST-20260817`
-**Status**: DRAFT — awaiting Architect (Node 0) confirmation
+**Status**: APPROVED — ratified by Architect (Node 0), 2026-10-09
 **Source**: `docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md` §3.1 (PUB-1)
-**Date**: 2026-08-17
+**Date**: 2026-08-17 · **Ratified**: 2026-10-09
+**Ruling scope**: The public repo ships entity/agent material. `data/entities/`,
+`.opencode/agents/` and `config/wads/` are IWAD core, not internal leakage, and
+are IN SCOPE for publication. kq5 / godot-kq5 is a side-project and is OUT OF
+SCOPE entirely (removed 2026-10-09).
 
 > **Purpose**: The public repo is an **allowlist**, not "gitignore harder."
 > Everything not listed here is FORGE (this machine or private `omega-forge`).

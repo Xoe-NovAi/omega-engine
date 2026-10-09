@@ -4,6 +4,21 @@
 
 schema_version: "1.0"
 document_type: "operational_config"
+
+# OPERATIONAL, MACHINE-LOCAL MODEL FLEET — NOT LOADED BY ANY CODE.
+# Nothing in src/, mcp_servers/ or scripts/ reads this file; it is a working
+# reference for local fleet provisioning.
+#
+# M29 (2026-10-09): absolute machine paths were removed so the public tree no
+# longer discloses the local account name and mount layout. `model_path` values
+# are now `${OMEGA_MODELS_DIR}/<file>.gguf`.
+#
+# ⚠️ THERE IS NO ENV EXPANDER FOR THIS FILE. It is not wired to
+# `os.path.expandvars`, and no other config in this repo uses `${VAR}` — that
+# convention exists only here. If this file is ever promoted to be loaded, the
+# expander must be added FIRST, or `model_path` resolves to a literal
+# "${OMEGA_MODELS_DIR}/..." string. Prefer excluding it from the public cut
+# over promoting it.
 document_id: "MODEL_FLEET_OPERATIONAL-20260901"
 title: "Omega Engine — Model Fleet Operational Configuration"
 status: "ACTIVE — RUNTIME CONFIG"
@@ -129,7 +144,7 @@ tier_0_local_sovereign_details:
     # v2.0.0: New primary agentic_local provider
     enabled: true
     endpoint: "http://127.0.0.1:1234/v1"
-    model_path: "/media/arcana-novai/omega_library/models/gguf/LFM2.5-2.6B-Q4_K_M.gguf"
+    model_path: "${OMEGA_MODELS_DIR}/LFM2.5-2.6B-Q4_K_M.gguf"
     models:
       - id: "lfm-2.5-2.6b-local"
         role: "agentic_local"
@@ -150,7 +165,7 @@ tier_0_local_sovereign_details:
     # v2.0.0: Qwen3-1.7B available as second instance (port 1236) if RAM allows
     enabled: true
     endpoint: "http://127.0.0.1:1236/v1"
-    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    model_path: "${OMEGA_MODELS_DIR}/Qwen3-1.7B-Q6_K.gguf"
     models:
       - id: "qwen3-1.7b-local"
         role: "extraction"
@@ -169,7 +184,7 @@ tier_0_local_sovereign_details:
   native_gguf_extractor:
     enabled: true
     endpoint: "http://127.0.0.1:1234/v1"
-    model_path: "/media/arcana-novai/omega_library/models/gguf/LFM2.5-2.6B-Q4_K_M.gguf"
+    model_path: "${OMEGA_MODELS_DIR}/LFM2.5-2.6B-Q4_K_M.gguf"
     models:
       - id: "lfm-2.5-2.6b-local"
         role: "extraction"
@@ -188,7 +203,7 @@ tier_0_local_sovereign_details:
     enabled: false
     opt_in: true
     endpoint: "http://127.0.0.1:1235/v1"
-    model_path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+    model_path: "${OMEGA_MODELS_DIR}/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
     models:
       - id: "qwen3-4b-thinking"
         role: "reasoning"

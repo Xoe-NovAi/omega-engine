@@ -113,7 +113,7 @@ gateway = AsyncServiceProxy("gateway")
 # with canonical default. This avoids hardcoded paths in core engine code.
 _OMEGA_LIBRARY_PATH = Path(os.environ.get(
     "OMEGA_LIBRARY_PATH",
-    "/media/arcana-novai/omega_library"
+    str(Path.home() / "omega_library")
 ))
 _OMEGA_MODELS_PATH = Path(os.environ.get(
     "OMEGA_MODELS_PATH",

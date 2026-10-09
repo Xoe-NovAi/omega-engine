@@ -44,7 +44,7 @@ endif
 PYTEST := $(PYTHON) -m pytest
 
 # [maat 2026-09-28] Absolute form, for recipes that `cd` off the repo root
-# before invoking the interpreter (check-kq5 checks an external checkout).
+# before invoking the interpreter.
 # M24: venv sovereignty applies there too — a bare `python3` in a gate is
 # the same defect class as `--break-system-packages`.
 PYTHON_ABS := $(abspath $(PYTHON))
@@ -603,30 +603,6 @@ check-reuse:
 	@$(REUSE) lint
 	@echo "$(GREEN)M37 passed: REUSE v3.3 compliant (all files have SPDX headers)$(NC)"
 
-# Check kq5-godot experiment (VNR vision system integration)
-# Runs the experiment's make check (22 checks) and validates VNR integration
-check-kq5:
-	@echo "$(YELLOW)Checking kq5-godot experiment (VNR vision system)...$(NC)"
-	@if [ ! -L data/experiments/kq5-godot ]; then \
-		echo "$(RED)FAIL: kq5-godot symlink not found at data/experiments/kq5-godot$(NC)"; \
-		exit 1; \
-	fi
-	@if [ ! -d /media/arcana-novai/omega_library/games/kq5-godot ]; then \
-		echo "$(RED)FAIL: kq5-godot source not found at /media/arcana-novai/omega_library/games/kq5-godot$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(YELLOW)Running kq5-godot make check (22 checks)...$(NC)"
-	@cd data/experiments/kq5-godot && $(MAKE) check
-	@echo "$(YELLOW)Verifying VNR script...$(NC)"
-# [maat 2026-09-28] M24: was bare `python3`. Interpreter only — behaviour
-# unchanged. $(CURDIR)-anchored because the recipe `cd`s to the external
-# kq5-godot checkout first, so a relative .venv/bin/python would not
-# resolve from there. PYTHON_ABS is the same interpreter as $(PYTHON).
-	@cd /media/arcana-novai/omega_library/games/kq5-godot && $(PYTHON_ABS) scripts/vnr_render.py --help >/dev/null
-	@echo "$(YELLOW)Verifying VNR backend import...$(NC)"
-	@cd /media/arcana-novai/omega_library/games/kq5-godot && $(PYTHON_ABS) -c "import sys; sys.path.insert(0, '.'); from vnr import VisionBackendVNR; print('VNR backend import OK')"
-	@echo "$(GREEN)kq5-godot check passed: experiment operational, VNR integrated$(NC)"
-
 # Download license texts to LICENSES/ directory (run once after clone)
 reuse-download:
 	@echo "$(YELLOW)Downloading license texts...$(NC)"
@@ -886,7 +862,7 @@ heritage-map:
 	@$(PYTHON) scripts/heritage_audit.py --output-report
 	@echo "✅ Heritage map written to data/coordination/HERITAGE_AUDIT_REPORT.md"
 
-.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-kq5 check-sahs check-policy-constants
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe m23-baseline check-mandates check-mandate-compliance check-mandate-compliance-json verify-mandate-claims check-sahs check-policy-constants
 
 # === BUILD OBSERVABILITY (P8, AP-BUILD-OBS-v1.0.0) ===
 # Wrap ANY long/native build with telemetry + auto-postmortem.
@@ -924,7 +900,7 @@ install-guarded:
 # is acceptable; external telemetry is not).
 
 INFER_LOG_DIR := data/logs/native-gguf
-INFER_MODELS_DIR := $(or $(OMEGA_MODELS_DIR),/media/arcana-novai/omega_library/models/gguf)
+INFER_MODELS_DIR := $(or $(OMEGA_MODELS_DIR),$${HOME}/omega_library/models/gguf)
 
 .PHONY: infer-start infer-stop infer-restart infer-status infer-memory infer-stop-all infer-models infer-talk infer-logs infer-events infer-health infer-debug
 

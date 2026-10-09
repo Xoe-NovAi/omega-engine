@@ -85,8 +85,12 @@ ARCHIVE_AFTER_DAYS = 7
 TOMBSTONE_GRACE_SECONDS = 0.5
 
 # External storage for long-term session archival (90-day policy)
-# Sessions older than 90 days are moved to external 8TB storage drive
-EXTERNAL_STORAGE_PATH = Path("/media/arcana-novai/omega_library/archive/sessions")
+# Sessions older than 90 days are moved to external 8TB storage drive.
+# M29: env-overridable so no machine-specific mount leaks into the public tree.
+EXTERNAL_STORAGE_PATH = Path(os.environ.get(
+    "OMEGA_EXTERNAL_STORAGE",
+    Path.home() / "omega_library" / "archive" / "sessions",
+))
 ARCHIVE_TO_EXTERNAL_DAYS = 90
 
 

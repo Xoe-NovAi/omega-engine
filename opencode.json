@@ -3,11 +3,7 @@
   "autoupdate": true,
   "subagent_depth": 2,
   "plugin": [
-    "opencode-sessions-explorer",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
-    "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
+    "opencode-sessions-explorer"
   ],
   "permission": {
     "read": "allow",
@@ -27,18 +23,12 @@
       "dd *of=/dev*": "deny"
     },
     "external_directory": {
-      "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
-      "/media/arcana-novai/**": "allow",
-      "/home/arcana-novai/archive/**": "allow",
-      "/home/arcana-novai/Documents/docs-backup/**": "allow",
-      "/home/arcana-novai/Documents/docs_1/**": "allow",
-      "/home/arcana-novai/Documents/Archives/**": "allow",
-      "/home/arcana-novai/Documents/xnaif-files/**": "allow",
-      "/home/arcana-novai/.lmstudio/**": "allow",
-      "/home/arcana-novai/.ollama/**": "allow",
-      "/home/arcana-novai/.config/opencode/**": "allow",
-      "/tmp/omega/**": "allow",
+      "~/omega_library/**": "allow",
+      "~/.lmstudio/**": "allow",
+      "~/.ollama/**": "allow",
+      "~/.config/opencode/**": "allow",
       "~/.local/share/opencode/**": "allow",
+      "/tmp/omega/**": "allow",
       "/*": "allow"
     },
     "skill": {
