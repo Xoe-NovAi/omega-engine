@@ -12,7 +12,7 @@ SPDX-License-Identifier: Apache-2.0
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Twenty-Seven Laws of Sovereign Execution
+## 🛡️ The Thirty Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
