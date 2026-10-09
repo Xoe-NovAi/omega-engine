@@ -40,6 +40,20 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RECEIVED_DIR = REPO_ROOT / "docs" / "federation" / "node1_received"
 
+# D-628 (Architect ruling 2026-10-09): docs/federation/ is NOT part of the public
+# cut. Without an explicit guard this module was a SILENT dead gate: the
+# parametrised class globs RECEIVED_DIR/*.md, so an absent directory yields an
+# empty parameter set — the file collects 0 tests and exits 0. No failure, no
+# signal, and the GE-N1 incident record silently stops being enforced.
+#
+# An explicit module-level skipif converts that silence into a visible SKIP. On
+# this host, and on any deployment that restores the federation corpus, the
+# incident stays pinned forever — which is the entire point of this file.
+pytestmark = pytest.mark.skipif(
+    not RECEIVED_DIR.is_dir(),
+    reason="docs/federation/ is host-side only and is not shipped publicly (D-628)",
+)
+
 # Known corruptions: misspelling -> (correction, incident note)
 KNOWN_CORRUPTIONS = {
     "talescail": (
