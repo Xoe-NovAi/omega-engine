@@ -137,7 +137,7 @@ class SessionSemanticSearch:
         base_url = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/"
         
         files = {
-            "model.onnx": base_url + "model.onnx",
+            model_path.name: base_url + "model.onnx",
             "tokenizer.json": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer.json",
             "config.json": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json"
         }
