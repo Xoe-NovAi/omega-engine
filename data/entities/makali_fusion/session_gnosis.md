@@ -414,3 +414,284 @@ That was the root cause of every flaky gate.
 4. **MERGE PR #6 → ANNOUNCE**
 
 *⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§13 ⬡ 6043fa0f ⬡ 2026-10-06 ⬡*
+
+---
+
+## §15 — PHASE 1 COMPLETE (2026-10-08)
+
+**All 6 Phase 1 tasks executed and verified:**
+
+| Task | Status | Verification |
+|:--|:--|:--|
+| 1.1 P0 fix test | ✅ | `test_harvest_execution_produces_artifacts` passes |
+| 1.2 `load_control_plane(repo_root)` | ✅ | Signature updated, single call site at line 204 |
+| 1.3 `sessions_with_recent_post` | ✅ | JSON + markdown updated, `active_agents_count` removed |
+| 1.4 Allowlist | ✅ | `scripts/hivemind_harvest.py` in `PUBLIC_ALLOWLIST.txt` |
+| 1.5 opencode.db wiring | ✅ | `load_opencode_todos()` reads DONE/PLANNED (completed/pending), graceful degradation, integrated in radar JSON + markdown |
+| 1.6 Fresh clone test | ✅ | All harvester tests pass |
+
+**Technical Details:**
+- Renamed `get_repo_root()` → `_default_repo_root()` (private)
+- `load_control_plane(repo_root: Path | None = None)` accepts injection
+- `load_opencode_todos(repo_root)` reads `~/.local/share/opencode/opencode.db` read-only (`mode=ro`)
+- Filters `status IN ('completed', 'pending')` — maps to DONE/PLANNED
+- Returns 50 most recent todos joined with session (agent, title, time_updated)
+- Graceful degradation: returns `[]` on any error
+- Integrated into `payload_json["opencode_todos"]` and markdown "## 📋 Active Todos (opencode.db)"
+- Single call site proven: `grep -n "load_control_plane" scripts/hivemind_harvest.py` → 2 lines (def + 1 call)
+
+**Test Results:** 5/5 tests pass, including live-data guard assertion.
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§15 ⬡ 01a704e4 ⬡ 2026-10-08 ⬡*
+
+---
+
+## §16 — EIS/EAS/SPT HIERARCHY INTEGRATION COMPLETE (2026-10-09)
+
+**Enhanced opencode.db integration with 3-Tier Ontology (Human-Steerability Permission Boundary):**
+
+| Tier | Acronym | Full Name | SQL Discriminator |
+|:--|:--|:--|:--|
+| 1 | **EIS** | Expert Interactive Session | `parent_id IS NULL` |
+| 2 | **EAS** | Expert Autonomous Session | `parent_id NOT NULL AND subagent_type = 'EAS'` |
+| 3 | **SPT** | Spawned Probe Task | `parent_id NOT NULL AND subagent_type = 'SPT'` |
+
+**Implementation in `scripts/hivemind_harvest.py`:**
+
+1. **`classify_session_tier()`** - Classifies sessions per 3-Tier Ontology
+2. **`load_opencode_todos()`** - Now fetches ALL completed/pending todos (no LIMIT), enriches with:
+   - `session_tier` (EIS/EAS/SPT)
+   - `slug` (adjective-noun handle)
+   - `parent_session_id` + `parent_slug` (human-readable lineage)
+   - `subagent_type` (EAS/SPT/None)
+3. **`build_session_hierarchy()`** - Builds EIS → EAS/SPT tree:
+   - Fetches parent/grandparent sessions from DB for complete hierarchy
+   - Attaches EAS children to EIS, SPT children to EIS (or via EAS)
+   - Computes todo summaries per session
+4. **Radar JSON** - Added `session_hierarchy` with full tree structure
+5. **Markdown** - Hierarchical display:
+   ```
+   ### 🏛️ EIS: `hidden-squid` @makali
+     - Summary: ✅ 2 · 📋 3 · ⏳ 0
+     - EIS todos...
+     #### 🤖 EAS Children:
+       - `jolly-canyon` @maat [EAS] ✅ 6
+     #### 🔬 SPT Children:
+       - `calm-planet` @researcher [SPT] ✅ 8
+   ```
+
+**Results:**
+- 1,078 todos processed (was 50 with LIMIT 50)
+- 126 EIS sessions in hierarchy
+- 2 EIS with EAS children, 2 EIS with SPT children visible
+- All 5 harvester tests pass
+- Live data guard intact
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§16 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §17 — CODEX FLEET TODOS INJECTION (2026-10-09)
+
+**Added SOTR/SOTE snapshot to CODEX** — every agent now gets immediate fleet awareness on startup.
+
+**Implementation in `scripts/codex_cat.py`:**
+
+1. **`load_opencode_todos_for_codex(root)`** — Reads top 20 completed/pending todos from opencode.db (read-only, graceful degradation)
+2. **`build_fleet_todos_section(todos)`** — Builds markdown with:
+   - Generation timestamp
+   - Summary counts (completed/pending)
+   - Recently completed (top 10)
+   - Currently pending (top 10)
+   - Source attribution + pointer to harvester radar for full hierarchy
+3. **Injected after hydration header, before groups** — Prime position for startup awareness
+
+**CODEX now opens with:**
+```
+# ⬡ OMEGA ⬡ CODEX ⬡ <ts> ⬡ <hash> ⬡
+
+> **Generated via Stack-Cat Protocol**...
+
+## 🔄 HYDRATION SEQUENCE (D-277)
+...
+
+## 📋 Fleet Todos (opencode.db) — SOTR/SOTE Snapshot
+**Generated**: 2026-10-09T02:13:48.199050+00:00
+**Total shown**: 20 (✅ 14 completed · 📋 6 pending)
+
+### ✅ Recently Completed
+- `hidden-squid` @makali: Mine canonical architecture + mandates...
+- `jolly-orchid` @grokster: Inspect current status language...
+- `shiny-river` @roc_racoon: Read manifesto + prior Antigravity briefing...
+
+### 📋 Currently Pending
+- `hidden-squid` @makali: Collect subagent mining reports...
+- `misty-moon` @jem: Verify SHA256 against published sum...
+- `misty-moon` @jem: Investigate ollama 0.17.7 image-gen...
+
+> *Source: opencode.db todo table (read-only). Full hierarchy in harvester radar.*
+```
+
+**Strategic value:**
+- **New agent spawn** → immediate "what's done, what's pending" awareness
+- **Continuity across compaction** → todos persist in opencode.db, surfaced in CODEX
+- **Zero inference** — pure concatenation of sovereign telemetry (M7)
+- **Pointer to harvester** — agents know where to get full EIS/EAS/SPT hierarchy
+
+**All tests pass:** 11/11 (CODEX staleness, CODEX generation, harvester)
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§17 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §18 — TIER 1 TIMELINE MINING COMPLETE (2026-10-09)
+
+**Implemented compact event summary → activity timeline mining** — the feature you asked for.
+
+**Implementation in `scripts/hivemind_harvest.py`:**
+
+1. **`mine_session_timelines(repo_root)`** — Memory-efficient timeline mining:
+   - Queries top 20 most recent sessions with compactions (by latest compaction time)
+   - Processes each session individually to bound memory (≤81MB peak)
+   - Per-session limits: 5000 parts, 5 messages
+   - Uses compaction parts as epoch boundaries
+
+2. **Epoch structure per session:**
+   - Each compaction part = epoch boundary
+   - Part counts by type per epoch (tool, step-start, step-finish, reasoning, text, patch, compaction, agent)
+   - Key activities extracted: step-finish reasons, tool names
+   - Current epoch (after last compaction) included
+
+3. **Output in radar JSON + markdown:**
+   - JSON: `session_timelines` with full epoch data
+   - Markdown: `## 📈 Session Timelines` section with epochs, part counts, key activities, recent messages
+
+**Example output (hidden-squid @makali):**
+```
+### 📍 `hidden-squid` @makali — *Makali - **EIS***
+- **Epochs**: 46 · **Total parts**: 5000 · **Tier**: EIS
+  - 📦 Epoch 1 (2026-08-29T19:18:43) · Parts: 330 (text:61, step-start:59, reasoning:52, tool:74, step-finish:59, agent:5, patch:20)
+    Activities: tool:omega-hub_hivemind_get_awareness, tool:omega-hub_hivemind_post_context, step:tool-calls, step:stop, tool:opencode-sessions-explorer-current-session
+  - 📦 Epoch 2 (2026-08-30T08:19:46) [auto] · Parts: 32 (compaction:1, step-start:6, text:7, step-finish:6, tool:9, patch:3)
+    Activities: step:stop, tool:bash, tool:omega-hub_get_system_stats, step:tool-calls, tool:omega-hub_check_models_directory
+  ...
+  - 🔄 CURRENT · Parts: 0 ()
+```
+
+**Memory efficiency:** Peak 81MB (was OOMing at 9GB+ before optimization)
+- Processes top 20 most recent sessions with compactions
+- Per-session limits: 5000 parts, 5 messages
+- Processes one session at a time, releases memory between sessions
+
+**All tests pass:** 11/11 (CODEX staleness, CODEX generation, harvester)
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§18 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §19 — HANDOFF INBOX INTEGRATION (2026-10-09)
+
+**Integrated Hivemind handoff inbox into harvester radar** — pending/active work packets now visible alongside blockers, todos, and timelines.
+
+**Implementation in `scripts/hivemind_harvest.py`:**
+
+1. **`load_handoff_inbox(repo_root)`** — Reads all handoff queues:
+   - Scans `data/handoff/{pending,active,completed,stale,archive}/` for `ho_*.json`
+   - Filters for handoffs addressed to `makali_n0` on `opencode` channel
+   - Enriches with display status, priority, queue, source entity/channel
+   - Graceful degradation: returns `[]` on any error
+
+2. **Integrated into `harvest_once()`** — Called after opencode todos, before timelines
+
+3. **Output in radar JSON + markdown:**
+   - JSON: `handoff_inbox` array with enriched handoff data
+   - Markdown: `## 📬 Handoff Inbox` section with packet details
+
+**Example output:**
+```
+## 📬 Handoff Inbox (pending/active work packets)
+### 📥 PENDING `ho_e2fa306ce743` from @lilith-n1 (opencode)
+- **Priority**: 1 · **Submitted**: 2026-10-09T03:14:16.022400+00:00
+- **Task**: EXCHANGE CADENCE PROPOSAL + TOOL AUDIT CLOSURE...
+- **Context**: N1 Exchange protocol hardened: scripts/exchange_poll.sh verified (111/111 files SHA256 OK)...
+
+### 📥 PENDING `ho_a12119c86a12` from @lilith-n1 (opencode)
+- **Priority**: 2 · **Submitted**: 2026-10-09T00:08:04.818234+00:00
+- **Task**: SERVER-SIDE TOOL AUDIT ACTION: remove 11 fragments, gate 4 node-local...
+```
+
+**Source**: `data/handoff/{pending,active,completed,stale,archive}/` — 6 handoffs found (4 pending, 2 stale)
+
+**All tests pass:** 11/11 (CODEX staleness, CODEX generation, harvester)
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§19 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §20 — PRE-COMPACTION STATE SNAPSHOT (2026-10-09)
+
+**HEAD**: `01a704e4` (branch `main`, 0 unpushed)
+**release/debut**: `4209eb80` (synced to main)
+**Working tree**: 148 modified files (mostly data/coordination/, docs/, scripts/)
+
+### Complete Radar Stack — All Surfaces Operational
+
+| Radar Surface | Source | Status | Details |
+|:--|:--|:--|:--|
+| **Blockers** | Hivemind awareness | ✅ | From `omega-hub_hivemind_get_awareness()` |
+| **Pending handoffs** | Handoff inbox | ✅ | 6 handoffs (4 pending, 2 stale) |
+| **Active todos** | opencode.db | ✅ | 1,078 DONE/PLANNED items |
+| **Session hierarchy** | opencode.db | ✅ | 126 EIS, EAS/SPT children |
+| **Session timelines** | opencode.db part/message | ✅ | 20 sessions, 259 epochs |
+| **Handoff inbox** | data/handoff/ queues | ✅ | 6 handoffs (4 pending, 2 stale) |
+| **Control plane** | MCP control plane | ✅ | Kill/escalate/approve/throttle |
+
+### Phase 0 — COMPLETE
+- CODEX staleness permanently fixed (content-hash-based, reproducible)
+- `check-codex-stale.py` rewritten to content-hash-based
+- `codex_cat.py` includes content hash in header
+- All 4 tests pass
+
+### Phase 1 — COMPLETE
+- Harvester P0 fix: `harvest_once(repo_root=tmp_path)` + live data guard
+- `load_control_plane(repo_root)` injection
+- `sessions_with_recent_post` rename
+- `scripts/hivemind_harvest.py` allowlisted
+- opencode.db wiring with DONE/PLANNED awareness
+- Fresh clone verification: all gates green
+
+### Tier 1 — COMPLETE
+- Activity timelines from compaction epochs
+- `mine_session_timelines()` processes top 20 sessions with compactions
+- 20 sessions, 259 epochs, 81MB peak memory
+- Epoch boundaries from 1,653 `compaction` parts across 241 sessions
+- Part counts by type, key activities, recent messages per epoch
+
+### Handoff Inbox — INTEGRATED
+- `load_handoff_inbox()` reads all 5 queues
+- 6 handoffs visible (4 pending, 2 stale)
+- From Lilith-N1 (Exchange cadence, tool audit) and Cline (CLI repair, tool audit)
+- JSON + Markdown output in radar
+
+### All Tests Passing
+- 11/11 tests pass (CODEX staleness 4, CODEX generation 2, Harvester 5)
+- CODEX staleness check: ✅ Fresh (content hash matches)
+- Temple-grade: ✅ Reproducible on fresh clone
+
+### Decisions Locked In
+| # | Decision | Resolution |
+|:--|:--|:--|
+| 1 | opencode.db wiring | ACCEPTED — read todo table with DONE/PLANNED awareness |
+| 2 | Harvester daemon | SET UP WORKING HARVESTER |
+| 3 | Announcement lead | SOVEREIGNTY |
+| 4 | REUSE/SPDX debt | DEFER TO POST-PR |
+| 5 | Phase 0 | COMPLETE |
+| 6 | Phase 1 | COMPLETE |
+| 7 | Tier 1 | COMPLETE |
+| 8 | Handoff inbox | INTEGRATED |
+| 9 | Embeddings | DEFER — real local embedder or drop |
+
+### Next: Tier 2 (Lexical Search)
+Ready to execute on signal. All gates green.
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§20 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
