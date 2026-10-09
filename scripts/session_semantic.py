@@ -117,11 +117,40 @@ class SessionSemanticSearch:
     def _init_embedder(self):
         """Initialize embedder if available."""
         model_path = self.repo_root / "data" / "models" / "embeddings" / "all-MiniLM-L6-v2.onnx"
+        
+        # Download model if missing
+        if not model_path.exists():
+            self._download_model(model_path)
+        
         if model_path.exists() and ORT_AVAILABLE:
             try:
                 self.embedder = TorchFreeEmbedder(model_path)
             except Exception as e:
                 print(f"[semantic] Embedder init failed: {e}", file=sys.stderr)
+
+    def _download_model(self, model_path: Path):
+        """Download ONNX model and tokenizer if missing."""
+        import urllib.request
+        
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        base_url = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/"
+        
+        files = {
+            "model.onnx": base_url + "model.onnx",
+            "tokenizer.json": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer.json",
+            "config.json": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json"
+        }
+        
+        for filename, url in files.items():
+            filepath = model_path.parent / filename
+            if not filepath.exists():
+                print(f"[semantic] Downloading {filename}...")
+                try:
+                    urllib.request.urlretrieve(url, filepath)
+                    print(f"[semantic] Downloaded {filename}")
+                except Exception as e:
+                    print(f"[semantic] Failed to download {filename}: {e}", file=sys.stderr)
 
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self.db_path)
@@ -365,6 +394,10 @@ class SessionSemanticSearch:
 
         # Get semantic results
         semantic_results = self.search(query, limit=limit*2, entity=entity)
+
+        # Filter out error results
+        lexical_results = [r for r in lexical_results if "session_id" in r]
+        semantic_results = [r for r in semantic_results if "session_id" in r]
 
         # RRF fusion
         k = 60  # RRF constant
