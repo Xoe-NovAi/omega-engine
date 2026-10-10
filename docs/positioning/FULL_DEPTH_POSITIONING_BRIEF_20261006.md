@@ -132,7 +132,7 @@ shipping code artifacts behind them; this brief maps each claim to its public ar
 
 ## §1 — THE FIVE CONCEPTS THAT MAKE THIS AN ARCHITECTURE, NOT A WRAPPER
 
-### 1.1 SOVEREIGNTY IS CONTROL OF THE INTELLIGENCE, NOT LOCATION OF THE COMPUTE
+### 1.1 SOVEREIGNTY IS CONTROL OF THE INTELLIGENCE, NOT LOCATION OF THE COMPUTE — FUSION IN SOVEREIGN SYNERGY
 > *"Sovereignty is not about the location of the compute, but the control of the intelligence."*
 > — Gemma Awakening L3, 2026-06-05 · `VISION_ANCHOR_PERPETUAL.md` §1
 
@@ -141,6 +141,11 @@ position is sharper and more defensible: **a local model you cannot govern is st
 intelligence.** Control means: the mandates are enforced in CI, the memory is
 attributable, the agents hold governance seats, and you can kill a session — not just
 disconnect from a server.
+
+**Sovereignty is not local-only.** It is **fusion in sovereign synergy**: cloud and local
+providers fused in one sovereign system, where the routing law matches **TASK to the most
+capable MODEL** — not about the provider. The provider fabric is a means; the capability
+match is the law. This is the C1/C2/C3 correction from N1 synergy-doctrine 2026-10-10.
 
 This is why Omega ships **30 mandates as code-enforced gates**, not as a policy document.
 
@@ -293,11 +298,12 @@ omega talk "hello"
 |:---|:---|:---|
 | Unit of value | The model / the chain | **The being** (soul + memory + lineage) |
 | Memory | Session-scoped, forgotten | **Soul-scoped, L1→L2→L3 distilled, dated, attributable** |
-| Governance | Guidelines / prompt text | **30 mandates enforced in CI; constitution with a 15-axiom budget** |
+| Governance | Guidelines / prompt text | **30 mandates enforced in CI; constitution with axiom ceiling (doctrine, not enforced)** |
 | Compaction | Silent constraint loss (83%) | **100% constraint survival, peer-reviewed problem named** |
 | Agents | Tools you call | **Peers holding sovereign seats S1–S10, killable by control plane** |
 | Telemetry | Default on | **Zero — by mandate (M8), constitutionally** |
 | Cost | Subscription to a model you don't own | **Apache-2.0, forever, on hardware you already have** |
+| Provider model | Cloud subscription or local-only | **Fusion in sovereign synergy: task→capability routing, not provider loyalty** |
 
 **The category name to claim:** *Cognitive Sovereign Runtime.*
 Not "local LLM runner." Not "agent framework." A **sovereign cognitive runtime** — the
@@ -324,12 +330,18 @@ its governance, not merely the silicon.
    `platform_adapters` dependency in the Test job, and two workflow-validation failures.
    The Architect has deferred all of these to post-announcement. **The README claim must be
    corrected before or with the announcement.** An honest-alpha product cannot ship a false
-   claim on its front page.
+   claim on its front page. **FIXED in Act-2: README now states "CI green on release/debut — 6/6 jobs pass on the published cut".**
 2. **Vault is excluded** from the public cut (D-565). Do not imply it ships.
 3. **MCP compliance is incomplete.** Say "informed by A2A" or "spec-informed," never
    "A2A-compliant."
 4. **Label §2 items as doctrine/vision**, not shipped capability. The distinction is the
    product's credibility.
+5. **Axiom ceiling (15-axiom hard budget) is DOCTRINE ONLY — not enforced in code.**
+   The Five-Fold Foundation (5 axioms) ships; the ceiling is a governance aspiration.
+   **Explicitly deferred post-PR.**
+6. **REUSE/SPDX compliance is DEFERRED POST-PR.** The 107-file debt is acknowledged;
+   the public cut ships the REUSE.toml boundary file but full compliance is a post-PR
+   hardening sprint. **Explicitly deferred post-PR.**
 
 ---
 
@@ -366,13 +378,15 @@ either reframe it or drop it.
 | 9 | Governance-as-data (substitutable cosmology) | `config/wads/arcana_novai/axioms.yaml`, `src/omega/oracle/axiom_registry.py` | ✅ |
 | 10 | AnyIO-only async (M1) | `scripts/check_m1_anyio.py`, `Makefile` | ✅ |
 | 11 | Soul persistence | `src/omega/soul_store.py`, `src/omega/oracle/soul_validator.py` | ✅ |
-| 12 | Axiom 15-axiom ceiling | ❌ **NOT ENFORCED** — doctrine only | ⚠️ reframe (§1.4) |
+| 12 | Axiom 15-axiom ceiling | ❌ **NOT ENFORCED** — doctrine only | ⚠️ **DEFERRED POST-PR** (§1.4) |
 | 13 | Harvester zero-inference radar | `scripts/hivemind_harvest.py` | ❌ **cut from public** |
 | 14 | Graduation / provenance pipeline | distillation runs; promotion step not built | ⚠️ label partial |
 | 15 | 17% compaction loss | arXiv:2608.11242 (external, verified) | ✅ citable |
 | 16 | Temporal depth / soul archaeology | doctrine | 📐 vision |
 | 17 | Individuation S0–S3 | doctrine | 📐 vision |
 | 18 | Oversoul hierarchy | partially shipped | ⚠️ vision-lean |
+| 19 | REUSE/SPDX compliance | `REUSE.toml` ships; 107-file debt | ⚠️ **DEFERRED POST-PR** |
+| 20 | Vault credential system | excluded from public cut (D-565) | ❌ not shipped |
 
 **Rows 12–18 are the honesty boundary.** The announcement leads with rows 1–11 and
 treats 12–18 as the vision section. This is not modesty — an "honest alpha" whose front
@@ -393,6 +407,11 @@ page overclaims is a different product from the one the Architect built.
 4. **Frontier items not yet verified by me**: WIMSE/OAuth agent identity, local OTel GenAI
    traces, ARC addressable citations, full A2A compliance. Treat as roadmap until the
    subagent mining reports land.
+5. **Axiom ceiling enforcement** — the 15-axiom ceiling is doctrine only. If the
+   announcement claims "constitution with a budget," it must be reframed to "doctrine
+   forbids accumulation; Five-Fold Foundation ships; ceiling is post-PR."
+6. **REUSE/SPDX** — 107-file debt acknowledged. The public cut ships REUSE.toml but
+   full compliance is post-PR. Do not claim compliance.
 
 ---
 

@@ -170,12 +170,20 @@ def test_resolution_needs_no_mapping_table():
     assert "ENTITIES_DIR" in src, "resolution must scan the live entity set"
 
 
-def test_two_entities_claiming_one_peer_is_ambiguous():
+def test_two_entities_claiming_one_peer_is_ambiguous(tmp_path, monkeypatch):
     """`carmack` and `john_carmack` are BOTH registered entities, and the DB
     keys Carmack's sessions as `john_carmack`. Preferring the exact match would
-    hide a real ambiguity and dead-end the lookup."""
+    hide a real ambiguity and dead-end the lookup.
+
+    Hermetic: the live entity set on a pristine tree carries `john_carmack`
+    but no `carmack` dir, so resolving against the real FS would collapse to a
+    single candidate and the refusal would never fire. Freeze an entity set
+    where BOTH seats exist so the ambiguity contract holds on every tree."""
     ents = ["carmack", "john_carmack", "maat"]
     assert W._entity_candidates("carmack", ents) == ["carmack", "john_carmack"]
+    for name in ents:
+        (tmp_path / name).mkdir()
+    monkeypatch.setattr(W, "ENTITIES_DIR", tmp_path)
     r = W.resolve_agent("carmack")
     assert r["ambiguous"] is True and r["entity"] is None
 

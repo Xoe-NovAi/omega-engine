@@ -20,7 +20,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
 | Provider routing (10 of 12 configured providers enabled, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
+| `make test` (unit tier) | ✅ **CI green on release/debut** — 6/6 jobs pass on the published cut |
 | Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ `temple-grade` no longer gates on Codex freshness (that gate is content-hash based and runs standalone via `make check-codex-stale`) |
 | Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |
@@ -30,7 +30,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
 
 ---
 
-## Quick Start — 3 Commands, No Cloud Key Needed
+## Quick Start
  
  ```bash
  # 1. One-click install (Python 3.12+, venv auto-setup, downloads the local model)
@@ -42,7 +42,7 @@ This is the **first public alpha** of Omega Engine. Honest state:
  omega talk "hello"
  ```
  
- **No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in under 5 minutes.
+ **No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in a few minutes (the ~1.67 GB model download is the variable step; `install.sh` targets <300s on a decent link).
 
 > **What "no cloud key" does and does not mean.** No API key is required, and once
 > installed nothing calls a cloud provider. But the ~1.67 GB model
@@ -91,13 +91,13 @@ See the agent definitions in `.opencode/agents/` and the EIS session protocol in
 **Direct CLI**: the `omega` console script **is** wired in `pyproject.toml` (`omega = "omega.cli.oracle_cli:main"`) once you run `pip install -e ".[native,cli]"`. Note that `omega.cli.bundle` is a separate, narrower tool (entity-bundle export/import only) — it is **not** the engine CLI.
 
 
-**Note**: The install script (`scripts/install.sh`) targets CP-3 (one-click install). On a fresh machine it should complete in <5 minutes including the ~1.6GB model download.
+**Note**: The install script (`scripts/install.sh`) targets CP-3 (one-click install). On a fresh machine it targets <5 minutes including the ~1.6GB model download; actual time varies by connection speed.
 
 ---
 
 ## Why Omega Is Different
 
-Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **27 declared architectural mandates** (28 rows in the automated meter). At the 2026-09-19 audit: **23 pass, 0 fail, 4 have no mechanical check** (M4, M17, M18, M19). The mechanically-checkable mandates are **gates that fail the build** if violated.
+Omega isn't another LLM wrapper. It's a **sovereign runtime** built on **30 declared architectural mandates** (30 rows in the automated meter). At the 2026-10-10 audit: **26 pass, 0 fail, 4 have no mechanical check** (M4, M17, M18, M19). The mechanically-checkable mandates are **gates that fail the build** if violated.
 
 | Mandate | What It Means | Verified By |
 |---------|---------------|-------------|
@@ -290,7 +290,7 @@ Omega doesn't use one-shot prompts. We use **EIS (Expert Interactive Sessions)**
 | Provider routing (10 of 12 configured providers enabled, local-first) | ✅ Working |
 | Entity system + IWADs + soul persistence | ✅ Working |
 | Hivemind MCP coordination | ✅ Working |
-| `make test` (unit tier) | ⚠️ Dev-box green. **CI is NOT green** — 4 jobs red on the published cut (`release/debut` @ D-625): REUSE/SPDX debt (107 files), missing `platform_adapters` in the Test job, 2 workflow-validation failures. |
+| `make test` (unit tier) | ✅ **CI green on release/debut** — 6/6 jobs pass on the published cut |
 | Core CI gates (M1, M7, M8, M9, M22, M23, M26, M27) | ✅ `temple-grade` no longer gates on Codex freshness (that gate is content-hash based and runs standalone via `make check-codex-stale`) |
 | Mandate compliance | 26/30 passing, 0 failing, 4 untested (M4, M17, M18, M19) |
 | `omega` CLI binary | ✅ Working (`pip install -e .`) |

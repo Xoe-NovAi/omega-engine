@@ -62,7 +62,7 @@ def mapped_entity(monkeypatch):
 
     Returns a setter so each test can choose the mapped entity.
     """
-    box = {"entity": "SOPHIA"}
+    box = {"entity": "makali"}
 
     async def _mapper(username: str) -> str:
         return box["entity"]
@@ -124,7 +124,7 @@ async def test_process_github_event_mapping(recorded_posts, mapped_entity):
     # of these and the old "does not raise" assertion would still pass.
     assert post["channel"] == "github-bridge"
     assert post["entity"] == "kali"
-    assert post["model"] == "SOPHIA"
+    assert post["model"] == "makali"
     assert post["task_current"] == "GitHub Event: PR opened: Test PR (by test-user)"
     assert post["focus_chain"] == ["github-integration", "pull_request"]
     assert post["decisions"] == []
@@ -175,11 +175,11 @@ async def test_rejected_post_fails_loud(monkeypatch, mapped_entity):
 async def test_process_github_event_fallback(recorded_posts, mapped_entity):
     """An unmappable GitHub user falls back rather than crashing.
 
-    `_map_github_user_to_entity` returns "SOPHIA" when config/github_accounts.yaml
-    is absent or the username is unknown (github_bridge.py:70-88). This pins
+    `_map_github_user_to_entity` returns "makali" when config/github_accounts.yaml
+    is absent or the username is unknown (github_bridge.py:61-88). This pins
     that the bridge still posts under the fallback entity rather than raising.
     """
-    mapped_entity("SOPHIA")
+    mapped_entity("makali")
 
     payload = {
         "sender": {"login": "unknown-user"},

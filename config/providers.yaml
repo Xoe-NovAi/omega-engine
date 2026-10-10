@@ -42,9 +42,16 @@ sovereignty_policy:
       description: "Credential routing, PII sanitization — local ONLY, no fallback"
 
 # ── Entity Intent Layer (maakali_routing) ──────────────────────────
-# Maps entities to Synergy tiers. The tier determines the provider
-# fabric via sovereignty_policy.tiers. Entity-specific provider
-# overrides remain possible via provider_override (rare, explicit).
+# Routing matches TASK to the most appropriately capable MODEL among
+# available providers. It is not about the provider itself.
+#
+# Entities are organized by DOMAIN, not provider. Every entity is a
+# persistent agent stored on the local machine and may use ANY provider
+# (local or cloud) via the synergy router below.
+# This table sets DEFAULT ROUTES only: the tier selects the provider
+# fabric for a call via sovereignty_policy.tiers. It never defines what
+# the entity is. Per-call overrides via provider_override (rare, explicit)
+# and per-entity fallback_tier always apply.
 # Ratified: 2026-09-16 — entity-based routing PRESERVED (sometimes
 # the appropriate agent IS a specific entity).
 maakali_routing:
@@ -78,8 +85,12 @@ maakali_routing:
   scribe:
     tier: background_watchdogs
     fallback_tier: local
-  slot:
-    tier: background_watchdogs
+
+# GLOSSARY NOTE: "tier" collision — three distinct axes share this word:
+#   1. Hierarchy rank (S1–S10 slots in dispatch.yaml)
+#   2. Routing tier (reasoning/embeddings/background_watchdogs/vault_ops here)
+#   3. Soul-section order (L1→L2→L3 distillation)
+# These are orthogonal. Context disambiguates. No rename pre-PR (breaking change).
     fallback_tier: local
   doom_guy:
     tier: reasoning

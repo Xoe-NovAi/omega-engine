@@ -48,15 +48,29 @@ from mcp_servers.omega_hub import handoff_alias as HA  # noqa: E402
 # 1. ALIAS -> CANONICAL
 # ═══════════════════════════════════════════════════════════════════════════
 
-# The ruling, verbatim: `makali-n0` is authoritative.
+# The ruling, verbatim (SUPERSEDED): `makali` is authoritative.
+#
+# Architect ruling 2026-10-09 superseding D-614: there is ONE Makali. The fork
+# is CLOSED, not aliased — `makali_fusion`/`makali-fusion` were merged into
+# `makali/` and are deliberately ABSENT from config/entity_canonicalization.yaml
+# (aliases: []), and `makali-n0` is a NODE SEAT routing spelling (M29), not an
+# entity alias. Tests below assert the declaration itself (one seat) and assert
+# the closed fork spellings stay unmerged.
 #
 # [CUT-20261007] These spellings assert the DECLARED seat. Full delivery needs
 # the declared canonical's entity directory OR live queue traffic — absent by
 # law on a packetless public tree, where the resolver honestly reports what it
 # can deliver. Tests that need the seat present declare their precondition via
 # the _seat_present fixture; tests of the declaration itself need no seat.
-DECLARED_ALIASES = ["makali", "makali_fusion", "makali-fusion", "MAKALI_N0", " makali "]
-CANONICAL = "makali-n0"
+DECLARED_ALIASES = ["makali", " makali "]
+CANONICAL = "makali"
+
+# Former fork spellings: CLOSED, not aliased. They must NOT canonicalise to the
+# seat — that would reopen the fork D-614 measured and the 2026-10-09 ruling
+# collapsed. `makali-n0`/`MAKALI_N0` are node-qualified (routing branch answers
+# them); `makali_fusion`/`makali-fusion` are bare but undeclared (derived path
+# answers them, honestly unresolved where undeliverable).
+CLOSED_FORK_SPELLINGS = ["makali_fusion", "makali-fusion", "makali-n0", "MAKALI_N0"]
 
 
 @pytest.fixture
@@ -67,8 +81,8 @@ def _seat_present(monkeypatch):
     destination (entity dir or queue traffic). Dev has both; a public tree has
     neither. Freeze the precondition so seat-assertion tests hold on every tree.
     """
-    monkeypatch.setattr(HA, "_live_entities", lambda: ["makali-n0", "makali", "makali_fusion"])
-    monkeypatch.setattr(HA, "_queue_canonical", lambda: {"makali-n0": "makali-n0"})
+    monkeypatch.setattr(HA, "_live_entities", lambda: ["makali"])
+    monkeypatch.setattr(HA, "_queue_canonical", lambda: {})
 
 
 @pytest.mark.parametrize("alias", DECLARED_ALIASES)
@@ -96,20 +110,34 @@ def test_resolution_is_resolved_true_for_every_spelling(alias, _seat_present):
 def test_identity_reports_exact_and_folds_report_declared_alias(_seat_present):
     """`rule` must not lie about whether a name matched or was rewritten.
 
-    The ruling asked for `rule: exact` on every spelling. Reporting a fold as
-    `exact` would put the same class of lie back into the one field callers
-    read, so folds report `declared_alias` and say so explicitly. Both are
-    `resolved: true`; only the honesty differs.
+    The seat IS its own spelling now (`makali` == canonical), so it reports
+    `exact`. The closed fork spellings are NOT declared aliases: they must
+    never report `declared_alias` onto this seat — that would reopen the fork.
     """
     ident = HA.resolve_target_entity(CANONICAL, "opencode")
     assert ident["rule"] == "exact"
     assert ident["resolved_exactly"] is True
+    assert ident["resolved"] is True
 
-    folded = HA.resolve_target_entity("makali", "opencode")
-    assert folded["rule"] == "declared_alias"
-    assert folded["resolved_exactly"] is False
-    assert folded["resolved"] is True
-    assert folded["declared_canonical"] == CANONICAL
+    for spelling in CLOSED_FORK_SPELLINGS:
+        r = HA.resolve_target_entity(spelling, "opencode")
+        assert r["rule"] != "declared_alias", (
+            f"{spelling!r} must not fold via declared_alias (fork is closed): {r}"
+        )
+        assert r.get("declared_canonical") is None or r.get("declared_canonical") != CANONICAL or r["entity"] != CANONICAL, (
+            f"{spelling!r} must not claim this seat via the table: {r}"
+        )
+
+
+def test_closed_fork_spellings_do_not_canonicalise_to_the_seat():
+    """The fork is CLOSED, not aliased: former spellings stay unmerged."""
+    for spelling in CLOSED_FORK_SPELLINGS:
+        assert HA.canonical_entity_name(spelling) != CANONICAL or spelling.strip().lower() == CANONICAL, (
+            f"{spelling!r} must not canonicalise to {CANONICAL!r} (fork closed)"
+        )
+    # Bare mechanical variants of the seat itself still fold to it.
+    assert HA.canonical_entity_name("MAKALI") == CANONICAL
+    assert HA.canonical_entity_name(" makali ") == CANONICAL
 
 
 def test_no_spelling_falls_through_to_unknown_entity_passed_through():
@@ -128,7 +156,7 @@ def test_no_spelling_falls_through_to_unknown_entity_passed_through():
 # 2. IDEMPOTENCY
 # ═══════════════════════════════════════════════════════════════════════════
 
-@pytest.mark.parametrize("alias", DECLARED_ALIASES + [CANONICAL])
+@pytest.mark.parametrize("alias", DECLARED_ALIASES + [CANONICAL] + CLOSED_FORK_SPELLINGS)
 def test_canonicalizing_twice_is_the_same_result(alias):
     once = HA.canonical_entity_name(alias)
     twice = HA.canonical_entity_name(once)
@@ -140,11 +168,10 @@ def test_resolution_is_idempotent():
     """Feeding a resolved address back in must not drift or re-resolve.
 
     [CUT-20261007] Structural idempotency, not a tree-shaped one: the second
-    pass must be a fixed point of the FIRST answer, whatever it is. On dev the
-    first answer is `makali-n0` (entity dir exists); on a public tree it is
-    `makali_fusion` (derived spelling fold). Both are stable — the contract is
-    that re-resolution never moves, not that every tree lands on one seat."""
-    first = HA.resolve_target_entity("makali_fusion", "opencode")
+    pass must be a fixed point of the FIRST answer, whatever it is. The seat
+    spelling `makali` is stable on every tree (declared canonical with a live
+    entity dir); the contract is that re-resolution never moves."""
+    first = HA.resolve_target_entity("makali", "opencode")
     second = HA.resolve_target_entity(first["entity"], "opencode")
     assert second["entity"] == first["entity"]
     assert second["agent_id"] == first["agent_id"]
@@ -257,7 +284,7 @@ def test_a_malformed_table_cannot_redirect_a_target(monkeypatch, tmp_path):
 # 4. M28 — LEGACY PACKETS STAY READABLE, HISTORY IS NOT REWRITTEN
 # ═══════════════════════════════════════════════════════════════════════════
 
-LEGACY_ALIASES = ("makali", "makali_fusion", "makali-fusion")
+LEGACY_ALIASES = ("makali",)
 
 
 def _packets():
@@ -289,15 +316,17 @@ def test_the_double_submit_pair_is_still_on_disk_and_addressable():
     assert a["context"] == b["context"], "the two submits were byte-identical in context"
     assert a["source_agent_id"] == b["source_agent_id"], "one sender, two spellings"
     # Canonicalisation happens at RESOLUTION time: both old addresses now
-    # resolve to the one seat, so an inbox queried by either spelling agrees.
-    assert HA.resolve_target_entity(a["target_agent_id"].split("/", 1)[1], "opencode")["entity"] \
-        == HA.resolve_target_entity(b["target_agent_id"].split("/", 1)[1], "opencode")["entity"] \
-        == CANONICAL
+    # resolve, so an inbox queried by either spelling can receive.
+    assert HA.resolve_target_entity(a["target_agent_id"].split("/", 1)[1], "opencode")["resolved"] is True
+    assert HA.resolve_target_entity(b["target_agent_id"].split("/", 1)[1], "opencode")["resolved"] is True
 
 
 def test_every_legacy_alias_addressed_on_disk_still_resolves():
     """Every packet addressed to an alias must remain addressable by that
-    spelling — no packet becomes orphaned by the merge."""
+    spelling — no packet becomes orphaned by the merge.
+
+    Historical packets addressed to the collapsed fork spellings (makali_fusion,
+    makali-n0) or the canonical seat (makali) remain addressable and resolve."""
     packets = list(_packets())
     legacy = [
         (_f, pkt, ent)
@@ -306,15 +335,16 @@ def test_every_legacy_alias_addressed_on_disk_still_resolves():
         for raw in [pkt.get(key)]
         if isinstance(raw, str) and "/" in raw
         for ent in [raw.split("/", 1)[1]]
-        if ent in LEGACY_ALIASES
+        if ent in ("makali",) or ent in CLOSED_FORK_SPELLINGS
     ]
     if not legacy:
         # [CUT-20261007] Guards alias-vs-corpus drift on dev; on the public tree
         # the alias packets are private history, so skip instead of failing.
         pytest.skip("no legacy-alias packets on this tree (public debut ships no private packets)")
     for _f, pkt, ent in legacy:
-        assert HA.canonical_entity_name(ent) == CANONICAL, (
-            f"{pkt.get('packet_id')} addressed {ent!r}, which no longer resolves"
+        r = HA.resolve_target_entity(ent, "opencode")
+        assert r["resolved"] is True, (
+            f"{pkt.get('packet_id')} addressed {ent!r}, which no longer resolves: {r}"
         )
 
 
@@ -348,16 +378,28 @@ def test_resolution_does_not_mutate_history():
 
 
 def test_merge_manifest_exists_and_covers_the_declared_table():
-    """M28: the merge is explicit and auditable — a manifest, not a silent edit."""
+    """M28: the merge is explicit and auditable — a manifest, not a silent edit.
+
+    The on-disk manifest records the SUPERSEDED D-614 merge (makali -> makali-n0,
+    61 packets): it is historical evidence and must stay byte-identical (M28).
+    The CURRENT declared table is the collapsed seat (makali -> makali). This
+    test asserts both halves — history preserved, present declared — so neither
+    a silent rewrite of the past nor drift of the present can pass unnoticed.
+    """
     manifest = REPO / "data" / "coordination" / "ENTITY_CANONICALIZATION_20261005.json"
     assert manifest.is_file(), f"merge manifest missing: {manifest}"
     doc = json.loads(manifest.read_text())
     assert doc.get("canonicalization_performed_at_utc"), "manifest must be timestamped"
-    for alias, canonical in HA._declared_alias_table().items():
-        recorded = {m["alias"]: m["canonical"] for m in doc["alias_map"]}
-        assert recorded.get(alias) == canonical, (
-            f"{alias!r} -> {canonical!r} is declared in config but absent from the manifest"
-        )
+    # Historical record: the D-614 merge as measured (must not be rewritten).
+    recorded = {m["alias"]: m["canonical"] for m in doc["alias_map"]}
+    assert recorded.get("makali") == "makali-n0", (
+        "manifest must preserve the D-614 record (makali -> makali-n0); history is not rewritten"
+    )
+    # Present declaration: the collapsed seat (2026-10-09 ruling superseding D-614).
+    table = HA._declared_alias_table()
+    assert table.get("makali") == "makali", (
+        f"current table must declare the collapsed seat makali -> makali, got {table!r}"
+    )
     assert doc.get("historical_packets_deleted") == 0, \
         "M28: canonicalisation is resolution-time; no packet may be deleted"
     assert doc.get("historical_packets_rewritten") == 0, \

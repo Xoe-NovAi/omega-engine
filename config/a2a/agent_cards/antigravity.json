@@ -154,7 +154,8 @@
       "library_fts_search",
       "get_omega_metrics"
     ],
-    "entity_workspace": "data/entities/antigravity/",
+    "entity_workspace": "",
+    "entity_workspace_note": "Strategy-only seat — no local entity workspace. Antigravity IDE operates as a cross-platform Hivemind Council peer via the Exchange (port 8019) and hub (port 8016). No data/entities/antigravity/ directory exists or is required.",
     "documentation_path": "docs/architecture/A2A_AGENT_CARDS_20261003.md",
     "notes": "IMPORTANT HONESTY FLAG, from data/entities/antigravity/soul.yaml: the Antigravity IDE *plugin* remains BANNED from the provider fabric (round-robin multi-account rotation eradicated per D-1, 2026-06-29). The IDE is admitted only as a Hivemind Council peer. This card describes the IDE seat, not the banned plugin."
   }

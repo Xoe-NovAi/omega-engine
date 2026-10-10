@@ -165,18 +165,6 @@ entities:
     owned_files: []
     model: "qwen3-4b-think-q4_k_m"
 
-  # Template (1)
-  - name: "slot"
-    role: "S1"
-    mode: "subagent"
-    purpose: "Slot-based domain agent — parameterized by --slot SX"
-    capabilities: ["domain_execution", "slot_dispatch"]
-    domains: ["slot_domain"]
-    slot: "SX"
-    task_tool_type: "slot"
-    owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
-
   # Federation Meta-Entity (1)
   - name: "omega_federation"
     role: "FEDERATION_MESH"

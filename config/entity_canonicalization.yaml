@@ -91,8 +91,20 @@ deliberately_not_merged:
       A parallel session reported this as a spelling hazard; that reading is
       REJECTED — evidence contradicts it. Two agents, one name-family.
 
-  - names: ["ge-n0", "ge-n1"]
-    reason: "Distinct nodes. `ge_n1` vs `ge-n1` IS a real spelling fold, handled mechanically by canonical_form()."
+  - names: ["ge-n1"]
+    reason: >
+      SOLE gaming entity. `ge_n1` is a mechanical separator fold (canonical_form).
+      `ge-n0` NEVER EXISTED — no such entity in the federation. The prior entry
+      claiming "distinct nodes" was false and is superseded by this ruling.
+      Node 1 addresses this entity by session name: GE-Gaming, GE-VNR.
 
-  - names: ["john-carmack-n1", "john_carmack"]
-    reason: "Distinct nodes; `john_carmack` vs `john-carmack` is a mechanical separator fold, not a node merge."
+  - names: ["john_carmack"]
+    reason: >
+      SOLE John Carmack entity in the federation (Node 0). `john-carmack-n1`
+      NEVER EXISTED — no such entity on Node 1. The prior entry claiming
+      "distinct nodes" was false and is superseded by this ruling.
+      `john-carmack` vs `john_carmack` is a mechanical separator fold.
+
+# C2 CANON (N1 §5.2): Entity IDs are snake_case (roc_racoon, grokster, john_carmack).
+# Display names are Title Case ("Roc Racoon", "Grokster", "John Carmack").
+# The ID is the machine key; the display name is for humans. Never conflate.

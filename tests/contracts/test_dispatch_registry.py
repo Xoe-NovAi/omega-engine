@@ -51,15 +51,12 @@ class TestDispatchRegistry:
         assert kali.get("name") == "kali"
 
     def test_dispatch_registry_get_entity_by_role_pillar(self):
-        """get_entity_by_role finds an entity with S1 role (slot-based)."""
+        """get_entity_by_role finds an entity with S3_DEDICATED_KEEPER role (carmack)."""
         invalidate_cache()
-        pillar = get_entity_by_role("S1")
+        pillar = get_entity_by_role("S3_DEDICATED_KEEPER")
         assert pillar is not None
-        assert pillar.get("role") == "S1"
-        # The slot entity carries the S1 role
-        entities = get_dispatch_entities()
-        s1_names = {e["name"] for e in entities if e.get("role") == "S1"}
-        assert "slot" in s1_names
+        assert pillar.get("role") == "S3_DEDICATED_KEEPER"
+        assert pillar.get("name") == "carmack"
 
     def test_dispatch_registry_get_entity_by_role_not_found(self):
         """get_entity_by_role returns None for unknown role."""
@@ -101,8 +98,8 @@ class TestDispatchRegistry:
         entities = get_dispatch_entities()
         names = {e["name"] for e in entities}
         # Core entities that must exist (Phase-1 nomenclature: sophia/node
-        # removed; slot entity carries the S1 role)
-        required = {"kali", "maat", "lilith", "iris", "makali", "verity", "slot"}
+        # removed; slot entity removed 2026-10-10 — parameterized role, not an agent)
+        required = {"kali", "maat", "lilith", "iris", "makali", "verity"}
         for req in required:
             assert req in names, f"Required entity '{req}' missing from dispatch.yaml"
 

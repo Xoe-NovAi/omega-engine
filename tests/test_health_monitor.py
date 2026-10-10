@@ -239,7 +239,15 @@ class TestStatusReport:
         assert "google" in report["providers"]
         assert "gemma-4-31b" in report["models"]
 
-@pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="vault excluded from public debut (D-565)")
+def _vaultcore_available() -> bool:
+    try:
+        from omega.vault import VaultCore
+        return True
+    except ImportError:
+        return False
+
+
+@pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
 class TestVaultCoreRateLimit:
     def test_rate_limit_does_not_trigger_rotation(self):
         """[IW-2] Rate limits must raise ProviderRateLimitError, not rotate keys.

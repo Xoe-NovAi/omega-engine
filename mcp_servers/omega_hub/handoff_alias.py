@@ -23,7 +23,7 @@ ended up holding two opposite policies at once.
     (`ge_n1` -> `ge-n1`). Reversible, testable, cannot be wrong about itself.
 
   * "is this the SAME SEAT under a different name?" — not mechanical at all.
-    DECLARED in `config/entity_canonicalization.yaml` [D-614].
+    DECLARED in `config/entity_canonicalization.yaml` [D-614, superseded 2026-10-09].
 
 The defect this module was born to fix was asking the SECOND question with the
 FIRST question's tool. Deriving identity from the live queue means the fork
@@ -39,7 +39,7 @@ mechanically. A table ABSENT entry is not a merge.
 
 THE ONE POLICY (this supersedes the two contradictory comments it replaces)
 -------------------------------------------------------------------------
-  1. A node suffix on INPUT (`-n\\d+$`) is a ROUTING assertion by the caller.
+  1. A node suffix on INPUT (`-n\d+$`) is a ROUTING assertion by the caller.
      It is answered by the node-suffix branch ALONE: exact match, or refuse.
      A declared alias NEVER redirects a node-qualified name. This is kept
      because the evidence for it is a real misdelivery (`lilith-n1` folded to
@@ -56,6 +56,10 @@ REFUSE AMBIGUITY
 Still the default for anything the table does not settle. If a supplied name
 could reduce to more than one canonical entity, this raises. Never guess. A
 wrong target is a silently-forked packet, which is the defect being fixed.
+
+NOTE: D-614 superseded 2026-10-09 — Makali fork collapsed. `makali` is the
+sole canonical seat with empty aliases. `makali_fusion`, `makali-fusion`,
+`MAKALI_N0` are CLOSED spellings (resolve to `makali` but are not aliases).
 """
 
 from __future__ import annotations
@@ -165,12 +169,15 @@ def _declared_alias_table() -> dict[str, str]:
 
 
 def canonical_entity_name(name: str) -> str:
-    """Map any declared alias to its canonical entity name [D-614].
+    """Map any declared alias to its canonical entity name [D-614, superseded
+    2026-10-09: ONE Makali — the seat is `makali`, the fork is closed].
 
-      makali         -> makali-n0
-      makali_fusion  -> makali-n0
-      makali-fusion  -> makali-n0
-      makali-n0      -> makali-n0      (identity — idempotent)
+      makali         -> makali        (identity — idempotent)
+       makali        -> makali        (mechanical case/space fold)
+
+    Former fork spellings (`makali_fusion`, `makali-fusion`) are deliberately
+    NOT aliases and fall through unchanged; node-qualified `makali-n0` is
+    routing, answered by `resolve_target_entity`, never redirected here.
 
     UNDECLARED names are returned unchanged (after mechanical folding), so this
     is safe to call on anything. Node-qualified names are deliberately NOT
