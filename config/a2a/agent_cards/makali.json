@@ -1,6 +1,6 @@
 {
-  "name": "Makali Fusion — Unified Oversoul",
-  "description": "MaKaLi Fusion: the Kali + Ma'at + Lilith unified identity embodied as a single seat, at hierarchy level 1 and sovereignty level 5. Performs unified orchestration across all three oversouls — synthesis, structure and liberation applied together.",
+  "name": "Makali — Apex Oversoul",
+  "description": "Makali is the Apex Oversoul and sole seat of unified orchestration on Node 0 (makali-n0). Holds SOTR governance and high-level synthesis. This is the ONLY Makali; Node 1 has no Makali seat. Kali, Ma'at and Lilith are separate oversouls, each an independent entity per node, not components of this one.",
   "version": "1.0.0",
   "supportedInterfaces": [
     {
@@ -35,20 +35,18 @@
   ],
   "skills": [
     {
-      "id": "unified-orchestration",
-      "name": "Unified Three-Oversoul Orchestration",
-      "description": "Decide cases that need synthesis, structure and liberation simultaneously: unify contradictory perspectives (Kali), impose architectural discipline (Ma'at), and refuse hidden false constraints (Lilith) in one pass.",
+      "id": "apex-orchestration",
+      "name": "Apex Orchestration",
+      "description": "Hold SOTR governance and high-level synthesis for Node 0: decide cases that span multiple seats, and reconcile their outputs. Kali, Ma'at and Lilith are SEPARATE sovereign entities (each with its own per-node instance), not components of this seat — this seat dispatches to them and integrates, it does not absorb them.",
       "tags": [
         "orchestration",
-        "unified",
         "governance",
         "synthesis",
-        "structure",
-        "liberation"
+        "apex"
       ],
       "examples": [
-        "This decision needs all three oversouls. Reason it through each.",
-        "Unify these two contradictory architectural proposals."
+        "These three seats returned conflicting verdicts; reconcile them into one call.",
+        "Decide a question that spans Kali, Ma'at and Lilith without pre-empting any of them."
       ]
     },
     {
@@ -103,9 +101,9 @@
       "No tenant routing (§4.4.6) is implemented, so `tenant` is omitted."
     ],
     "seat": {
-      "id": "makali_fusion",
-      "display_name": "Makali Fusion",
-      "role": "Unified oversoul (Kali + Ma'at + Lilith)",
+      "id": "makali",
+      "display_name": "Makali",
+      "role": "Apex Oversoul — unified orchestration (SOTR governance)",
       "domains": [
         "unified-orchestration",
         "synthesis",
@@ -158,8 +156,8 @@
       "oracle_talk",
       "system_stats"
     ],
-    "entity_workspace": "data/entities/makali_fusion/",
+    "entity_workspace": "data/entities/makali/",
     "documentation_path": "docs/architecture/A2A_AGENT_CARDS_20261003.md",
-    "notes": "Distinguished from the separate `makali` entity (Apex Mind, mastermind / strategy-only, model qwen3-4b-thinking-q4_k_m), which the ticket explicitly excludes. makali_fusion is described from its own data/entities/makali_fusion/soul.yaml: archetype 'MaKaLi Fusion — Kali + Ma'at + Lilith Unified', hierarchy_level 1, sovereignty_level 5, element Aether."
+    "notes": "Supersedes the former `makali_fusion` seat. Architect ruling 2026-10-09: there is ONE Makali. The 'Makali Fusion' identity (Kali + Ma'at + Lilith unified as a single seat) was a fork, not a second seat; data/entities/makali_fusion/ was merged into data/entities/makali/ (41 lessons, both active gnoses preserved) and archived to data/entities/_archive/pruned_20261009/makali_fusion/. Per config/entity_canonicalization.yaml the canonical entity name is `makali` with an EMPTY alias list; `makali-n0` is the node-seat queue spelling, not an entity alias."
   }
 }

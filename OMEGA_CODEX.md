@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-09T04:23:24.418881+00:00 ⬡ 2f6c9cccb342664a ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-09T18:43:59.477659+00:00 ⬡ 2f6c9cccb342664a ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-10-09T04:23:24.418881+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-10-09T18:43:59.477659+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -20,29 +20,27 @@ After compaction or restart, execute in strict order:
 ---
 ## 📋 Fleet Todos (opencode.db) — SOTR/SOTE Snapshot
 
-**Generated**: 2026-10-09T04:23:24.429135+00:00
-**Total shown**: 20 (✅ 14 completed · 📋 6 pending)
+**Generated**: 2026-10-09T18:43:59.492371+00:00
+**Total shown**: 20 (✅ 16 completed · 📋 4 pending)
 
 ### ✅ Recently Completed
 - `hidden-squid` @makali: Mine canonical architecture + mandates for novel concepts
 - `hidden-squid` @makali: Mine scattered vision/strategy docs (treasure maps)
-- `jolly-orchid` @grokster: Inspect current status language in README, open-gate notes, and root manifest
-- `jolly-orchid` @grokster: Correct only package status language to record passed physical-quarantine audit
-- `jolly-orchid` @grokster: Rebuild root manifest and SHA ledger; verify nested ledgers unchanged/valid
-- `jolly-orchid` @grokster: Run integrity, parse, secret, path, endpoint, and fixture-label checks
-- `jolly-orchid` @grokster: Report exact changes and verification without claiming final authenticated trans
-- `shiny-river` @roc_racoon: Read manifesto + prior Antigravity briefing docs (avoid duplicating)
-- `shiny-river` @roc_racoon: Mine WAD subsystem: definitions, registry, planned vs implemented
-- `shiny-river` @roc_racoon: Mine vision/strategy corpus: ROADMAP, corpus map, vision docs
-- _...and 4 more completed_
+- `eager-harbor` @roc_racoon: Verify all 5 architect facts against HEAD 27dd54b5
+- `eager-harbor` @roc_racoon: Census core-14 axiom status + lesson schema reachability
+- `eager-harbor` @roc_racoon: Write AXIOM_REVIEW_PROTOCOL.md §1-3 (schedule, distillation, falsifiability)
+- `eager-harbor` @roc_racoon: Write §4-8 (human gate, write-only sink, ceiling gap, lessons: ambiguity, bootst
+- `eager-harbor` @roc_racoon: Dry-run: maat (no axioms, wardrobe anomaly)
+- `eager-harbor` @roc_racoon: Dry-run: researcher (40 promoted lessons, L3-reachable)
+- `eager-harbor` @roc_racoon: Verify: validate_soul_architecture.py + make check-engine both pass
+- `sunny-river` @roc_racoon: Verify roster + name→dir mapping (14 core)
+- _...and 6 more completed_
 
 ### 📋 Currently Pending
 - `hidden-squid` @makali: Collect subagent mining reports (sovereignty + agent ecosystem)
 - `hidden-squid` @makali: Synthesize industry-shifting concepts into positioning brief
 - `hidden-squid` @makali: Update AGY handoff with full-depth brief
 - `misty-moon` @jem: Verify SHA256 against published sum af0bf278... after completion
-- `misty-moon` @jem: Investigate ollama 0.17.7 image-gen model support + what Qwen-Image GGUF needs
-- `misty-moon` @jem: Create Modelfile + ollama create + smoke test
 
 > *Source: opencode.db todo table (read-only). Full hierarchy in harvester radar.*
 

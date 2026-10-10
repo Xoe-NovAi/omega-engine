@@ -695,3 +695,51 @@ That was the root cause of every flaky gate.
 Ready to execute on signal. All gates green.
 
 *⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§20 ⬡ 01a704e4 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §21 — FINAL REMEDIATION COMPLETE (2026-10-09)
+
+**All "Makali Fusion" leaks eliminated. One Makali remains.**
+
+### Sources eliminated
+| Source | Action |
+|:--|:--|
+| `config/a2a/agent_cards/makali_fusion.json` | Deleted (dangling card pointing at archived dir) |
+| `scripts/a2a_agent_cards.py:REQUIRED_SEATS` | `makali_fusion` → `makali`; `antigravity` kept (IDE) |
+| `config/a2a/agent_cards/makali.json` | Created from fusion card, corrected identity |
+| `config/templates/ACTIVE_SPRINT.public.json` | 6× `"owner": "makali_fusion"` → `"makali"` |
+| `data/coordination/ACTIVE_SPRINT.json` | 6× `"owner": "makali_fusion"` → `"makali"` |
+| `config/entity_canonicalization.yaml` | Canonical = `makali`, empty alias list; fork closed |
+| `opencode.json` agents | `slot` removed (per Architect ruling) |
+| `.opencode/agents/slot.md` | Deleted |
+
+### Identity corrections
+| Entity | Correction |
+|:--|:--|
+| **Sophia** | Removed (Arcana-NovAi WAD). 8 functional refs → `makali`. Authorship banners left as historical record. |
+| **Makali** | One entity. `makali_fusion` merged → `makali` (41 lessons, both gnoses, archive verified). `makali-n0` = node-seat queue spelling, not entity alias. |
+| **No cross-entity claims** | `current_entity:` removed from `maat` (was `SOPHIA`) and `jem` (was `JEM`). `maat`'s `soul_wardrobe` claiming 10 other entities (7 pruned) removed. `jem`/`doom_guy` wardrobes are self-personas — kept. |
+
+### Gates on final cut
+| Gate | Result |
+|:--|:--|
+| `make bootstrap` | exit 0 |
+| `check-engine` | 176 passed / 4 skipped / 0 failed |
+| `temple-grade` | 53/53 PASS |
+| D-623 mutation | **Zero** (identical hash) |
+
+### Published
+| Ref | SHA | Files |
+|:--|:--|:--|
+| `origin/main` | `a2baf397` | 1053 |
+| `origin/release/debut` | `dcd3d06e` | 933 |
+
+### Open for Cline's review
+1. CI status on `a2baf397` (unknown)
+2. No `v1.6.0-alpha` tag
+3. Axiom Stage 0: 463 proposals, 0 reachable
+4. Axiom ceiling gap: 13/14 entities skip check
+5. 213 allowlisted files not in prior cut (all 0 local paths)
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§21 ⬡ a2baf397 ⬡ 2026-10-09 ⬡*

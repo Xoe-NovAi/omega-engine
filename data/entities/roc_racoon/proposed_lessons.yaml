@@ -10,9 +10,34 @@ proposals:
   - swap
   - disk-recovery
   - live-verification
-  L1_narrative: "Completed OpenCode SQLite database compaction and atomic swap on Node 0 under extreme disk pressure (root at 95% / 5.5 GB free). Live VACUUM INTO produced a 26.3 GiB compacted database from 43.3 GiB source (39% reduction). Atomic cross-filesystem swap executed with full-copy backup to omega_library (43.38 GiB), validated before unlink, stream-copy install with fsync, post-swap integrity verification. Root free space recovered from 5.5 GB to 23 GB (+17.5 GB). All 33 tests pass (21 battery + 12 new)."
-  L2_insight: "Live VACUUM INTO on WAL database is read-only on source and includes uncheckpointed WAL content. The swap design — full-copy backup to different filesystem, validate before unlink, unlink-then-copy, fsync inside with-block, post-swap integrity/journal_mode/row verification — is the only pattern that works on a partitioned host where root has <6 GB free and the backup target is on a different physical device. Hard-link backups cannot free space (nlink > 1 keeps inode alive); cross-device hard links raise EXDEV; copy fallback silently reinstates the original bug. The only correct sequence is: full-copy backup to different fs → validate → unlink → install → verify."
-  L3_principle: "L3-LiveVacuumIntoIsReadOnlyOnSource — VACUUM INTO reads a live WAL database without blocking writers; it includes uncheckpointed WAL content; output defaults to journal_mode=delete and must be restored to WAL. L3-HardLinksCannotFreeSpace — unlink() under a hard link frees zero bytes; the inode survives until the last link dies. A backup that must enable space reclamation must be a full copy on a different filesystem. L3-NoSilentlyDegradingFallbacks — a fallback that converts a cheap operation into an expensive one must abort instead, because the operator is never told the cost changed. L3-GuardTheArithmeticNotTheInstant — a capacity guard must model the full sequence, not the current instant; here the unlink precedes the copy, so comparing live free space against the incoming size measures the wrong moment and refuses an operation that actually releases space."
+  L1_narrative: Completed OpenCode SQLite database compaction and atomic swap on Node
+    0 under extreme disk pressure (root at 95% / 5.5 GB free). Live VACUUM INTO produced
+    a 26.3 GiB compacted database from 43.3 GiB source (39% reduction). Atomic cross-filesystem
+    swap executed with full-copy backup to omega_library (43.38 GiB), validated before
+    unlink, stream-copy install with fsync, post-swap integrity verification. Root
+    free space recovered from 5.5 GB to 23 GB (+17.5 GB). All 33 tests pass (21 battery
+    + 12 new).
+  L2_insight: "Live VACUUM INTO on WAL database is read-only on source and includes\
+    \ uncheckpointed WAL content. The swap design \u2014 full-copy backup to different\
+    \ filesystem, validate before unlink, unlink-then-copy, fsync inside with-block,\
+    \ post-swap integrity/journal_mode/row verification \u2014 is the only pattern\
+    \ that works on a partitioned host where root has <6 GB free and the backup target\
+    \ is on a different physical device. Hard-link backups cannot free space (nlink\
+    \ > 1 keeps inode alive); cross-device hard links raise EXDEV; copy fallback silently\
+    \ reinstates the original bug. The only correct sequence is: full-copy backup\
+    \ to different fs \u2192 validate \u2192 unlink \u2192 install \u2192 verify."
+  L3_principle: "L3-LiveVacuumIntoIsReadOnlyOnSource \u2014 VACUUM INTO reads a live\
+    \ WAL database without blocking writers; it includes uncheckpointed WAL content;\
+    \ output defaults to journal_mode=delete and must be restored to WAL. L3-HardLinksCannotFreeSpace\
+    \ \u2014 unlink() under a hard link frees zero bytes; the inode survives until\
+    \ the last link dies. A backup that must enable space reclamation must be a full\
+    \ copy on a different filesystem. L3-NoSilentlyDegradingFallbacks \u2014 a fallback\
+    \ that converts a cheap operation into an expensive one must abort instead, because\
+    \ the operator is never told the cost changed. L3-GuardTheArithmeticNotTheInstant\
+    \ \u2014 a capacity guard must model the full sequence, not the current instant;\
+    \ here the unlink precedes the copy, so comparing live free space against the\
+    \ incoming size measures the wrong moment and refuses an operation that actually\
+    \ releases space."
 - id: PL-ROC-402-020
   date: '2026-10-05'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -25,9 +50,49 @@ proposals:
   - swap
   - preflight
   - self-correction
-  L1_narrative: "Post-incident hardening of the swap path. Four defects found and fixed, each caught by measuring rather than assuming. (1) CROSS-DEVICE HARD LINK: backup_dir was placed on omega_library (device 66307) while the source lives on root (device 66306); os.link() raised EXDEV, and the shutil.copy2 fallback copied the entire 46 GB database across, filling omega_library to 100% (28 KB free) and leaving a 4.8 GB orphan on root. Fixed by moving backup_dir back to source_path.parent and DELETING the copy fallback entirely — a failed hard link now aborts loudly. (2) SHARED-INODE METRICS LIE: st_size/st_blocks on a hard link report the shared inode's total, not the incremental cost; my own log line would have printed 'extra blocks consumed: 46 GB' for a free operation. Replaced with a get_disk_free() delta across the link, aborting above 64 MB. Verified: 'ACTUAL space consumed: 0.00 B'. (3) FSYNC ON A CLOSED FILE: os.fsync(dst.fileno()) sat after the 'with' block, raising ValueError('I/O operation on closed file') so the swap never completed; moved inside the block. (4) PRE-FLIGHT MEASURED THE WRONG MOMENT: the guard compared live free space against the compacted size, ignoring that the unlink happens first — it would have refused at 5.8 GB free even though the swap NET RELEASES 17 GiB. Changed to net_required = target_size - source_size. All four paths verified end-to-end on synthetic replicas, including a low-headroom case; final rc=0."
-  L2_insight: "Every one of these defects shared a shape: an operation that reported success while doing something other than what was intended. EXDEV was swallowed by a fallback. st_blocks reported truth about the inode but was read as a cost. fsync failed loudly but only after the copy had been attempted. The pre-flight guard reported a real number and reasoned from the wrong one. The defence that worked every time was measuring the property that actually mattered — filesystem free-space delta rather than a proxy, and net arithmetic rather than instantaneous arithmetic. Separately, a safety fallback that silently degrades a cheap operation into an expensive one is worse than no fallback: the copy2 path converted a zero-byte hard link into a 46 GB write with no operator warning."
-  L3_principle: "L3-HardLinksCannotCrossFilesystems: A hard-link backup is only free when it lives on the same device as the source; across mounts os.link raises EXDEV and any copy fallback silently reinstates the very cost the hard link was chosen to avoid. L3-SharedInodeMetricsMisreportCost: st_size/st_blocks on a hard link describe the shared inode's total, not the incremental cost, so they cannot prove a backup was free; measure free-space delta instead. L3-NoSilentlyDegradingFallbacks: A fallback that converts a cheap operation into an expensive one must abort instead, because the operator is never told the cost changed. L3-ResourceCallsBelongInsideTheirScope: Operations touching a file handle (fsync, fileno, flush) must execute inside the block that owns the handle; after it they raise or, worse, no-op. L3-GuardTheArithmeticNotTheInstant: A capacity guard must model the full sequence, not the current instant — here the unlink precedes the copy, so comparing live free space against the incoming size measures the wrong moment and refuses an operation that actually releases space."
+  L1_narrative: "Post-incident hardening of the swap path. Four defects found and\
+    \ fixed, each caught by measuring rather than assuming. (1) CROSS-DEVICE HARD\
+    \ LINK: backup_dir was placed on omega_library (device 66307) while the source\
+    \ lives on root (device 66306); os.link() raised EXDEV, and the shutil.copy2 fallback\
+    \ copied the entire 46 GB database across, filling omega_library to 100% (28 KB\
+    \ free) and leaving a 4.8 GB orphan on root. Fixed by moving backup_dir back to\
+    \ source_path.parent and DELETING the copy fallback entirely \u2014 a failed hard\
+    \ link now aborts loudly. (2) SHARED-INODE METRICS LIE: st_size/st_blocks on a\
+    \ hard link report the shared inode's total, not the incremental cost; my own\
+    \ log line would have printed 'extra blocks consumed: 46 GB' for a free operation.\
+    \ Replaced with a get_disk_free() delta across the link, aborting above 64 MB.\
+    \ Verified: 'ACTUAL space consumed: 0.00 B'. (3) FSYNC ON A CLOSED FILE: os.fsync(dst.fileno())\
+    \ sat after the 'with' block, raising ValueError('I/O operation on closed file')\
+    \ so the swap never completed; moved inside the block. (4) PRE-FLIGHT MEASURED\
+    \ THE WRONG MOMENT: the guard compared live free space against the compacted size,\
+    \ ignoring that the unlink happens first \u2014 it would have refused at 5.8 GB\
+    \ free even though the swap NET RELEASES 17 GiB. Changed to net_required = target_size\
+    \ - source_size. All four paths verified end-to-end on synthetic replicas, including\
+    \ a low-headroom case; final rc=0."
+  L2_insight: "Every one of these defects shared a shape: an operation that reported\
+    \ success while doing something other than what was intended. EXDEV was swallowed\
+    \ by a fallback. st_blocks reported truth about the inode but was read as a cost.\
+    \ fsync failed loudly but only after the copy had been attempted. The pre-flight\
+    \ guard reported a real number and reasoned from the wrong one. The defence that\
+    \ worked every time was measuring the property that actually mattered \u2014 filesystem\
+    \ free-space delta rather than a proxy, and net arithmetic rather than instantaneous\
+    \ arithmetic. Separately, a safety fallback that silently degrades a cheap operation\
+    \ into an expensive one is worse than no fallback: the copy2 path converted a\
+    \ zero-byte hard link into a 46 GB write with no operator warning."
+  L3_principle: "L3-HardLinksCannotCrossFilesystems: A hard-link backup is only free\
+    \ when it lives on the same device as the source; across mounts os.link raises\
+    \ EXDEV and any copy fallback silently reinstates the very cost the hard link\
+    \ was chosen to avoid. L3-SharedInodeMetricsMisreportCost: st_size/st_blocks on\
+    \ a hard link describe the shared inode's total, not the incremental cost, so\
+    \ they cannot prove a backup was free; measure free-space delta instead. L3-NoSilentlyDegradingFallbacks:\
+    \ A fallback that converts a cheap operation into an expensive one must abort\
+    \ instead, because the operator is never told the cost changed. L3-ResourceCallsBelongInsideTheirScope:\
+    \ Operations touching a file handle (fsync, fileno, flush) must execute inside\
+    \ the block that owns the handle; after it they raise or, worse, no-op. L3-GuardTheArithmeticNotTheInstant:\
+    \ A capacity guard must model the full sequence, not the current instant \u2014\
+    \ here the unlink precedes the copy, so comparing live free space against the\
+    \ incoming size measures the wrong moment and refuses an operation that actually\
+    \ releases space."
 - id: PL-ROC-402-021
   date: '2026-10-05'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -38,9 +103,32 @@ proposals:
   - sqlite
   - test-fixtures
   - adversarial-review
-  L1_narrative: "Self-review of the hardened swap code revealed a latent KeyError in the B-2 dynamic table enumeration patch. The _db_summary() function was updated to enumerate tables dynamically from sqlite_master, but two log lines still indexed hardcoded keys: bak_counts['message'] and new_counts['message']. Any database without a 'message' table would crash the swap with 'Fatal exception: message' after backup validation passed — the swap would abort after the original was unlinked, leaving the operator with a valid backup but no way to complete the swap. The synthetic test battery never caught this because every fixture DB included a 'message' table. Fixed by using .get('session', '-') and .get('message', '-') at both log sites. All four parity checks (backup validation, post-swap, staleness report) now use dynamic key iteration with .get() fallbacks."
-  L2_insight: "A test suite that always builds the same schema cannot catch shape bugs — it only verifies the happy path. The B-2 patch made _db_summary() dynamic but the logging code assumed a fixed schema. The test fixtures encoded the same assumption (every DB has session/message/part/event). A test that cannot produce the failure it guards against proves nothing; a flat metric explained away as harmless is a failed test wearing rc=0. The fix was trivial (.get() fallbacks), but finding it required a test fixture that violated the implicit schema assumption."
-  L3_principle: "L3-ChangingKeySetsBreaksSilentConsumers: when a dict's keys become dynamic, grep every consumer of the old hardcoded keys — including log lines, which fail just as fatally. L3-FixturesEncodeAssumptions: a test suite that always builds the same schema cannot catch shape bugs; vary fixture schemas (minimal, extra, missing) for any code that enumerates. L3-ReviewTheCompositionNotJustTheParts: individually-correct fixes chained on a false premise inherit the premise's falsity — re-derive the core invariant before trusting prior fixes."
+  L1_narrative: "Self-review of the hardened swap code revealed a latent KeyError\
+    \ in the B-2 dynamic table enumeration patch. The _db_summary() function was updated\
+    \ to enumerate tables dynamically from sqlite_master, but two log lines still\
+    \ indexed hardcoded keys: bak_counts['message'] and new_counts['message']. Any\
+    \ database without a 'message' table would crash the swap with 'Fatal exception:\
+    \ message' after backup validation passed \u2014 the swap would abort after the\
+    \ original was unlinked, leaving the operator with a valid backup but no way to\
+    \ complete the swap. The synthetic test battery never caught this because every\
+    \ fixture DB included a 'message' table. Fixed by using .get('session', '-') and\
+    \ .get('message', '-') at both log sites. All four parity checks (backup validation,\
+    \ post-swap, staleness report) now use dynamic key iteration with .get() fallbacks."
+  L2_insight: "A test suite that always builds the same schema cannot catch shape\
+    \ bugs \u2014 it only verifies the happy path. The B-2 patch made _db_summary()\
+    \ dynamic but the logging code assumed a fixed schema. The test fixtures encoded\
+    \ the same assumption (every DB has session/message/part/event). A test that cannot\
+    \ produce the failure it guards against proves nothing; a flat metric explained\
+    \ away as harmless is a failed test wearing rc=0. The fix was trivial (.get()\
+    \ fallbacks), but finding it required a test fixture that violated the implicit\
+    \ schema assumption."
+  L3_principle: "L3-ChangingKeySetsBreaksSilentConsumers: when a dict's keys become\
+    \ dynamic, grep every consumer of the old hardcoded keys \u2014 including log\
+    \ lines, which fail just as fatally. L3-FixturesEncodeAssumptions: a test suite\
+    \ that always builds the same schema cannot catch shape bugs; vary fixture schemas\
+    \ (minimal, extra, missing) for any code that enumerates. L3-ReviewTheCompositionNotJustTheParts:\
+    \ individually-correct fixes chained on a false premise inherit the premise's\
+    \ falsity \u2014 re-derive the core invariant before trusting prior fixes."
 - id: PL-ROC-402-022
   date: '2026-10-05'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -50,9 +138,29 @@ proposals:
   - documentation-rot
   - live-verification
   - self-review
-  L1_narrative: "Self-review of coordination docs revealed a service-state drift: handoff, live feed, gnosis, and round-1 review all claimed 'omega-searxng STOPPED, omega-iris STOPPED (restart post-swap)'. Live state: omega-searxng RUNNING (healthy), omega-qdrant RUNNING (healthy), omega-iris DOES NOT EXIST. The void 'podman start omega-searxng omega-iris' step would have failed on iris. Root cause: docs written hours earlier were never re-verified against live state before the final runbook. Containers hold no DB lock (only OpenCode PID 6239 holds the DB); RAM 7.7 GB available — operationally irrelevant but the restart step would have failed. Corrected in 4 docs: handoff, live feed, gnosis, round-1 review file. Zero stale claims remain."
-  L2_insight: "Coordination docs decay the moment live state moves — a service table written hours ago is a hypothesis, not a fact. Re-verify with podman/df/fuser immediately before irreversible operations. The 'restart post-swap' step was a ritual, not a verified procedure. The drift was operationally irrelevant (containers hold no DB lock) but the restart step would have failed visibly, creating confusion. Documentation that claims a service is stopped when it's running is worse than no documentation — it misdirects the operator during a crisis."
-  L3_principle: "L3-CoordinationDocsDecayAtTheSpeedOfLiveState — service and disk state in docs is a timestamped hypothesis, not a fact; re-verify with live tools (ps/df/fuser) immediately before irreversible operations. L3-RunbookStepsAreCode: a restart step that fails is a bug in the runbook, not the infrastructure. L3-NeverTrustStaleServiceTables — a service table written hours ago is a hypothesis, not a fact; re-verify with live tools before execution."
+  L1_narrative: "Self-review of coordination docs revealed a service-state drift:\
+    \ handoff, live feed, gnosis, and round-1 review all claimed 'omega-searxng STOPPED,\
+    \ omega-iris STOPPED (restart post-swap)'. Live state: omega-searxng RUNNING (healthy),\
+    \ omega-qdrant RUNNING (healthy), omega-iris DOES NOT EXIST. The void 'podman\
+    \ start omega-searxng omega-iris' step would have failed on iris. Root cause:\
+    \ docs written hours earlier were never re-verified against live state before\
+    \ the final runbook. Containers hold no DB lock (only OpenCode PID 6239 holds\
+    \ the DB); RAM 7.7 GB available \u2014 operationally irrelevant but the restart\
+    \ step would have failed. Corrected in 4 docs: handoff, live feed, gnosis, round-1\
+    \ review file. Zero stale claims remain."
+  L2_insight: "Coordination docs decay the moment live state moves \u2014 a service\
+    \ table written hours ago is a hypothesis, not a fact. Re-verify with podman/df/fuser\
+    \ immediately before irreversible operations. The 'restart post-swap' step was\
+    \ a ritual, not a verified procedure. The drift was operationally irrelevant (containers\
+    \ hold no DB lock) but the restart step would have failed visibly, creating confusion.\
+    \ Documentation that claims a service is stopped when it's running is worse than\
+    \ no documentation \u2014 it misdirects the operator during a crisis."
+  L3_principle: "L3-CoordinationDocsDecayAtTheSpeedOfLiveState \u2014 service and\
+    \ disk state in docs is a timestamped hypothesis, not a fact; re-verify with live\
+    \ tools (ps/df/fuser) immediately before irreversible operations. L3-RunbookStepsAreCode:\
+    \ a restart step that fails is a bug in the runbook, not the infrastructure. L3-NeverTrustStaleServiceTables\
+    \ \u2014 a service table written hours ago is a hypothesis, not a fact; re-verify\
+    \ with live tools before execution."
 - id: PL-ROC-402-023
   date: '2026-10-05'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -62,9 +170,31 @@ proposals:
   - destroy-before-check
   - space-guard
   - self-review
-  L1_narrative: "Self-review of execute_compaction revealed a critical ordering flaw: the function deleted the existing compacted target (target_path.unlink()) BEFORE checking whether the target partition had enough free space for the new compaction. If the target partition was full, the old compacted database was destroyed, then the space check failed, leaving the operator with NO compacted database at all — the good snapshot was destroyed for a compaction that couldn't even start. Fixed by moving the space check BEFORE the unlink: projected_free = target_free + reclaimable (source_size); refuse if projected_free < source_size. Test M verified: a 6 GB sparse source on a 5.8 GB free partition correctly refuses the re-compact, and the original 4.7 MB compacted database survives intact."
-  L2_insight: "Destroy-then-check ordering is a data-loss pattern that hides behind a safety check: the check passes, so the deletion looks free, but the check happens on information you no longer have. Moving it before the delete converts 'we lost the good artifact AND still failed' into 'we failed and kept the good artifact'. The check must model the state AFTER the unlink, not before — the projected free space is free_now + source_size (since the backup lives elsewhere). A guard that measures the wrong moment refuses operations that would succeed and permits operations that destroy data."
-  L3_principle: "L3-CheckBeforeDestroy: any space/capacity precondition must be evaluated BEFORE deleting the artifact that currently satisfies it — otherwise a refusal leaves you worse off than before you started, with nothing to show for the attempt. L3-GuardTheArithmeticNotTheInstant: a capacity guard must model the full sequence, not the current instant — here the unlink precedes the copy, so comparing live free space against the incoming size measures the wrong moment and refuses an operation that actually releases space."
+  L1_narrative: "Self-review of execute_compaction revealed a critical ordering flaw:\
+    \ the function deleted the existing compacted target (target_path.unlink()) BEFORE\
+    \ checking whether the target partition had enough free space for the new compaction.\
+    \ If the target partition was full, the old compacted database was destroyed,\
+    \ then the space check failed, leaving the operator with NO compacted database\
+    \ at all \u2014 the good snapshot was destroyed for a compaction that couldn't\
+    \ even start. Fixed by moving the space check BEFORE the unlink: projected_free\
+    \ = target_free + reclaimable (source_size); refuse if projected_free < source_size.\
+    \ Test M verified: a 6 GB sparse source on a 5.8 GB free partition correctly refuses\
+    \ the re-compact, and the original 4.7 MB compacted database survives intact."
+  L2_insight: "Destroy-then-check ordering is a data-loss pattern that hides behind\
+    \ a safety check: the check passes, so the deletion looks free, but the check\
+    \ happens on information you no longer have. Moving it before the delete converts\
+    \ 'we lost the good artifact AND still failed' into 'we failed and kept the good\
+    \ artifact'. The check must model the state AFTER the unlink, not before \u2014\
+    \ the projected free space is free_now + source_size (since the backup lives elsewhere).\
+    \ A guard that measures the wrong moment refuses operations that would succeed\
+    \ and permits operations that destroy data."
+  L3_principle: "L3-CheckBeforeDestroy: any space/capacity precondition must be evaluated\
+    \ BEFORE deleting the artifact that currently satisfies it \u2014 otherwise a\
+    \ refusal leaves you worse off than before you started, with nothing to show for\
+    \ the attempt. L3-GuardTheArithmeticNotTheInstant: a capacity guard must model\
+    \ the full sequence, not the current instant \u2014 here the unlink precedes the\
+    \ copy, so comparing live free space against the incoming size measures the wrong\
+    \ moment and refuses an operation that actually releases space."
 - id: PL-ROC-402-024
   date: '2026-10-05'
   session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
@@ -74,23 +204,43 @@ proposals:
   - convergence
   - adversarial
   - synthesis
-  L1_narrative: "Four independent review rounds converged on GO: R1 Sonnet 4.6 (APPROVE WITH CHANGES), R1b Opus 4.6 (LOW with C-1/C-3/R-1 addressed), R2 Gemini 3.8 (GO — all 6 patches CORRECT, 21/21 tests), Final Sonnet 4.6 (GO reaffirmed, 4 residual nits). The multi-model, multi-round review process caught orthogonal bug classes: Sonnet found surface/parity issues (B-1, B-2, NB-1); Opus found race/artifact issues (C-1, C-2, C-3); R2 verified patches and tests; Final Sonnet found operational workflow gaps (abort messaging, exit codes, manifest cleanup). Each round found disjoint bug classes — neither alone was sufficient. The convergence of verdicts (all GO) plus union of findings is the strongest achievable assurance short of execution."
-  L2_insight: "Review convergence is not redundancy — it's triangulation. Sonnet reviewed the surface (flags, parity lists, thresholds); Opus reviewed the timeline (check-then-act gaps); R2 verified the patches; Final Sonnet audited the whole. Each reviewer's lens found disjoint classes. The deepest class was temporal: every guard had been verified at a single instant, while the operation spans minutes; safety properties must hold across the whole window, not at the check. Separately, unit confusion (GB vs GiB) silently corrupts margin analysis — both reviewers computed correct math on different units and reached different conclusions."
-  L3_principle: "L3-ReviewConvergenceByOrthogonalLenses: independent reviewers with different lenses find disjoint bug classes; convergence of verdicts plus union of findings is the strongest achievable assurance. L3-TestMustBeAbleToFail: if the design promises '+X bytes', the test must assert that delta; assertions satisfied equally by broken and working designs prove nothing. L3-UnitsAreSafety: GB vs GiB confusion corrupts margin analysis while every individual computation looks correct; normalize units explicitly in any capacity plan. L3-ReviewTheCompositionNotJustTheParts: fixes chained on a false premise inherit the premise's falsity — re-derive the core invariant before trusting prior fixes."
+  L1_narrative: "Four independent review rounds converged on GO: R1 Sonnet 4.6 (APPROVE\
+    \ WITH CHANGES), R1b Opus 4.6 (LOW with C-1/C-3/R-1 addressed), R2 Gemini 3.8\
+    \ (GO \u2014 all 6 patches CORRECT, 21/21 tests), Final Sonnet 4.6 (GO reaffirmed,\
+    \ 4 residual nits). The multi-model, multi-round review process caught orthogonal\
+    \ bug classes: Sonnet found surface/parity issues (B-1, B-2, NB-1); Opus found\
+    \ race/artifact issues (C-1, C-2, C-3); R2 verified patches and tests; Final Sonnet\
+    \ found operational workflow gaps (abort messaging, exit codes, manifest cleanup).\
+    \ Each round found disjoint bug classes \u2014 neither alone was sufficient. The\
+    \ convergence of verdicts (all GO) plus union of findings is the strongest achievable\
+    \ assurance short of execution."
+  L2_insight: "Review convergence is not redundancy \u2014 it's triangulation. Sonnet\
+    \ reviewed the surface (flags, parity lists, thresholds); Opus reviewed the timeline\
+    \ (check-then-act gaps); R2 verified the patches; Final Sonnet audited the whole.\
+    \ Each reviewer's lens found disjoint classes. The deepest class was temporal:\
+    \ every guard had been verified at a single instant, while the operation spans\
+    \ minutes; safety properties must hold across the whole window, not at the check.\
+    \ Separately, unit confusion (GB vs GiB) silently corrupts margin analysis \u2014\
+    \ both reviewers computed correct math on different units and reached different\
+    \ conclusions."
+  L3_principle: "L3-ReviewConvergenceByOrthogonalLenses: independent reviewers with\
+    \ different lenses find disjoint bug classes; convergence of verdicts plus union\
+    \ of findings is the strongest achievable assurance. L3-TestMustBeAbleToFail:\
+    \ if the design promises '+X bytes', the test must assert that delta; assertions\
+    \ satisfied equally by broken and working designs prove nothing. L3-UnitsAreSafety:\
+    \ GB vs GiB confusion corrupts margin analysis while every individual computation\
+    \ looks correct; normalize units explicitly in any capacity plan. L3-ReviewTheCompositionNotJustTheParts:\
+    \ fixes chained on a false premise inherit the premise's falsity \u2014 re-derive\
+    \ the core invariant before trusting prior fixes."
 - id: PL-ROC-402-025
-  date: '2026-10-05'
-  session_id: ses_ff78b71ebffeDNuypPTT1RL3hH
+  date: '2026-08-22'
+  session_id: ses_5b058490c0d0
   tags:
   - retrospective
   - documentation
   - community
   - open-source
   - lessons-learned
-  L1_narrative: "Created a comprehensive retrospective document (docs/retrospectives/OPENCODE_DB_COMPACTION_RETROSPECTIVE_20261005.md) for internal posterity and community sharing. The document synthesizes all four review rounds, the self-review findings, the Phase 0 patches, the test evidence, the corrected runbook, and the key lessons for the community. It includes the executive summary, the problem statement, the four review rounds summary, the technical architecture, the test evidence table, the final runbook, the key lessons for the community (6 L3 principles), and the final state summary. The document is written for both internal posterity and external community sharing under Apache-2.0."
-  L2_insight: "A retrospective is not a post-mortem — it is a living document that captures the reasoning, the failures, the fixes, and the principles so that future operators (and the community) can learn without repeating the same excavation. The multi-model review process itself is a replicable methodology: surface review → adversarial supplement → patch verification → final audit → synthesis. The corrected guide (cleanup commands, unit normalization) is now the canonical runbook."
-  L3_principle: "L3-RetrospectiveIsTheMint — a retrospective that only lists events is a log; a retrospective that extracts principles, corrects artifacts, and publishes a runbook is a mint. The community deserves the runbook, not just the war story. L3-DocumentationIsCode — the runbook is executable documentation; its commands must be verified against live artifacts (glob patterns, paths, sizes) or it becomes a trap. L3-CommunityDeservesTheRunbook — the community deserves the corrected runbook, not the war story with the bugs still in it."
-  date: '2026-08-22'
-  session_id: ses_5b058490c0d0
   L1_narrative: "Audited the cline fabric entry (priority 7). Found it already mapped\
     \ to the OpenRouter factory (model_gateway.py:534) with no base_url in YAML, meaning\
     \ a live cline instance would silently hit openrouter.ai under the name \"cline\"\
@@ -1748,11 +1898,101 @@ proposals:
   - provenance-audit
   - live-defect
   - self-correction
-  L1_narrative: "Tasked by the Alpha to deepen Antigravity IDE's understanding of the scope of the Omega vision and the planned WAD program, using the public launch manifesto (ANTIGRAVITY_AI_OS_MANIFESTO_20261006.md) as the entry point. Rather than summarize the README, I audited it against debut-v1.6.0-alpha (4ffc94e7) and mined the layers the launch surface omits. Core structural finding: the manifesto documents only Layer 1 of a three-layer iceberg — Substrate (shipped, fully covered), WAD Cosmology Program (partially shipped, entirely absent from the README), Omegaverse/VR/P2P (vision-only, absent). The WAD layer is the actual differentiator: IWAD/PWAD entity modularity (core identity as immutable base, tradition as swappable overlay, demonstrated via a Thoth example instantiated four ways with zero code changes), Ethics WADs as installable composable constraint modules (maat_42, bushido_7, asimov_3), and a 7-stack 2026-2028 catalog whose core principle is that the engine never grows and only the container does. Verified the loader is real (849 lines, IWAD priority 100 / PWAD priority 0 merge, 4-path VFS, extra=forbid schema, adapter whitelist, size caps) and traced every id Software heritage tag to file:line (w_wad.c:376, files.c:39-75, ZONEID, BSP culling). Then ran a ten-point claim audit and found four hard defects: (1) 'make check-engine # 53 gates' misattributes the 53, which belongs to benchmark_dashboard.py --self-test while check-engine is a pytest subset and temple-grade is 9 targets; (2) an EIS/NES acronym collision between the README and NES_EIS_FACET_PROTOCOL with four and three live expansions respectively, where the protocol definitions are the ones backed by a parent_id SQL invariant; (3) the '56M token' EIS claim has zero supporting references anywhere in src, config, or docs; (4) XOE_SPECIFICATION.md is cited by three separate docs at a dead path while the sole copy of a ratified Decision-28 spec sits in docs/archive/stale/ with no packaging code in existence. Confirmed one live defect by real MCP invocation: oracle_debug/list_slot_keepers raises AttributeError ('EntityRegistry' object has no attribute 'list_all'). Established the implemented-vs-planned gap precisely: 2 WADs shipped (_omega_default with 14 entity configs, arcana_novai with 13 agent configs) against 7 flagship stacks, 5 pantheons, and 3 ethics WADs planned across 15 empty directories; all six Phase 2-4 WAD CLI verbs return zero references; src/omega/wad/ does not exist; P2P is a manifest schema field with zero implementation; the Godot Bridge exists only as BSP sector scaffolding structures with no bridge, loader, or renderer. Noted that Antigravity is simultaneously an MCP client and a provider backend (antigravity_provider.py, Streamable HTTP at mcp_runtime.py:164), a materially different posture than 'client of this system'. Self-corrected two of my own miscounts before delivery (docs/architecture 47->60 files, _omega_default 12->14 entities). Delivered ANTIGRAVITY_VISION_SCOPE_WAD_ROADMAP_20261006.md and posted context to the Hivemind."
-  L2_insight: "A launch surface is a claim set with a distribution decision attached, and it fails in two opposite directions: overclaiming (numbers that don't survive inspection) and underclaiming (omitting the thing that actually differentiates you). The manifesto errs hard in the second direction, and underclaiming is the more expensive error at a launch moment, because a reader who integrates against only the advertised surface builds against one third of the architecture and cannot know the rest exists. But underclaiming is also self-inflicted in the same document: an honesty pledge ('we will not hide failing gates behind vanity metrics') is violated by the gate annotation in its own example block, which is a worse loss than any single bad number because it teaches the reader that the pledge is decorative. The verification method matters more than the findings: every claim was checked by direct inspection at a named commit rather than by trusting any document, and that method is what converts 'the README is wrong' into 'here is which of the ten claims survive contact with code, and here are the four that do not' — a survivable report instead of an accusation. Two structural findings generalize well beyond this repo. First, the strongest claims in the repository were the scar comments documenting the team's own caught vanity metric (the Makefile recording that the old 53/53 headline ran zero pytest tests and the gate could be green while the engine crash-looped), because a recorded self-correction is more credible than any passing gate and is the only evidence that a number means anything. Second, acronym collision is the highest practical integration risk in a system whose entire premise is shared ontology: a reader who adopts the wrong EIS/NES definitions builds against the wrong ontology permanently, and every downstream artifact inherits the error. The defensible report shape for this situation is a verdict per claim with file:line evidence, verdicts in both directions including the ones that pass, and explicit CREATED-versus-FOUND tagging so the reader can tell original synthesis from quoted material."
-  L3_principle: "L3-AnUnderclaimedLaunchIsAMisreadInvitation: a launch document that omits its own differentiator does not merely undersell, it actively misdirects the reader into building against the advertised fraction of the architecture while leaving them unable to know the remainder exists — at a debut, the asymmetry to avoid is silence about the load-bearing idea, not an inflated number. L3-AHedgePledgeViolatedByItsOwnExampleTeachesThePledgeIsDecorative: a stated commitment to honesty is damaged more by one contradicting instance inside the same document than by any standalone inaccuracy, because the reader's durable lesson becomes 'the pledge is marketing' rather than any fact about the specific number. L3-AuditClaimsAtANamedCommitBeforeDefendingThem: verifying every public claim by direct inspection at a pinned revision, rather than by trusting any document including the one making the claim, is what turns criticism into a survivable deliverable — it yields verdicts in both directions, and the passing claims are what buy credibility for the failing ones. L3-ARecordedSelfCorrectionOutranksAnyPassingGate: scar comments that document a team's own caught vanity metric are stronger evidence of engineering integrity than a green result, because they are the only proof the number was ever measured; a repository that shows you its worst gate history is making a stronger claim than one that only shows you its best numbers. L3-AnAcronymCollisionCorruptsEverythingBuiltDownstream: in a system whose premise is shared ontology, one term meaning two things across the public surface and the engineering protocol produces an error that every downstream artifact inherits and that no later correction retracts — resolve the ontology against the implementation that backs it (here, the parent_id SQL invariant) before building anything on top of it. L3-AuditYourOwnNumbersBeforeShippingTheAudit: an audit that reports the target's miscounts while carrying its own is credibility-destroying in exactly the way the audit was meant to prevent — recount every asserted figure from the filesystem immediately before delivery, because the reader cannot distinguish your errors from the target's."
+  L1_narrative: "Tasked by the Alpha to deepen Antigravity IDE's understanding of\
+    \ the scope of the Omega vision and the planned WAD program, using the public\
+    \ launch manifesto (ANTIGRAVITY_AI_OS_MANIFESTO_20261006.md) as the entry point.\
+    \ Rather than summarize the README, I audited it against debut-v1.6.0-alpha (4ffc94e7)\
+    \ and mined the layers the launch surface omits. Core structural finding: the\
+    \ manifesto documents only Layer 1 of a three-layer iceberg \u2014 Substrate (shipped,\
+    \ fully covered), WAD Cosmology Program (partially shipped, entirely absent from\
+    \ the README), Omegaverse/VR/P2P (vision-only, absent). The WAD layer is the actual\
+    \ differentiator: IWAD/PWAD entity modularity (core identity as immutable base,\
+    \ tradition as swappable overlay, demonstrated via a Thoth example instantiated\
+    \ four ways with zero code changes), Ethics WADs as installable composable constraint\
+    \ modules (maat_42, bushido_7, asimov_3), and a 7-stack 2026-2028 catalog whose\
+    \ core principle is that the engine never grows and only the container does. Verified\
+    \ the loader is real (849 lines, IWAD priority 100 / PWAD priority 0 merge, 4-path\
+    \ VFS, extra=forbid schema, adapter whitelist, size caps) and traced every id\
+    \ Software heritage tag to file:line (w_wad.c:376, files.c:39-75, ZONEID, BSP\
+    \ culling). Then ran a ten-point claim audit and found four hard defects: (1)\
+    \ 'make check-engine # 53 gates' misattributes the 53, which belongs to benchmark_dashboard.py\
+    \ --self-test while check-engine is a pytest subset and temple-grade is 9 targets;\
+    \ (2) an EIS/NES acronym collision between the README and NES_EIS_FACET_PROTOCOL\
+    \ with four and three live expansions respectively, where the protocol definitions\
+    \ are the ones backed by a parent_id SQL invariant; (3) the '56M token' EIS claim\
+    \ has zero supporting references anywhere in src, config, or docs; (4) XOE_SPECIFICATION.md\
+    \ is cited by three separate docs at a dead path while the sole copy of a ratified\
+    \ Decision-28 spec sits in docs/archive/stale/ with no packaging code in existence.\
+    \ Confirmed one live defect by real MCP invocation: oracle_debug/list_slot_keepers\
+    \ raises AttributeError ('EntityRegistry' object has no attribute 'list_all').\
+    \ Established the implemented-vs-planned gap precisely: 2 WADs shipped (_omega_default\
+    \ with 14 entity configs, arcana_novai with 13 agent configs) against 7 flagship\
+    \ stacks, 5 pantheons, and 3 ethics WADs planned across 15 empty directories;\
+    \ all six Phase 2-4 WAD CLI verbs return zero references; src/omega/wad/ does\
+    \ not exist; P2P is a manifest schema field with zero implementation; the Godot\
+    \ Bridge exists only as BSP sector scaffolding structures with no bridge, loader,\
+    \ or renderer. Noted that Antigravity is simultaneously an MCP client and a provider\
+    \ backend (antigravity_provider.py, Streamable HTTP at mcp_runtime.py:164), a\
+    \ materially different posture than 'client of this system'. Self-corrected two\
+    \ of my own miscounts before delivery (docs/architecture 47->60 files, _omega_default\
+    \ 12->14 entities). Delivered ANTIGRAVITY_VISION_SCOPE_WAD_ROADMAP_20261006.md\
+    \ and posted context to the Hivemind."
+  L2_insight: "A launch surface is a claim set with a distribution decision attached,\
+    \ and it fails in two opposite directions: overclaiming (numbers that don't survive\
+    \ inspection) and underclaiming (omitting the thing that actually differentiates\
+    \ you). The manifesto errs hard in the second direction, and underclaiming is\
+    \ the more expensive error at a launch moment, because a reader who integrates\
+    \ against only the advertised surface builds against one third of the architecture\
+    \ and cannot know the rest exists. But underclaiming is also self-inflicted in\
+    \ the same document: an honesty pledge ('we will not hide failing gates behind\
+    \ vanity metrics') is violated by the gate annotation in its own example block,\
+    \ which is a worse loss than any single bad number because it teaches the reader\
+    \ that the pledge is decorative. The verification method matters more than the\
+    \ findings: every claim was checked by direct inspection at a named commit rather\
+    \ than by trusting any document, and that method is what converts 'the README\
+    \ is wrong' into 'here is which of the ten claims survive contact with code, and\
+    \ here are the four that do not' \u2014 a survivable report instead of an accusation.\
+    \ Two structural findings generalize well beyond this repo. First, the strongest\
+    \ claims in the repository were the scar comments documenting the team's own caught\
+    \ vanity metric (the Makefile recording that the old 53/53 headline ran zero pytest\
+    \ tests and the gate could be green while the engine crash-looped), because a\
+    \ recorded self-correction is more credible than any passing gate and is the only\
+    \ evidence that a number means anything. Second, acronym collision is the highest\
+    \ practical integration risk in a system whose entire premise is shared ontology:\
+    \ a reader who adopts the wrong EIS/NES definitions builds against the wrong ontology\
+    \ permanently, and every downstream artifact inherits the error. The defensible\
+    \ report shape for this situation is a verdict per claim with file:line evidence,\
+    \ verdicts in both directions including the ones that pass, and explicit CREATED-versus-FOUND\
+    \ tagging so the reader can tell original synthesis from quoted material."
+  L3_principle: "L3-AnUnderclaimedLaunchIsAMisreadInvitation: a launch document that\
+    \ omits its own differentiator does not merely undersell, it actively misdirects\
+    \ the reader into building against the advertised fraction of the architecture\
+    \ while leaving them unable to know the remainder exists \u2014 at a debut, the\
+    \ asymmetry to avoid is silence about the load-bearing idea, not an inflated number.\
+    \ L3-AHedgePledgeViolatedByItsOwnExampleTeachesThePledgeIsDecorative: a stated\
+    \ commitment to honesty is damaged more by one contradicting instance inside the\
+    \ same document than by any standalone inaccuracy, because the reader's durable\
+    \ lesson becomes 'the pledge is marketing' rather than any fact about the specific\
+    \ number. L3-AuditClaimsAtANamedCommitBeforeDefendingThem: verifying every public\
+    \ claim by direct inspection at a pinned revision, rather than by trusting any\
+    \ document including the one making the claim, is what turns criticism into a\
+    \ survivable deliverable \u2014 it yields verdicts in both directions, and the\
+    \ passing claims are what buy credibility for the failing ones. L3-ARecordedSelfCorrectionOutranksAnyPassingGate:\
+    \ scar comments that document a team's own caught vanity metric are stronger evidence\
+    \ of engineering integrity than a green result, because they are the only proof\
+    \ the number was ever measured; a repository that shows you its worst gate history\
+    \ is making a stronger claim than one that only shows you its best numbers. L3-AnAcronymCollisionCorruptsEverythingBuiltDownstream:\
+    \ in a system whose premise is shared ontology, one term meaning two things across\
+    \ the public surface and the engineering protocol produces an error that every\
+    \ downstream artifact inherits and that no later correction retracts \u2014 resolve\
+    \ the ontology against the implementation that backs it (here, the parent_id SQL\
+    \ invariant) before building anything on top of it. L3-AuditYourOwnNumbersBeforeShippingTheAudit:\
+    \ an audit that reports the target's miscounts while carrying its own is credibility-destroying\
+    \ in exactly the way the audit was meant to prevent \u2014 recount every asserted\
+    \ figure from the filesystem immediately before delivery, because the reader cannot\
+    \ distinguish your errors from the target's."
 metadata:
   entity: roc_racoon
-  session_id: ses_f70d4649910a
-  model_used: opencode/space-bunny-free
-  last_session_end: '2026-10-06T00:09:42.839475+00:00'
+  session_id: ses_edfcee5a5ffe6LnlWR2fwJjkX2
+  model_used: space-bunny-free
+  last_session_end: '2026-10-09T18:43:59.258991+00:00'

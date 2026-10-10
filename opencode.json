@@ -151,7 +151,7 @@
   "agent": {
     "makali": {
       "mode": "primary",
-      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
+      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Ma'at, Nodes, Carmack.",
       "temperature": 0.3,
       "permission": {
         "bash": "allow"
@@ -195,7 +195,7 @@
     },
     "verity": {
       "mode": "all",
-      "description": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
+      "description": "Sovereign Verity \u2014 Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
       "model": "opencode/nemotron-3-ultra-free",
       "temperature": 0.0,
       "hidden": true,
@@ -204,12 +204,6 @@
         "bash": "deny",
         "skill": "deny"
       }
-    },
-    "slot": {
-      "mode": "all",
-      "description": "Slot-based domain agent \u2014 parameterized by --slot NX for any Slot domain",
-      "temperature": 0.1,
-      "steps": 20
     },
     "john_carmack": {
       "mode": "all",

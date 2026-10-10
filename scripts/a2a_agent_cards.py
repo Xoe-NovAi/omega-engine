@@ -81,7 +81,7 @@ REQUIRED_SEATS: tuple[str, ...] = (
     "researcher",
     "verity",
     "antigravity",
-    "makali_fusion",
+    "makali",
 )
 
 #: §8.2 Discovery Mechanisms / §14.3 Well-Known URI Registration.

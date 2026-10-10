@@ -31,19 +31,19 @@
       "step": 2,
       "action": "Retroactive merge of the 10 alias forks. BLOCKED ON step 1 - do not start before the suffix-strip policy is ruled.",
       "status": "blocked",
-      "owner": "makali_fusion"
+      "owner": "makali"
     },
     {
       "step": 3,
       "action": "Define per-entity liveness semantics at submit time: 'resolves' vs 'reachable' is undefined for chat-session peers (no daemon, no port). Produce the semantic contract, then wire it to the submit-time check.",
       "status": "in_progress",
-      "owner": "makali_fusion"
+      "owner": "makali"
     },
     {
       "step": 4,
       "action": "HANDOFF_BASE process-global residual: architecture debate active, call-graph trace running. Await trace result, then rule on process-global vs per-instance state.",
       "status": "in_progress",
-      "owner": "makali_fusion"
+      "owner": "makali"
     },
     {
       "step": 5,
@@ -55,19 +55,19 @@
       "step": 6,
       "action": "N0 install as first outside user: not started. Largest untouched item in the queue. No prior session has executed an install against the public repo.",
       "status": "pending",
-      "owner": "makali_fusion"
+      "owner": "makali"
     },
     {
       "step": 7,
       "action": "Tailnet policy v2: mark the three 09-26 variants superseded in-file. data/federation/ still holds CONVERTED / DEFINITIVE / RECOMMENDED 20260926 alongside v2-20260928 with no authority marker; v2-20260928 matches live netmap (N1->N0 8016, 8019 allow; 8017, 8018, 22, 2049, 6379, 51372 deny).",
       "status": "pending",
-      "owner": "makali_fusion"
+      "owner": "makali"
     },
     {
       "step": 8,
       "action": "Handoff queue archive pass: data/handoff/pending/ holds 30 packets. Determine which are actionable before more are added; '607 stale handoffs' in known_degradations is now understated.",
       "status": "pending",
-      "owner": "makali_fusion"
+      "owner": "makali"
     }
   ],
   "ruling_decisions": {
