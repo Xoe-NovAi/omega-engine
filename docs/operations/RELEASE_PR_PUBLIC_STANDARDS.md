@@ -109,6 +109,7 @@ Architect-level decision carrying a decision ID:
 | Scope | Full (PR + cut + release) |
 | Version policy | **New tag for every fix.** A published tag is never moved. |
 | Public-history posture | Revisit later. **No history rewrite is in scope now.** |
+| Merge model | **Direct push to `main`.** Merge-gating (§7.4) is therefore off by architecture, not by omission. |
 
 ---
 
@@ -161,79 +162,11 @@ required form.
 > reading `docs/operations/REUSE_WAIVER_DEBUT_20261003.md`. Treat this as an
 > open compliance gap (G6), not as a satisfied gate.
 
-> **Gap (G15):** `main` is now **protected** (enabled 2026-10-12, see §9.1) against
-> force-push, deletion, and unresolved conversations — verified by real push
-> attempts, not by reading settings. Still open: required reviews and required
-> status checks, both deferred because this is a **solo-maintainer repository**
-> (`Xoe-NovAi` is the only collaborator) and two checks are already red on
-> `main`. See §11.
-
-### 9.1 Branch protection — as actually enabled (2026-10-12)
-
-Enabled on `main` via the GitHub API and **empirically verified**, not assumed:
-
-| Control | State | How verified |
-|:--|:--|:--|
-| Force-push blocked | ✅ `allow_force_pushes: false` | Real rewind push → `GH006: Cannot force-push to this branch` |
-| Branch deletion blocked | ✅ `allow_deletions: false` | Real delete push → `Cannot delete this branch` |
-| Admins bound by the above | ✅ `enforce_admins: true` | Same probe run as the admin (sole collaborator) |
-| Unresolved conversations block merge | ✅ enabled | API state |
-| Normal fast-forward push | ✅ still works | Real push `b2451e9d..5a4c263a` succeeded |
-| Required pull-request reviews | ❌ **not enabled** | Would deadlock a solo maintainer |
-| Required status checks | ❌ **not enabled** | Two checks are red on `main` (below) |
-| Immutable releases | ❌ **unavailable** | API returns 404; not enabled for this account |
-
-**Do not enable force-push protection on `release/debut`.** That branch is
-force-pushed on every cut by design (`--force-with-lease`). Protecting it would
-break the release process. Only `main` is protected.
-
-### 9.2 Known red checks on `main` (block required status checks)
-
-| Check | Failure | Cause |
-|:--|:--|:--|
-| `test-and-lint (3.13)` | `assert cache_dir.exists(), ".firecrawl/ cache directory missing"` | Environment gap: this workflow does not create `.firecrawl/` the way `test.yml` does. Not a product bug. |
-| `SOTE Mechanical Pipeline` | `Could not open requirements file: requirements.txt` | Stale workflow; dependencies moved to `pyproject.toml`. |
-
-Both must be fixed before required status checks can be enabled, otherwise the
-branch becomes un-mergeable the moment protection requires them.
-
-### 9.3 Tag immutability — ruleset + immutable releases (enabled 2026-10-12)
-
-Two independent controls, **both verified by real rejected pushes**:
-
-| Control | State | Verification |
-|:--|:--|:--|
-| **Immutable releases** | ✅ `enabled: true` | `GET /repos/{owner}/{repo}/immutable-releases` |
-| **Tag ruleset** `protect-release-tags` | ✅ active, `refs/tags/v*` | force-move → *push declined due to repository rule violations* |
-| Tag deletion blocked | ✅ | delete → *push declined* |
-| **No bypass actors** | ✅ `bypass_actors: []` | admin force-move rejected with no bypass |
-
-> **Correction (was wrong, now fixed).** An earlier revision of this document
-> recorded immutable releases as *unavailable (API 404)*. That was a **typo in the
-> endpoint path** — `immutable_releases` (underscore) instead of
-> `immutable-releases` (hyphen). The feature is GA (2025-10-28) and works on this
-> repo. The 404 was mine, not GitHub's. Do not accept a 404 from a path you have
-> not cross-checked against the documented endpoint.
-
-**Rulesets, not classic protection, for tags.** Classic branch protection has no
-tag target at all. Rulesets layer alongside it — all applicable rules are
-enforced — so the §9.1 branch protection remains in place and is not wasted.
-
-Rules use `{"type": "<rule>"}` objects, **not** bare keys:
-```json
-"rules": [ { "type": "deletion" }, { "type": "update" } ]
-```
-
-**Recovery path** (deliberate, logged, reversible — required if a tag is ever
-wrong): set the ruleset `enforcement: disabled` → delete/move the tag → restore
-`enforcement: active`. Verified end-to-end during setup.
-
-**Why no bypass actor.** A bypass actor gives an admin an escape hatch, but the
-maintainer is also the person most likely to move a tag by accident. During setup
-the first ruleset *did* grant admin `bypass_mode: always` and a test force-move
-succeeded. Protection that the only possible actor can trivially bypass is
-protection against nobody. Bypass is a multi-maintainer tool; a solo repo should
-use the disable/re-enable recovery path instead.
+> **Gap (G15):** `main` is **protected** (§9.1) against force-push, deletion, and
+> unresolved conversations — verified by real rejected pushes, not by reading
+> settings. Required reviews are deferred because this is a **solo-maintainer
+> repository** (`Xoe-NovAi` is the only collaborator) and would deadlock. Required
+> status checks are **declined by architecture**, not oversight — see §7.4.
 
 ### 2.4 AI disclosure
 
@@ -677,7 +610,67 @@ Do not treat pre-commit-only rules as satisfied in CI.
 > landed in one file only). Consolidate to one canonical pipeline per concern,
 > or designate canonical vs mirror **with a drift test**.
 
-### 7.4 Secrets: gating posture
+### 7.4 Required status checks are incompatible with a direct-push workflow
+
+> **Measured, not assumed. Tested on a throwaway branch — it rejected the push.**
+
+This repo merges by **pushing directly to `main`**. Required status checks cannot
+be enabled on top of that. With classic branch protection a direct push is
+rejected outright:
+
+```
+remote: error: GH006: Protected branch update failed
+remote: - 2 of 2 required status checks are expected.
+ ! [remote rejected]   HEAD -> main (protected branch hook declined)
+```
+
+Rulesets are not an escape. GitHub's documentation for the ruleset
+`required_status_checks` rule states:
+
+> "Choose which status checks must pass before the ref is updated. When enabled,
+> **commits must first be pushed to another ref where the checks pass**."
+
+Both mechanisms therefore require commits to land elsewhere, pass there, and only
+then update `main`. The constraint is architectural, not a settings detail — no
+amount of payload fiddling changes it.
+
+| Rule | Level |
+|:--|:--|
+| Do not enable required status checks while this repo pushes directly to `main` | **CI-REQUIRED** by architecture |
+| Never use a `bypass_actors` entry to force an incompatible gate on | **CI-REQUIRED** |
+
+> **Why no bypass shortcut.** A ruleset with `bypass_mode: always` for the admin
+> *does* admit direct pushes — and the protection then constrains nobody, because
+> the only possible actor is exempt. Same mistake already rejected for the tag
+> ruleset (§9.3). If a gate can only be satisfied by bypassing it, it is not a gate.
+
+**Enforcement actually in place instead** (deliberate, per §1.4):
+
+| Control | Where |
+|:--|:--|
+| CI runs every gate on every push and reports red | `ci.yml`, `test.yml` |
+| `temple-grade` + M23 run locally on **pre-push** | `.pre-commit-config.yaml` |
+| Release gated end-to-end incl. artifact verification | `.github/workflows/release.yml` |
+| A published tag cannot be moved or deleted | §9.3 ruleset + immutable releases |
+
+**Revisit when** external contributors start pushing, or when red lands on `main`
+often enough to matter. The migration is a workflow change, not a settings change.
+
+### 7.5 Path to merge-gating (when the time comes)
+
+Safe order for a **solo** maintainer:
+
+1. Adopt a PR workflow — push to a topic branch, open a PR, merge it.
+2. Add a ruleset requiring a pull request, but **not** requiring approvals.
+   Per GitHub: *"The pull request doesn't necessarily have to be approved, but it
+   must be opened."* Requiring **reviews** deadlocks a one-person repo; requiring a
+   **PR** does not.
+3. Only then add `required_status_checks`, limited to checks that always run and
+   never skip — never `allowlist-lint.yml`, which is path-filtered.
+
+Never start at step 3. That ordering is the mistake this section documents.
+
+### 7.6 Secrets: gating posture
 
 Gate on **verified** findings; track `unverified`/`unknown` separately rather
 than discarding them. TruffleHog exits **183** on findings — distinct from exit 1
@@ -688,7 +681,7 @@ on error, and the distinction matters for triage. Enforce fail-on-scan-errors.
 > the *sole* signal produces false-clean results. Use it as the blocking gate and
 > keep unverified visible.
 
-### 7.5 Waivers
+### 7.7 Waivers
 
 A broken gate that is reported and waived **in writing** is governance. A broken
 gate that silently ships is a soft failure (M23).
@@ -743,10 +736,80 @@ was only visible because the wheel path was actually tested.
 | Tag creation requires a named release approver | **RECOMMENDED** |
 | Required-review count enforced by branch protection | **CI-REQUIRED** — *not configured* |
 
-> **Gap (G15):** there is no enforced branch protection on `main`, so "≥1
-> maintainer review" is currently an honor system. Enabling branch protection with
-> required reviews and required status checks is the single highest-value
-> infrastructure change available.
+> **Gap (G15):** `main` is protected (§9.1) but enforces **no review requirement**,
+> so "≥1 maintainer review" remains an honor system. That is the correct posture
+> for a one-person repo: a required-review gate would deadlock it. Required status
+> checks are likewise declined by architecture (§7.4), not by omission.
+
+### 9.1 Branch protection — as actually enabled (2026-10-12)
+
+Enabled on `main` via the GitHub API and **empirically verified**, not assumed:
+
+| Control | State | How verified |
+|:--|:--|:--|
+| Force-push blocked | ✅ `allow_force_pushes: false` | Real rewind push → `GH006: Cannot force-push to this branch` |
+| Branch deletion blocked | ✅ `allow_deletions: false` | Real delete push → `Cannot delete this branch` |
+| Admins bound by the above | ✅ `enforce_admins: true` | Same probe run as the admin (sole collaborator) |
+| Unresolved conversations block merge | ✅ enabled | API state |
+| Normal fast-forward push | ✅ still works | Real push `b2451e9d..5a4c263a` succeeded |
+| Required pull-request reviews | ❌ **not enabled** | Would deadlock a solo maintainer |
+| Required status checks | ❌ **not enabled** | Two checks are red on `main` (below) |
+| Immutable releases | ❌ **unavailable** | API returns 404; not enabled for this account |
+
+**Do not enable force-push protection on `release/debut`.** That branch is
+force-pushed on every cut by design (`--force-with-lease`). Protecting it would
+break the release process. Only `main` is protected.
+
+### 9.2 Known red checks on `main` — RESOLVED (2026-10-12)
+
+Both were red when D5 began. Both are now green; the record is kept because the
+*reason* one of them went unnoticed is the lesson.
+
+| Check | Failure | Cause | Status |
+|:--|:--|:--|:--|
+| `test-and-lint (3.12)/(3.13)` | `.firecrawl/ cache directory missing` | An order-dependent test asserting on gitignored state | ✅ CLOSED (§6.5) |
+| `SOTE Mechanical Pipeline` | `No such file: requirements.txt` | Stale workflow; deps live in `pyproject.toml` | ✅ CLOSED (§6.6) |
+
+Both legs of the `test-and-lint` matrix now agree, and they agree because
+determinism is pinned (`-p no:randomly`) rather than by luck.
+
+### 9.3 Tag immutability — ruleset + immutable releases (enabled 2026-10-12)
+
+Two independent controls, **both verified by real rejected pushes**:
+
+| Control | State | Verification |
+|:--|:--|:--|
+| **Immutable releases** | ✅ `enabled: true` | `GET /repos/{owner}/{repo}/immutable-releases` |
+| **Tag ruleset** `protect-release-tags` | ✅ active, `refs/tags/v*` | force-move → *push declined due to repository rule violations* |
+| Tag deletion blocked | ✅ | delete → *push declined* |
+| **No bypass actors** | ✅ `bypass_actors: []` | admin force-move rejected with no bypass |
+
+> **Correction (was wrong, now fixed).** An earlier revision of this document
+> recorded immutable releases as *unavailable (API 404)*. That was a **typo in the
+> endpoint path** — `immutable_releases` (underscore) instead of
+> `immutable-releases` (hyphen). The feature is GA (2025-10-28) and works on this
+> repo. The 404 was mine, not GitHub's. Do not accept a 404 from a path you have
+> not cross-checked against the documented endpoint.
+
+**Rulesets, not classic protection, for tags.** Classic branch protection has no
+tag target at all. Rulesets layer alongside it — all applicable rules are
+enforced — so the §9.1 branch protection remains in place and is not wasted.
+
+Rules use `{"type": "<rule>"}` objects, **not** bare keys:
+```json
+"rules": [ { "type": "deletion" }, { "type": "update" } ]
+```
+
+**Recovery path** (deliberate, logged, reversible — required if a tag is ever
+wrong): set the ruleset `enforcement: disabled` → delete/move the tag → restore
+`enforcement: active`. Verified end-to-end during setup.
+
+**Why no bypass actor.** A bypass actor gives an admin an escape hatch, but the
+maintainer is also the person most likely to move a tag by accident. During setup
+the first ruleset *did* grant admin `bypass_mode: always` and a test force-move
+succeeded. Protection that the only possible actor can trivially bypass is
+protection against nobody. Bypass is a multi-maintainer tool; a solo repo should
+use the disable/re-enable recovery path instead.
 
 ---
 
@@ -832,7 +895,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G12 | M26 scope mismatch (`doc-llm-validate` scope) | M26 unenforceable as written | @scribe | OPEN |
 | G13 | D-628: 13 `[CUT-]` entries parsed as KEEP | Sensitive-adjacent files ship | **Architect** | OPEN |
 | G14 | Glob-translator quirks pinned by fuzz parity | A "fix" silently rewrites the boundary | @maat | OPEN |
-| G15 | `main` not branch-protected; no required reviews | Unenforced approvals | **Architect** | **PARTIAL** — force-push/deletion/conversation locked (§9.1); reviews + status checks open |
+| G15 | `main` not branch-protected; no required reviews | Unenforced approvals | **Architect** | **PARTIAL** — force-push/deletion/conversation locked (§9.1); reviews deferred (solo); required status checks **declined by architecture**, see §7.4 |
 | G16 | Unified checklists | — | — | **CLOSED** (§10) |
 | G23 | ~~Immutable releases unavailable~~ — **RESOLVED (2026-10-12):** the earlier 404 was a typo'd endpoint (`immutable_releases`). Immutable releases **enabled**; tag ruleset `protect-release-tags` active on `refs/tags/v*` with no bypass actors (§9.3) | — | — | **CLOSED** |
 | G17 | `scripts/check_mandate_compliance.py` enumerates M1…M27 of 30 | M28/M29/M30 unchecked | @verity | OPEN |
@@ -857,6 +920,8 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | D5 | ~~Enable GitHub branch protection (required reviews + required checks) and immutable releases~~ — **DONE (2026-10-12):** `main` protected (force-push, deletion, admins, conversations) and verified by real rejected pushes (§9.1). **Immutable releases enabled + tag ruleset active, no bypass actors (§9.3).** Required reviews deferred (solo maintainer); required status checks deferred pending G24. |
 | D6 | LAN posture — rebind tailnet services to loopback, or record reviewed justification per bind |
 | D7 | Public `main` history posture (deferred by standing decision §1.4) |
+| D8 | ~~Required status checks on `main`~~ — **DECLINED (2026-10-12), by architecture, not oversight.** Direct-push workflow is incompatible with both classic protection and rulesets; commits must land on another ref first and pass there. Enforcement relocated to CI reporting + pre-push `temple-grade` + release gating + tag immutability. Migration path and trigger conditions in §7.4–7.5. |
+| D9 | Review trigger: adopt a PR workflow when external contributors push, or when red lands on `main` more than ~1×/month |
 
 ### 11.2 Implementation order
 
