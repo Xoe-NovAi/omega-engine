@@ -421,3 +421,4 @@ data/coordination/sessions/
 # the tracked config/lan_exposure_allowlist.yaml is a public placeholder-only
 # template, and the real values must never ship (D-612 closed that leak).
 config/lan_exposure_allowlist.local.yaml
+stable-diffusion.cpp/
