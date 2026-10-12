@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   release:
-    name: 🏷️ Release v${{ github.ref_name }}
+    name: 🏷️ Release ${{ github.ref_name }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -77,11 +77,11 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          name: Omega Engine ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Omega Engine ${{ github.ref_name }}
           body_path: release_notes.md
           draft: false
-          prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') || contains(github.ref, '-rc') }}
+          prerelease: ${{ contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
           files: |
             dist/*.whl
             dist/*.tar.gz
@@ -91,5 +91,5 @@ jobs:
       - name: Verify install
         run: |
           pip install dist/*.whl
-          OMEGA_PROVIDER=mock omega talk "Release verification: hello from ${{ github.ref }}"
+          OMEGA_PROVIDER=mock omega talk "Release verification: hello from ${{ github.ref_name }}"
 

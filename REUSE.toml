@@ -22,6 +22,15 @@ path = "config/**/*.json"
 SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
 
+# ── Packaged runtime defaults (wheel) ────────────────────────────────────────
+# src/omega/config_data/** contains verbatim copies of already-public config
+# runtime defaults (top-level YAMLs + default IWAD) so wheel installs are
+# self-contained. Same copyright/license as the config/** originals.
+[[annotations]]
+path = "src/omega/config_data/**/*.yaml"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
 # ── Scripts ────────────────────────────────────────────────────────────────
 [[annotations]]
 path = "scripts/**/*.py"
