@@ -46,6 +46,35 @@ class USMManager:
         self.index_path = self.base_dir / "index.db"
         self._db_conn: Optional[sqlite3.Connection] = None
 
+    def _ensure_db(self) -> None:
+        """Ensure the state directory and index schema exist (first-run safe).
+
+        Fresh installs (wheel, new OMEGA_DATA_DIR) have neither the directory
+        nor the index file. sqlite3.connect() cannot create the file when the
+        parent directory is missing (OperationalError: unable to open database
+        file), and SELECT on a schema-less DB raises 'no such table'. This
+        makes every DB-touching path first-run safe whether or not
+        initialize() ran first.
+        """
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        # NOTE: direct connect here — _ensure_db must NOT call _connect(),
+        # which calls _ensure_db() (infinite mutual recursion).
+        with sqlite3.connect(self.index_path) as conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS state_refs (
+                    key TEXT PRIMARY KEY,
+                    hash TEXT NOT NULL,
+                    timestamp TEXT NOT NULL,
+                    metadata TEXT
+                )
+            """)
+            conn.commit()
+
+    def _connect(self) -> sqlite3.Connection:
+        """Open the index DB, ensuring first-run directory/schema exist."""
+        self._ensure_db()
+        return sqlite3.connect(self.index_path)
+
     async def initialize(self) -> None:
         """Initialize CAS and the SQLite index."""
         await self.cas.initialize()
@@ -71,7 +100,7 @@ class USMManager:
         return await self.save_state(key, data)
 
     def _update_index(self, key: str, blob_hash: str, timestamp: str) -> None:
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             conn.execute(
                 "INSERT OR REPLACE INTO state_refs (key, hash, timestamp) VALUES (?, ?, ?)",
                 (key, blob_hash, timestamp),
@@ -125,7 +154,7 @@ class USMManager:
         return blob_hash is not None
 
     def _get_hash(self, key: str) -> Optional[str]:
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute("SELECT hash FROM state_refs WHERE key = ?", (key,))
             row = cursor.fetchone()
             return row[0] if row else None
@@ -186,7 +215,7 @@ class USMManager:
         # For now, just check if key exists in index
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute(
                 "SELECT 1 FROM state_refs WHERE key = ?", (f"session:{session_id}",)
             )
@@ -198,7 +227,7 @@ class USMManager:
         # For now, just remove from index
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute(
                 "DELETE FROM state_refs WHERE key = ?", (f"session:{session_id}",)
             )
@@ -222,14 +251,14 @@ class USMManager:
     def has_memory(self, entity_id: str) -> bool:
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute("SELECT 1 FROM state_refs WHERE key = ?", (f"mem:{entity_id}",))
             return cursor.fetchone() is not None
 
     async def release_memory(self, entity_id: str) -> bool:
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute("DELETE FROM state_refs WHERE key = ?", (f"mem:{entity_id}",))
             conn.commit()
             return cursor.rowcount > 0
@@ -253,7 +282,7 @@ class USMManager:
     def has_handoff(self, packet_id: str) -> bool:
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute(
                 "SELECT 1 FROM state_refs WHERE key = ?", (f"handoff:{packet_id}",)
             )
@@ -262,7 +291,7 @@ class USMManager:
     async def release_handoff(self, packet_id: str) -> bool:
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             cursor = conn.execute("DELETE FROM state_refs WHERE key = ?", (f"handoff:{packet_id}",))
             conn.commit()
             return cursor.rowcount > 0
@@ -274,7 +303,7 @@ class USMManager:
         # Count entries in index
         import sqlite3
 
-        with sqlite3.connect(self.index_path) as conn:
+        with self._connect() as conn:
             sessions = conn.execute(
                 "SELECT COUNT(*) FROM state_refs WHERE key LIKE 'session:%'"
             ).fetchone()[0]
