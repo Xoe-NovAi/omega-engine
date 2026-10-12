@@ -1,0 +1,380 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Provider Capability Matrix — Canonical Registry
+# ⬡ OMEGA ⬡ JEM ⬡ trc_capability_matrix ⬡ v0.1.0 ⬡ 2026-07-19
+#
+# Source: R_GEMMA4_GAP_RESEARCH_20260719.md — all 15 gaps resolved
+# Pattern: LiteLLM `supports_*` capability flags (verified cross-framework standard)
+# Heritage: [heritage: litellm-2024] Capability flag pattern for model registry
+#
+# Each model entry declares:
+#   - What it supports (thinking, streaming, etc.)
+#   - How to configure thinking (level/budget/mode)
+#   - Which provider IDs map to it (provider-relative identity)
+#   - Quota limits per provider tier
+#
+# The Matrix Loader (Week 1 Step 3) validates this at startup.
+# The Normalizer translates canonical effort levels to provider schemas.
+# The Selector routes by capability match + quota headroom.
+# The Health monitor tracks thinking token provenance.
+
+version: "0.1.0"
+last_updated: "2026-07-19"
+
+# ── Canonical Thinking Effort Levels ──────────────────────────
+# The Normalizer translates these to provider-specific schemas.
+# Cross-provider standard from deep research (Gap 3.1):
+#   LiteLLM, Vercel AI SDK, LangChain all use 3-tier effort levels
+# Extended with aliases for fine-grained control.
+thinking_efforts:
+  - minimal    # No thinking / fastest response
+  - low        # Light reasoning (maps to minimal for binary schemas)
+  - standard   # Default reasoning quality
+  - medium     # Enhanced reasoning (maps to high for binary schemas)
+  - high       # Deep reasoning
+  - deep       # Maximum reasoning (Gemma 4 HIGH, OpenAI o1 max, etc.)
+  - xhigh      # Extreme reasoning (maps to high for binary schemas)
+
+# ── Provider Thinking Schema Registry ─────────────────────────
+# Maps provider design patterns to their canonical schema type.
+# Research (Gap 2.1): 7 distinct thinking schemas exist in industry.
+thinking_schemas:
+  thinking_level:
+    description: "Simple enum-based thinking levels — MINIMAL/HIGH, etc."
+    providers:
+      - google-ai-studio
+      - google-vertex-ai
+    example: '{"thinkingConfig": {"thinkingLevel": "HIGH"}}'
+  
+  thinking_budget:
+    description: "Token budget for thinking — generative AI. Vertex Gemini 2.5"
+    providers:
+      - google-vertex-ai
+    example: '{"thinkingConfig": {"thinkingBudget": 8192}}'
+  
+  reasoning_effort:
+    description: "Named effort levels — OpenAI o1/o3 pattern"
+    providers:
+      - openai
+      - openrouter
+    example: '{"reasoning_effort": "medium"}'
+  
+  extended_thinking:
+    description: "Boolean flag + budget tokens — Anthropic Claude pattern"
+    providers:
+      - anthropic
+    example: '{"extended_thinking": true, "budget_tokens": 16000}'
+  
+  chat_template_kwargs:
+    description: "Gemma 4 local inference — GGUF chat template toggle"
+    providers:
+      - native-gguf
+      - ollama
+    example: '{"chat_template_kwargs": {"thinking": true}}'
+  
+  gemma_toggle:
+    description: "Qwen3/Qwen2.5 toggle tags in chat template"
+    providers:
+      - native-gguf
+      - ollama
+    example: '{"chat_template_kwargs": {"thinking": true}}'
+
+# ── Model Capabilities ───────────────────────────────────────
+# Each entry is a canonical model ID (as recognized by the engine).
+# Aliases field maps provider-relative IDs to this canonical ID.
+# Research (Gap 1.1): OpenCode uses models.dev IDs; direct API uses bare IDs.
+models:
+  gemma-4-31b-it:
+    display_name: "Gemma 4 31B Instruct"
+    provider_ids:
+      google-ai-studio: "gemma-4-31b-it"
+      google-vertex-ai: "gemma-4-31b-it"
+      openrouter: "google/gemma-4-31b-it"
+      openrouter-free: "google/gemma-4-31b-it:free"
+      models-dev: "google/gemma-4-31b-it"
+      native-gguf: "gemma-4-31b-it-q4_k_m"
+    capabilities:
+      supports_thinking: true
+      thinking_schema: "thinking_level"
+      thinking_levels:
+        - MINIMAL   # Gemini API enum for minimal
+        - HIGH      # Gemini API enum for deep reasoning
+      thinking_mapping:   # canonical effort → provider enum
+        minimal: "MINIMAL"
+        low: "MINIMAL"
+        standard: "MINIMAL"
+        medium: "HIGH"
+        high: "HIGH"
+        deep: "HIGH"
+        xhigh: "HIGH"
+      supports_streaming: true
+      supports_thinking_streaming: true  # Verified: Gemma 4 streams thinking
+      max_context: 32768
+      max_output: 8192
+      detection_regex: "gemma-?4"  # Pi PR #2903 pattern (Gap 4.1)
+      mtp_drafter: null  # No speculative decode for 31B
+    quota:
+      free_tier:
+        rpm: 15         # Gap 2.2: Verified rolling 60s window
+        tpm: 16000      # Per-project, not per-key
+        rpd: 1500
+        tier: "free"
+        rolling_window_ms: 60000
+      tier_1:
+        rpm: 60
+        tpm: 60000
+        rpd: 5000
+        tier: "tier_1"
+      tier_2:
+        rpm: 120
+        tpm: 120000
+        rpd: 10000
+        tier: "tier_2"
+    cost_per_m_tokens:
+      free: 0.0
+      tier_1_input: 0.15
+      tier_1_output: 0.60  # Thinking billed as output (Gap 2.3)
+      tier_1_thinking_multiplier: 0.85  # ~85% of tokens are thinking (estimate)
+      openrouter: 0.15
+      openrouter_thinking: 0.60
+      local_gguf_q4: 0.001  # Self-host is ~150x cheaper (Gap 3.3)
+
+  gemma-4-26b-it:
+    display_name: "Gemma 4 26B Instruct"
+    provider_ids:
+      google-ai-studio: "gemma-4-26b-it"
+      google-vertex-ai: "gemma-4-26b-it"
+      openrouter: "google/gemma-4-26b-it"
+      native-gguf: "gemma-4-26b-it-q4_k_m"
+    capabilities:
+      supports_thinking: true
+      thinking_schema: "thinking_level"
+      thinking_levels:
+        - MINIMAL
+        - HIGH
+      thinking_mapping:
+        minimal: "MINIMAL"
+        standard: "MINIMAL"
+        deep: "HIGH"
+      supports_streaming: true
+      supports_thinking_streaming: true
+      max_context: 32768
+      max_output: 8192
+      detection_regex: "/gemma-?4/i"
+      mtp_drafter: null
+    quota:
+      free_tier:
+        rpm: 15
+        tpm: 16000
+        rpd: 1500
+        rolling_window_ms: 60000
+
+  gemma-4-12b-unified:
+    display_name: "Gemma 4 12B Unified"
+    provider_ids:
+      google-ai-studio: "gemma-4-12b-unified"
+      google-vertex-ai: "gemma-4-12b-unified"
+      openrouter: "google/gemma-4-12b-unified"
+      native-gguf: "gemma-4-12b-unified-q4_k_m"
+    capabilities:
+      supports_thinking: true
+      thinking_schema: "thinking_level"
+      thinking_levels:
+        - MINIMAL
+        - HIGH
+      thinking_mapping:
+        minimal: "MINIMAL"
+        standard: "MINIMAL"
+        deep: "HIGH"
+      supports_streaming: true
+      supports_thinking_streaming: true
+      max_context: 262144  # 256K — 8x the 31B model
+      max_output: 8192
+      detection_regex: "/gemma-?4/i"
+      mtp_drafter:
+        layers: 6
+        speedup: "2-3x"  # MTP drafter: 2-3x token generation speedup (Gap 2.5)
+        quality_loss: "negligible"
+    quota:
+      free_tier:
+        rpm: 30
+        tpm: 32000
+        rpd: 3000
+        rolling_window_ms: 60000
+      tier_1:
+        rpm: 120
+        tpm: 120000
+        rpd: 10000
+    cost_per_m_tokens:
+      free: 0.0
+      tier_1_input: 0.05
+      tier_1_output: 0.20
+      local_gguf_q4: 0.0005  # Smallest model = cheapest self-host
+
+  gemini-2-5-flash:
+    display_name: "Gemini 2.5 Flash"
+    provider_ids:
+      google-ai-studio: "gemini-2-5-flash"
+      google-vertex-ai: "gemini-2-5-flash"
+      openrouter: "google/gemini-2-5-flash"
+    capabilities:
+      supports_thinking: true
+      thinking_schema: "thinking_level"
+      thinking_levels:
+        - MINIMAL
+        - HIGH
+      thinking_mapping:
+        minimal: "MINIMAL"
+        standard: "MINIMAL"
+        deep: "HIGH"
+      supports_streaming: true
+      supports_thinking_streaming: true
+      max_context: 1048576  # 1M context
+      max_output: 8192
+    # G-1 latency profile 2026-08-28 (per R_ANTIGRAVITY_FINAL_READINESS §3.1):
+    # 1K ctx ~3.3s, 10K ctx ~3.2s, 100K ctx ~3.5s, 200K ctx ~21s
+    # Cliff at >100K context; expect 5-10x slowdown for long-context tasks.
+    # M3 is the long-write champion (48 TPS at 500+ tok), NOT the real-time champion.
+    latency_profile:
+      short_ping: "~1.8-2.5s"
+      long_write_500tok: "~48 TPS sustained"
+      context_cliff_200k: "~21s (5-10x slowdown)"
+
+  gemini-2-5-pro:
+    display_name: "Gemini 2.5 Pro"
+    provider_ids:
+      google-ai-studio: "gemini-2-5-pro"
+      google-vertex-ai: "gemini-2-5-pro"
+      openrouter: "google/gemini-2-5-pro"
+    capabilities:
+      supports_thinking: true
+      thinking_schema: "thinking_budget"  # Vertex only: uses budget
+      thinking_levels:
+        - MINIMAL
+        - HIGH
+      thinking_mapping:
+        minimal: "MINIMAL"
+        standard: "MINIMAL"
+        deep: "HIGH"
+      supports_streaming: true
+      supports_thinking_streaming: true
+      max_context: 1048576
+      max_output: 8192
+
+  # ── Cloud Provider Config Templates ─────────────────────────
+  # Per-provider configuration mappings for the Normalizer.
+  # Research (Gap 2.1, 2.4): Each provider needs specific schema + auth + routing.
+
+providers:
+  google-ai-studio:
+    display_name: "Google AI Studio (gemini.googleapis.com)"
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    auth_type: "api_key"
+    thinking_schema: "thinking_level"
+    thinking_field: "thinkingConfig.thinkingLevel"
+    model_id_format: "bare"  # API expects bare model name (not prefixed)
+    id_prefix_to_strip: "google/"  # Strip models.dev prefix (Gap 1.1)
+    rate_limit_headers:
+      remaining_tokens: "x-ratelimit-remaining-tokens"
+      remaining_requests: "x-ratelimit-remaining-requests"
+      retry_after: "retry-after"
+    error_codes:
+      quota_exhausted: 429
+      invalid_thinking: 400  # Wrong thinkingLevel value
+
+  google-vertex-ai:
+    display_name: "Google Vertex AI (cloud.google.com)"
+    base_url: "https://aiplatform.googleapis.com/v1"
+    auth_type: "oauth"  # Service account or OAuth 2.0
+    thinking_schema: "thinking_level"  # Gemma 4 uses level even on Vertex
+    thinking_field: "thinkingConfig.thinkingLevel"
+    model_id_format: "bare"
+    id_prefix_to_strip: "google/"
+    supports_thinking_budget: true  # Gemini 2.5 uses budget on Vertex
+
+  openrouter:
+    display_name: "OpenRouter.ai"
+    base_url: "https://openrouter.ai/api/v1"
+    auth_type: "api_key"
+    thinking_schema: "reasoning_effort"  # Generic passthrough
+    # OpenRouter passes provider-specific config via extra_body
+    # Research (Gap 2.4): Must pin provider to avoid auto-routing
+    provider_pinning:
+      require_order:
+        - "Google AI Studio"
+      allow_fallbacks: false
+    model_id_format: "prefixed"  # OpenRouter uses "google/gemma-4-31b-it"
+    note: ":free suffix routes to free tier pool — keep for OpenRouter, strip for direct Google"
+
+  native-gguf:
+    display_name: "Native GGUF Inference (llama.cpp)"
+    auth_type: "none"
+    thinking_schema: "chat_template_kwargs"
+    thinking_field: "chat_template_kwargs.thinking"
+    supports_local: true
+    note: "Self-host is ~150x cheaper than API. MTP drafters available for 12B."
+
+# ── Routing Rules ─────────────────────────────────────────────
+# CapabilitySelector uses these rules to choose the best provider.
+# Research (Gap 2.2, 2.3): Quota is a routing signal, not a failure.
+routing_rules:
+  default:
+    strategy: "capability_first"  # Match thinking level → quota headroom → cost
+    fallback_chain:
+      - native-gguf
+      - google-ai-studio
+      - openrouter
+      - google-vertex-ai
+
+  thinking_deep:
+    description: "Deep reasoning requires careful provider selection"
+    strategy: "capability_first"
+    filter:
+      supports_thinking: true
+    preference:
+      - native-gguf  # Free, local
+      - google-ai-studio  # Cheapest cloud option
+      - openrouter  # Pin to Google AI Studio
+    fallback_chain:
+      - native-gguf
+      - google-ai-studio
+      - openrouter
+    quota: "preflight_reject_if_gt_80pct"  # Gap 2.2: Pre-flight estimate
+
+  thinking_minimal:
+    description: "Fast response, no reasoning"
+    strategy: "fastest_response"
+    preference:
+      - native-gguf
+      - openrouter
+      - google-ai-studio
+
+# ── Thinking Token Tracking ───────────────────────────────────
+# Budget gate configuration (Gap 2.3: Thinking tokens ARE billable output)
+thinking_token_tracking:
+  budget_multiplier: 3.0  # 2-5x for thinking models
+  track_per_response: true
+  fields:
+    - thoughts_token_count
+    - thinking_duration_ms
+  provenance:
+    - requested_level
+    - sent_level
+    - accepted_level
+    - was_clamped
+  estimate_before_request: true  # Pre-flight estimation
+
+# ── Health Monitoring ─────────────────────────────────────────
+# ProviderHealth configuration (Gap 3.3)
+health_monitoring:
+  quota_check_interval_ms: 60000  # Poll Google quota every minute
+  circuit_breaker:
+    quota_errors_trip_circuit: false  # 429 = routing signal, not failure
+    consecutive_timeout_threshold: 3
+    recovery_timeout_s: 30
+  streaming:
+    per_chunk_timeout_ms: 30000  # 30s idle timeout
+    total_timeout_ms: 300000      # 5 min max stream duration
+    graceful_fallback: true       # Gap 3.3: Partial response stitching

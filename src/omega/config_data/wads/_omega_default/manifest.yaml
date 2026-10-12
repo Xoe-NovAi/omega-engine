@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+wad:
+  name: "_omega_default — The Company"
+  version: "1.0.0"
+  requires_engine: ">=0.5.0"
+  author: "Xoe-NovAi Foundation"
+  description: "The Omega Engine's default IWAD. A software company leadership structure: Founder (Kali) directs, CTO (Ma'at) builds, CISO (Lilith) protects. 10 department heads implement."
+  type: iwad
+  mode: production
+  license: "Apache 2.0"
+  
+  startup:
+    message: |
+      The Company is loaded. Kali (Founder) sets direction. Ma'at (CTO) builds the system right. Lilith (CISO) keeps it running. Ma'at governs the build slots (S1-S5); Lilith governs the run slots (S6-S10); keepers are assigned as they prove out.
+
+  entities:
+    - "default.yaml"        # Default assistant — general queries
+    - "kali.yaml"           # Founder — sets direction (Grand Oversight)
+    - "maat.yaml"           # CTO — build side (slots S1-S5)
+    - "lilith.yaml"         # CISO — run side (slots S6-S10)
+    - "iris.yaml"           # Voice Interface — first contact
+    - "jem.yaml"            # Research orchestrator (slot S9)
+    - "researcher.yaml"     # Deep research (slot S6)
+    - "john_carmack.yaml"   # S3 consultant (slot S3)
+    - "verity.yaml"         # Compliance + gnosis distillation
+    - "scribe.yaml"         # Gnosis keeper
+    - "quality.yaml"        # QA
+    - "roc_racoon.yaml"     # Legacy mining & archaeology
+    - "doom_guy.yaml"       # id Software heritage & performance
+
+  voices:
+    primary: "jem.yaml"
+    secondary: []
+
+  vr_scenes: []
+
+  dependencies: []

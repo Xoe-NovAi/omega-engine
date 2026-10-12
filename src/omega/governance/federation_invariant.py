@@ -20,6 +20,8 @@ from typing import Any
 
 import anyio
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 logger = logging.getLogger(__name__)
 
 # Endpoints that MUST NOT exist on the mesh
@@ -70,7 +72,7 @@ async def verify_local_only_embeddings() -> dict[str, Any]:
     import yaml
 
     def _load() -> dict:
-        with open("config/providers.yaml") as f:
+        with open(CONFIG_DIR / "providers.yaml") as f:
             return yaml.safe_load(f)
 
     cfg = await anyio.to_thread.run_sync(_load)

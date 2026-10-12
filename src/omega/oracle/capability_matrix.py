@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 
 import yaml
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 logger = logging.getLogger(__name__)
 
 
@@ -82,11 +84,7 @@ class CapabilityMatrix:
 
     def __init__(self, config_path: Optional[Path] = None):
         if config_path is None:
-            config_path = (
-                Path(__file__).resolve().parent.parent.parent.parent
-                / "config"
-                / "provider_capabilities.yaml"
-            )
+            config_path = CONFIG_DIR / "provider_capabilities.yaml"
         self.config_path = config_path
         self._models: Dict[str, ModelCapability] = {}
         self._providers: Dict[str, ProviderConfig] = {}

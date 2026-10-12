@@ -1,0 +1,190 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# ══════════════════════════════════════════════════════════════════════════════
+#  HIVEMIND PROTOCOL — declared, not coded.
+#
+#  This file is PROTOCOL CONTENT. The engine mechanism (federation_protocol.py) is
+#  protocol-agnostic and loads this file by path only. Do NOT embed any of this
+#  logic in Python (M2 Engine-Stack Firewall, ADR-001).
+#
+#  id Software principle: complexity lives in data; the engine interprets it.
+#  To change how the Omega Engine communicates — message shape, lifecycle,
+#  retention, naming, routing — you edit THIS FILE, never the interpreter.
+# ══════════════════════════════════════════════════════════════════════════════
+
+protocol:
+  name: hivemind
+  version: 1
+  # A protocol file that does not load is a loud failure, never a default.
+  # Invented defaults are how a compliance system becomes decorative. (M23)
+  on_malformed: refuse
+  description: >-
+    Internal and federation messaging between persistent entities across nodes.
+    Governs what a message IS, what states it may hold, what transitions are
+    legal, how long each state is retained, and how a target name is canonicalised.
+
+# ── LAYOUT ────────────────────────────────────────────────────────────────────
+# The inbox directory name is INTERFACE, not just structure. "pending" tells a
+# human and an agent what the directory is for; "envelopes" told them nothing.
+# Ruling: Architect, 2026-09-30. See commit bbf989b9.
+layout:
+  inbox: pending          # needs looking at. The query path.
+  payloads: hot           # message bodies
+  cold: cold              # past retention, still durable. M29: never auto-deleted.
+  retired: retired        # explicitly withdrawn by a human act
+  sequence_file: .seq
+  cursor_file: .cursors.json
+  counters_file: .counters.json
+
+# ── MESSAGE SCHEMA ────────────────────────────────────────────────────────────
+# requested_target / resolved_target exist BECAUSE THE SCHEMA DECLARES THEM.
+#
+# This is the fix for the unanswerable question: the store persisted what it
+# RESOLVED and never what was ASKED, so "did the sender omit the suffix, or did
+# the resolver strip it?" could not be settled from evidence. Under this schema
+# the evidence is a required field, not something a logger remembered to add.
+schema:
+  required:
+    - message_id
+    - source_channel
+    - source_agent          # the persona. Has an AGENTS.md / soul.yaml. STABLE.
+    - source_instance       # the chat session. Individuated: own history, research,
+                            # lessons, domain. Many per agent. WHAT YOU PAGE.
+    - source_node           # corroborated by transport, never self-report alone
+    - target_entity
+    - requested_target
+    - resolved_target
+    - requested_target      # what the sender ASKED FOR, verbatim
+    - resolved_target       # what the resolver CHOSE, or null if unresolved
+    - subject
+    - created_at
+  optional:
+    - context
+    - priority
+    - state
+    - read_by
+    - seq
+    - session_id
+    - supersedes
+    - artifact_refs
+  types:
+    # A `pattern` type carries its regex as the VALUE, not in a trailing
+    # comment: a YAML `#` strips everything after it, so a pattern written
+    # there silently never existed. That bug shipped once and was caught by
+    # test_bad_message_id_pattern_is_rejected.
+    message_id: "pattern ^ho_[A-Za-z0-9]{8,}$"
+    source_channel: str
+    # ── THE THREE LEVELS, DECLARED SEPARATELY ────────────────────────────────
+    # source_entity was asked to carry agent, instance and host at once and could
+    # only carry one. That single type error produced nine separately-diagnosed
+    # symptoms on 2026-09-30: a peer reading another's mail, a host assertion made
+    # from a free-text field, a "non-deterministic" suffix fold, a stale registry,
+    # and a who_is that needed ambiguity refusal.
+    source_agent: agent_name      # MUST resolve to a registered agent
+    source_instance: instance_name # MUST resolve under source_agent
+    source_node: node_name        # MUST match the transport peer
+    target_entity: str
+    requested_target: str   # NEVER auto-corrected on write
+    resolved_target: [str, "null"]
+    subject: str
+    context: str
+    priority: int
+    state: state_ref
+    created_at: timestamp
+    read_by: map
+    seq: int
+    session_id: [str, "null"]
+    supersedes: [str, "null"]
+    artifact_refs: [str, "null"]
+
+# ── LIFECYCLE ─────────────────────────────────────────────────────────────────
+# Declared states with legal transitions. The interpreter REFUSES an illegal
+# transition. This is the change that makes lifecycle evolution a YAML diff
+# instead of a code change.
+lifecycle:
+  initial: pending
+  states:
+    pending:   { retention_days: 90,  terminal: false, description: "Needs looking at. The inbox." }
+    active:    { retention_days: 90,  terminal: false, description: "Accepted, work in flight." }
+    completed: { retention_days: 365, terminal: true,  description: "Work finished, outcome recorded." }
+    stale:     { retention_days: 90,  terminal: false, description: "No response within threshold." }
+    rejected:  { retention_days: 365, terminal: true,  description: "Declined, with reason." }
+    cold:      { retention_days: null, terminal: true, description: "Past retention. Durable forever. M29." }
+    retired:   { retention_days: null, terminal: true,  description: "Withdrawn by human act only. M29." }
+  transitions:
+    pending:   [active, rejected, stale, cold, retired]
+    active:    [completed, stale, cold, retired]
+    stale:     [active, cold, retired]
+    completed: [cold, retired]
+    rejected:  [cold, retired]
+    cold:      [retired]
+    retired:   []          # terminal. Nothing leaves retired. M29.
+
+# ── CANONICAL NAMING ──────────────────────────────────────────────────────────
+# THE OPEN POLICY QUESTION — Architect to ratify. Both keys are declared so the
+# decision is explicit and in data, not implied by a deployed heuristic.
+#
+#   reject_unknown:  refuse a submit whose target cannot be canonicalised
+#   resolve_and_log: accept, but record requested != resolved for audit
+#
+# Suffix stripping is DISABLED. It folds makali-n0 into makali, and those are
+# distinct registered agents. That fold is why GE-N0's correction concluded the
+# problem is "mostly train senders, plus a real but rarer resolver bug."
+naming:
+  case_sensitive: false
+  separators_equivalent: ["_", "-"]     # ge_n1 and ge-n1 are the SAME name
+  node_suffix_is_significant: true       # makali-n0 is NOT makali. Never fold it.
+  reject_unknown: false                  # <- RATIFY
+  resolve_and_log: true                  # <- RATIFY
+  on_ambiguous: refuse                    # never guess. who_is already does this.
+
+# ── DELIVERY ──────────────────────────────────────────────────────────────────
+delivery:
+  # A target may be an endpoint, a chat session, or a durable identity. They are
+  # NOT the same thing and conflating them is why "liveness" has no definition.
+  target_kinds: [endpoint, session, identity]
+  ack_required: false        # submission is not receipt. M30.
+  ack_state: active
+  receipt_fields: [message_id, resolved_target, state, accepted_at, session_id]
+  unread_is: per_entity      # read_by is per-recipient, never global
+
+# ── RETENTION ─────────────────────────────────────────────────────────────────
+# Retention is a QUERY over created_at against these numbers. It is never a
+# transition some process triggers on a timer, and never a deletion. M29.
+retention:
+  enforced_by: query
+  auto_delete: false         # M29: no automated unrecoverable removal, ever.
+  deep_archive: quarterly
+  measure: created_at
+
+# ── IDENTITY ──────────────────────────────────────────────────────────────────
+# The substrate's deepest correction (2026-09-30). One agent, many instances.
+#
+#   agent     — has an AGENTS.md / soul.yaml. Stable. One per persona.
+#               `Gaming-Expert`. Kali has one. Ma'at has one.
+#   instance  — a chat session. Individuated: its own history, research, distilled
+#               lessons and domain specialisation. Many per agent. ADDRESSING
+#               GOES HERE, because paging an agent is meaningless — you page a
+#               session for its accumulated context.
+#   node      — where it runs. The ONLY level corroborable by transport.
+#
+# Proof this is universal and not a Node 1 quirk, from opencode.db read-only:
+#   kali 68 structural EIS · maat 11 · lilith 13 · doom_guy 4 · makali 21
+# The fleet has always been multi-session per agent; the federation just had no
+# vocabulary for it.
+#
+# THE RULE THAT FALLS OUT: a session may not sign as a name that names a
+# different AGENT. `ge-n0` named an agent that does not exist. It was accepted and
+# stored, because the schema never declared which of the three levels a name was
+# supposed to belong to. Under this protocol it is refused at submit.
+identity:
+  levels: [agent, instance, node]
+  address_by: instance
+  reject_agent_level_mismatch: true
+  corroborate_node_by_transport: true
+  # `unread_for` MUST scope to an instance. Returning everything for every name is
+  # not a filter; it is a queue dump wearing a filter's clothes. (Observed
+  # 2026-09-30: unread_for returned an identical 32 rows for three distinct names.)
+  unread_scope: instance

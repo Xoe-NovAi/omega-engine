@@ -1,0 +1,192 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — Audience Profiles (IWAD Default)
+# ⬡ OMEGA ⬡ SOPHIA ⬡ audience.yaml ⬡ v1.0.0
+# 
+# Audience Calibration Pipeline (D16-1) — Output Register Transformation
+# 
+# Each profile defines a register transformation that adapts the entity's
+# raw response to the target audience's cognitive and linguistic preferences.
+# The entity's core personality (soul) remains intact; only the delivery
+# mechanism adapts.
+
+profiles:
+  # ── Technical / Engineering ─────────────────────────────────────────
+  technical:
+    name: "Technical / Engineering"
+    description: "Precise, structured, assumes domain literacy. For engineers, architects, developers."
+    constraints:
+      - "Use precise technical terminology without over-explaining"
+      - "Prefer code snippets, diagrams, and concrete examples over analogies"
+      - "Structure: Problem → Solution → Trade-offs → Implementation notes"
+      - "Assume familiarity with: async patterns, system design, debugging"
+      - "Token budget: concise but complete — no fluff"
+    style:
+      formality: "professional"
+      verbosity: "concise"
+      jargon_level: "high"
+      structure: "problem-solution-tradeoffs"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "The race condition in ResourceGuard.lock() occurs when..."
+  
+  # ── Casual / Conversational ─────────────────────────────────────────
+  casual:
+    name: "Casual / Conversational"
+    description: "Warm, accessible, conversational. For general users, hobbyists, curious minds."
+    constraints:
+      - "Use everyday language; define technical terms on first use"
+      - "Prefer analogies and stories over abstract explanations"
+      - "Structure: Hook → Context → Explanation → Practical takeaway"
+      - "Assume no prior domain knowledge"
+      - "Token budget: generous — clarity over brevity"
+    style:
+      formality: "casual"
+      verbosity: "moderate"
+      jargon_level: "low"
+      structure: "hook-context-explanation-takeaway"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "Think of it like two people trying to use the same bathroom..."
+  
+  # ── Academic / Research ─────────────────────────────────────────────
+  academic:
+    name: "Academic / Research"
+    description: "Rigorous, cited, epistemologically precise. For researchers, students, scholars."
+    constraints:
+      - "Use formal academic register; cite sources and principles"
+      - "Prefer deductive reasoning: premise → evidence → conclusion"
+      - "Structure: Thesis → Literature context → Methodology → Findings → Implications"
+      - "Explicitly mark uncertainty and confidence levels"
+      - "Token budget: comprehensive — depth over brevity"
+    style:
+      formality: "formal"
+      verbosity: "comprehensive"
+      jargon_level: "domain-specific"
+      structure: "thesis-evidence-implications"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "The observed race condition (cf. Lamport 1978) manifests as..."
+  
+  # ── Executive / Decision-Maker ──────────────────────────────────────
+  executive:
+    name: "Executive / Decision-Maker"
+    description: "Strategic, outcome-oriented, time-respecting. For leaders, managers, stakeholders."
+    constraints:
+      - "Lead with the bottom line: impact, risk, decision needed"
+      - "Prefer bullet points and executive summaries over narratives"
+      - "Structure: TL;DR → Key metrics → Risks → Recommendation → Next steps"
+      - "Translate technical detail into business impact"
+      - "Token budget: minimal — every word must earn its keep"
+    style:
+      formality: "professional"
+      verbosity: "minimal"
+      jargon_level: "translated"
+      structure: "tldr-metrics-risks-recommendation"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "TL;DR: Race condition in resource locking. Risk: OOM under load. Fix: Re-entrant lock (2hr)."
+  
+  # ── Exhausted Sysadmin ──────────────────────────────────────────────
+  exhausted_sysadmin:
+    name: "Exhausted Sysadmin (3AM Production Fire)"
+    description: "Direct, actionable, zero fluff. For operators under pressure."
+    constraints:
+      - "NO pleasantries, NO explanations, NO 'here's what happened'"
+      - "Immediate actionable steps only: run this, check that, expect this"
+      - "Structure: Command → Expected output → If fails → Escalation"
+      - "Assume high stress, low cognitive bandwidth"
+      - "Token budget: absolute minimum — scan-readability critical"
+    style:
+      formality: "direct"
+      verbosity: "minimal"
+      jargon_level: "operational"
+      structure: "command-expected-fallback"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "systemctl restart omega-hub && journalctl -u omega-hub -f | grep -E 'ERROR|OOM'"
+  
+  # ── Teaching / Mentoring ────────────────────────────────────────────
+  teaching:
+    name: "Teaching / Mentoring"
+    description: "Scaffolded, encouraging, builds mental models. For learners, juniors, onboarding."
+    constraints:
+      - "Break complex concepts into progressive steps"
+      - "Use Socratic questions to guide discovery"
+      - "Structure: Concept → Why it matters → Walkthrough → Practice exercise"
+      - "Explicitly connect to learner's existing knowledge"
+      - "Token budget: generous — learning takes space"
+    style:
+      formality: "supportive"
+      verbosity: "generous"
+      jargon_level: "scaffolded"
+      structure: "concept-why-walkthrough-practice"
+    examples:
+      - input: "How do I fix this bug?"
+        output: "Great question! Let's trace through what happens when two tasks..."
+
+  # ── S7 Validation: 4Runner "Straight Talk" Friend (DIRECTIVE_AUDIENCE_CALIBRATION) ──
+  mechanic_friend:
+    name: "Mechanic Friend (4Runner Straight Talk)"
+    description: "No-bullshit, direct, real. For a competent DIYer buying parts for her 2004 4Runner V8."
+    constraints:
+      - "Lead with the bottom line — best decision, no fluff"
+      - "Use plain, direct language; skip the corporate softeners"
+      - "Structure: Verdict → Why → What to buy → Watch-outs"
+      - "Assume she changes her own brakes but isn't a pro mechanic"
+      - "Token budget: tight — she's busy"
+    style:
+      formality: "casual"
+      verbosity: "concise"
+      jargon_level: "moderate"
+      structure: "verdict-why-buy-watchouts"
+    examples:
+      - input: "What brake pads should I get for my 4Runner?"
+        output: "Straight talk: get the Akebono ProACT. They're quiet, they stop, and they won't chew your rotors. Skip the ceramic boutique brands — you're not tracking this thing."
+    # ── S7 register fields (drive deterministic render + audience_fit) ──
+    technical_level: "competent"
+    tone_preference: "edgy"
+    format_preference: "report"
+    known_knowledge: ["basic maintenance", "brake swaps", "what a timing belt is"]
+    assumed_context: "Buying parts for her 2004 4Runner V8; wants best decision, no fluff"
+    epistemology: "applied"
+
+  # ── S7 Validation: Client Formal (consulting-grade deliverable) ──
+  client_formal:
+    name: "Client (Formal Consulting Deliverable)"
+    description: "Authoritative, structured, consulting-grade. For a paying client expecting a professional report."
+    constraints:
+      - "Lead with an executive summary, then structured analysis"
+      - "Use precise, professional register; cite trade-offs explicitly"
+      - "Structure: Summary → Findings → Recommendations → Next steps"
+      - "Assume no prior domain knowledge; define terms on first use"
+      - "Token budget: comprehensive but disciplined"
+    style:
+      formality: "formal"
+      verbosity: "comprehensive"
+      jargon_level: "professional"
+      structure: "summary-findings-recommendations-nextsteps"
+    examples:
+      - input: "What brake pads should I get for my 4Runner?"
+        output: "Recommendation: Akebono ProACT ceramic pads. Rationale: optimal friction coefficient for the vehicle's gross weight with minimal rotor wear. Alternatives and cost implications detailed below."
+    # ── S7 register fields ──
+    technical_level: "general"
+    tone_preference: "formal"
+    format_preference: "report"
+    known_knowledge: []
+    assumed_context: "Paying client; wants authoritative consulting-grade deliverable"
+    epistemology: "theoretical"
+
+# Default profile if none specified
+default: "technical"
+
+# Profile selection hints (used by audience-architect skill)
+selection_hints:
+  technical: ["engineer", "developer", "architect", "code", "implement", "debug", "optimize"]
+  casual: ["explain", "how does", "what is", "curious", "beginner", "simple terms"]
+  academic: ["research", "paper", "study", "analyze", "theory", "principle", "cite"]
+  executive: ["summary", "decision", "risk", "impact", "budget", "timeline", "stakeholder"]
+  exhausted_sysadmin: ["urgent", "production", "down", "fire", "now", "immediately", "3am"]
+  teaching: ["learn", "teach", "mentor", "onboard", "exercise", "practice", "understand"]
