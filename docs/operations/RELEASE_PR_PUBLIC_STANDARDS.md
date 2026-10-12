@@ -575,6 +575,52 @@ must come from a gate run on a clean checkout.
 > A tag message is a permanent public claim. Every line in it should be a number
 > that was measured on that exact tree.
 
+### 6.5 Determinism: a result must not depend on what else ran
+
+> **This section exists because of a live defect, not a hypothetical.**
+
+Two `ci.yml` matrix legs run **identical steps on the same commit**. They
+disagreed: 3.12 `success`, 3.13 `failure`. The cause was
+`tests/test_search_tools.py::test_cache_growth`, which asserted that the
+ambient, gitignored `.firecrawl/` directory existed. That directory is only ever
+created as a **side effect** of some other test exercising the cache, so under
+`pytest-randomly` the verdict depended on ordering. Same code, same commit,
+different seed, opposite answers — and nothing in the output said "flake".
+
+| Rule | Level |
+|:--|:--|
+| CI runs pytest with `-p no:randomly` (matches `Makefile:547,566,780`) | **CI-REQUIRED** |
+| A test must not assert on gitignored or untracked filesystem state | **RECOMMENDED** — see G26 |
+| A test that needs a directory must create it (`tmp_path`), not assume it | **RECOMMENDED** |
+| Two matrix legs must never disagree on the same commit | **CI-REQUIRED** by discipline |
+
+The repo already wrote this principle down — *"with xdist the visible subset
+varies per run, so a red result could not be told apart from a flake, and 'flaky'
+would become a verdict rather than a diagnosis"* (`Makefile:526-531`) — and then
+did not apply it to the full CI suite. The rule was right; the coverage was not.
+
+### 6.6 No gate may fail invisibly
+
+A workflow triggered only by `cron`/`workflow_dispatch` never runs when code
+changes, so its failures stay unseen until a human happens to look.
+
+Two were, on this repo, for months:
+
+| Workflow | Invisible failure |
+|:--|:--|
+| `sote.yml` | `pip install -r requirements.txt` — this repo has never had a requirements file. Red **every week** since creation. |
+| `codex-refresh.yml` | A missing `fi` in its shell block — `syntax error: unexpected end of file`. Red **every day** since creation. |
+
+| Rule | Level |
+|:--|:--|
+| Every workflow triggers on push/PR, **or** is declared scheduled-only with a stated reason | **CI-REQUIRED** — `make check-workflow-triggers` |
+| Declared scheduled-only workflows list their accepted risk | **CI-REQUIRED** |
+
+Enforced by `scripts/check_workflow_trigger_coverage.py`, wired into `temple-grade`.
+It is a *structural* check: it cannot tell you a scheduled run is red today, only
+that a workflow is **capable** of being red unseen. That residual risk is declared
+in the allowlist, not hidden.
+
 ---
 
 ## 7. CI and workflow standards
@@ -795,7 +841,10 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G20 | No automated config-path sweep; startup-read config not enumerated | Wheel ships without a config it needs | @makali | OPEN |
 | G21 | No waiver-expiry enforcement; waivers are human-enforced only | Expired waiver silently persists | @verity | OPEN |
 | G22 | TruffleHog is PR-only (`secrets.yml:92`); push events run without it | Fail-open secret path on push | @verity | OPEN |
-| G24 | Two checks red on `main` (`test-and-lint (3.13)` missing `.firecrawl/`; `SOTE` stale `requirements.txt`) | Required status checks cannot be enabled | @maat | OPEN |
+| G24 | ~~Two checks red on `main`~~ — **RESOLVED (2026-10-12):** `test-and-lint` order-dependence fixed; `sote.yml` install fixed | — | — | **CLOSED** (§6.5) |
+| G25 | No guard against workflows that can only fail invisibly | A red scheduled workflow goes unseen indefinitely | @makali | **CLOSED** (§6.6) |
+| G26 | Tests may assert on gitignored/untracked runtime state | Verdict depends on test ordering; flakiness mistaken for a result | @verity | OPEN (guard would be noisy; see §6.5) |
+| G27 | `sote.yml` / `codex-refresh.yml` push directly to `main` with `contents: write` | Breaks when required PRs/checks are enabled | @makali | OPEN |
 
 ### 11.1 Decisions requiring the Architect
 

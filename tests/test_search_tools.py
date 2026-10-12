@@ -61,19 +61,37 @@ def test_websearch_baseline():
     assert res.returncode == 0, "Outbound network connectivity failed"
     assert "200" in res.stdout or "301" in res.stdout or "302" in res.stdout
 
-def test_cache_growth():
+def test_cache_growth(tmp_path):
     """
-    Verify .firecrawl/ cache directory exists and is being populated.
+    SovereignCache round-trips a search result through its cache directory.
+
+    HISTORY (why this was rewritten): this test used to assert that the
+    ambient repo-relative `.firecrawl/` directory existed. That directory is
+    gitignored, is untracked, and is only ever created as a *side effect* of
+    some other test exercising the cache. Under `pytest-randomly` the verdict
+    therefore depended on test ordering: two identical CI matrix legs on the
+    same commit disagreed (3.12 passed, 3.13 failed) purely from a seed
+    difference. A test whose result depends on what else ran is not a test.
+
+    This version drives the real cache API against a tmp_path, so it is
+    self-contained, order-independent, and actually asserts behaviour.
     """
-    cache_dir = Path(".firecrawl")
-    assert cache_dir.exists(), ".firecrawl/ cache directory missing"
-    assert cache_dir.is_dir(), ".firecrawl/ is not a directory"
-    
-    # Check if there are any markdown files in the cache
-    files = list(cache_dir.glob("*.md"))
-    # We don't fail if empty (new install), but we log it.
-    if not files:
-        print("\n[WARN] .firecrawl/ cache is currently empty.")
+    from omega.oracle.search_cache import SovereignCache
+
+    cache_dir = tmp_path / ".firecrawl"
+    cache = SovereignCache(cache_dir=str(cache_dir), ttl_seconds=60)
+
+    assert cache_dir.is_dir(), "SovereignCache did not create its cache directory"
+    assert cache.get("missing-query", "entity") is None, "empty cache returned a value"
+
+    assert cache.set("q1", "entity", "cached answer") is True
+    assert cache.get("q1", "entity") == "cached answer", "cache did not round-trip"
+
+    # A different query is a different key.
+    assert cache.get("q2", "entity") is None
+
+    assert cache.clear() >= 1, "clear() removed nothing"
+    assert cache.get("q1", "entity") is None, "entry survived clear()"
 
 @pytest.mark.anyio
 async def test_credit_exhaustion_handling():

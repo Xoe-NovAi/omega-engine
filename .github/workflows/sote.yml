@@ -45,8 +45,13 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install pyyaml jsonschema
+          # [G24] Was `pip install -r requirements.txt`. This repo has never
+          # had a requirements file — dependencies are declared in
+          # pyproject.toml (M24 venv sovereignty). The step had been failing
+          # on every scheduled run since this workflow was created, and nobody
+          # saw it because sote.yml only runs on cron + manual dispatch
+          # (see the triggers note below).
+          pip install -e ".[cli,dev]"
       
       - name: Determine SOTE week
         id: week

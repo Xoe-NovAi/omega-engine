@@ -73,7 +73,18 @@ jobs:
       env:
         OMEGA_ENV: test
       run: |
-        pytest tests/ -v
+        # [DETERMINISM] -p no:randomly is mandatory here, matching the
+        # Makefile's stated principle (Makefile:526-531): with random ordering
+        # a red result cannot be told apart from a flake, and "flaky" becomes a
+        # verdict instead of a diagnosis. This suite must be either green or
+        # honestly red, every time.
+        #
+        # Evidence this was a live defect: the 3.12 and 3.13 matrix legs run
+        # IDENTICAL steps on the same commit, yet disagreed (3.12 success,
+        # 3.13 failure) because a test's verdict depended on whether an
+        # unrelated test had already created a gitignored directory. See
+        # tests/test_search_tools.py::test_cache_growth history.
+        pytest tests/ -v -p no:randomly
 
     - name: Omega Doc Lint
       run: |
