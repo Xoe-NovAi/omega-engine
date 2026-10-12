@@ -197,12 +197,43 @@ break the release process. Only `main` is protected.
 Both must be fixed before required status checks can be enabled, otherwise the
 branch becomes un-mergeable the moment protection requires them.
 
-### 9.3 Fallback for tag immutability
+### 9.3 Tag immutability — ruleset + immutable releases (enabled 2026-10-12)
 
-GitHub immutable releases are unavailable here (§9.1). Until they exist, tag
-immutability (§4.1) rests on: branch protection preventing accidental rewrites of
-`main`, the operational rules in §4.1, and the peel assertion in §10.3. This is a
-**compensating control, not enforcement** — say so when reporting release status.
+Two independent controls, **both verified by real rejected pushes**:
+
+| Control | State | Verification |
+|:--|:--|:--|
+| **Immutable releases** | ✅ `enabled: true` | `GET /repos/{owner}/{repo}/immutable-releases` |
+| **Tag ruleset** `protect-release-tags` | ✅ active, `refs/tags/v*` | force-move → *push declined due to repository rule violations* |
+| Tag deletion blocked | ✅ | delete → *push declined* |
+| **No bypass actors** | ✅ `bypass_actors: []` | admin force-move rejected with no bypass |
+
+> **Correction (was wrong, now fixed).** An earlier revision of this document
+> recorded immutable releases as *unavailable (API 404)*. That was a **typo in the
+> endpoint path** — `immutable_releases` (underscore) instead of
+> `immutable-releases` (hyphen). The feature is GA (2025-10-28) and works on this
+> repo. The 404 was mine, not GitHub's. Do not accept a 404 from a path you have
+> not cross-checked against the documented endpoint.
+
+**Rulesets, not classic protection, for tags.** Classic branch protection has no
+tag target at all. Rulesets layer alongside it — all applicable rules are
+enforced — so the §9.1 branch protection remains in place and is not wasted.
+
+Rules use `{"type": "<rule>"}` objects, **not** bare keys:
+```json
+"rules": [ { "type": "deletion" }, { "type": "update" } ]
+```
+
+**Recovery path** (deliberate, logged, reversible — required if a tag is ever
+wrong): set the ruleset `enforcement: disabled` → delete/move the tag → restore
+`enforcement: active`. Verified end-to-end during setup.
+
+**Why no bypass actor.** A bypass actor gives an admin an escape hatch, but the
+maintainer is also the person most likely to move a tag by accident. During setup
+the first ruleset *did* grant admin `bypass_mode: always` and a test force-move
+succeeded. Protection that the only possible actor can trivially bypass is
+protection against nobody. Bypass is a multi-maintainer tool; a solo repo should
+use the disable/re-enable recovery path instead.
 
 ### 2.4 AI disclosure
 
@@ -329,10 +360,10 @@ Two rules prevent recurrence:
 2. Assert the peel equals that SHA **before** pushing, and re-assert via
    `git ls-remote` **after** pushing.
 
-> Git does not technically forbid `git tag -f`. Immutability here is an
-> operational rule backed by GitHub's *immutable releases* setting, which must be
-> enabled at the repository level. Until it is enabled, immutability depends on
-> everyone following §4.1. See §11.
+> Git does not technically forbid `git tag -f`. **This repo does** — an active
+> tag ruleset blocks tag updates and deletions, and immutable releases are on
+> (§9.3). Both were verified by real rejected pushes, not by reading settings.
+> Recovery is deliberate: disable the ruleset, fix, re-enable.
 
 ### 4.2 Versioning
 
@@ -747,7 +778,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G4 | Duplicate secret-scan workflows | Drift; patched in one file only | @verity | OPEN |
 | G5 | Duplicate Python CI workflows (`ci.yml` / `test.yml`) | Drift in flags and ordering | @maat | OPEN |
 | G6 | REUSE RED on `main`; waiver expires next cut or 2027-01-01 | Next release blocked or needs a second waiver | @maat | OPEN |
-| G7 | No tag-immutability / peel / sync gate | Moved-tag class recurs | @makali | OPEN |
+| G7 | No tag-immutability gate | Moved-tag class recurs | @makali | **CLOSED** (§9.3 ruleset + immutable releases) |
 | G8 | Changelog empty-notes fallback permitted | Release ships without notes | @makali | OPEN |
 | G9 | No version-vs-tag-vs-CHANGELOG consistency check | Version drift | @makali | OPEN |
 | G10 | No wheel-content / packaging-drift gate | Future packager broadens `package-data` | @makali | OPEN |
@@ -757,7 +788,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G14 | Glob-translator quirks pinned by fuzz parity | A "fix" silently rewrites the boundary | @maat | OPEN |
 | G15 | `main` not branch-protected; no required reviews | Unenforced approvals | **Architect** | **PARTIAL** — force-push/deletion/conversation locked (§9.1); reviews + status checks open |
 | G16 | Unified checklists | — | — | **CLOSED** (§10) |
-| G23 | GitHub immutable releases unavailable (API 404) | Tag immutability has no server-side enforcement | **Architect** | OPEN |
+| G23 | ~~Immutable releases unavailable~~ — **RESOLVED (2026-10-12):** the earlier 404 was a typo'd endpoint (`immutable_releases`). Immutable releases **enabled**; tag ruleset `protect-release-tags` active on `refs/tags/v*` with no bypass actors (§9.3) | — | — | **CLOSED** |
 | G17 | `scripts/check_mandate_compliance.py` enumerates M1…M27 of 30 | M28/M29/M30 unchecked | @verity | OPEN |
 | G18 | `SOVEREIGN_MANDATES.md` §28/29/30 inline tags disagree with section numbers (violates D-609) | Citations resolve to the wrong law | @verity | OPEN |
 | G19 | No commit-lint; no PR-template completeness gate; branch-target conflict between `CONTRIBUTING.md` and workflows | Contributors guess the process | @maat | OPEN |
@@ -774,7 +805,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | D2 | M26 scope — widen `doc-llm-validate` or narrow the mandate |
 | D3 | Whether `temple-grade` absorbs secrets + REUSE, or they stay separate with explicit waivers |
 | D4 | REUSE backfill owner, sprint, and done-date before waiver expiry |
-| D5 | ~~Enable GitHub branch protection (required reviews + required checks) and immutable releases~~ — **PARTIAL (2026-10-12):** force-push, deletion, admin enforcement, and conversation resolution enabled on `main` and verified. Immutable releases unavailable (404). Required reviews deferred (solo maintainer). Required status checks deferred pending G24. |
+| D5 | ~~Enable GitHub branch protection (required reviews + required checks) and immutable releases~~ — **DONE (2026-10-12):** `main` protected (force-push, deletion, admins, conversations) and verified by real rejected pushes (§9.1). **Immutable releases enabled + tag ruleset active, no bypass actors (§9.3).** Required reviews deferred (solo maintainer); required status checks deferred pending G24. |
 | D6 | LAN posture — rebind tailnet services to loopback, or record reviewed justification per bind |
 | D7 | Public `main` history posture (deferred by standing decision §1.4) |
 
