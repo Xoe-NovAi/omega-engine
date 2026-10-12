@@ -161,8 +161,48 @@ required form.
 > reading `docs/operations/REUSE_WAIVER_DEBUT_20261003.md`. Treat this as an
 > open compliance gap (G6), not as a satisfied gate.
 
-> **Gap (G15):** `main` is **not branch-protected**. Approval counts and required
-> checks are therefore advisory today. See §9 and §11.
+> **Gap (G15):** `main` is now **protected** (enabled 2026-10-12, see §9.1) against
+> force-push, deletion, and unresolved conversations — verified by real push
+> attempts, not by reading settings. Still open: required reviews and required
+> status checks, both deferred because this is a **solo-maintainer repository**
+> (`Xoe-NovAi` is the only collaborator) and two checks are already red on
+> `main`. See §11.
+
+### 9.1 Branch protection — as actually enabled (2026-10-12)
+
+Enabled on `main` via the GitHub API and **empirically verified**, not assumed:
+
+| Control | State | How verified |
+|:--|:--|:--|
+| Force-push blocked | ✅ `allow_force_pushes: false` | Real rewind push → `GH006: Cannot force-push to this branch` |
+| Branch deletion blocked | ✅ `allow_deletions: false` | Real delete push → `Cannot delete this branch` |
+| Admins bound by the above | ✅ `enforce_admins: true` | Same probe run as the admin (sole collaborator) |
+| Unresolved conversations block merge | ✅ enabled | API state |
+| Normal fast-forward push | ✅ still works | Real push `b2451e9d..5a4c263a` succeeded |
+| Required pull-request reviews | ❌ **not enabled** | Would deadlock a solo maintainer |
+| Required status checks | ❌ **not enabled** | Two checks are red on `main` (below) |
+| Immutable releases | ❌ **unavailable** | API returns 404; not enabled for this account |
+
+**Do not enable force-push protection on `release/debut`.** That branch is
+force-pushed on every cut by design (`--force-with-lease`). Protecting it would
+break the release process. Only `main` is protected.
+
+### 9.2 Known red checks on `main` (block required status checks)
+
+| Check | Failure | Cause |
+|:--|:--|:--|
+| `test-and-lint (3.13)` | `assert cache_dir.exists(), ".firecrawl/ cache directory missing"` | Environment gap: this workflow does not create `.firecrawl/` the way `test.yml` does. Not a product bug. |
+| `SOTE Mechanical Pipeline` | `Could not open requirements file: requirements.txt` | Stale workflow; dependencies moved to `pyproject.toml`. |
+
+Both must be fixed before required status checks can be enabled, otherwise the
+branch becomes un-mergeable the moment protection requires them.
+
+### 9.3 Fallback for tag immutability
+
+GitHub immutable releases are unavailable here (§9.1). Until they exist, tag
+immutability (§4.1) rests on: branch protection preventing accidental rewrites of
+`main`, the operational rules in §4.1, and the peel assertion in §10.3. This is a
+**compensating control, not enforcement** — say so when reporting release status.
 
 ### 2.4 AI disclosure
 
@@ -715,14 +755,16 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G12 | M26 scope mismatch (`doc-llm-validate` scope) | M26 unenforceable as written | @scribe | OPEN |
 | G13 | D-628: 13 `[CUT-]` entries parsed as KEEP | Sensitive-adjacent files ship | **Architect** | OPEN |
 | G14 | Glob-translator quirks pinned by fuzz parity | A "fix" silently rewrites the boundary | @maat | OPEN |
-| G15 | `main` not branch-protected; no required reviews | Unenforced approvals | **Architect** | OPEN |
+| G15 | `main` not branch-protected; no required reviews | Unenforced approvals | **Architect** | **PARTIAL** — force-push/deletion/conversation locked (§9.1); reviews + status checks open |
 | G16 | Unified checklists | — | — | **CLOSED** (§10) |
+| G23 | GitHub immutable releases unavailable (API 404) | Tag immutability has no server-side enforcement | **Architect** | OPEN |
 | G17 | `scripts/check_mandate_compliance.py` enumerates M1…M27 of 30 | M28/M29/M30 unchecked | @verity | OPEN |
 | G18 | `SOVEREIGN_MANDATES.md` §28/29/30 inline tags disagree with section numbers (violates D-609) | Citations resolve to the wrong law | @verity | OPEN |
 | G19 | No commit-lint; no PR-template completeness gate; branch-target conflict between `CONTRIBUTING.md` and workflows | Contributors guess the process | @maat | OPEN |
 | G20 | No automated config-path sweep; startup-read config not enumerated | Wheel ships without a config it needs | @makali | OPEN |
 | G21 | No waiver-expiry enforcement; waivers are human-enforced only | Expired waiver silently persists | @verity | OPEN |
 | G22 | TruffleHog is PR-only (`secrets.yml:92`); push events run without it | Fail-open secret path on push | @verity | OPEN |
+| G24 | Two checks red on `main` (`test-and-lint (3.13)` missing `.firecrawl/`; `SOTE` stale `requirements.txt`) | Required status checks cannot be enabled | @maat | OPEN |
 
 ### 11.1 Decisions requiring the Architect
 
@@ -732,7 +774,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | D2 | M26 scope — widen `doc-llm-validate` or narrow the mandate |
 | D3 | Whether `temple-grade` absorbs secrets + REUSE, or they stay separate with explicit waivers |
 | D4 | REUSE backfill owner, sprint, and done-date before waiver expiry |
-| D5 | Enable GitHub branch protection (required reviews + required checks) and immutable releases |
+| D5 | ~~Enable GitHub branch protection (required reviews + required checks) and immutable releases~~ — **PARTIAL (2026-10-12):** force-push, deletion, admin enforcement, and conversation resolution enabled on `main` and verified. Immutable releases unavailable (404). Required reviews deferred (solo maintainer). Required status checks deferred pending G24. |
 | D6 | LAN posture — rebind tailnet services to loopback, or record reviewed justification per bind |
 | D7 | Public `main` history posture (deferred by standing decision §1.4) |
 
