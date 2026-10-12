@@ -313,6 +313,21 @@ path = "docs/federation/node1_received/**"
 SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
 
+# ── Federation artifacts (received from Node 1, PR #4) ──────────────────────
+# data/federation/ holds handoff artifacts, quarantine, usb-payload, etc.
+# These are Omega Engine artifacts (Apache-2.0) but lack inline SPDX headers.
+# Annotated here rather than editing 100+ upstream files.
+[[annotations]]
+path = "data/federation/**"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── USB payload archive (binary, cannot carry inline headers) ───────────────
+[[annotations]]
+path = "data/federation/usb-payload.zip"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"
+
 # ── Deprecated agent archives (PR #4) ─────────────────────────────────────
 # Two retired Nemotron-3.5 planning docs. The `.deprecated` suffix means the
 # `docs/**/*.md` glob does not match them.
