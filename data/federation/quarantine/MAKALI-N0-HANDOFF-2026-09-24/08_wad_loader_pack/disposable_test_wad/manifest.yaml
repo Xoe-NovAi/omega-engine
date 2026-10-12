@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# Disposable WAD only. No personal or production entity data.
+name: n0_disposable_test
+version: 1.0.0
+type: pwad
+entities: []
+adapters: {}
+hierarchy: hierarchy.yaml

@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+test_override_entity:
+  rank: 3
+  role: "test_override"

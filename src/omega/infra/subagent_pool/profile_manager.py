@@ -27,6 +27,8 @@ from typing import Any, Optional
 
 import yaml
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 from .models import Account, PoolType
 
 logger = logging.getLogger(__name__)
@@ -197,7 +199,7 @@ class ProfileManager:
         templates_dir: Optional[Path] = None,
     ):
         self.profiles_dir = profiles_dir or Path("data/state/subagent_pool/profiles")
-        self.templates_dir = templates_dir or Path("config/subagent_pool/templates")
+        self.templates_dir = templates_dir or CONFIG_DIR / "subagent_pool" / "templates"
         self._profile_cache: dict[str, AgentProfile] = {}
         self._lock = anyio.Lock()
 

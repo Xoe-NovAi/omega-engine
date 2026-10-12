@@ -144,7 +144,7 @@ def _load_search_config() -> Dict[str, Any]:
             with open(_CONFIG_PATH) as f:
                 return yaml.safe_load(f) or {}
         else:
-            logger.warning("config/search.yaml not found, using defaults")
+            logger.warning(f"{CONFIG_DIR / 'search.yaml'} not found, using defaults")
             return {}
     except (OmegaError, RuntimeError, OSError) as e:
         logger.warning(f"Failed to load config/search.yaml: {e}")

@@ -39,6 +39,8 @@ from typing import Optional
 
 import httpx
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +49,7 @@ logger = logging.getLogger(__name__)
 # CONFIGURATION
 # ============================================================================
 
-DB_PATH = Path("config/model_registry/index.sqlite")
+DB_PATH = CONFIG_DIR / "model_registry" / "index.sqlite"
 HF_API_BASE = "https://huggingface.co/api"
 AA_API_BASE = "https://artificialanalysis.ai/api/v2/language"
 
