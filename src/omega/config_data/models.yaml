@@ -1,0 +1,131 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Model configurations with context budgets
+# [N3] Paths use env:OMEGA_MODELS_DIR prefix. In CI/test without the var,
+# resolve_path() returns the relative path — still ends with .gguf for assertions.
+models:
+  qwen3-1.7b:
+    context_budget: 15000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+    size_gb: 1.6
+    ram_mb: 2048
+    context_window: 8192
+    role: "S1-S10 slots, fast inference"
+    # Sampling parameters (model-level defaults, overrideable per-request)
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  qwen3-1.7b-q6_k:
+    context_budget: 15000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+    size_gb: 1.6
+    ram_mb: 2048
+    context_window: 8192
+    role: "Q6_K quant variant of Qwen3-1.7B"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  qwen3-4b:
+    context_budget: 20000
+    provider: ollama
+    role: "Ma'at/Lilith synthesis"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  qwen3-4b-thinking:
+    context_budget: 20000
+    context_window: 32768
+    provider: ollama
+    role: "D-585 executor — reasoning-heavy execution (registered 2026-08-22, DR-7 fix)"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  frontier:
+    context_budget: 30000
+    provider: google
+    role: "Kali Grand Oversoul, complex synthesis"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  mimo-7b-rl-q4_k_m:
+    context_budget: 25000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/MiMo-7B-RL-Q4_K_M.gguf
+    size_gb: 4.7
+    ram_mb: 6144
+    context_window: 32768
+    role: "MiMo 7B RL - strong reasoning/coding, 32K context"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  rocracoon-3b-q4_k_m:
+    context_budget: 20000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/RocRacoon-3b.Q4_K_M.gguf
+    size_gb: 2.4
+    ram_mb: 3072
+    context_window: 8192
+    role: "RocRacoon 3B - mining/distillation worker, fast local"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  rocracoon-3b-q5_k_m:
+    context_budget: 20000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/RocRacoon-3b.Q5_K_M.gguf
+    size_gb: 2.8
+    ram_mb: 3584
+    context_window: 8192
+    role: "RocRacoon 3B Q5_K_M - higher quality worker"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+
+# S4: Gemma 4 MTP Speculative Decoding
+# [id-soft: gemma-4-mtp-s4] MTP draft pair config for speculative decoding
+speculative_decode:
+  gemma4_mtp:
+    enabled: true
+    draft_type: mtp
+    server_flag: "--spec-type draft-mtp"
+    pairs:
+      gemma-4-26b-a4b-it: gemma-4-26b-a4b-it-assistant
+
+# ── Sovereign Sampling Layer: Per-Model Stability Overrides ──────────────
+# [M2 Firewall] Moved out of model_gateway.py's generate() hot path.
+# Any model can get safety/stability floors here without touching code.
+# `match: substring` checks if `key` appears anywhere in the requested
+# model_name (case-insensitive). `match: exact` requires full equality.
+sampling_overrides:
+  gemma-4-31b:
+    match: substring
+    min_temperature: 0.85
+    min_repetition_penalty: 1.2
+    forced_logit_bias:
+      759: -10.0        # ' la'
+      2149: -10.0       # 'la-'
+      236772: -10.0     # 'la-' (variant)
+    reason: >
+      Eliminates repetition-loop failure mode documented in
+      COGNITIVE_STABILITY_PLAN.md. Verified token IDs — do not
+      renumber without re-verifying against the model's tokenizer.

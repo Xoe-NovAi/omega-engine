@@ -1,0 +1,459 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+version: 1.3.1
+generated_at: '2026-08-07'
+source: config/model_registry
+strategy: local_first
+
+# ── Sovereignty Policy (Synergy Model) ─────────────────────────────
+# Spec: docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md
+# Ratified: 2026-09-16 — Sovereignty is Policy Enforcement, not isolation.
+sovereignty_policy:
+  mode: synergy  # "synergy" | "local_first" | "cloud_first"
+
+  tiers:
+    reasoning:
+      primary: opencode-zen
+      fallback: [openrouter, anthropic, native-gguf]
+      allowed_data_classification: [PUBLIC, INTERNAL]
+      description: "High-order synthesis, architecture, dialectics — frontier cloud"
+
+    embeddings:
+      primary: native-local
+      model: bge-m3-q8
+      fallback: [ollama-local]
+      allowed_data_classification: [PUBLIC, INTERNAL, PRIVATE, SOVEREIGN]
+      description: "Vector embeddings — local, zero egress"
+
+    background_watchdogs:
+      primary: ollama-local
+      model: qwen2.5-coder:7b
+      fallback: [native-gguf]
+      allowed_data_classification: [PUBLIC, INTERNAL, PRIVATE]
+      description: "Heartbeats, health checks, background loops — local"
+
+    vault_ops:
+      primary: native-local
+      model: qwen3-1.7b
+      fallback: []
+      allowed_data_classification: [PRIVATE, SOVEREIGN]
+      description: "Credential routing, PII sanitization — local ONLY, no fallback"
+
+# ── Entity Intent Layer (maakali_routing) ──────────────────────────
+# Routing matches TASK to the most appropriately capable MODEL among
+# available providers. It is not about the provider itself.
+#
+# Entities are organized by DOMAIN, not provider. Every entity is a
+# persistent agent stored on the local machine and may use ANY provider
+# (local or cloud) via the synergy router below.
+# This table sets DEFAULT ROUTES only: the tier selects the provider
+# fabric for a call via sovereignty_policy.tiers. It never defines what
+# the entity is. Per-call overrides via provider_override (rare, explicit)
+# and per-entity fallback_tier always apply.
+# Ratified: 2026-09-16 — entity-based routing PRESERVED (sometimes
+# the appropriate agent IS a specific entity).
+maakali_routing:
+  kali:
+    tier: reasoning            # Synthesis, architecture → cloud frontier
+    fallback_tier: local       # Degrade to local if cloud unavailable
+  maat:
+    tier: reasoning            # Build governance, code review → cloud frontier
+    fallback_tier: local
+  lilith:
+    tier: background_watchdogs # Runtime metabolism, heartbeats → local
+    fallback_tier: reasoning   # Escalate to cloud if local overwhelmed
+  carmack:
+    tier: reasoning
+    fallback_tier: local
+  researcher:
+    tier: reasoning
+    fallback_tier: local
+  roc_racoon:
+    tier: background_watchdogs
+    fallback_tier: reasoning
+  jem:
+    tier: reasoning
+    fallback_tier: local
+  grokster:
+    tier: reasoning
+    fallback_tier: local
+  verity:
+    tier: reasoning
+    fallback_tier: local
+  scribe:
+    tier: background_watchdogs
+    fallback_tier: local
+
+# GLOSSARY NOTE: "tier" collision — three distinct axes share this word:
+#   1. Hierarchy rank (S1–S10 slots in dispatch.yaml)
+#   2. Routing tier (reasoning/embeddings/background_watchdogs/vault_ops here)
+#   3. Soul-section order (L1→L2→L3 distillation)
+# These are orthogonal. Context disambiguates. No rename pre-PR (breaking change).
+    fallback_tier: local
+  doom_guy:
+    tier: reasoning
+    fallback_tier: local
+
+# Dynamic Fallback Resolver Configuration
+# Replaces hardcoded fallback_provider with model-aware resolution
+fallback_resolver:
+  enabled: true
+  strategy: "model_aware"  # "model_aware" | "priority_chain" | "static"
+  cvars:
+    # Per-provider fallback chains (ordered by preference)
+    # Resolution: 1) same_model providers → 2) configured chain → 3) same_family → 4) native-gguff
+    opencode-zen:
+      - openrouter          # Same models often available (Nemotron, DeepSeek, etc.)
+      - anthropic           # Claude models
+      - google-compat       # Gemini models
+      - native-gguf         # Last resort
+    openrouter:
+      - opencode-zen
+      - cline               # DeepSeek V4 Flash, MiMo
+      - anthropic
+      - google-compat
+      - native-gguf
+    google:
+      - google-compat       # Same models, different endpoint
+      - openrouter
+      - native-gguf
+    google-compat:
+      - google
+      - openrouter
+      - native-gguf
+    anthropic:
+      - openrouter
+      - opencode-zen
+      - native-gguf
+    xai:
+      - openrouter
+      - native-gguf
+    cline:
+      - openrouter          # DeepSeek V4 Flash, MiMo
+      - opencode-zen
+      - native-gguf
+    antigravity:
+      - openrouter
+      - google              # G-1 fix 2026-08-28: add google for users without OR keys
+      - opencode-zen
+      - native-gguf
+
+inference:
+  fallback_chain:
+  - provider: native-gguf
+    priority: 0
+    enabled: true
+    description: Local GGUF inference via llama.cpp (highest priority - local-first)
+    is_cloud: false
+  - provider: lmster
+    priority: 1
+    enabled: false   # de-scoped: Ollama is the other local provider
+    description: LM Studio local server (OpenAI-compatible API)
+    is_cloud: false
+  - provider: ollama
+    priority: 2
+    enabled: true
+    description: Ollama local server (OpenAI-compatible API)
+    is_cloud: false
+  - provider: antigravity
+    priority: 3
+    enabled: true
+    description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
+      OpenAI)
+    is_cloud: true
+  - provider: google
+    priority: 4
+    enabled: true
+    description: Google AI Studio / Vertex AI - Google's own models only
+    is_cloud: true
+  - provider: openrouter
+    priority: 5
+    enabled: true
+    description: OpenRouter
+    is_cloud: true
+  - provider: opencode-zen
+    priority: 6
+    enabled: true
+    description: OpenCode Zen - CLI-exclusive cloud models
+    # M22 repair 2026-08-22: endpoint forensically extracted from ~/.opencode/bin/opencode
+    # binary provider registry ("api":"https://opencode.ai/zen/v1", @ai-sdk/openai-compatible).
+    # NOTE: _load_provider_fabric() passes ONLY this flat chain entry to the factory —
+    # the inference.providers: dicts are NOT read for base_url.
+    base_url: https://opencode.ai/zen/v1
+    # Credential via env var (resolved by model_gateway env: support, 2026-08-22).
+    # Export before engine-path zen calls: key lives in ~/.local/share/opencode/auth.json.
+    # Unset var = entry dropped cleanly (no garbage bearer token); call will 401 until set.
+    api_key: env:OPENCODE_API_KEY
+    is_cloud: true
+  - provider: cline
+    priority: 7
+    enabled: true
+    description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
+    # M22 repair 2026-08-22: endpoint per CLINE_PROVIDER_ACTIVATION_AUDIT_20260822.md
+    # (openai_compat.py:94 URL math -> https://api.cline.bot/api/v1/chat/completions).
+    base_url: https://api.cline.bot/api
+    # Credential via env var (resolved by _create_openrouter env: support).
+    api_key: env:CLINE_API_KEY
+    is_cloud: true
+  - provider: anthropic
+    priority: 8
+    enabled: true
+    description: Anthropic - Claude models (Sonnet, Haiku, Opus)
+    is_cloud: true
+  - provider: xai
+    priority: 9
+    enabled: true
+    description: xAI - Grok models
+    is_cloud: true
+  - provider: mock
+    priority: 10
+    enabled: false
+    description: Test mock provider for unit tests
+    is_cloud: false
+  - provider: google-compat
+    priority: 4
+    enabled: true
+    is_cloud: true
+    description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
+      support
+  providers:
+    native-gguf:
+      priority: 0
+      enabled: true
+      description: Local GGUF inference via llama.cpp (highest priority - local-first)
+      # v2.0.0 (2026-09-01, Grokster): Default model is now LFM2.5-2.6B (1.67GB Q4_K_M).
+      # LFM2.5-2.6B is open weights (lfm1.0), purpose-built for agentic tool use,
+      # and uses <2.5GB RAM. It replaces the previous Qwen3-1.7B default.
+      # To use Qwen3-1.7B instead, set OMEGA_NATIVE_GGUF_MODEL=Qwen3-1.7B-Q6_K.gguf
+      # in your environment. See data/coordination/R_RESEARCHER_NES_MODEL_SPECS_VNR_20260901.md
+      # for the full research justification.
+      model_path: env:OMEGA_NATIVE_GGUF_MODEL
+      n_threads: 4
+      max_concurrent: 1
+      numa: disable
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+      # v2.0.0: LFM2.5-2.6B is the new default model name
+      - lfm-2.5-2.6b-local
+    lmster:
+      priority: 1
+      enabled: false   # de-scoped (post-release update); Ollama is the other local provider
+      description: LM Studio local server (OpenAI-compatible API)
+      api_key: lm-studio
+      base_url: http://localhost:1234/v1
+      n_threads: 4
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+    ollama:
+      priority: 2
+      enabled: true
+      description: Ollama local server (OpenAI-compatible API)
+      api_key: ollama
+      base_url: http://localhost:11434/v1
+      n_threads: 4
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+    antigravity:
+      priority: 3
+      enabled: true
+      description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
+        OpenAI)
+      api_key: env:ANTIGRAVITY_API_KEY
+      base_url: https://api.antigravity.ai/v1
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 45000
+        total_timeout_ms: 600000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
+      supported_models:
+      - gemini-3.5-flash
+      - gemini-3.1-pro
+      - claude-sonnet-4.6
+      - claude-opus-4.6
+      - gpt-oss-120b
+    google:
+      priority: 4
+      enabled: true
+      description: Google AI Studio / Vertex AI - Google's own models only
+      api_key: env:GOOGLE_API_KEY
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - gemma-4-31b-it-free
+      - gemma-4-26b-a4b-it-free
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+    google-compat:
+      priority: 4
+      enabled: true
+      description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
+        support
+      api_key: env:GOOGLE_API_KEY
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - gemma-4-31b-it
+      - gemma-4-26b-it
+      - gemma-4-12b-unified
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+    openrouter:
+      priority: 5
+      enabled: true
+      description: OpenRouter free tier and paid models
+      api_key: env:OPENROUTER_API_KEY
+      base_url: https://openrouter.ai/api
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - google/gemma-4-31b-it:free
+      - google/gemma-4-26b-a4b-it:free
+      # deepseek/deepseek-v4-flash:free removed 2026-08-28: returns 404 "unavailable for free"
+      - minimax/minimax-m2.5:free
+      - nvidia/nemotron-3-super-120b-a12b:free
+      - qwen/qwen3-next-80b-a3b-instruct:free
+      # qwen/qwen3-coder:free removed 2026-08-28: returns 404 "unavailable for free"
+      - meta-llama/llama-3.3-70b-instruct:free
+      - meta-llama/llama-3.2-3b-instruct:free
+      - nousresearch/hermes-3-llama-3.1-405b:free
+      - openai/gpt-oss-120b:free
+      - openai/gpt-oss-20b:free
+      - arcee-ai/trinity-large-thinking:free
+      - poolside/laguna-m.1:free
+      - poolside/laguna-xs.2:free
+      - cognitivecomputations/dolphin-mistral-24b-venice-edition:free
+      - liquid/lfm-2.5-1.2b-instruct:free
+      - nvidia/nemotron-3-nano-30b-a3b:free
+      - nvidia/nemotron-nano-9b-v2:free
+      - nvidia/nemotron-nano-12b-v2-vl:free
+      - nvidia/nemotron-3-nano-omni-30b-a3b:free
+      - z-ai/glm-4.5-air:free
+      - openrouter/free
+      - openrouter/owl-alpha
+      - baidu/cobuddy:free
+    opencode-zen:
+      priority: 6
+      enabled: true
+      description: OpenCode Zen - CLI-exclusive cloud models
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - claude-sonnet-5-high-thinking
+      - claude-haiku-4.5-extended
+      - claude-opus-4.8
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+      - grok-4.3-web
+      - grok-4.1-fast-web
+      - deepseek-v4-flash-free
+      - qwen3.6-plus-free
+      - minimax-m2.5-free
+      - ring-2.6-1t-free
+      - trinity-large-preview-free
+      - nemotron-3-super-free
+      - big-pickle
+      - gpt-5-nano
+      - gpt-5-codex
+      - claude-sonnet-4-6
+      - claude-opus-4-6
+      - glm-5.1
+      - kimi-k2.6
+    cline:
+      priority: 7
+      enabled: true
+      description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 60000
+        total_timeout_ms: 600000
+        fallback_on_timeout: true
+      supported_models:
+      - deepseek-v4-flash
+      - mimo-v2.5
+    anthropic:
+      priority: 8
+      enabled: true
+      description: Anthropic - Claude models (Sonnet, Haiku, Opus)
+      api_key: env:ANTHROPIC_API_KEY
+      base_url: https://api.anthropic.com/v1
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - claude-sonnet-5-high-thinking
+      - claude-haiku-4.5-extended
+      - claude-opus-4.8
+    xai:
+      priority: 9
+      enabled: true
+      description: xAI - Grok models
+      api_key: env:XAI_API_KEY
+      base_url: https://api.x.ai/v1
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+      supported_models:
+      - grok-4.3-web
+      - grok-4.1-fast-web
+    mock:
+      priority: 10
+      enabled: false
+      description: Test mock provider for unit tests
+      n_threads: 4
+      supported_models:
+      - mock-model

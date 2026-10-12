@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Omega Engine Configuration
+# AP: AP-OMEGA-CONFIG-v1.0.0
+# ⬡ OMEGA ⬡ CONFIG ⬡
+
+omega:
+  entity:
+    active_iwad: "_omega_default"
+  
+  # Model updater configuration
+  model_updater:
+    enabled: true
+    schedule: "0 3 * * *"  # Daily at 3 AM
+    max_concurrent_downloads: 2
+    cleanup_old_versions: true
+    keep_versions: 3
+
+  # Provider fabric configuration
+  provider_fabric:
+    strategy: "local_first"
+    health_check_interval: 300
+    circuit_breaker_threshold: 5
+    circuit_breaker_timeout: 60
+
+  # Memory store configuration
+  memory:
+    hot_max_tokens: 500
+    warm_max_tokens: 3000
+    cold_archive_days: 90
+    compaction_enabled: true
+
+  # Observability configuration
+  observability:
+    trace_sampling_rate: 1.0
+    metrics_enabled: true
+    log_level: "INFO"
+
+  # Security configuration
+  security:
+    pii_masking_enabled: true
+    tdp_enabled: true
+    tainted_data_quarantine: true
+
+  # Hivemind configuration
+  hivemind:
+    heartbeat_ttl_seconds: 1200
+    pruning_interval_seconds: 60
+    metrics_interval_seconds: 60
+    reaper_interval_seconds: 300
+
+  # Sovereignty Gate (P0-2) — Configurable, default OFF
+  sovereignty_gate:
+    enabled: false              # USER CONTROL — default OFF
+    threshold: 0.80             # 80% when enabled
+    track_only: true            # Track ratio, never fail unless enabled
+    ci_fail_on_threshold: false # Explicit opt-in for CI enforcement
+
+  # MCP servers
+  mcp:
+    hub_port: 8016
+    firecrawl_port: 8015
+    searxng_port: 8018
+    transport: "sse"
+
+  # Hardware optimization
+  hardware:
+    cpu_threads: 4
+    openblas_coretype: "ZEN"
+    llama_cpp_f16_kv: true
+    malloc_arena_max: 2
+
+  # Sovereignty Gate (P0-2) — Configurable, default OFF
+  # User directive: start at 0% local usage, build up while developing with cloud models
+  sovereignty_gate:
+    enabled: false              # USER CONTROL — default OFF
+    threshold: 0.80             # 80% when enabled
+    track_only: true            # Track ratio, never fail unless enabled
+    ci_fail_on_threshold: false # Explicit opt-in for CI enforcement
