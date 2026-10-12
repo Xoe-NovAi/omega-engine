@@ -52,7 +52,6 @@
             "maat",
             "researcher",
             "roc_racoon",
-            "slot",
             "verity"
           ],
           "description": "Fleet entity that dispatched this cohort"

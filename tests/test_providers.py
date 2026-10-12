@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import importlib.util
 import os
 from unittest.mock import AsyncMock, patch
 
@@ -17,6 +16,23 @@ from omega.oracle.providers import (
     OllamaProvider,
     NativeGGUFProvider,
 )
+
+
+def _vaultcore_available() -> bool:
+    """VaultCore is post-PR / excluded from the public debut (D-565/D-539).
+
+    NOTE: ``importlib.util.find_spec("omega.vault")`` is NOT a valid guard here.
+    ``src/omega/vault/`` survives as a namespace package, so find_spec returns a
+    non-None spec and the skipif never fires — but the ``VaultCore`` symbol itself
+    was removed. Tests then die at call time with
+    ``ProviderAuthError: cannot import name 'VaultCore' from 'omega.vault'``.
+    Attempt the real import instead.
+    """
+    try:
+        from omega.vault import VaultCore  # noqa: F401
+        return True
+    except ImportError:
+        return False
 
 
 class TestBaseProvider:
@@ -53,7 +69,7 @@ class TestGoogleAIProvider:
     def provider(self):
         return GoogleAIProvider("google", {})
 
-    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
+    @pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
     @pytest.mark.anyio
     async def test_is_available_with_key(self, provider):
         """is_available returns True when GOOGLE_API_KEY is set."""
@@ -66,7 +82,7 @@ class TestGoogleAIProvider:
         with patch.dict(os.environ, {}, clear=True):
             assert await provider.is_available() is False
 
-    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
+    @pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
     @pytest.mark.anyio
     async def test_generate_success(self, provider):
         """Successful API call returns parsed text."""
@@ -87,7 +103,7 @@ class TestGoogleAIProvider:
                 )
                 assert result == "Hello, world!"
 
-    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
+    @pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
     @pytest.mark.anyio
     async def test_generate_missing_candidates(self, provider):
         """API response without candidates returns None."""
@@ -102,7 +118,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
-    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
+    @pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
     @pytest.mark.anyio
     async def test_generate_malformed_response(self, provider):
         """Malformed API response returns None without raising."""
@@ -117,7 +133,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
-    @pytest.mark.skipif(importlib.util.find_spec("omega.vault") is None, reason="Google key flow requires vault (D-565)")
+    @pytest.mark.skipif(not _vaultcore_available(), reason="vault excluded from public debut (D-565)")
     @pytest.mark.anyio
     async def test_generate_http_error(self, provider):
         """HTTP errors propagate as custom OmegaErrors."""

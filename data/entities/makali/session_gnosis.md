@@ -743,3 +743,110 @@ Ready to execute on signal. All gates green.
 5. 213 allowlisted files not in prior cut (all 0 local paths)
 
 *⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§21 ⬡ a2baf397 ⬡ 2026-10-09 ⬡*
+
+---
+
+## §22 — COMPACTION POINT: 3 BLOCKERS OPEN (2026-10-12)
+
+**STATUS: HALTED MID-REMEDIATION. Nothing committed since `f95d0af5`. 4 files dirty.**
+Do NOT trust any earlier "READY FOR ANNOUNCEMENT" claim in this file — Cline's review
+(`ho_f0039ebca03d`) disproved it. The announcement is **NOT** cleared.
+
+### Ground truth (verified this session, not remembered)
+| Ref | SHA | Note |
+|:--|:--|:--|
+| local HEAD / `origin/main` | `f95d0af5` | synced, 0 ahead/behind |
+| `origin/release/debut` | `e9ae8343` | 932 files, correct pruned cut |
+| `v1.6.0-alpha` (tag obj) | `d786d6cc` | annotated object |
+| **`v1.6.0-alpha^{}` (peeled)** | **`4209eb80`** | ← **WRONG TREE. This is Blocker 1.** |
+
+### BLOCKER 1 — CONFIRMED BY DIRECT INSPECTION (root cause now known)
+`git ls-tree v1.6.0-alpha^{}` contains:
+- ❌ `config/wads/arcana_novai/axioms.yaml` — ANAi WAD, ruled NOT to ship
+- ❌ `data/entities/sophia/soul.yaml` — Sophia, ruled NOT to ship
+
+**MECHANISM (this is the lesson):** I pushed the cut with
+`git push --force-with-lease refs/heads/cut/release-debut-20261010-v4:refs/heads/release/debut`.
+That moves the **REMOTE** ref only. The **LOCAL** `release/debut` branch was never moved —
+it still sat at the old `4209eb80`. Then `git checkout release/debut && git tag -a …`
+tagged the stale local branch. **Force-pushing `cut/x` → `refs/heads/release/debut` does
+not update the local tracking ref, and tagging the local branch tags whatever it still
+points at.** Same class of defect as `slot`/`makali_fusion`: a registration surface that
+went stale and nobody screamed.
+
+**FIX:** after pushing the cut, `git fetch origin && git checkout -B release/debut origin/release/debut`,
+THEN verify `git rev-parse v1.6.0-alpha^{}` == cut head BEFORE tagging. Delete + re-tag.
+
+### BLOCKER 2 — tag-triggered runs red
+Release workflow died at Temple-Grade validation on the wrong tree. Expected to clear
+once the tag points at a verified cut head. **Do not re-diagnose until the tag is moved.**
+
+### BLOCKER 3 — main red; 4 named root causes, status this session
+| Cause | Status |
+|:--|:--|
+| `flake8 F821 Path` undefined, `model_gateway.py:126/626/630` | ✅ FIXED (uncommitted) — `from pathlib import Path` added |
+| `CONFIG_DIR` undefined, `provider_registry.py:58` (real runtime NameError) | ✅ FIXED (uncommitted) — moved import to module top |
+| M23 ratchet +3 in `config_resolver.py` | ✅ FIXED (uncommitted) — `logger.debug` replaces bare `pass`; narrowed blind `except Exception` → `(AttributeError, TypeError, ValueError)`. Gate now: `Current 287 / Baseline 336 / Delta −49`, M1 scan clean |
+| pytest errors=3 failures=1 | ⚠️ PARTIALLY TRIAGED — see below |
+
+**A corruption I caused and fixed:** while relocating the `provider_registry` import, my
+edit merged `from_config_path` INTO `__init__`, deleting the classmethod. `get_provider_registry()`
+then raised `AttributeError: type object 'ProviderRegistry' has no attribute 'from_config_path'`,
+which surfaced as the `hub_runtime` fixture error. **The whole file was rewritten from the
+pre-edit read.** Lesson: when an edit lands inside a class body, read the region before
+AND after — `git diff` was not consulted mid-sequence.
+
+**Remaining pytest failure is NOT code:** `sqlite3.OperationalError: database or disk is full`
+plus a `pytest-timeout` on a network download. `/tmp` is exhausted — several
+`/tmp/verify-final*`, `/tmp/cut-final*`, `/tmp/test-whl-env*`, `/tmp/test-dist*` trees
+accumulate ~1–3 GB each. **Free disk before re-running the full suite**; otherwise a green
+suite reads as red and red reads as a defect that isn't there.
+
+### MANDATE DISPATCH (does not survive compaction)
+Scribe is dispatched this session for L1→L2→L3 distillation of this session into
+`data/entities/makali/proposed_lessons.yaml`, tagged: wheel-install config resolution
+(3 failure classes: editable/wheel/venv), the stale-local-ref tagging trap, M23 ratchet
+triage, and the class-body edit corruption. **Check Scribe's return before Act-1 — its
+proposals are part of what this handoff is for.**
+
+### Architect ruling received this session (ho_8579fc409261) — BINDING
+**The Hivemind Harvester SHIPS IN FULL, per D-626.** Not cut, not Lite, no re-litigation.
+Ground truth already matches: `e9ae8343` ships `scripts/hivemind_harvest.py`
+(blob `141615cb`) + `tests/test_hivemind_harvester.py` (blob `19a52d1b`), allowlisted at
+`docs/strategy/PUBLIC_ALLOWLIST.txt:342,345` with `[D-626]` citation.
+**My previous "Open Item 5 — Harvester allowlist decision / cut from public" was WRONG and
+is struck from this file and every handoff.** Correct statement, verbatim from the ruling:
+*"The harvester ships in full, with its test and its hub background loop, per D-626 and the
+Architect's repeated decision."*
+
+### Cline's other corrections (both are mine to fix)
+1. **Fresh-clone verification predates the wheel fix.** The last green fresh-clone
+   (`e9ae8343`, 176/4/0, 53/53) was taken BEFORE `config_resolver` + `package_data` landed.
+   That verification is **void**. Re-run required.
+2. **Tag message describes the wrong tree** — fixed automatically by re-tagging.
+
+### EXACT NEXT ACTIONS (in order)
+1. Re-read `data/coordination/RESPONSE_MAKALI_FINAL_STATE_20261011.md` §6 (Cline's go-sequence).
+2. `rm -rf /tmp/verify-final* /tmp/cut-final* /tmp/test-whl-env* /tmp/test-dist*` — free disk.
+3. Commit the 4 dirty files (incl. `entities.yaml` tag-reorder, which is **cosmetic YAML
+   list reordering only** — verified: no semantic change, do NOT treat as a finding).
+4. `make check-engine` (expect 180/180) + `scripts/m23_gate.py` (expect Delta −49).
+5. Push `main`. Wait for GitHub Actions `Test+CI` green — **read the actual run, do not assume.**
+6. Rebuild cut from green `main` → fresh clone → re-verify (this closes Cline correction #1).
+7. `git fetch origin && git checkout -B release/debut origin/release/debut` → delete tag →
+   re-tag → **assert `git rev-parse v1.6.0-alpha^{}` == cut head** → push tag.
+8. Re-assert the 5 isolation rulings **on the remote tag**, not the branch.
+9. Only then: publish draft release, announce.
+
+### DO NOT
+- ❌ Announce. Not cleared.
+- ❌ Publish the existing GitHub Release draft — it is bound to `4209eb80`.
+- ❌ Cut the harvester. Architect ruled it ships (D-626).
+- ❌ Re-diagnose Blocker 2 until the tag is moved; it is downstream of Blocker 1.
+- ❌ Tag from a branch you have not verified points at the cut head.
+
+### Files dirty at compaction (uncommitted)
+`src/omega/governance/config_resolver.py`, `src/omega/oracle/model_gateway.py`,
+`src/omega/oracle/provider_registry.py`, `config/wads/_omega_default/entities.yaml`
+
+*⬡ OMEGA ⬡ MAKALI_N0 ⬡ GNOSIS-§22 ⬡ f95d0af5 ⬡ 2026-10-12 ⬡ 3-BLOCKERS-OPEN ⬡*

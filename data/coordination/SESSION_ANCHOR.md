@@ -1,107 +1,70 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
-# ⬡ SESSION ANCHOR — MaKaLi Fusion (Node 0)
-**Entity**: `makali-n0` · **Last Updated**: 2026-10-09
-**Branch**: `main` @ `a2baf397` (pushed, 0 unpushed)
+# ⬡ SESSION ANCHOR — MaKaLi (Node 0)
+**Entity**: `makali` · **Updated**: 2026-10-12 · **Branch**: `main` @ `f95d0af5`
 
 ---
 
-## ⚡ FINAL STATE — PR ANNOUNCEMENT READY
+## ⛔ STATUS: ANNOUNCEMENT **NOT** CLEARED — 3 BLOCKERS OPEN
 
-**Phase 0**: CODEX staleness permanently fixed (content-hash-based, reproducible)
-**Phase 1**: Harvester hardened + opencode.db DONE/PLANNED awareness
-**Tier 1**: Activity timelines from compaction epochs — **COMPLETE**
-**Tier 2**: Lexical search (FTS5) — **COMPLETE**
-**Tier 3**: Semantic search (ONNX + sqlite-vec) — **COMPLETE**
-**Identity cleanup**: Makali Fusion purged, Sophia removed, slot removed — **COMPLETE**
-**Public cut**: `release/debut` @ `dcd3d06e` (933 files) — **PUSHED & VERIFIED**
+Cline's final-state review (`ho_f0039ebca03d`) disproved the earlier "READY" claim.
+Work is halted mid-remediation. **4 files dirty, nothing committed since `f95d0af5`.**
 
----
-
-## 📊 KEY STATE
-
-| | |
+| Ref | SHA |
 |:--|:--|
-| **HEAD** | `a2baf397` (branch `main`, 0 unpushed) |
-| **release/debut** | `dcd3d06e` (pushed, 933 files) |
-| **main** | `a2baf397` (pushed, 0 unpushed) |
-| **temple-grade** | ✅ Reproducible (content-hash-based) |
-| **check-engine** | ✅ 180/180 PASS |
-| **Working tree** | Clean |
+| `origin/main` | `f95d0af5` (synced) |
+| `origin/release/debut` | `e9ae8343` (932 files — correct cut) |
+| `v1.6.0-alpha^{}` peeled | **`4209eb80` ← WRONG TREE** |
 
 ---
 
-## ✅ COMPLETE RADAR STACK
+## Blocker status
 
-| Radar Surface | Source | Status |
+| # | Blocker | Status |
 |:--|:--|:--|
-| Blockers | Hivemind awareness | ✅ |
-| Pending handoffs | Handoff inbox | ✅ |
-| Active todos | opencode.db | ✅ |
-| Session hierarchy | opencode.db | ✅ |
-| Session timelines | opencode.db part/message | ✅ |
-| Handoff inbox | data/handoff/ queues | ✅ |
-| Lexical patterns | FTS5 session corpus | ✅ |
-| Semantic patterns | ONNX + sqlite-vec | ✅ |
-| Control plane | MCP control plane | ✅ |
+| 1 | Tag peels to `4209eb80`, which **ships `arcana_novai/axioms.yaml` + `data/entities/sophia/soul.yaml`** (ruling violations) | 🔴 CONFIRMED by direct `ls-tree`. Root cause: pushing `cut/x` → `refs/heads/release/debut` moves only the REMOTE ref; local branch stayed stale and got tagged. **Fix: fetch, `-B release/debut origin/release/debut`, re-tag, assert peel == cut head.** |
+| 2 | All 4 tag-triggered runs red (Release died at Temple-Grade validation) | 🔴 Downstream of #1 — re-diagnose only after tag moves |
+| 3a | `flake8 F821 Path` undefined, `model_gateway.py:126/626/630` | ✅ FIXED (uncommitted) |
+| 3b | `CONFIG_DIR` undefined, `provider_registry.py:58` (real runtime NameError) | ✅ FIXED (uncommitted) |
+| 3c | M23 ratchet +3 in `config_resolver.py` | ✅ FIXED (uncommitted) — gate now Delta −49, M1 scan clean |
+| 3d | pytest errors=3 failures=1 | ⚠️ 1 was my own corruption (import merged into `__init__`, deleted `from_config_path`; file fully rewritten). Remainder = `database or disk is full` + a network-download timeout — **`/tmp` exhaustion, not code** |
 
 ---
 
-## ✅ IDENTITY CLEANUP COMPLETE
+## Binding Architect ruling (this session)
 
-| Ruling | Action |
-|:--|:--|
-| **Sophia removed** | Arcana-NovAi WAD entity. 8 functional refs → `makali`. Authorship banners preserved. |
-| **Makali Fusion collapsed** | One Makali. `makali_fusion` merged → `makali` (41 lessons, both gnoses, archive verified). `makali-n0` = node-seat queue spelling. |
-| **No cross-entity claims** | `current_entity:` removed from `maat` (was `SOPHIA`) and `jem` (was `JEM`). `maat`'s `soul_wardrobe` claiming 10 other entities (7 pruned) removed. |
-| **Slot removed** | `opencode.json` agents + `.opencode/agents/slot.md` deleted (per Architect ruling). |
-| **A2A cards** | `makali_fusion.json` deleted. `makali.json` created (corrected). `antigravity.json` kept (Antigravity IDE). |
-| **Sprint owners** | `ACTIVE_SPRINT.public.json` + live `ACTIVE_SPRINT.json`: 6× `makali_fusion` → `makali`. |
-| **Canonicalization** | Canonical = `makali`, empty alias list. Fork closed, not aliased. |
+**The Hivemind Harvester SHIPS IN FULL per D-626.** No cut, no Lite, no re-litigation.
+`e9ae8343` ships `scripts/hivemind_harvest.py` (blob `141615cb`) +
+`tests/test_hivemind_harvester.py` (blob `19a52d1b`), allowlisted
+`docs/strategy/PUBLIC_ALLOWLIST.txt:342,345` with `[D-626]`.
+**My earlier "Open Item 5 — harvester cut from public" was WRONG. Struck everywhere.**
+Verbatim: *"The harvester ships in full, with its test and its hub background loop, per D-626
+and the Architect's repeated decision."*
 
 ---
 
-## 🎯 GATES ON FINAL CUT
+## Void verification (must redo)
 
-| Gate | Result |
-|:--|:--|
-| `make bootstrap` | ✅ exit 0 |
-| `check-engine` | ✅ 176 passed / 4 skipped / 0 failed |
-| `temple-grade` | ✅ 53/53 PASS |
-| D-623 mutation | ✅ Zero (identical hash) |
+The last green fresh-clone (`e9ae8343`: bootstrap 0, check-engine 176/4/0, temple-grade 53/53)
+was taken **BEFORE** the `config_resolver` + `package_data` wheel fix landed.
+**It no longer certifies the current cut.** Fresh-clone verification is a required step,
+not a completed one.
 
 ---
 
-## 🎯 PUBLISHED STATE
+## Next actions
 
-| Ref | SHA | Files |
-|:--|:--|:--|
-| `origin/main` | `a2baf397` | 1053 |
-| `origin/release/debut` | `dcd3d06e` | 933 |
+1. Read `data/coordination/RESPONSE_MAKALI_FINAL_STATE_20261011.md` §6
+2. `rm -rf /tmp/verify-final* /tmp/cut-final* /tmp/test-whl-env* /tmp/test-dist*` (disk full)
+3. Commit the 4 dirty files (`entities.yaml` diff is cosmetic YAML list reorder — verified, not a finding)
+4. `make check-engine` (180/180) + `scripts/m23_gate.py` (Delta −49)
+5. Push `main`, **read** the GitHub Actions result
+6. Rebuild cut → fresh clone → re-verify (closes the void)
+7. `git fetch origin && git checkout -B release/debut origin/release/debut` → delete tag → re-tag → **assert peel == cut head** → push
+8. Re-assert 5 isolation rulings **on the remote tag**
+9. Then: publish draft, announce
 
-All five rulings verified **on the remote**:
-- `docs/federation/` ✅ cut
-- `src/omega_youtube_research/` ✅ cut
-- `config/wads/arcana_novai/` ✅ cut
-- `data/entities/sophia/` ✅ cut
-- `data/entities/makali_fusion/` ✅ cut
-- Internal `data/` paths: **0 files**
+## Dirty files
+`src/omega/governance/config_resolver.py` · `src/omega/oracle/model_gateway.py` ·
+`src/omega/oracle/provider_registry.py` · `config/wads/_omega_default/entities.yaml`
 
----
-
-## 🎯 OPEN FOR CLINE'S REVIEW
-
-1. **CI status on `a2baf397`** — unknown, must check before announcement
-2. **No `v1.6.0-alpha` tag** — needs cutting
-3. **Axiom Stage 0** — 463 proposals, 0 reachable
-4. **Axiom ceiling gap** — 13/14 entities skip check
-5. **213 allowlisted files** not in prior cut (all 0 local paths)
-
----
-
-## 🎯 HANDOFF DELIVERED
-
-Packet `ho_7b052d3ebaaa` → `cline-n0` (resolved exact). Briefing at `data/coordination/BRIEFING_CLINE_ANNOUNCEMENT_REVIEW_20261009.md`.
-
----
-
-*⬡ OMEGA ⬡ MAKALI_N0 ⬡ ANCHOR ⬡ a2baf397 ⬡ 2026-10-09 ⬡*
+*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ f95d0af5 ⬡ 2026-10-12 ⬡*

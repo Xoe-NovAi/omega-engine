@@ -23,6 +23,8 @@ from typing import Any, Optional
 
 import yaml
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,8 +50,6 @@ class ProviderRegistry:
         # model name -> provider name (populated from providers.yaml
         # `providers:` map supported_models, Decision 4).
         self._model_to_provider: dict[str, str] = {}
-
-    from omega.governance.config_resolver import CONFIG_DIR
 
     @classmethod
     def from_config_path(cls, path: Optional[Path] = None) -> "ProviderRegistry":

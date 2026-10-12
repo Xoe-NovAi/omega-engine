@@ -185,8 +185,12 @@ class TestCapabilityRegistry:
         expected = [
             "kali", "doom_guy", "roc_racoon", "jem", "carmack",
             "makali", "researcher", "maat", "lilith", "verity",
-            "iris", "omega_federation", "slot",
+            "iris", "omega_federation",
         ]
+        # [RULING] `slot` is a role/template, never an agent — it must NOT appear
+        # in CAPABILITY_REGISTRY. This test previously asserted `"slot"` was a
+        # registered agent, encoding the old (incorrect) nomenclature.
+        assert "slot" not in CAPABILITY_REGISTRY
         for agent in expected:
             assert agent in CAPABILITY_REGISTRY
 

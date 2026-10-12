@@ -14,6 +14,7 @@
 #
 # Circular-import safe: pure Path objects, lazy readers perform I/O only when called.
 
+import logging
 import os
 import sysconfig
 from pathlib import Path
@@ -25,6 +26,9 @@ try:
     import importlib.resources as pkg_resources
 except ImportError:
     import importlib_resources as pkg_resources  # py3.8 fallback
+
+
+logger = logging.getLogger(__name__)
 
 
 # ─── Multi-Context Path Resolution ──────────────────────────────────────────
@@ -77,8 +81,8 @@ class _ConfigDir:
                 self._pkg_config_cm = pkg_resources.as_file(pkg_config)
                 self._resolved = self._pkg_config_cm.__enter__()
                 return self._resolved
-        except (ModuleNotFoundError, AttributeError, FileNotFoundError):
-            pass
+        except (ModuleNotFoundError, AttributeError, FileNotFoundError) as e:
+            logger.debug("Package config resolution failed: %s", e)
 
         # 6. Fallback: if cwd has embedding_strategy.yaml
         cwd_config = Path.cwd() / "config"
@@ -97,8 +101,8 @@ class _ConfigDir:
         if hasattr(self, '_pkg_config_cm') and self._pkg_config_cm:
             try:
                 self._pkg_config_cm.__exit__(None, None, None)
-            except Exception:
-                pass
+            except (AttributeError, TypeError, ValueError) as e:
+                logger.debug("Package config cleanup failed: %s", e)
 
 
 # Global config directory instance
