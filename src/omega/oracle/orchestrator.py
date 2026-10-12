@@ -36,6 +36,8 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 
 from .entity_workspace import EntityWorkspaceManager
 from .resource_guard import ResourceGuard
@@ -790,9 +792,7 @@ class Orchestrator:
     async def _init_model_updater(self) -> None:
         """Asynchronously initialize the ModelUpdaterWorker."""
         try:
-            config_path = (
-                Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-            )
+            config_path = CONFIG_DIR / "omega.yaml"
 
             def _load_cfg():
                 if not config_path.exists():
@@ -819,7 +819,7 @@ class Orchestrator:
                 logger.info("ModelUpdaterWorker initialized successfully.")
         except OmegaError:
             raise
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Failed to initialize ModelUpdaterWorker: {e}", exc_info=True)
             raise OmegaError(f"ModelUpdater init failed: {e}", raw_error=e) from e
 

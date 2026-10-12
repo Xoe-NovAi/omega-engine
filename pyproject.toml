@@ -126,6 +126,11 @@ Issues = "https://github.com/Xoe-NovAi/omega-engine/issues"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+omega = [
+    "config_data/**/*.yaml",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 anyio_mode = "auto"

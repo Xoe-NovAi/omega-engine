@@ -74,7 +74,8 @@ from omega.oracle.search_observability import (
 
 logger = logging.getLogger(__name__)
 
-_CONFIG_PATH = Path(__file__).parent.parent.parent.parent / "config" / "search.yaml"
+from omega.governance.config_resolver import CONFIG_DIR
+_CONFIG_PATH = CONFIG_DIR / "search.yaml"
 
 # [C-6' final pass — DEL-1 4d] Tier thresholds preserved verbatim from the
 # deleted omega.oracle.search_circuit_breaker.TIER_CONFIGS (retired 2026-08-24).

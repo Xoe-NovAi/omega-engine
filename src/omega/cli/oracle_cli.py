@@ -161,9 +161,11 @@ except ImportError:
     pass  # local_queue module not available
 
 
+from omega.governance.config_resolver import CONFIG_DIR
+
 def _load_config() -> dict:
     """Load core omega config."""
-    config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+    config_path = CONFIG_DIR / "omega.yaml"
     if not config_path.exists():
         return {}
     import yaml
@@ -174,7 +176,7 @@ def _load_config() -> dict:
 
 def _save_config(config: dict):
     """Save core omega config."""
-    config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+    config_path = CONFIG_DIR / "omega.yaml"
     import yaml
 
     with open(config_path, "w") as f:
@@ -306,7 +308,8 @@ def entity_workspace_status(
     and calculates character counts per file, per-domain breakdowns, and
     total utilization. Block limits are displayed if defined in entity config.
     """
-    DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
+    from omega.governance.config_resolver import CONFIG_DIR
+    DATA_DIR = CONFIG_DIR.parent / "data"
     entity_dir = DATA_DIR / "entities" / entity.lower()
 
     if not entity_dir.exists():

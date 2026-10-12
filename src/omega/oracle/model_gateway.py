@@ -23,18 +23,18 @@
 #   - Cache-friendly batch sizes (512/32 for small models, 64/16 for 8B+)
 #   - OMP_PROC_BIND=close for NUMA-aware scheduling on single-CCX
 
-import logging
-import os
-import time
-import inspect
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+from omega.governance.config_resolver import CONFIG_DIR
+from typing import TYPE_CHECKING, Optional, Dict, List, Tuple, Any
 
 # ── TYPE_CHECKING block for forward references ──
 if TYPE_CHECKING:
     from omega.oracle.cpu_optimizer import SpeculativeDecodeConfig
 from dataclasses import dataclass
 import anyio
+import logging
+import os
+import time
+import inspect
 
 
 @dataclass
@@ -121,9 +121,7 @@ class ModelGateway:
         if config_path is None:
             config_path = os.environ.get(
                 "OMEGA_MODELS_CONFIG",
-                str(
-                    Path(__file__).resolve().parent.parent.parent.parent / "config" / "models.yaml"
-                ),
+                str(CONFIG_DIR / "models.yaml"),
             )
         self.config_path = Path(config_path)
 
@@ -176,9 +174,7 @@ class ModelGateway:
         # Handoff: ho_8135d6122230 — Lilith Phase 1 port from xna-omega-legacy
         # R3: Cross-references provider IDs against config/providers.yaml
         self.affinity_resolver = EntityAffinityResolver(
-            yaml_path=Path(__file__).resolve().parent.parent.parent.parent
-            / "config"
-            / "entity_model_affinity.yaml"
+            yaml_path=CONFIG_DIR / "entity_model_affinity.yaml"
         )
         # Seed known providers from loaded fabric for R3 validation
         provider_names = {p.name for p in self.providers}
@@ -519,9 +515,7 @@ class ModelGateway:
         if os.environ.get("OMEGA_ENV") == "test":
             return [MockProvider("mock", {"timeout_seconds": 5.0})]
 
-        providers_path = (
-            Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
-        )
+        providers_path = CONFIG_DIR / "providers.yaml"
         if not providers_path.exists():
             logger.warning(f"Provider config not found at {providers_path}. Using defaults.")
             return [MockProvider("mock", {})]

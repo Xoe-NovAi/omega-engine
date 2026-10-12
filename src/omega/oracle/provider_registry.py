@@ -49,13 +49,13 @@ class ProviderRegistry:
         # `providers:` map supported_models, Decision 4).
         self._model_to_provider: dict[str, str] = {}
 
+    from omega.governance.config_resolver import CONFIG_DIR
+
     @classmethod
     def from_config_path(cls, path: Optional[Path] = None) -> "ProviderRegistry":
         """Load from config/providers.yaml (or a custom path for tests)."""
         if path is None:
-            path = (
-                Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
-            )
+            path = CONFIG_DIR / "providers.yaml"
         if not path.exists():
             logger.warning("Provider config not found at %s. Using empty registry.", path)
             return cls([])
