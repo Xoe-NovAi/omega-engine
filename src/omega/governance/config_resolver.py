@@ -5,23 +5,73 @@
 # ⬡ OMEGA ⬡ GOVERNANCE ⬡ CONFIG_RESOLVER
 # Single source of truth for project paths (D-281 Phase II).
 #
-# Constants are pure Path objects — NO I/O at module level (circular-import safe).
-# Lazy readers (get_active_iwad) perform I/O only when called.
-# Do NOT re-export from governance/__init__.py — import explicitly at call sites.
+# Robust multi-context resolution:
+#   1. OMEGA_CONFIG_DIR environment variable
+#   2. Source / editable install tree (via __file__.parents[3] / config)
+#   3. Current working directory (Path.cwd() / config)
+#   4. User configuration directory (~/.config/omega)
+#
+# Circular-import safe: pure Path objects, lazy readers perform I/O only when called.
 
+import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import yaml
 
-# ─── Pure Path Constants (NO I/O at module level) ────────────────────────────
-# Path: governance → omega → src → REPO ROOT (4 parents).
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-CONFIG_DIR = PROJECT_ROOT / "config"
-WADS_DIR = CONFIG_DIR / "wads"
-DATA_DIR = PROJECT_ROOT / "data"
-SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-AGENTS_MD = PROJECT_ROOT / "AGENTS.md"
+# ─── Multi-Context Path Resolution ──────────────────────────────────────────
+
+def _resolve_config_dir() -> Path:
+    """Resolve config directory across editable, dev, wheel, and standalone contexts."""
+    # 1. Environment variable override (highest precedence)
+    env_dir = os.environ.get("OMEGA_CONFIG_DIR")
+    if env_dir:
+        p = Path(env_dir).expanduser().resolve()
+        if p.is_dir():
+            return p
+
+    # 2. Source / editable checkout (4 parents from this file: governance -> omega -> src -> root)
+    dev_root = Path(__file__).resolve().parent.parent.parent.parent
+    dev_config = dev_root / "config"
+    if dev_config.is_dir() and (dev_config / "omega.yaml").is_file():
+        return dev_config
+
+    # 3. Current working directory (common for CLI invoked from cloned repository)
+    cwd_config = Path.cwd() / "config"
+    if cwd_config.is_dir() and (cwd_config / "omega.yaml").is_file():
+        return cwd_config
+
+    # 4. User configuration directory (~/.config/omega)
+    user_config = Path.home() / ".config" / "omega"
+    if user_config.is_dir() and (user_config / "omega.yaml").is_file():
+        return user_config
+
+    # 5. Fallback: if cwd has embedding_strategy.yaml
+    if cwd_config.is_dir() and (cwd_config / "embedding_strategy.yaml").is_file():
+        return cwd_config
+
+    # Default to dev_config (will fail with clear message if accessed when absent)
+    return dev_config
+
+
+def _resolve_project_root(config_dir: Path) -> Path:
+    """Resolve root directory from resolved config directory."""
+    if config_dir.name == "config" and config_dir.parent.is_dir():
+        return config_dir.parent
+    return Path.cwd()
+
+
+# Canonical paths resolved once at module load
+CONFIG_DIR: Path = _resolve_config_dir()
+PROJECT_ROOT: Path = _resolve_project_root(CONFIG_DIR)
+WADS_DIR: Path = CONFIG_DIR / "wads"
+DATA_DIR: Path = (
+    PROJECT_ROOT / "data"
+    if (PROJECT_ROOT / "data").is_dir()
+    else (Path.cwd() / "data" if (Path.cwd() / "data").is_dir() else PROJECT_ROOT / "data")
+)
+SCRIPTS_DIR: Path = PROJECT_ROOT / "scripts"
+AGENTS_MD: Path = PROJECT_ROOT / "AGENTS.md"
 
 
 def get_active_iwad() -> str:
