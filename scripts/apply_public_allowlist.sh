@@ -622,6 +622,30 @@ if [[ "$CONFIRM" -eq 1 ]]; then
   echo
   echo "OK $REMOVED_COUNT file(s) staged for removal."
   echo
+
+  # === P0-2 EXPOSURE REDACTION (2026-10-13) ===
+  # Rewrite infrastructure identifiers (tailnet IDs, node IPs, mount paths,
+  # personal emails, machine hostnames) to RFC-2606 placeholders in the cut
+  # tree, then stage the rewrites so they land in the same commit as the
+  # removals. Patterns live in scripts/cut_redaction_patterns.tsv —
+  # INTERNAL-ONLY (scripts/ is enumerated per-file in PUBLIC_ALLOWLIST.txt and
+  # the TSV is not listed, so it never reaches the public cut).
+  if [[ -f scripts/cut_redact.py && -f scripts/cut_redaction_patterns.tsv ]]; then
+    echo "=== P0-2 redaction: rewriting identifiers in cut tree ==="
+    if python3 scripts/cut_redact.py --apply .; then
+      git add -u
+      echo "OK: redaction rewrites staged."
+    else
+      echo "FATAL: P0-2 redaction failed (rc=$?) — do NOT commit this cut" >&2
+      echo "       (M23: a cut that skips redaction re-leaks the tailnet)." >&2
+      exit 30
+    fi
+  else
+    echo "FATAL: P0-2 redaction inputs missing (scripts/cut_redact.py or" >&2
+    echo "       scripts/cut_redaction_patterns.tsv) — refusing to cut unredacted." >&2
+    exit 30
+  fi
+  echo
   echo "NEXT STEPS (manual, per M23 human-in-the-loop):"
   echo "  1. git status                 # verify the staged removals"
   echo "  2. git diff --cached --stat   # confirm what is being removed"
@@ -632,6 +656,12 @@ if [[ "$CONFIRM" -eq 1 ]]; then
 else
   echo "DRY-RUN: no changes made. Pass --confirm to actually git rm --cached."
   echo
+  # === P0-2 redaction preview (dry-run) ===
+  if [[ -f scripts/cut_redact.py && -f scripts/cut_redaction_patterns.tsv ]]; then
+    echo "=== P0-2 redaction preview (--check; hits shown, NOT rewritten) ==="
+    python3 scripts/cut_redact.py --check . || true
+    echo
+  fi
   echo "M23 REMINDER: Review the list above. The allowlist is the sovereignty"
   echo "              boundary. Confirming removes files from the index only;"
   echo "              they remain in the working tree and in unaltered commits."

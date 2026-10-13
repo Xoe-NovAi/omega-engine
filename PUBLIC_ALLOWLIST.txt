@@ -35,6 +35,7 @@ docs/governance/CONSTRAINTS.md
 # test-target or a gate helper, verified 0 sensitive hits (no hosts, no IPs, no
 # key material). A shipped test that cannot reach its subject is a dead gate.
 scripts/opencode-hydration.py        # P0-2 constraint re-assertion wiring
+scripts/cut_redact.py                # P0-2 cut-time exposure redaction (generic; patterns TSV stays internal)
 scripts/a2a_agent_cards.py           # A2A v1.0 card validator/publisher
 scripts/check_hub_import_gate.py     # D-620 gate self-reporter
 scripts/correct_ics_provenance.py    # M22 provenance corrector

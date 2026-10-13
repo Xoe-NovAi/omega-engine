@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 from datetime import datetime, timezone
 from typing import Any
@@ -38,7 +39,9 @@ from mcp_servers.omega_hub.protocol_version import (
 logger = logging.getLogger(__name__)
 
 # Tailnet domain suffix — used to build MagicDNS hostnames.
-_TAILNET_DOMAIN = "tail51f14a.ts.net"
+# OMEGA_TAILNET_DOMAIN wins (third-party tailnets differ); the default below is
+# this fleet's suffix and is rewritten to a placeholder in the public cut (P0-2).
+_TAILNET_DOMAIN = os.environ.get("OMEGA_TAILNET_DOMAIN", "tail51f14a.ts.net")
 
 # ── Internal helpers ────────────────────────────────────────────────
 
