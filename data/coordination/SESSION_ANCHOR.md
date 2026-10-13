@@ -1,70 +1,43 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ⬡ SESSION ANCHOR — MaKaLi (Node 0)
-**Entity**: `makali` · **Updated**: 2026-10-12 · **Branch**: `main` @ `f95d0af5`
+**Entity**: `makali` · **Updated**: 2026-10-12 · **Main**: `9c0f8be8`
 
 ---
 
-## ⛔ STATUS: ANNOUNCEMENT **NOT** CLEARED — 3 BLOCKERS OPEN
+## ✅ STATUS: v1.6.0-alpha RELEASED — ANNOUNCEMENT CORRECTED, PENDING FINAL PUBLISH DECISION
 
-Cline's final-state review (`ho_f0039ebca03d`) disproved the earlier "READY" claim.
-Work is halted mid-remediation. **4 files dirty, nothing committed since `f95d0af5`.**
+- `origin/main`: `9c0f8be8` (synced; includes post-release docs)
+- `origin/release/debut`: `355cbf1a` (public cut)
+- `v1.6.0-alpha`: object `058879bc`, peels to `355cbf1a` ✅
+- Working tree: `M data/entities/makali/session_gnosis.md`, `?? .agents/`
 
-| Ref | SHA |
-|:--|:--|
-| `origin/main` | `f95d0af5` (synced) |
-| `origin/release/debut` | `e9ae8343` (932 files — correct cut) |
-| `v1.6.0-alpha^{}` peeled | **`4209eb80` ← WRONG TREE** |
+Do not trust any earlier anchor section that says announcement is blocked by the old tag tree. The stale-tag blocker was closed by re-tagging on an explicit SHA with peel assertion.
 
 ---
 
-## Blocker status
+## Verified release gates
 
-| # | Blocker | Status |
-|:--|:--|:--|
-| 1 | Tag peels to `4209eb80`, which **ships `arcana_novai/axioms.yaml` + `data/entities/sophia/soul.yaml`** (ruling violations) | 🔴 CONFIRMED by direct `ls-tree`. Root cause: pushing `cut/x` → `refs/heads/release/debut` moves only the REMOTE ref; local branch stayed stale and got tagged. **Fix: fetch, `-B release/debut origin/release/debut`, re-tag, assert peel == cut head.** |
-| 2 | All 4 tag-triggered runs red (Release died at Temple-Grade validation) | 🔴 Downstream of #1 — re-diagnose only after tag moves |
-| 3a | `flake8 F821 Path` undefined, `model_gateway.py:126/626/630` | ✅ FIXED (uncommitted) |
-| 3b | `CONFIG_DIR` undefined, `provider_registry.py:58` (real runtime NameError) | ✅ FIXED (uncommitted) |
-| 3c | M23 ratchet +3 in `config_resolver.py` | ✅ FIXED (uncommitted) — gate now Delta −49, M1 scan clean |
-| 3d | pytest errors=3 failures=1 | ⚠️ 1 was my own corruption (import merged into `__init__`, deleted `from_config_path`; file fully rewritten). Remainder = `database or disk is full` + a network-download timeout — **`/tmp` exhaustion, not code** |
+- Fresh-clone verification on the shipped cut lineage: bootstrap exit 0; check-engine 176 passed / 4 skipped / 0 failed; temple-grade 53/53; M23 gate Delta −49; D-623 zero mutation.
+- Public isolation rulings verified on the tag tree: `docs/federation/`, `src/omega_youtube_research/`, `config/wads/arcana_novai/`, `data/entities/sophia/`, `data/entities/makali_fusion/` absent; internal `data/` paths absent.
+- Harvester ships in full per D-626.
+- Wheel: standalone install resolves packaged runtime configs + default IWAD.
+- Antigravity review: **GO**, conditional on correcting MCP client instructions; announcement corrected to SSE/HTTP Hub endpoint plus local Hub start command.
 
 ---
 
-## Binding Architect ruling (this session)
+## Remaining CI debt (not release-blocking for the published artifact)
 
-**The Hivemind Harvester SHIPS IN FULL per D-626.** No cut, no Lite, no re-litigation.
-`e9ae8343` ships `scripts/hivemind_harvest.py` (blob `141615cb`) +
-`tests/test_hivemind_harvester.py` (blob `19a52d1b`), allowlisted
-`docs/strategy/PUBLIC_ALLOWLIST.txt:342,345` with `[D-626]`.
-**My earlier "Open Item 5 — harvester cut from public" was WRONG. Struck everywhere.**
-Verbatim: *"The harvester ships in full, with its test and its hub background loop, per D-626
-and the Architect's repeated decision."*
-
----
-
-## Void verification (must redo)
-
-The last green fresh-clone (`e9ae8343`: bootstrap 0, check-engine 176/4/0, temple-grade 53/53)
-was taken **BEFORE** the `config_resolver` + `package_data` wheel fix landed.
-**It no longer certifies the current cut.** Fresh-clone verification is a required step,
-not a completed one.
+- `Test` workflow passes.
+- `CI` doc-lint failures are pre-existing G1/G2 doc debt in `docs/decisions/` and `docs/research/`.
+- Secret-scan/M35 failures include the known TruffleHog PR-only gap (G22).
 
 ---
 
 ## Next actions
 
-1. Read `data/coordination/RESPONSE_MAKALI_FINAL_STATE_20261011.md` §6
-2. `rm -rf /tmp/verify-final* /tmp/cut-final* /tmp/test-whl-env* /tmp/test-dist*` (disk full)
-3. Commit the 4 dirty files (`entities.yaml` diff is cosmetic YAML list reorder — verified, not a finding)
-4. `make check-engine` (180/180) + `scripts/m23_gate.py` (Delta −49)
-5. Push `main`, **read** the GitHub Actions result
-6. Rebuild cut → fresh clone → re-verify (closes the void)
-7. `git fetch origin && git checkout -B release/debut origin/release/debut` → delete tag → re-tag → **assert peel == cut head** → push
-8. Re-assert 5 isolation rulings **on the remote tag**
-9. Then: publish draft, announce
+1. Commit/push the refreshed continuity SSOTs (`SESSION_ANCHOR.md`, `ACTIVE_SPRINT.json`, `HMC_COLLABORATION_HUB.md`, `CLAIM_MAP_20261010.md` annotation, Makali custom instructions already written).
+2. Post-debut tasks from AGY briefing: cold-machine `pip install` + `omega talk`; verify `install.sh` time target; write Antigravity MCP guide; link WAD-authoring docs.
+3. Address G1/G2 doc lint and G22 secret-scan posture.
+4. Architect decisions: D1/D2/D3/D6/D7.
 
-## Dirty files
-`src/omega/governance/config_resolver.py` · `src/omega/oracle/model_gateway.py` ·
-`src/omega/oracle/provider_registry.py` · `config/wads/_omega_default/entities.yaml`
-
-*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ f95d0af5 ⬡ 2026-10-12 ⬡*
+*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ 9c0f8be8 ⬡ 2026-10-12 ⬡*
