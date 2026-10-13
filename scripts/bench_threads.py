@@ -295,15 +295,36 @@ def memory_state() -> dict:
     swap_total = info.get("SwapTotal", 0)
     swap_free = info.get("SwapFree", 0)
     zram_used = zram_total = 0
-    for path, label in (("/sys/block/zram0/mem_used_total", "used"),
-                        ("/sys/block/zram0/orig_data_size", "orig")):
-        raw = _read(path)
-        if raw and raw.isdigit():
-            val = int(raw)
-            if label == "used":
-                zram_used = val
-            else:
-                zram_total = val
+    zram_disksize = 0
+    # Preferred: mm_stat (orig_data_size, mem_used_total live at fixed columns
+    # on kernels where the legacy sysfs files were removed).
+    # mm_stat columns: orig_data_size, compr_data_size, mem_used_total, ...
+    try:
+        parts = open("/sys/block/zram0/mm_stat").read().split()
+        if len(parts) >= 3:
+            zram_total = int(float(parts[0]))  # orig_data_size (uncompressed)
+            zram_used = int(float(parts[2]))   # mem_used_total (compressed)
+    except (OSError, ValueError, IndexError):
+        pass
+    if not zram_total:
+        for path, label in (("/sys/block/zram0/mem_used_total", "used"),
+                            ("/sys/block/zram0/orig_data_size", "orig")):
+            raw = _read(path)
+            if raw and raw.isdigit():
+                val = int(raw)
+                if label == "used":
+                    zram_used = val
+                else:
+                    zram_total = val
+    raw_ds = _read("/sys/block/zram0/disksize")
+    if raw_ds and raw_ds.isdigit():
+        zram_disksize = int(raw_ds)
+    # zram_compr_ratio = compressed/uncompressed (LOWER = better compression,
+    # e.g. 0.27 = 3.7x). zram_util_pct = uncompressed payload vs provisioned
+    # disksize (capacity pressure signal). Never confuse the two: a low
+    # compression ratio is GOOD, high utilisation is the pressure warning.
+    compr_ratio = (zram_used / zram_total) if zram_total else 0.0
+    util_pct = (zram_total / zram_disksize * 100) if zram_disksize else 0.0
     return {
         "mem_total_gb": round(total / 1e9, 2),
         "mem_available_gb": round(avail / 1e9, 2),
@@ -312,7 +333,10 @@ def memory_state() -> dict:
         "swap_used_gb": round((swap_total - swap_free) / 1e9, 2),
         "zram_used_gb": round(zram_used / 1e9, 2),
         "zram_orig_gb": round(zram_total / 1e9, 2),
-        "zram_pct": round(zram_used / zram_total * 100, 1) if zram_total else 0.0,
+        "zram_pct": round(compr_ratio * 100, 1),  # legacy key = compression ratio %
+        "zram_compr_ratio": round(compr_ratio, 3),
+        "zram_util_pct": round(util_pct, 1),
+        "zram_disksize_gb": round(zram_disksize / 1e9, 2),
     }
 
 
@@ -564,23 +588,56 @@ def api_post(path: str, payload: dict, timeout: int = 300) -> dict:
         return json.loads(resp.read())
 
 
+def restart_ollama(model: str = "") -> None:
+    # Unload resident models + warm-load `model`. No service restart: a bare
+    # `ollama create` stores the new variant but the running llama-server keeps
+    # serving the OLD blob (the phantom-optimum failure). `ollama stop` unloads
+    # it; the next generate spawns a fresh runner from the new blob. A service
+    # restart would drop this script's own connection mid-run, so it is NOT used.
+    log("   + unloading resident models to pick up new variant...")
+    try:
+        loaded = api_post("/api/ps", {}, timeout=10).get("models", [])
+    except Exception:
+        loaded = []
+    for entry in loaded:
+        name = entry.get("model") or entry.get("name") or ""
+        if name:
+            _run(["ollama", "stop", name])
+    if model:
+        try:
+            api_post("/api/generate",
+                     {"model": model, "prompt": "hi", "stream": False,
+                      "options": {"num_predict": 1},
+                      "keep_alive": "30m"})
+        except Exception as exc:
+            log(f"   ! warm-load of {model} failed (will retry on measure): {exc}")
+
 def ensure_variant(base_model: str, threads: int) -> str:
     """Create (idempotently) a model variant pinned to `threads` via Modelfile.
 
     `base_model` may be a registry name (phi4-mini) OR an absolute path to a
     .gguf file, in which case the Modelfile uses `FROM <path>` -- the form
     ollama accepts for importing a local GGUF.
+
+    If `base_model` already carries the variant prefix (e.g. a re-run pointed
+    at a previous variant), strip it first so names never double up into
+    `bench-tbench-t...` entries.
     """
-    if base_model.endswith(".gguf"):
-        slug = re.sub(r"[^A-Za-z0-9]+", "-", Path(base_model).stem)[:28].strip("-").lower()
+    canonical = base_model
+    if canonical.startswith(VARIANT_PREFIX):
+        canonical = canonical[len(VARIANT_PREFIX):]
+        # drop a trailing -<threads> suffix from the prior variant if present
+        canonical = re.sub(r"-\d+$", "", canonical)
+    if canonical.endswith(".gguf"):
+        slug = re.sub(r"[^A-Za-z0-9]+", "-", Path(canonical).stem)[:28].strip("-").lower()
         name = f"{VARIANT_PREFIX}{slug}-{threads}"
     else:
-        slug = re.sub(r"[^A-Za-z0-9]+", "-", base_model)[:28].strip("-").lower()
+        slug = re.sub(r"[^A-Za-z0-9]+", "-", canonical)[:28].strip("-").lower()
         name = f"{VARIANT_PREFIX}{slug}-{threads}"
     path = f"/tmp/{name}.Modelfile"
     with open(path, "w") as handle:
-        handle.write(f"FROM {base_model}\nPARAMETER num_thread {threads}\n")
-    _run(["ollama", "rm", "-f", name])
+        handle.write(f"FROM {canonical}\nPARAMETER num_thread {threads}\n")
+    _run(["ollama", "rm", name])
     out = subprocess.run(
         ["ollama", "create", name, "-f", path],
         capture_output=True,
@@ -687,8 +744,11 @@ def preflight(expected_profile: str, require_ac: bool) -> tuple:
     # to make a call like that yet... The new gate will NOT refuse to run 
     # with zRAM ever because you will remove the gate."
     # Logging zRAM state for visibility, not gating:
-    if mem.get("zram_pct", 0) > 25.0:
-        log(f"  ! zram at {mem['zram_pct']}% ({mem['zram_used_gb']}GB of {mem['zram_orig_gb']}GB) "
+    # util_pct = payload vs provisioned disksize (the capacity-pressure signal).
+    # compr_ratio = compressed/uncompressed (low = good compression, ~0.27 = 3.7x).
+    if mem.get("zram_util_pct", 0) > 25.0:
+        log(f"  ! zram utilisation {mem['zram_util_pct']}% ({mem['zram_orig_gb']}GB payload in "
+            f"{mem['zram_disksize_gb']}GB device, ratio {mem.get('zram_compr_ratio')}) "
             f"— high but proceeding per operator directive")
     if mem.get("swap_used_gb", 0) > 0.5:
         log(f"  ! swap used: {mem['swap_used_gb']}GB — proceeding anyway")
@@ -807,6 +867,14 @@ def measure(base_model: str, threads: int, repeats: int, predict: int,
     except RuntimeError as exc:
         res.failure = f"variant creation failed: {exc}"
         return res
+
+    # MUST unload the resident model between configurations: `ollama create`
+    # stores the new variant but the running llama-server keeps serving the
+    # OLD blob (same thread count) -- the exact failure mode that produced
+    # the "phantom optimum". restart_ollama() stops resident models (API, no
+    # service restart) and warm-loads the new variant so the gate below
+    # verifies a genuinely fresh runner.
+    restart_ollama(model)
 
     try:
         api_post("/api/generate",
