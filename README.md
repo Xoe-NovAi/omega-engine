@@ -76,7 +76,7 @@ In Omega, an agent is an enduring entity with an attributable history, an identi
 
 ---
 
-## 🚀 Quick Start in 3 Steps
+## 🚀 Quick Start
 
 Omega is designed to get out of your way. You can run it completely offline on local CPU, or plug in your cloud credentials to activate full sovereign synergy.
 
@@ -97,7 +97,7 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 │  IWAD: _omega   │ │  IWAD: arcana   │ │  PWAD: persona_*    │
 │  _default       │ │  _novai         │ │  (Patch WADs)       │
 │                 │ │                 │ │                     │
-│ 12 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
+│ 14 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
 │ Build/Run Slots │ │ 10 Pillars      │ │ • Therapy Bot       │
 │ Engineering     │ │ Sephirotic Tree │ │ • Domain Expert     │
 │ Council         │ │ 42 Ideals       │ │ • Your Creation     │
@@ -114,24 +114,24 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 
 ## 🚀 Quick Start
 
-### Option A: From Source (Recommended)
+### Recommended: From Source
 ```bash
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
 ./scripts/install.sh
 ```
-*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), and compiles native llama-cpp bindings (pre-fetched, 6-way build). Runs verification gates at the end.*
+*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), compiles native llama-cpp bindings, and runs verification gates.*
 
-### Option B: Wheel from the GitHub Release (alternative — no native GGUF build)
+### Alternative: Wheel from GitHub Release
 ```bash
-# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
+# Download the wheel (aria2c: 16-split fetch for >1MB, M23)
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
 pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 
 omega list-entities          # See the sovereign council
 omega talk "Hello, Omega"    # Route to the best entity automatically
 ```
-*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option A. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
+*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use the source install above.*
 
 ### 2. Connect Your Preferred Interface
 Omega adapts to whatever workflow you prefer:
@@ -159,7 +159,7 @@ Omega's **Engine-Stack Firewall** (M2) means your custom agents, skills, and con
 
 ## 🏛️ The Sovereign Council Roster
 
-Omega ships with 12 persistent IWAD entities and 10 A2A seats ready to orchestrate:
+Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructure) and **10 A2A seats** ready to orchestrate:
 
 | Entity | Domain | Core Responsibility |
 |:--|:--|:--|
@@ -194,6 +194,8 @@ Omega ships with 12 persistent IWAD entities and 10 A2A seats ready to orchestra
 ---
 
 ## 🧭 Maturity & Status: Honest Alpha (v1.6.0-alpha)
+
+**Versions:** Engine `1.6.0-alpha` (tag `v1.6.0a0`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
 
 Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
 - ✅ **Core Local & Synergistic Inference**: 100% operational across native GGUF and configured cloud providers.
