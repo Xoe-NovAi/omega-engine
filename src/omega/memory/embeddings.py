@@ -366,7 +366,18 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
             )
 
         # Load via llama-cpp-python in a thread (blocking init)
-        import llama_cpp  # lazy import — heavy module
+        try:
+            import llama_cpp  # lazy import — heavy module
+        except ImportError as e:
+            # Core wheel installs without the [native] extra (llama-cpp-python
+            # is a source build). Callers handle FileNotFoundError as a
+            # degraded-provider signal — ModuleNotFoundError would escape and
+            # crash the summon. (Fixed 2026-10-13 after PyPI smoke exit 1.)
+            raise FileNotFoundError(
+                "llama-cpp-python not installed — embedding provider "
+                "unavailable. Install the native extra: pip install "
+                "omega-engine[native] (or run ./scripts/install.sh)."
+            ) from e
 
         def _load():
             return llama_cpp.Llama(
