@@ -60,6 +60,14 @@ SCHEDULED_ONLY_ALLOWLIST: dict[str, str] = {
         "with nobody seeing it — the direct evidence for this check. Mitigation: "
         "manual dispatch plus a status review before releases."
     ),
+    "publish.yml": (
+        "PyPI publication pipeline (OIDC trusted publishing, no tokens). "
+        "Runs on release publish + manual dispatch only: a push trigger would "
+        "re-present releases on every commit. "
+        "ACCEPTED RISK: can fail invisibly. Mitigation: the publish gate "
+        "(scripts/ci_secret_scan.py + release asset check) is reviewed "
+        "before each inception."
+    ),
 }
 
 
