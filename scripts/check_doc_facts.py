@@ -59,6 +59,16 @@ FORBIDDEN_PHRASES = [
     "arcana_novai.*(complete|ships)",
 ]
 
+# Public tree forbidden patterns (should never appear in tracked files)
+PUBLIC_TREE_FORBIDDEN = [
+    r"docs/archive/",
+    r"session-ses_",
+    r"claude-handoff",
+    r"tskey-auth-k.*CNTRL",
+    r"/home/xnai/",
+    r"/home/hazeruno/",
+]
+
 
 def load_facts() -> Dict[str, Any]:
     with open(FACTS_PATH) as f:
@@ -130,6 +140,41 @@ def check_facts(facts: Dict[str, Any]) -> Tuple[List[str], List[str]]:
                     errors.append(
                         f"{filepath}: {key} = '{extracted_val}' but FACTS.yaml has '{expected}'"
                     )
+
+    # Public tree self-check: scan public-facing tracked files for forbidden patterns
+    # Only check public-facing directories, not internal data/ or scripts/
+    PUBLIC_DIRS = [
+        "README.md", "QUICKSTART.md", "ANNOUNCEMENT_v1.6.0-alpha.md",
+        "docs/guides/", "docs/tutorials/", "docs/reference/",
+        "docs/architecture/", "docs/governance/", "docs/operations/",
+        "docs/specs/", "docs/api/", "docs/federation/", "docs/strategy/",
+        "docs/how-to/", "docs/kb/", "docs/sprints/",
+        "PUBLIC_ALLOWLIST.txt", ".gitleaksignore", ".secret-history-baseline.toml",
+        ".gitguardian.yaml", ".secret-history-baseline.toml"
+    ]
+    try:
+        for pub_path in PUBLIC_DIRS:
+            p = Path(pub_path)
+            if not p.exists():
+                continue
+            if p.is_file():
+                files = [p]
+            elif p.is_dir():
+                files = list(p.rglob("*"))
+            else:
+                continue
+            for f in files:
+                if not f.is_file() or f.suffix not in (".md", ".py", ".yaml", ".yml", ".txt", ".toml"):
+                    continue
+                try:
+                    content = f.read_text(encoding="utf-8")
+                except Exception:
+                    continue
+                for pattern in PUBLIC_TREE_FORBIDDEN:
+                    if re.search(pattern, content, re.IGNORECASE):
+                        errors.append(f"PUBLIC TREE VIOLATION: {f} contains forbidden pattern '{pattern}'")
+    except Exception:
+        pass  # Non-fatal if git not available
 
     return errors, warnings
 

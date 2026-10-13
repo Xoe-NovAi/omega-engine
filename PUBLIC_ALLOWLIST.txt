@@ -252,7 +252,6 @@ tests/unit/test_vault_core.py   # D-565 — vault excluded from debut; test cann
 tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/USER/*) — plugin stays private
 config/wads/arcana_novai/plugins/   # host paths /media/USER/* — FORGE beats any broader entry; keep it private
 docs/research/
-docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above
 data/entities/                # EXCEPT one default soul (e.g. _omega_default)
 data/handoff/

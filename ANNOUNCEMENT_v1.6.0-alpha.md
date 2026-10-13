@@ -63,14 +63,12 @@ git clone https://github.com/Xoe-NovAi/omega-engine
 cd omega-engine
 ./scripts/install.sh
 
-# Or wheel install (self-contained) — from the GitHub release asset
-# (not yet on PyPI). Download with aria2c (M23: mandatory for >1MB on
-# Node 0 — single-connection pip/curl can crawl at KB/s), then install:
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
+# Alternative: wheel install (core runtime only — no MCP hub, no native GGUF).
+# For the hub + local inference, use the source install above.
+curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
 pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 
-# First run — launches the hub + registers your entities
-omega talk "Hello, Omega"
+omega list-entities          # See the sovereign council
 ```
 
 **MCP clients:** Connect to the live hub via Streamable HTTP (primary) or SSE (legacy):
@@ -86,19 +84,6 @@ omega talk "Hello, Omega"
 ```
 
 **Transports:** Streamable HTTP `/mcp` (primary) · Legacy SSE `/sse` (both on `127.0.0.1:8016`)
-
-**Or run the hub locally** (if not already running):
-```bash
-# Start the hub daemon
-python -m mcp_servers.omega_hub.server
-
-# Then connect your MCP client to http://127.0.0.1:8016/mcp
-```
-
-**First run** — launches the hub + registers your entities:
-```bash
-omega talk "Hello, Omega"
-```
 
 ---
 
