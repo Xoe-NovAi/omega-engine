@@ -117,8 +117,8 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 ### Option A: From GitHub Release (Fastest)
 ```bash
 # Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
-pip install omega_engine-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/the_omega_engine-1.6.0a0-py3-none-any.whl
+pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 
 # PyPI: `pip install the-omega-engine` — pending publisher exists; verify live before relying on it (see ANNOUNCEMENT_v1.6.0-alpha.md)
 
@@ -137,8 +137,8 @@ cd omega-engine
 
 **Or, wheel from the release asset** (aria2c — 16-split fetch per M23):
 ```bash
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/omega_engine-1.6.0a0-py3-none-any.whl
-pip install omega_engine-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
+pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 ```
 *The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "the-omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
 
