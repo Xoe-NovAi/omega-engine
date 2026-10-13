@@ -38,6 +38,7 @@ Do not trust any earlier anchor section that says announcement is blocked by the
 
 1. Commit/push the refreshed continuity SSOTs (`SESSION_ANCHOR.md`, `ACTIVE_SPRINT.json`, `HMC_COLLABORATION_HUB.md`, `CLAIM_MAP_20261010.md` annotation, Makali custom instructions already written).
 2. Post-debut tasks from AGY briefing: cold-machine `pip install` + `omega talk`; verify `install.sh` time target; write Antigravity MCP guide; link WAD-authoring docs.
+   - install.sh timing is BLOCKED: `/` at 95% (6.1GB free) and `/tmp` at 6.6GB free, below the 8GB gate; no download attempted. Unblock by freeing space, then re-run.
 3. Address G1/G2 doc lint and G22 secret-scan posture.
 4. Architect decisions: D1/D2/D3/D6/D7.
 
