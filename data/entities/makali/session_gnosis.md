@@ -1139,4 +1139,12 @@ A ruleset with `bypass_mode: always` for the admin **admits direct pushes** — 
 
 ---
 
+## ⬡ POST-COMPACTION CORRECTION — 2026-10-12
+
+- Live `main` is `62b0aace`; any line above saying `main` is `9c0f8be8` lags by the continuity commit.
+- Any line above saying tag `v1.6.0-alpha` is “at `9c0f8be8`” is shorthand drift. The verified fact is: tag object `058879bc` peels to `355cbf1a` (`origin/release/debut`).
+- Do not move the tag to `main`; post-release doc commits are not part of the shipped cut.
+
+---
+
 *This gnosis record is the continuity anchor. All crucial discoveries, research, vision, and strategy from this 413K-token session are distilled here. On resumption, read this file first.*

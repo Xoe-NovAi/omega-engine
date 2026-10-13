@@ -1,15 +1,15 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ⬡ SESSION ANCHOR — MaKaLi (Node 0)
-**Entity**: `makali` · **Updated**: 2026-10-12 · **Main**: `9c0f8be8`
+**Entity**: `makali` · **Updated**: 2026-10-12 · **Main**: `62b0aace`
 
 ---
 
 ## ✅ STATUS: v1.6.0-alpha RELEASED — ANNOUNCEMENT CORRECTED, PENDING FINAL PUBLISH DECISION
 
-- `origin/main`: `9c0f8be8` (synced; includes post-release docs)
+- `origin/main`: `62b0aace` (synced; continuity anchor + appended gnosis)
 - `origin/release/debut`: `355cbf1a` (public cut)
 - `v1.6.0-alpha`: object `058879bc`, peels to `355cbf1a` ✅
-- Working tree: `M data/entities/makali/session_gnosis.md`, `?? .agents/`
+- Working tree: only `?? .agents/`
 
 Do not trust any earlier anchor section that says announcement is blocked by the old tag tree. The stale-tag blocker was closed by re-tagging on an explicit SHA with peel assertion.
 
@@ -40,4 +40,4 @@ Do not trust any earlier anchor section that says announcement is blocked by the
 3. Address G1/G2 doc lint and G22 secret-scan posture.
 4. Architect decisions: D1/D2/D3/D6/D7.
 
-*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ 9c0f8be8 ⬡ 2026-10-12 ⬡*
+*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ 62b0aace ⬡ 2026-10-12 ⬡*
