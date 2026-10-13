@@ -4,7 +4,7 @@
 
 **Date**: 2026-10-02
 **Purpose**: Step-by-step tutorial for creating a WAD (Where's All Data) bundle for the Omega Engine.
-**Prerequisites**: Python 3.11+, `omega-engine` repo cloned, `omega.cli.bundle` available
+**Prerequisites**: Python 3.12+, `omega-engine` repo cloned, `omega.cli.bundle` available
 **Tags**: tutorial, wad, bundle, content, distribution
 
 ---
