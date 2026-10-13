@@ -101,10 +101,10 @@ This section answers the mandatory threat-model questions with actual config val
 
 | Plane | What It Gates | Default | Config |
 |-------|---------------|---------|--------|
-| **Kill** | Halt runaway session | Enabled | `OMEGA_KILL_TIMEOUT_S` (default 30s) |
+| **Kill** | Halt runaway session | Enabled | (hardcoded 30s timeout) |
 | **Escalate** | Promote blocker to higher authority | Enabled | Requires `packet_id` + `to_entity` |
 | **Approve** | Gate destructive ops | Enabled (fail-closed) | `OMEGA_APPROVAL_TIMEOUT_S` (default 900s) |
-| **Throttle** | Per-entity token/tool limits | Advisory v1 | `OMEGA_THROTTLE_ENABLED=true` |
+| **Throttle** | Per-entity token/tool limits | Advisory v1 | (not yet implemented) |
 
 **Defaults**: Kill/Escalate/Approve active; Throttle advisory. All planes require explicit human decision for Approve; Kill is idempotent.
 
