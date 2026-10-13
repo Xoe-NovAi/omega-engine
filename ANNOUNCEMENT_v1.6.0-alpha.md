@@ -1,7 +1,7 @@
 # 🎉 Omega Engine v1.6.0-alpha — Public Debut
 
 **Release Date:** 2026-10-12  
-**Tag:** `v1.6.0-alpha` (commit `344ea02d`)  
+**Tag:** `v1.6.0-alpha` (peels to `355cbf1a`)  
 **Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0-alpha.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0-alpha)
 
 ---
@@ -20,7 +20,7 @@
 |:--|:--|
 | **Local-first inference** (llama.cpp, GGUF, Zen 2 optimized) | ✅ Primary |
 | **Cloud fallback** (OpenAI, Anthropic, Google, OpenCode Zen, LM Studio, Ollama) | ✅ Configurable |
-| **Persistent entities** with hot-reloadable YAML affinity | ✅ 14 IWAD entities, 10 A2A seats |
+| **Persistent entities** with hot-reloadable YAML affinity | ✅ 12 IWAD entities, 10 A2A seats |
 | **Cross-platform Hivemind** (handoffs, awareness, radar) | ✅ OpenCode, Cline, Cursor, Gemini CLI, Codex |
 | **Sovereign search** (SSP-V2: local cache → SearXNG → Exa → Firecrawl) | ✅ 4-tier |
 | **Wheel install** (`pip install omega-engine`) | ✅ Self-contained, 5 runtime configs + default IWAD |
@@ -63,8 +63,11 @@ git clone https://github.com/Xoe-NovAi/omega-engine
 cd omega-engine
 ./scripts/install.sh
 
-# Or wheel install (self-contained)
-pip install omega-engine
+# Or wheel install (self-contained) — from the GitHub release asset
+# (not yet on PyPI). Download with aria2c (M23: mandatory for >1MB on
+# Node 0 — single-connection pip/curl can crawl at KB/s), then install:
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega-1.6.0a0-py3-none-any.whl
+pip install omega-1.6.0a0-py3-none-any.whl
 
 # First run — launches the hub + registers your entities
 omega talk "Hello, Omega"
@@ -102,11 +105,11 @@ omega talk "Hello, Omega"
 | ✅ Works | ⚠️ Known Gaps (Honest) |
 |:--|:--|
 | Local inference + cloud fallback | Axiom ceiling enforcement (deferred) |
-| 14 persistent entities | REUSE/SPDX debt (107 files) |
+| 12 persistent entities | REUSE/SPDX debt (107 files) |
 | Cross-client Hivemind | Lesson promotion pipeline (partial) |
 | Wheel + source install | D-AVGN-006 N1 response pending |
-| Temple-Grade 53/53 gates | Lesson promotion pipeline (partial) |
-| Immutable releases + tag ruleset | D-AVGN-006 N1 response pending |
+| Temple-Grade 53/53 gates | — |
+| Immutable releases + tag ruleset | — |
 
 **No vaporware. No "coming soon" without a ticket.** Every claim above is gated by `make temple-grade` (53/53) and verified on clean clone.
 
