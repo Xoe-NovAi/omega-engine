@@ -140,7 +140,7 @@ cd omega-engine
 ### Connect Your IDE
 Omega adapts to whatever workflow you already use:
 - **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace — the full council and Hivemind MCP tools are immediately active.
-- **In Cline / Antigravity IDE / Cursor**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration.
+- **In Cline / Antigravity IDE / Cursor**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration. Antigravity setup: `docs/guides/connect-antigravity-ide.md`.
 - **From Your Terminal**: Use the built-in CLI directly:
   ```bash
   omega talk "Analyze the current architectural state"
