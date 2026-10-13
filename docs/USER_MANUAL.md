@@ -33,6 +33,7 @@
 15. [Architecture Overview](#architecture-overview)
 16. [Troubleshooting](#troubleshooting)
 17. [Quick Reference Cards](#quick-reference-cards)
+18. [Database Maintenance](#database-maintenance)
 
 ---
 
@@ -1109,7 +1110,70 @@ If your AI agent's context window is compacted:
 
 ---
 
-*⬡ OMEGA ⬡ USER-MANUAL ⬡ v1.6.0-alpha ⬡ 2026-10-03*
+## 18. Database Maintenance
+
+### OpenCode Session Store (`opencode.db`)
+
+OpenCode keeps all session history in a single SQLite database at
+`~/.local/share/opencode/opencode.db`. Over time it grows fast — the UI streams
+every message update as a full snapshot, so the event log accumulates
+**quadratic** redundancy.
+
+**Check the size:**
+```bash
+ls -lh ~/.local/share/opencode/opencode.db
+```
+
+**Safe read-only queries** (never `opencode db <query>` — it opens read-write):
+```bash
+ocdb-ro "SELECT COUNT(*) FROM session"
+ocdb-ro "SELECT COUNT(*) FROM message"
+ocdb-ro "PRAGMA quick_check"
+```
+
+**Reclaiming space** (needs an external backup target, and OpenCode closed for
+the final swap):
+```bash
+cd /path/to/omega-engine
+./scripts/opencode_db_reclaim.sh --dry-run    # verify gates, count, no writes
+./scripts/opencode_db_reclaim.sh --execute    # requires DB unlocked
+tail -f /tmp/opencode/reclaim.log             # monitor
+```
+
+The script refuses to mutate without a verified backup, and refuses to swap
+while any process holds the database open.
+
+**Full guide:** [how-to/opencode-db-maintenance.md](how-to/opencode-db-maintenance.md)
+— covers byte attribution, streaming backups, batched deletion, verification
+chains, and the failure modes to avoid.
+
+> **Never `cp` this database.** On a memory-constrained host it OOM-kills the
+> running agent and produces a truncated file that still has a valid SQLite
+> header. Use `VACUUM INTO` (see the guide).
+
+### Other Caches
+
+| Target | Typical reclaim | Regenerates? |
+|---|---:|---|
+| `~/.cache/pip` | ~1.1 GB | yes |
+| `~/.npm/_cacache` | ~880 MB | yes |
+| `go clean -modcache` | ~790 MB | yes (re-downloads) |
+| `~/.cache/tracker3` | ~210 MB | yes |
+| `podman image prune -a` | ~1.1 GB | images re-pullable |
+
+**Check before deleting:**
+```bash
+df -h /                                    # current pressure
+du -sh ~/.cache/* 2>/dev/null | sort -rh   # what is actually large
+```
+
+> **A large `opencode.db` is usually the real constraint, not caches.** On
+> 2026-10-13 a 26.6 GB database was reduced to 6.58 GB while cache cleanup
+> across the same host recovered only ~3 GB.
+
+---
+
+*⬡ OMEGA ⬡ USER-MANUAL ⬡ v1.6.0-alpha ⬡ 2026-10-13*
 *"Sever the umbilical cord of Big AI."*
 
 <!-- PROVENANCE-CORRECTED 2026-08-23T20:39:41Z — FP-04/R_MESSAGE_PROVENANCE_HIERARCHY audit

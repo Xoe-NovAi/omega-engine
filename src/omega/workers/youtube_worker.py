@@ -58,6 +58,7 @@ from omega.errors import (
     ProviderTimeoutError,
     ProviderUnavailableError,
 )
+from omega.governance.config_resolver import CONFIG_DIR
 from omega.library.coordinator import COORDINATOR
 from omega.oracle.resource_guard import ResourceGuard
 
@@ -1083,7 +1084,7 @@ def _cpu_percent() -> float:
 def _load_config(path: Optional[Path] = None) -> Dict:
     """Load YAML config file, returning empty dict if unavailable."""
     if path is None:
-        path = Path("config/youtube_worker.yaml")
+        path = CONFIG_DIR / "youtube_worker.yaml"
     if not path.exists():
         logger.info("No config file at %s — using defaults", path)
         return {}

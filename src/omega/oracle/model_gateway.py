@@ -512,8 +512,15 @@ class ModelGateway:
         takes 15-60s on Ryzen 5700U (no GPU). With 26 oracle tests each
         creating fresh instances, the cumulative time exceeds any reasonable
         timeout. MockProvider returns deterministic responses in <1ms.
+
+        [mock-override] When OMEGA_PROVIDER=mock, deterministically select
+        MockProvider only (no network probes, no API keys). Used by
+        `OMEGA_PROVIDER=mock omega talk` smoke (G11) and offline runs.
+        Any other OMEGA_PROVIDER value leaves the fabric untouched.
         """
         if os.environ.get("OMEGA_ENV") == "test":
+            return [MockProvider("mock", {"timeout_seconds": 5.0})]
+        if os.environ.get("OMEGA_PROVIDER", "").strip().lower() == "mock":
             return [MockProvider("mock", {"timeout_seconds": 5.0})]
 
         providers_path = CONFIG_DIR / "providers.yaml"

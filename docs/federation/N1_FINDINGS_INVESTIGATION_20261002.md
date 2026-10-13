@@ -1,0 +1,273 @@
+# N1 Findings Investigation — Node Identity, Disk Space, and Write Path
+
+**Date**: 2026-10-02
+**Investigator**: doom_guy (S1 Infrastructure Keeper)
+**Triggered by**: Lilith-N1 findings (3 issues)
+**Status**: INVESTIGATION COMPLETE — NO FIXES APPLIED
+
+---
+
+## Executive Summary
+
+| Finding | Severity | Root Cause | Fix Complexity |
+|---------|----------|------------|----------------|
+| 1. Wrong node identity | **Medium** | Architectural: hub runs on N0, reports local identity | Medium — requires node-awareness |
+| 2. Errno 28 on submit | **High** | Diagnostic gap + transient filesystem condition | Low — improve error reporting |
+| 3. Writes resolve to N0 home | **Critical** | Architectural: single-hub, single-filesystem design | High — requires multi-node hub or shared storage |
+
+**Key Insight**: Findings 1 and 3 share the same root cause — the hub is a single process running on Node 0 with a single filesystem root. Finding 2 is a separate issue with error reporting and idempotency.
+
+---
+
+## Finding 1: Federation Hub Reports Wrong Node Identity
+
+### Observation
+
+`omega-hub_omega_federation_status` invoked on Node 1 returns:
+```json
+{
+  "self": {
+    "hostname": "n0",
+    "tailscale_ip": "100.123.51.67",
+    "tags": ["tag:node0"]
+  }
+}
+```
+
+### Investigation
+
+**File**: `mcp_servers/omega_hub/hub_tools/federation.py`
+
+The `omega_federation_status` tool (line 222-251) works as follows:
+
+1. **Runs `tailscale status --json`** via `_run_tailscale(["status", "--json"])` (line 228-229)
+2. **Parses the Self node** via `_parse_self(status)` (line 59-69), which extracts `status.get("Self", {})`
+3. **Returns** hostname, tailscale_ip, tags from the Self node
+
+**How it determines "self" identity**:
+- It runs `tailscale status --json` on the **LOCAL machine** where the hub process is running
+- The `Self` field in tailscale's JSON output is the local node's identity
+- There is **NO caching** — it queries the live tailscale daemon each time
+- There is **NO hardcoded n0 reference** — the identity comes from tailscale itself
+
+**Why it reports n0 when called from Node 1**:
+- The hub process runs on Node 0 (confirmed by systemd unit: `WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine`)
+- When Node 1 connects to the hub via Tailscale and calls `omega_federation_status`, the tool queries **Node 0's** tailscale daemon
+- Node 0's tailscale daemon correctly reports Node 0's identity (hostname: n0, IP: 100.123.51.67)
+- The tool has **no concept of "which node is calling"** — it only knows its own local identity
+
+**Is there a hardcoded n0 reference?** No. The only n0 references in the codebase are:
+- `server.py` lines 133-148: Transport security allowlist entries for n0's IP and hostname
+- `federation.py` line 308: A probe client name `"n0-probe"` (cosmetic only)
+- `federation.py` lines 107-108: Docstring examples mentioning n1
+
+### Root Cause
+
+**Architectural**: The hub is a single process running on Node 0. The `omega_federation_status` tool reports the **hub's local node identity**, not the **caller's node identity**. This is correct behavior for the machine it runs on, but misleading when the caller is on a different node.
+
+### Fix Shape
+
+| Option | Description | Pros | Cons |
+|--------|-------------|------|------|
+| **A. Node parameter** | Add a `node` parameter to the tool; caller specifies which node's status they want | Simple, backward-compatible | Requires caller to know node names |
+| **B. Separate hub per node** | Run a hub instance on Node 1 with its own `PROJECT_ROOT` | Each hub reports its correct identity | Doubles resource usage, requires N1 hub deployment |
+| **C. Caller detection** | Detect caller's node from MCP connection context (e.g., source IP) | Transparent to caller | Complex, may not be reliable |
+
+**Recommendation**: Option A (node parameter) for immediate relief, Option B (separate hub) for long-term correctness.
+
+---
+
+## Finding 2: Handoff Submit Intermittently Fails with Errno 28
+
+### Observation
+
+`hivemind_handoff action=submit` first attempt returned:
+```json
+{"error": "[Errno 28] No space left on device"}
+```
+Retry succeeded. Disk has 180G free.
+
+### Investigation
+
+**File**: `mcp_servers/omega_hub/hub_tools/tools.py` (lines 1493-1602)
+
+The submit code path performs these writes:
+
+1. **Sequence counter** (line 1522): `store.next_seq()` -> `fe.new_seq_file(self.seq_file)`
+   - Writes to `HANDOFF_BASE / ".seq"` (i.e., `PROJECT_ROOT/data/handoff/.seq`)
+   - Uses `os.open()` + `fcntl.flock()` + `os.write()` + `os.fsync()`
+
+2. **Envelope write** (line 1556-1560): `fe.write_atomic(path, json.dumps(packet, ...))`
+   - Writes to `HANDOFF_PENDING / f"{packet_id}.json"`
+   - `write_atomic` creates a temp file `.{filename}.{pid}.{tid}.tmp` in the same directory
+   - Writes to temp file, fsyncs, then atomically renames to final path
+
+**Where does Errno 28 come from?**
+
+The error message `{"error": "[Errno 28] No space left on device"}` is generated by the `except Exception as e:` handler at line 1724:
+```python
+except Exception as e:
+    logger.warning("hivemind_handoff %s failed: %s", action, e)
+    return json.dumps({"error": str(e)})
+```
+
+For a Python `OSError`, `str(e)` returns `[Errno 28] No space left on device` — **WITHOUT the failing path**. This is a critical diagnostic gap.
+
+**Possible sources of ENOSPC**:
+
+| Source | Explanation | Likelihood |
+|--------|-------------|------------|
+| **Temp file creation** | `write_atomic` creates a temp file in `HANDOFF_PENDING/`. If this directory is on a filesystem that is temporarily full, `os.open()` with `O_CREAT` fails with ENOSPC | **High** |
+| **Sequence counter write** | `new_seq_file` writes to `HANDOFF_BASE/.seq`. Same filesystem concern | Medium |
+| **Inode exhaustion** | Filesystem has free space but no free inodes | Low (180G free suggests not inode-bound) |
+| **Transient kernel issue** | Filesystem under heavy load, writeback buffering causes temporary ENOSPC | Medium |
+
+**Why intermittent?** The filesystem where `HANDOFF_BASE` resides (under `PROJECT_ROOT/data/handoff/`) may experience transient space pressure from:
+- Log file growth (omega-hub.log can grow large)
+- Other processes writing to the same filesystem
+- Temporary files from crashed writers accumulating
+
+**Why does retry succeed?** The transient condition clears (kernel writeback completes, space is freed, or temp files are cleaned up by the `_open_exclusive_tmp` reclaim mechanism).
+
+**Is the error message adequate?** **No.** The error does not include:
+- Which file/path failed
+- Which operation failed (temp creation, write, fsync, rename)
+- The filesystem/mount point
+
+### Root Cause
+
+1. **Diagnostic gap**: The `except Exception as e:` handler at line 1724 returns `str(e)` which for OSError does NOT include the failing filename. This makes it impossible to diagnose which write failed.
+2. **Transient filesystem condition**: The handoff directory is on a filesystem that experiences transient space pressure.
+3. **No idempotency**: Each submit generates a new `packet_id` (line 1513: `packet_id = f"ho_{uuid.uuid4().hex[:12]}"`), so a retry creates a duplicate packet.
+
+### Fix Shape
+
+| Fix | Description | Priority |
+|-----|-------------|----------|
+| **Include path in error** | Catch `OSError` specifically and include `e.filename` in the error message | **P0** |
+| **Idempotency key** | Accept a client-supplied idempotency key; if the same key is submitted twice, return the original packet | **P1** |
+| **Pre-write space check** | Check available disk space before writing; fail early with a clear message | **P2** |
+| **Temp file cleanup** | Add a startup sweep to remove stale temp files from crashed writers | **P2** |
+
+**Recommended error format**:
+```json
+{
+  "error": {
+    "code": "disk_full",
+    "message": "No space left on device",
+    "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/pending/.ho_abc123.json.12345.67890.tmp",
+    "operation": "temp_file_creation",
+    "filesystem": "/dev/sda1",
+    "available_bytes": 0
+  }
+}
+```
+
+---
+
+## Finding 3: Hub Writes Resolve to Node 0 Home
+
+### Observation
+
+Successful submit returned path:
+```
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/handoff/pending/...
+```
+The hub is writing under Node 0's home, not Node 1's home.
+
+### Investigation
+
+**File**: `mcp_servers/omega_hub/state.py` (line 31)
+
+```python
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+```
+
+This resolves to the directory containing the `mcp_servers` directory:
+- `mcp_servers/omega_hub/state.py` -> parent = `mcp_servers/omega_hub/`
+- parent = `mcp_servers/`
+- parent = **omega-engine root** (e.g., `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine`)
+
+**All hub paths derive from `PROJECT_ROOT`**:
+```python
+HANDOFF_BASE = PROJECT_ROOT / "data" / "handoff"          # line 523
+HALL_OF_RECORDS = PROJECT_ROOT / "data" / "knowledge" / "HALL_OF_RECORDS"  # line 309
+LOCKS_BASE = PROJECT_ROOT / "data" / "coordination" / "locks"  # line 578
+METRICS_PATH = PROJECT_ROOT / "data" / "coordination" / "metrics.json"  # line 499
+```
+
+**Systemd unit confirms** (`~/.config/systemd/user/omega-hub.service`):
+```ini
+[Service]
+WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/omega_hub/server.py
+```
+
+**Is it hardcoded to `/home/arcana-novai`?** No. `PROJECT_ROOT` is relative to the file location. But the hub process is **started from Node 0's directory**, so `PROJECT_ROOT` resolves to Node 0's omega-engine directory.
+
+**Does the hub detect which node the caller is on?** **No.** There is:
+- No `OMEGA_NODE_ID` environment variable
+- No node detection mechanism
+- No per-node write routing
+- No shared filesystem (NFS) for the handoff directory
+
+**Is there a Node 1 hub?** No. The only hub systemd unit is on Node 0. Node 1 connects to Node 0's hub via Tailscale.
+
+### Root Cause
+
+**Architectural**: The hub is a single-node process with a single filesystem root. All writes go to the node where the hub process runs (Node 0). There is no mechanism for the hub to:
+1. Detect which node the caller is on
+2. Route writes to the caller's node
+3. Share state across nodes (except via Tailscale network, not shared storage)
+
+### Fix Shape
+
+| Option | Description | Pros | Cons |
+|--------|-------------|------|------|
+| **A. Separate hub per node** | Deploy a hub instance on Node 1 with its own `PROJECT_ROOT` | Each hub writes to local filesystem | Doubles resource usage, requires N1 hub deployment, state synchronization needed |
+| **B. Shared filesystem** | Mount NFS for `data/handoff/` so both nodes see the same files | Single source of truth | NFS latency, single point of failure, complex setup |
+| **C. Node-aware routing** | Add `OMEGA_NODE_ID` env var; hub routes writes to node-specific directories | Clean separation | Requires significant refactoring, breaks existing paths |
+| **D. Hub proxy on N1** | Run a lightweight proxy on N1 that forwards to N0's hub but rewrites paths | Minimal changes to hub | Complex, error-prone |
+
+**Recommendation**: Option A (separate hub per node) is the cleanest long-term solution. The N1 hub would have its own `PROJECT_ROOT` pointing to N1's omega-engine directory, and all writes would stay local to N1.
+
+---
+
+## Cross-Cutting Findings
+
+### 1. Single-Node Architecture Assumption
+
+The entire hub codebase assumes a single-node deployment. This is the root cause of Findings 1 and 3. The hub has no concept of:
+- Node identity
+- Caller location
+- Multi-node write routing
+- Cross-node state synchronization
+
+### 2. Error Reporting Gap
+
+The `except Exception as e:` pattern used throughout `tools.py` returns `str(e)` which for `OSError` does NOT include the failing filename. This is a systemic issue that affects all handoff operations, not just submit. Any disk-related failure is undiagnosable from the error message alone.
+
+### 3. No Idempotency in Handoff Operations
+
+The submit operation generates a new `packet_id` each time (UUID-based), making retries create duplicate packets. This is a reliability issue for any transient failure (network, disk, timeout).
+
+---
+
+## Appendix: Key File Locations
+
+| File | Lines | Role |
+|------|-------|------|
+| `mcp_servers/omega_hub/hub_tools/federation.py` | 222-251 | `omega_federation_status` tool |
+| `mcp_servers/omega_hub/hub_tools/federation.py` | 38-56 | `_run_tailscale()` — runs `tailscale status --json` |
+| `mcp_servers/omega_hub/hub_tools/federation.py` | 59-69 | `_parse_self()` — extracts Self node from tailscale JSON |
+| `mcp_servers/omega_hub/hub_tools/tools.py` | 1493-1602 | Handoff submit code path |
+| `mcp_servers/omega_hub/hub_tools/tools.py` | 1724-1726 | Exception handler that produces the unhelpful error message |
+| `mcp_servers/omega_hub/federation_envelope.py` | 556-613 | `write_atomic()` — temp file + atomic rename |
+| `mcp_servers/omega_hub/federation_envelope.py` | 220-330 | `new_seq_file()` — sequence counter with flock |
+| `mcp_servers/omega_hub/state.py` | 31 | `PROJECT_ROOT` definition |
+| `mcp_servers/omega_hub/state.py` | 523-528 | `HANDOFF_BASE` and queue paths |
+| `~/.config/systemd/user/omega-hub.service` | — | Systemd unit with WorkingDirectory |
+
+---
+
+*Report generated by doom_guy (S1 Infrastructure Keeper) on 2026-10-02. Investigation only — no code changes applied.*

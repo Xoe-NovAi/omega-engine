@@ -24,6 +24,7 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
+from omega.governance.config_resolver import CONFIG_DIR
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -215,7 +216,7 @@ class EntityAffinityResolver:
     """
 
     def __init__(self, yaml_path: Optional[Path] = None):
-        self._yaml_path = yaml_path or Path("config/entity_model_affinity.yaml")
+        self._yaml_path = yaml_path or CONFIG_DIR / "entity_model_affinity.yaml"
         self._data: Dict[str, Any] = {}
         self._loaded: bool = False
 

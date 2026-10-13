@@ -575,7 +575,19 @@ test-suite-full:
 # check-engine joins the chain FIRST, before check-hub-imports: it is the
 # cheapest signal that the engine boots, and there is no value in a 30-45s
 # clean-worktree import gate if the fast subset is already red.
-temple-grade: check-constraints check-engine check-hub-imports doc-llm-validate check-mandates check-mandate-compliance check-tracking-state dashboard-self-test
+# [G25] No workflow may fail INVISIBLY. A workflow with no push/pull_request
+# trigger never runs when code changes, so a red status sits unseen until
+# someone remembers to look. sote.yml failed on `pip install -r
+# requirements.txt` every week since creation, and codex-refresh.yml had a
+# missing `fi` and failed every day — both unnoticed. This target makes that
+# class of silent failure impossible to add by accident.
+.PHONY: check-workflow-triggers
+check-workflow-triggers:
+	@echo "$(YELLOW)M23: checking no workflow can fail invisibly (G25)...$(NC)"
+	@$(PYTHON_ABS) scripts/check_workflow_trigger_coverage.py
+
+.PHONY: temple-grade
+temple-grade: check-constraints check-engine check-hub-imports doc-llm-validate check-mandates check-mandate-compliance check-tracking-state check-workflow-triggers dashboard-self-test
 
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Hub Imports + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"

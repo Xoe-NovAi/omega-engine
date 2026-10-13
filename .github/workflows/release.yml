@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
 # SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Release Workflow
-# ⬡ OMEGA ⬡ PROMETHEUS ⬡ github-actions ⬡ trc_release ⬡ v1.0.0
+# ⬡ OMEGA ⬡ PROMETHEUS ⬡ github-actions ⬡ trc_release ⬡ v1.1.0
 #
 # Triggers on: tag push (v*.*.*)
-# Runs: temple-grade, builds artifacts, creates GitHub Release
+# Runs: temple-grade, version consistency, changelog gate, clean build,
+#       wheel content gate, creates GitHub Release, clean-env verification
 
 name: Release
 
@@ -22,7 +24,7 @@ jobs:
   release:
     name: 🏷️ Release ${{ github.ref_name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -58,21 +60,33 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           echo "version=${TAG#v}" >> $GITHUB_OUTPUT
 
-      - name: Generate changelog
-        id: changelog
+      - name: G9 — Version consistency (tag == pyproject == CHANGELOG)
         run: |
-          # Extract changelog section for this version
-          VERSION=${{ steps.version.outputs.version }}
-          awk -v v="$VERSION" '
-            /^## \[v/ { in_section=0 }
-            $0 ~ "\\[" v "\\]" { in_section=1 }
-            in_section { print }
-          ' CHANGELOG.md > release_notes.md || echo "No changelog section found" > release_notes.md
+          .venv/bin/python scripts/check_version_consistency.py \
+            --tag "${{ github.ref_name }}" \
+            --pyproject pyproject.toml \
+            --changelog CHANGELOG.md
 
-      - name: Build source distribution
+      - name: G8 — Fail-closed CHANGELOG section gate
+        run: |
+          .venv/bin/python scripts/check_release_changelog.py \
+            --tag "${{ github.ref_name }}" \
+            --changelog CHANGELOG.md \
+            --out release_notes.md
+
+      - name: Clean build directories
+        run: |
+          rm -rf build dist src/*.egg-info
+
+      - name: Build wheel
         run: |
           python -m pip install --upgrade build
-          python -m build --sdist --wheel
+          python -m build --wheel
+
+      - name: G10 — Wheel content gate
+        run: |
+          .venv/bin/python scripts/check_wheel_contents.py \
+            --wheel dist/*.whl
 
       - name: Create GitHub Release
         env:
@@ -95,8 +109,9 @@ jobs:
             --notes-file release_notes.md \
             dist/*.whl dist/*.tar.gz
 
-      - name: Verify install
+      - name: G11 — Clean-environment artifact verification
         run: |
-          pip install dist/*.whl
-          OMEGA_PROVIDER=mock omega talk "Release verification: hello from ${{ github.ref_name }}"
-
+          .venv/bin/python scripts/verify_artifact_clean_env.py \
+            --wheel dist/*.whl \
+            --repo-root ${{ github.workspace }} \
+            --smoke-cmd "omega list-entities"

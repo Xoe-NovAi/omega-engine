@@ -45,6 +45,7 @@ Speculative decoding (Oracle already implements this):
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
+from omega.governance.config_resolver import CONFIG_DIR
 from omega.errors import (
     OmegaError,
     OmegaError,
@@ -888,7 +889,7 @@ class CpuOptimizerFactory:
     - GenericFallbackOptimizer: Unknown/unsupported microarchitectures
     """
 
-    _PROFILE_PATH = Path("config/hardware_profile.yaml")
+    _PROFILE_PATH = CONFIG_DIR / "hardware_profile.yaml"
 
     @classmethod
     def get_optimizer(cls):
