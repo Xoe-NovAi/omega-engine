@@ -120,7 +120,6 @@ omega talk "Hello, Omega"
 - **Release:** https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0-alpha
 - **Docs:** https://github.com/Xoe-NovAi/omega-engine/tree/main/docs
 - **Issues:** https://github.com/Xoe-NovAi/omega-engine/issues
-- **Discord:** (coming soon)
 
 ---
 
