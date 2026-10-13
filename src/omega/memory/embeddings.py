@@ -376,7 +376,7 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
             raise FileNotFoundError(
                 "llama-cpp-python not installed — embedding provider "
                 "unavailable. Install the native extra: pip install "
-                "omega-engine[native] (or run ./scripts/install.sh)."
+                "the-omega-engine[native] (or run ./scripts/install.sh)."
             ) from e
 
         def _load():

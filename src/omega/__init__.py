@@ -45,10 +45,11 @@ if __version__ is None:  # pragma: no cover - installed distribution without pyp
     try:
         import importlib.metadata
 
-        # Distribution name (PyPI): omega-engine. Console script: omega.
-        # ("omega" is taken on PyPI by an unrelated game-theory package —
+        # Distribution name (PyPI): the-omega-engine. Console script: omega.
+        # ("omega" belongs to an unrelated game-theory package; "omega-engine"
+        # was rejected by PyPI's similarity gate vs the omegaengine.ai SDK —
         # renamed 2026-10-13 for the PyPI debut.)
-        __version__ = importlib.metadata.version("omega-engine")
+        __version__ = importlib.metadata.version("the-omega-engine")
     except importlib.metadata.PackageNotFoundError:
         __version__ = "0.0.0+unknown"
 

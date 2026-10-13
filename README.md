@@ -128,12 +128,12 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
 pip install omega_engine-1.6.0a0-py3-none-any.whl
 
-# PyPI: `pip install omega-engine` — publishing pending (see ANNOUNCEMENT_v1.6.0-alpha.md)
+# PyPI: `pip install the-omega-engine` — pending publisher exists; verify live before relying on it (see ANNOUNCEMENT_v1.6.0-alpha.md)
 
 omega list-entities          # See the sovereign council
 omega talk "Hello, Omega"    # Route to the best entity automatically
 ```
-*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "omega-engine[native]"` — or use Option B below.*
+*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option B below.*
 
 ### Option B: From Source (Full Development)
 ```bash
