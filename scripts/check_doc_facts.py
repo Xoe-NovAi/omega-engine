@@ -50,10 +50,13 @@ FORBIDDEN_PHRASES = [
     "100% constraint survival",
     "83%",
     "53/53 gates",
+    "53 reproducible gates",
+    "30 mandates enforced",
+    "30 Architectural Mandates.*enforced",
+    "100% operational",
     "never called unless local",
     "REUSE.*Green",
-    "30 mandates enforced",
-    "arcana_novai.*shipped",
+    "arcana_novai.*(complete|ships)",
 ]
 
 
