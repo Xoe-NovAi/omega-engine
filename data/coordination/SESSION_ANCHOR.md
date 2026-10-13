@@ -45,4 +45,12 @@ Do not trust any earlier anchor section that says announcement is blocked by the
 4. Architect decisions: D1/D2/D3/D6/D7.
 5. FINAL PUBLISH DECISION for v1.6.0-alpha announcement (Cline audit complete — see `data/handoff/OPENCODE_DB_RECLAIM_COMPLETE_CLINE_20261013_P1.md` for reclaim record; announcement audited in `33432093`).
 
-*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ 62b0aace ⬡ 2026-10-12 ⬡*
+## 🏛 Repo topology (2026-10-13, Cline — two-repo split)
+
+- **Public** `Xoe-NovAi/omega-engine`: main = cut lineage + public-safe commits only (`fae3fd3b`); `release/debut` = `355cbf1a`; CI runs here (free tier); announcement = release notes; branch protection restored (no force-push).
+- **Private** `Xoe-NovAi/omega-engine-internal`: full internal main (`d05a01f5`) — entity gnosis, federation docs, coordination; **Actions disabled** (zero free-tier burn). Push internal work to `internal`, never `origin`.
+- History-exposure note: internal files existed in the public main history pre-split (44 entity files, 114 federation docs, 71 coordination files + a 77.69 MB error.log). Audit vs purge decision deferred; GitHub retains unreachable objects — forks/clones retain copies.
+- Public-safe flow: develop on internal main → cherry-pick public-safe commits onto `public/main` worktree (staging) → push to origin main. `apply_public_allowlist.sh` remains the cut tool.
+- PyPI track: distribution renamed `omega` → `omega-engine` (omega name taken by unrelated package). Artifacts built + clean-venv smoke PASS (install 53s, mock talk exit 0; sha256 in `/media/arcana-novai/omega_library/staging/pypi-verify-20261013/SHA256.txt`). Publish workflow `.github/workflows/publish.yml` (trusted publishing, OIDC, no token) committed to public main. **Remaining operator step: pending publisher on pypi.org** (owner Xoe-NovAi, repo omega-engine, workflow publish.yml, env pypi) → then workflow_dispatch "Publish to PyPI". After it lands, flip the two announcement lines from GitHub-release wording to `pip install omega-engine` (M29: claim only once true).
+
+*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ fae3fd3b-public / d05a01f5-internal ⬡ 2026-10-13 ⬡*
