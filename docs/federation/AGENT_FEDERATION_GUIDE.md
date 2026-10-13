@@ -127,7 +127,7 @@ Shared files, datasets, and exchange packages flow through the **NFSv4.2 Distrib
 
 | Location | Path on Node 0 (`n0`) | Path on Node 1 (`n1`) |
 |---|---|---|
-| **Mount Point** | `/mnt/node-drive/` | `/home/xnai/node-drive/` |
+| **Mount Point** | `/mnt/node-drive/` | `<USER_HOME>/node-drive/` |
 | **Permissions** | Numeric `1000:1000` (mapped via server-side `all_squash`) | Native user `xnai:xnai` |
 | **Protocol** | NFSv4.2 over TCP `2049` | NFSv4.2 Server (`fsid=0`) |
 

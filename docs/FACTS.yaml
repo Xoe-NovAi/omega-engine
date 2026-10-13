@@ -10,7 +10,7 @@ release:
   commit: "355cbf1a"
   date: "2026-10-13"
   wheel_filename: "the_omega_engine-1.6.0a0-py3-none-any.whl"
-  wheel_sha256: "86e223dc4dcac932e1afd8632740b5058c00f8ae5b22e58bb76ef7167ed222df"
+  wheel_sha256: "e452d8ed343c38f74c31d77c034759972fdfc909af640ecbae503b1dfb0128a9"
 
 hub:
   host: "127.0.0.1"

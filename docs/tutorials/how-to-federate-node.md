@@ -131,12 +131,12 @@ cd omega-engine
 # Set Node 1 identity (CRITICAL - must be unique)
 export OMEGA_NODE_NAME="n1"
 export OMEGA_NODE_HOST="n1.example.invalid"  # Your Tailscale MagicDNS name
-export OMEGA_SELF_IP="100.98.76.54"  # Your Tailscale IP
+export OMEGA_SELF_IP="100.x.y.z"  # Your Tailscale IP
 
 # Add to ~/.bashrc for persistence
 echo 'export OMEGA_NODE_NAME="n1"' >> ~/.bashrc
 echo 'export OMEGA_NODE_HOST="n1.example.invalid"' >> ~/.bashrc
-echo 'export OMEGA_SELF_IP="100.98.76.54"' >> ~/.bashrc
+echo 'export OMEGA_SELF_IP="100.x.y.z"' >> ~/.bashrc
 
 # Verify
 echo "Node: $OMEGA_NODE_NAME"
@@ -424,7 +424,7 @@ WantedBy=default.target
 # Same as above but:
 Environment=OMEGA_NODE_NAME=n1
 Environment=OMEGA_NODE_HOST=n1.example.invalid
-Environment=OMEGA_SELF_IP=100.98.76.54
+Environment=OMEGA_SELF_IP=100.x.y.z
 ```
 
 ### 8.3 Enable and Start

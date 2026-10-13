@@ -108,7 +108,7 @@ This section answers the mandatory threat-model questions with actual config val
 
 **Defaults**: Kill/Escalate/Approve active; Throttle advisory. All planes require explicit human decision for Approve; Kill is idempotent.
 
-**Note**: The config symbols `OMEGA_KILL_TIMEOUT_S`, `OMEGA_APPROVAL_TIMEOUT_S`, `OMEGA_THROTTLE_ENABLED` are read by the control plane implementation. `OMEGA_KILL_TIMEOUT_S` defaults to 30s if unset.
+**Note**: The config symbol `OMEGA_APPROVAL_TIMEOUT_S` is read by the control plane implementation (default 900s). `OMEGA_KILL_TIMEOUT_S` and `OMEGA_THROTTLE_ENABLED` are **not currently implemented** in the public build; they are reserved for future use.
 
 ### 4. `vault_ops` Local-Only Enforcement
 

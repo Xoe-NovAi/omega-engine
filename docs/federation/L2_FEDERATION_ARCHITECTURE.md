@@ -38,7 +38,7 @@ The federation links two dedicated physical computing nodes into a unified, sove
 ```
 
 ### Key Breakthroughs Achieved in Phase 0:
-1. **Zero-Egress Distributed Storage**: NFSv4.2 pseudo-filesystem (`/home/xnai/node-drive` -> `/mnt/node-drive`) bound directly to Tailscale IPs with legacy port 111 (RPCbind) completely eradicated.
+1. **Zero-Egress Distributed Storage**: NFSv4.2 pseudo-filesystem (`<USER_HOME>/node-drive` -> `/mnt/node-drive`) bound directly to Tailscale IPs with legacy port 111 (RPCbind) completely eradicated.
 2. **Standardized Streamable HTTP MCP**: Cross-node tool invocation via Model Context Protocol (MCP) streamable-HTTP transport over port 8016.
 3. **Zero-Credential WireGuard SSH**: Seamless admin and agent remote access via Tailscale SSH, authenticated entirely through WireGuard cryptographic node identity.
 4. **Direct LAN Bypass**: Tailscale automatically routes peer packets across the local physical subnet (`192.168.10.x`) with sub-millisecond encryption and zero DERP relay overhead whenever both machines share physical proximity.
@@ -154,7 +154,7 @@ The federation utilizes the **Model Context Protocol (MCP)** Streamable-HTTP spe
 
 ### 4.3. Distributed NFSv4.2 Storage (Port 2049)
 - **Zero Port 111 Exposure**: Modern NFSv4 operates purely over TCP 2049. Legacy `rpcbind` and `mountd` are bypassed.
-- **Root Pseudo-Filesystem**: Node 1 exports `/home/xnai/node-drive` with `fsid=0` and `all_squash,anonuid=1000,anongid=1000`.
+- **Root Pseudo-Filesystem**: Node 1 exports `<USER_HOME>/node-drive` with `fsid=0` and `all_squash,anonuid=1000,anongid=1000`.
 - **Node 0 Mount Point**: `/mnt/node-drive`.
 - **Persistent Mount Entry (`/etc/fstab`)**:
   ```text

@@ -156,7 +156,7 @@ On N1, as `xnai`:
 - [ ] Free space on the NVMe backing `~/omega-exchange` (189 G free per
       Lilith-N1's survey; re-check, do not trust the number)
 - [ ] **NOT** touching port 8016. That is a separate local MCP
-      (`/home/xnai/mcp_server.py`) and is unrelated to the exchange.
+      (`<USER_HOME>/mcp_server.py`) and is unrelated to the exchange.
 
 ---
 
@@ -175,8 +175,8 @@ dependencies:
 find /home/xnai -maxdepth 5 -type d -name .git 2>/dev/null | sed 's|/.git$||'
 
 # 0b. pick the venv that actually satisfies the imports (authoritative, not guesswork)
-for v in /home/xnai/Documents/Projects/omega-engine-alpha/.venv \
-         /home/xnai/WanderGround/.venv; do
+for v in <USER_HOME>/Documents/Projects/omega-engine-alpha/.venv \
+         <USER_HOME>/WanderGround/.venv; do
   printf '%s : ' "$v"
   "$v/bin/python" -c 'import anyio, uvicorn, starlette; print("OK", uvicorn.__version__)' \
     2>&1 | tail -1
@@ -201,9 +201,9 @@ node's real store is. Never a copy. Never a second tree.
 
 ```bash
 # N1: link the conventional name at the real store. Do not move the data.
-ln -s /home/xnai/omega-exchange /home/xnai/exchange
-ls -ld /home/xnai/exchange                      # expect: exchange -> /home/xnai/omega-exchange
-readlink -f /home/xnai/exchange                 # expect: /home/xnai/omega-exchange
+ln -s <USER_HOME>/omega-exchange <USER_HOME>/exchange
+ls -ld <USER_HOME>/exchange                      # expect: exchange -> <USER_HOME>/omega-exchange
+readlink -f <USER_HOME>/exchange                 # expect: <USER_HOME>/omega-exchange
 ```
 
 Why a symlink and not a copy — Lilith's argument, which is correct: a copy
@@ -226,7 +226,7 @@ cannot drift, because it has no content of its own.
 Fetch the file *by blob* from git and verify it against N0's hash:
 
 ```bash
-OMEGA_REPO=/home/xnai/Documents/Projects/omega-engine-alpha   # from Step 0
+OMEGA_REPO=<USER_HOME>/Documents/Projects/omega-engine-alpha   # from Step 0
 cd "$OMEGA_REPO"
 
 # The file does not exist at N1's current pin (ddfa0d80, branch
@@ -279,10 +279,10 @@ Expected in the journal — a startup line, then serving:
 
 ```json
 {"ts":"...","service":"omega-exchange/2.0","method":"-","path":"-","status":0,"bytes":0,
- "client_ip":"-","user_agent":"-","note":"startup root=/home/xnai/exchange bind=127.0.0.1:805"}
+ "client_ip":"-","user_agent":"-","note":"startup root=<USER_HOME>/exchange bind=127.0.0.1:805"}
 ```
 
-`root=` must be `/home/xnai/exchange` — i.e. the symlink resolved. If it shows
+`root=` must be `<USER_HOME>/exchange` — i.e. the symlink resolved. If it shows
 `/home/USER/exchange` you are running the **N0 unit**; stop.
 
 Local liveness, from N1 itself:
@@ -447,7 +447,7 @@ A one-sided green check is the same false success as a 48-byte download.
 ./scripts/exchange_verify_duplex.sh \
     https://n0.example.invalid:8019 \
     /home/USER/exchange \
-    /home/xnai/exchange 10
+    <USER_HOME>/exchange 10
 ```
 
 **Status: previously 88/88. N0's store has since grown — it is now 95
@@ -460,7 +460,7 @@ the transfer did not regress. Re-run rather than trusting the old number.
 # ON N0   (repo: ~/Documents/Xoe-NovAi/omega-engine)
 ./scripts/exchange_verify_duplex.sh \
     https://n1.example.invalid:805 \
-    /home/xnai/exchange \
+    <USER_HOME>/exchange \
     /home/USER/exchange 10
 ```
 
@@ -490,7 +490,7 @@ The script was exercised before shipping, including against the live blocked por
 
 | Test | Invocation (abbreviated) | Result |
 |---|---|---|
-| A — happy path | `… 127.0.0.1:8019 /home/USER/exchange /home/xnai/exchange 3` | **12/12 PASS, exit 0** |
+| A — happy path | `… 127.0.0.1:8019 /home/USER/exchange <USER_HOME>/exchange 3` | **12/12 PASS, exit 0** |
 | B — self-fetch trap | `… 127.0.0.1:8019 /home/USER/exchange /home/USER/exchange 2` | **exit 1** — "ORIGIN IS THIS NODE'S OWN STORE" |
 | C — live ACL drop | `… https://n1.example.invalid:805 …` | **exit 1** — `curl (28) Connection timed out`, diagnosed as ACL drop |
 
@@ -516,9 +516,9 @@ rm ~/.config/systemd/user/omega-exchange.service
 systemctl --user daemon-reload
 
 # 4. optional — drop the symlink ONLY if you are certain nothing references it.
-#    Do NOT delete /home/xnai/omega-exchange. That is the real store (M28:
+#    Do NOT delete <USER_HOME>/omega-exchange. That is the real store (M28:
 #    no auto-deletion). The symlink carries no data; removing it loses nothing.
-#    rm /home/xnai/exchange
+#    rm <USER_HOME>/exchange
 
 # 5. optional — revert to the 8019 drop-in
 rm ~/.config/systemd/user/omega-exchange.service.d/10-port-8019.conf
