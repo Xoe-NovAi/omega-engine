@@ -1,0 +1,40 @@
+name: Publish to PyPI
+
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0
+# Trusted Publishing (OIDC) — no PyPI token is stored anywhere. Requires a
+# pending publisher configured on pypi.org: owner Xoe-NovAi, repo
+# omega-engine, workflow "publish.yml", environment "pypi".
+# CI lives on the PUBLIC repo (free tier) by design.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Build
+        run: uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
