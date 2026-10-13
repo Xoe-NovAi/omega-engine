@@ -65,18 +65,18 @@ Omega’s dynamic router operates on a strict law: **Match the TASK to the most 
 
 ### 3. Persistent Beings, Not Throwaway Sessions
 In Omega, an agent is an enduring entity with an attributable history, an identity constitution (`soul.yaml`), and continuous cognitive development:
-- **Compaction-Immune Memory**: Standard LLM summarization silently destroys up to 83% of operational constraints (arXiv:2606.22528 *Governance Decay*). Omega uses a dual prospective-retrospective hook structure guaranteeing **100% constraint survival across context compactions**.
+- **Compaction-Immune Memory**: In arXiv:2606.22528's benchmark, policy violations rose to **30% after compaction** (up to **59% for some models**). Omega pins `CONSTRAINTS.md` at hydration via prospective/retrospective hooks. Benchmark: [in progress](https://github.com/Xoe-NovAi/omega-engine/issues).
 - **L1 → L2 → L3 Gnosis Distillation**: Raw chat observations (L1) distill into validated tactical lessons (L2), which graduate into fundamental architectural truths (L3) with complete session provenance.
 - **Temporal Depth & Historical Recall**: Your working history is indexed into a high-speed local engine (FTS5 lexical search + native 1024-dim `sqlite-vec` semantic similarity). Agents can instantly recall architectural pivots, past decisions, and rationale established weeks or months ago.
 
 ### 4. Executable Governance & The Engine-Stack Firewall
-- **30 Architectural Mandates**: Rigid operational laws enforced continuously by automated test suites (`make temple-grade` with 53 reproducible gates). No silent failures, no unexpected egress, pure AnyIO async concurrency.
+- **26 of 30 mandates are mechanically checked; 4 are policy-only.** `make temple-grade` exits 0 on a fresh clone.
 - **WAD-Based Modular Architecture**: Inspired by DOOM's IWAD/PWAD architecture, the engine core (`src/omega/`) is strictly firewalled from domain stacks and agent definitions (`config/wads/`). You can plug in custom world-definitions, ethics files (`ethics.yaml`), and cosmological axioms without touching engine code.
 - **Four Production Control Planes**: Built-in runtime gates for runaway prevention: **Kill**, **Escalate**, **Approve**, and **Throttle**.
 
 ---
 
-## 🚀 Quick Start in 3 Steps
+## 🚀 Quick Start
 
 Omega is designed to get out of your way. You can run it completely offline on local CPU, or plug in your cloud credentials to activate full sovereign synergy.
 
@@ -97,7 +97,7 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 │  IWAD: _omega   │ │  IWAD: arcana   │ │  PWAD: persona_*    │
 │  _default       │ │  _novai         │ │  (Patch WADs)       │
 │                 │ │                 │ │                     │
-│ 12 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
+│ 14 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
 │ Build/Run Slots │ │ 10 Pillars      │ │ • Therapy Bot       │
 │ Engineering     │ │ Sephirotic Tree │ │ • Domain Expert     │
 │ Council         │ │ 42 Ideals       │ │ • Your Creation     │
@@ -105,7 +105,7 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 ```
 
 - **Engine Core** (`src/omega/`): The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
-- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 12 persistent engineering entities for software development. `arcana_novai` is a full esoteric AI operating system with its own cosmology. Each is a self-contained universe.
+- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities for software development. `arcana_novai` — **in development**. Each is a self-contained universe.
 - **PWADs** (Patch WADs): Modular add-on packs — a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own.**
 
 Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions — it doesn't merely suggest them.
@@ -114,39 +114,57 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 
 ## 🚀 Quick Start
 
-### Option A: From Source (Recommended)
+### Recommended: From Source
 ```bash
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
 ./scripts/install.sh
 ```
-*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), and compiles native llama-cpp bindings (pre-fetched, 6-way build). Runs verification gates at the end.*
+*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), compiles native llama-cpp bindings, and runs verification gates.*
 
-### Option B: Wheel from the GitHub Release (alternative — no native GGUF build)
+### Alternative: Wheel from GitHub Release
 ```bash
-# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
+# Download the wheel (aria2c: 16-split fetch for >1MB, M23)
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
 pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 
 omega list-entities          # See the sovereign council
-omega talk "Hello, Omega"    # Route to the best entity automatically
 ```
-*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option A. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
-
+*Note: the core wheel is **source-only** — it omits the MCP hub (`mcp_servers/`) and native llama-cpp-python (source build). For the hub + local GGUF inference, use the **source install above** or install the native extra — `pip install "the-omega-engine[native]"` (requires source build).*
 ### 2. Connect Your Preferred Interface
+
 Omega adapts to whatever workflow you prefer:
 - **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace in OpenCode — the entity council and Hivemind MCP tools are immediately active in your agent sidebar.
-- **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration.
+- **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration. Antigravity setup: `docs/guides/connect-antigravity-ide.md`.
 - **From Your Terminal**: Use the built-in fast diagnostic CLI:
   ```bash
   omega talk "Analyze the current architectural state"
   ```
 
+**MCP Transports:** The hub serves both transports on `127.0.0.1:8016`:
+| Transport | Path | Use Case |
+|:--|:--|:--|
+| **Streamable HTTP** (primary) | `/mcp` | Modern clients (OpenCode, Cursor, Codex) |
+| **Legacy SSE** | `/sse` | Legacy clients (Cline, older configs) |
+
+---
+
+## 📦 Create Your Own Content (WADs & Agents)
+
+Omega's **Engine-Stack Firewall** (M2) means your custom agents, skills, and configurations live in **WAD bundles** — not in the engine core.
+
+| Guide | What You'll Build |
+|:--|:--|
+| **[Create a WAD Bundle](docs/tutorials/how-to-create-wad.md)** | Package entities, skills, configs, and prompts into a portable `.wad` file |
+| **[Add a Sovereign Agent](docs/guides/how-to-add-agent.md)** | Create a new entity with soul, config, and Oracle registration |
+| **[WAD Architecture](docs/federation/PERSONA_WAD_ARCHITECTURE.md)** | Deep dive: manifest schema, taxonomy, provenance, versioning |
+| **[Engine Boundary](docs/governance/WAD_ENGINE_BOUNDARY_FIRST_PRINCIPLES.md)** | First principles: what belongs in Engine vs. WAD |
+
 ---
 
 ## 🏛️ The Sovereign Council Roster
 
-Omega ships with 12 persistent IWAD entities and 10 A2A seats ready to orchestrate:
+Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructure) and **10 A2A seats** ready to orchestrate:
 
 | Entity | Domain | Core Responsibility |
 |:--|:--|:--|
@@ -182,13 +200,15 @@ Omega ships with 12 persistent IWAD entities and 10 A2A seats ready to orchestra
 
 ## 🧭 Maturity & Status: Honest Alpha (v1.6.0-alpha)
 
+**Versions:** Engine `1.6.0-alpha` (tag `v1.6.0a0`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
+
 Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
-- ✅ **Core Local & Synergistic Inference**: 100% operational across native GGUF and configured cloud providers.
+- ✅ **Core Local & Synergistic Inference**: Operational across native GGUF and configured cloud providers (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama). Anthropic/xai adapters pending.
 - ✅ **Hivemind MCP & Coordination**: Operational and verified across local IDEs and multi-agent sessions.
-- ✅ **Temple-Grade CI**: 53/53 test gates exit 0 on fresh clone; 176 engine contract tests pass cleanly (4 skipped).
-- ✅ **Zero Telemetry**: Audited and enforced; no external analytics or metrics egress.
+- ✅ **Temple-Grade CI**: Dashboard self-test 53/53 (prerequisite); temple-grade exit 0 on fresh clone. Engine contract tests: 177 passing / 15 skipped.
+- ✅ **Zero Telemetry**: Audited and enforced via `make check-m8-zero-telemetry`; no external analytics or metrics egress.
 - 🟡 **Axiom Ceiling & Auto-Promotion**: The 15-axiom ceiling and automated lesson promotion pipelines are documented governance doctrine; implementation is scheduled for post-debut Sprint 01.
-- 🟡 **REUSE/SPDX License Compliance**: Baseline SPDX headers are in place across all core components; full legacy debt cleanup is tracked post-PR.
+- 🟡 **REUSE/SPDX License Compliance**: Baseline SPDX headers in place; 107 files outstanding (tracked post-PR).
 
 ---
 

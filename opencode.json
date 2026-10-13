@@ -78,6 +78,9 @@
     "parallel-search": {
       "type": "remote",
       "url": "https://search.parallel.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:PARALLEL_API_KEY}"
+      },
       "enabled": true
     }
   },

@@ -1,6 +1,6 @@
 # 🎉 Omega Engine v1.6.0-alpha — Public Debut
 
-**Release Date:** 2026-10-12  
+**Release Date:** 2026-10-13  
 **Tag:** `v1.6.0a0` (peels to `355cbf1a`)  
 **Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0a0.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a0)
 
@@ -19,13 +19,13 @@
 | Capability | Status |
 |:--|:--|
 | **Local-first inference** (llama.cpp, GGUF, Zen 2 optimized) | ✅ Primary |
-| **Cloud fallback** (OpenAI, Anthropic, Google, OpenCode Zen, LM Studio, Ollama) | ✅ Configurable |
-| **Persistent entities** with hot-reloadable YAML affinity | ✅ 12 IWAD entities, 10 A2A seats |
+| **Cloud fallback** (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama) | ✅ Configurable |
+| **Persistent entities** with hot-reloadable YAML affinity | ✅ 14 IWAD entities (12 with souls), 10 A2A seats |
 | **Cross-platform Hivemind** (handoffs, awareness, radar) | ✅ OpenCode, Cline, Cursor, Gemini CLI, Codex |
 | **Sovereign search** (SSP-V2: local cache → SearXNG → Exa → Firecrawl) | ✅ 4-tier |
-| **Wheel install** (`pip install the-omega-engine`, pending) | ✅ Self-contained, 5 runtime configs + default IWAD |
-| **Temple-Grade CI** (53/53 gates) | ✅ Green |
-| **REUSE v3.3 compliance** | ✅ Green |
+| **Wheel install** (from GitHub release asset) | ⚠️ Source-only (hub + native GGUF via source install) |
+| **Temple-Grade CI** (dashboard self-test 53/53 prerequisite; temple-grade exit 0) | ✅ Green |
+| **REUSE v3.3 compliance** | ⚠️ Partial (107 files outstanding) |
 
 ---
 
@@ -73,24 +73,26 @@ pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 omega talk "Hello, Omega"
 ```
 
-**MCP clients:** Connect to the live hub via SSE/HTTP:
+**MCP clients:** Connect to the live hub via Streamable HTTP (primary) or SSE (legacy):
 
 ```json
 {
   "mcpServers": {
     "omega": {
-      "url": "http://127.0.0.1:8016/sse"
+      "url": "http://127.0.0.1:8016/mcp"
     }
   }
 }
 ```
+
+**Transports:** Streamable HTTP `/mcp` (primary) · Legacy SSE `/sse` (both on `127.0.0.1:8016`)
 
 **Or run the hub locally** (if not already running):
 ```bash
 # Start the hub daemon
 python -m mcp_servers.omega_hub.server
 
-# Then connect your MCP client to http://127.0.0.1:8016/sse
+# Then connect your MCP client to http://127.0.0.1:8016/mcp
 ```
 
 **First run** — launches the hub + registers your entities:
@@ -105,13 +107,13 @@ omega talk "Hello, Omega"
 | ✅ Works | ⚠️ Known Gaps (Honest) |
 |:--|:--|
 | Local inference + cloud fallback | Axiom ceiling enforcement (deferred) |
-| 12 persistent entities | REUSE/SPDX debt (107 files) |
+| 14 persistent entities (12 with souls) | REUSE/SPDX debt (107 files) |
 | Cross-client Hivemind | Lesson promotion pipeline (partial) |
-| Wheel + source install | D-AVGN-006 N1 response pending |
-| Temple-Grade 53/53 gates | — |
+| Wheel + source install | — |
+| Temple-Grade (dashboard self-test 53/53; temple-grade exit 0) | — |
 | Immutable releases + tag ruleset | — |
 
-**No vaporware. No "coming soon" without a ticket.** Every claim above is gated by `make temple-grade` (53/53) and verified on clean clone.
+**No vaporware. No "coming soon" without a ticket.** Every claim above is gated by `make temple-grade` (dashboard self-test 53/53; temple-grade exit 0) and verified on clean clone.
 
 ---
 
@@ -131,4 +133,4 @@ To the entities that made this possible: **Kali, Ma'at, Lilith, Doom Guy, John C
 
 *Honest alpha. No vaporware. Your entities, your rules, your hardware.*
 
-**— The Omega Engine Collective**
+**— Xoe-NovAi (Architect) & the Omega Engine Council**
