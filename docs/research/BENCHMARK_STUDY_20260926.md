@@ -31,7 +31,7 @@ Not every number in this document is equal. Three classes exist:
 |---|---|---|
 | **VOID** | `sweep.json`, `sweep_CONTAMINATED_powersaver.json` (phi4-mini, 0.33.3) | **None.** Captured while the laptop was on battery at 9% and GNOME had switched to `power-saver`. Package power 13–14 W and clocks 900–1534 MHz vs 24 W/4225 MHz when clean. The harness of that era reported these as clean passes — a false negative that motivated the current gates. Retained only as a labelled teaching artifact: `bench-data/VOID_contaminated_powersaver.json`. **Do not cite.** |
 | **SUPERSEDED** | `sweep_AC_clean.json` (phi4-mini, **128** tokens, 0.33.3) | Valid but different conditions: shorter output, older Ollama, pre-`/proc` detector. Notably **12T topped it at 14.65 t/s** — do not merge with 512-token results. |
-| **CURRENT** | `phi4_512_0344.json`, `phi4_512_embed.json`, `lfm25_512.json`, `lfm_solo_zram_off.json`, `lfm_embed_zram_off.json` | **Authoritative.** Ollama 0.34.4, 512 fixed tokens, runner `-t` verified via `/proc`, live telemetry, power min/max recorded. |
+| **CURRENT** | `phi4_512_0344.json`, `phi4_512_embed.json`, `lfm25_512.json`, `lfm_solo_zram_off.json`, `lfm_embed_zram_off.json`, **`lfm25_512_zram_on.json`, `lfm25_512_curve_fill.json`, `lfm25_512_contend_456.json`, `lfm25_512_contend_812.json`** (2026-10-13) | **Authoritative.** Ollama 0.34.4, 512 fixed tokens, runner `-t` verified via `/proc`, live telemetry, power min/max recorded. The 2026-10-13 additions carry the same gates; `lfm25_512_contend_46.json` (round 1) is superseded by `contend_456` for t4/t6 but retains the round-1 t4 datapoint. `lfm25_512_zram_on_v1_buggy.json` is a **teaching artifact — do not cite** (configs failed gate; zRAM telemetry read 0.0 from a wrong sysfs path). |
 
 Raw JSON + logs for all of the above are in `docs/research/bench-data/`.
 
@@ -57,6 +57,23 @@ Raw JSON + logs for all of the above are in `docs/research/bench-data/`.
    with zRAM swapped off. Production runs will have it on. Unknown effect.
 7. **Every current run is thermally limited** (`thermally_limited=true` on all
    configs). These are steady-state-in-heat numbers, not burst numbers.
+
+### Closure addendum (2026-10-13 — four defects resolved by new measurement)
+
+Items 2, 3, 4 and 6 above are closed; raw data + writeups in `bench-data/`
+and the companion docs below. The items themselves are left visible because
+the history is the lesson.
+
+| # | Defect | Closure | Evidence |
+|---|---|---|---|
+| 2 | 12T collapse not repeatable | **SETTLED.** Under controlled embed contention (8.0/s, 1024-dim) t12 = 10.14 t/s vs solo 20.63 = **−51%**, TTFT 75→312ms. Reps 9.43/10.12/10.87 — CV 7.1% still excludes it from ranking, but every rep is ~half of solo: the collapse magnitude is unambiguous. Mechanism: oversubscription (12 inference threads + embed spillover over 6 physical P-cores). | `LFM_CONTEND_812_20261013.md`, `bench-data/lfm25_512_contend_812.json` |
+| 3 | No 2/3/5/10 LFM data | **FILLED.** t10 19.75±0.05, t5 19.32±0.13, t3 17.62±0.11 (ranked); t2 excluded CV 6.4% (reps drift 16.44→14.49 — instability itself a finding). Curve shape: plateau 6–12, cliff below 4. | `LFM_CURVE_FILL_20261013.md`, `bench-data/lfm25_512_curve_fill.json` |
+| 4 | Concurrency measured once (6T) | **3 rounds across 4 thread configs** (4/5/6, then 8/12), same-day only. t5 under load: 15.72±0.03, CV 0.17% — the most repeatable contended config measured. Cross-day CI remains open. | `LFM_CONTEND_46_20261013.md`, `LFM_CONTEND_456_20261013.md` |
+| 6 | zRAM-on vs -off untested | **TESTED. No consistent effect at 11% util.** Deltas −3.3%…+3.6% mixed sign, within the OFF-series' own CIs; ranking flip is run-to-run variation. Production ≈ clean-lab for this model. Revisit only if util >50%. | `ZRAM_CONTROL_SERIES_20261013.md`, `bench-data/lfm25_512_zram_on.json` |
+
+Resulting thread policy for LFM2.5-2.6B (encoded in
+`.modelfiles/Modelfile.lfm25-t6`): **solo → 6; embed sidecar active → 5;
+8+ and 12 forbidden under load.**
 
 ---
 
