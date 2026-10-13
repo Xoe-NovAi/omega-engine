@@ -23,7 +23,7 @@
 | **Persistent entities** with hot-reloadable YAML affinity | ✅ 12 IWAD entities, 10 A2A seats |
 | **Cross-platform Hivemind** (handoffs, awareness, radar) | ✅ OpenCode, Cline, Cursor, Gemini CLI, Codex |
 | **Sovereign search** (SSP-V2: local cache → SearXNG → Exa → Firecrawl) | ✅ 4-tier |
-| **Wheel install** (`pip install omega-engine`) | ✅ Self-contained, 5 runtime configs + default IWAD |
+| **Wheel install** (GitHub release asset) | ✅ Self-contained, 5 runtime configs + default IWAD |
 | **Temple-Grade CI** (53/53 gates) | ✅ Green |
 | **REUSE v3.3 compliance** | ✅ Green |
 
