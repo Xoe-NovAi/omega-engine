@@ -14,7 +14,7 @@ This report documents the architectural investigation into CPU scheduling, threa
 Specifically, it resolves:
 1. **The Ryzen 7 vs. Intel Core i7 Discrepancy:** Why physical-core pinning works intuitively on AMD Ryzen 7 (Zen 2/3/4) but causes a catastrophic 96% performance collapse on Intel Raptor Lake.
 2. **The "P-Core Pin Trap" Mechanics:** Detailed explanation of the spin-wait barrier convoy (`llama-server`, Ollama issue #17916) when threads are restricted to physical P-cores without HyperThreading siblings.
-3. **E-Core Embedding Offload:** Empirical benchmarking and live deployment of standalone ONNX Qwen3 embeddings (`model_int8.onnx`, 586MB, Matryoshka 768d) isolated exclusively to the 4 Gracemont Efficient cores (`CPUs 12–15`), leaving the Performance cores (`CPUs 0–11`) 100% unencumbered for LLM inference.
+3. **E-Core Embedding Offload:** Empirical benchmarking and live deployment of standalone ONNX Qwen3 embeddings (`model_int8.onnx`, 586MB; **native 1024-d since 2026-10-02 per P5.1b** — the Matryoshka 768-d truncation as-deployed on 2026-09-24 is superseded) isolated exclusively to the 4 Gracemont Efficient cores (`CPUs 12–15`), leaving the Performance cores (`CPUs 0–11`) 100% unencumbered for LLM inference.
 4. **The iGPU (64EU) Assessment:** Why running LLM or embedding inference on the Intel UHD 64EU integrated GPU does not resolve the memory bandwidth bottleneck ahead of the dual-channel DDR5 RAM upgrade.
 
 ---
@@ -192,7 +192,11 @@ WorkingDirectory=%h/Documents/Projects/omega-engine-alpha
 Environment="PATH=%h/WanderGround/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="OMP_NUM_THREADS=4"
 Environment="EMBED_MODEL_DIR=%h/Documents/Projects/omega-engine-alpha/models/embedding/qwen3-0.6b-onnx"
-Environment="TRUNCATE_DIM=768"
+# NOTE (2026-10-02, P5.1b): this reference block predates the dim cutover.
+# The value here was TRUNCATE_DIM=768 as-configured on 2026-09-24; the
+# canonical value is now 1024 (native, never truncated). The LIVE unit
+# at ~/.config/systemd/user/omega-embedding-server.service carries 1024.
+Environment="TRUNCATE_DIM=1024"
 CPUAffinity=12 13 14 15
 ExecStart=%h/WanderGround/.venv/bin/python3 %h/Documents/Projects/omega-engine-alpha/scripts/embedding_server.py
 Restart=always

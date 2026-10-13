@@ -1,12 +1,23 @@
 # Embedding Model Decision — Federated Compatibility for Node 0 ↔ Node 1
-**Doc ID**: `RES-EMBED-001` | **Status**: DEFINITIVE RECOMMENDATION | **Date**: 2026-09-17
+**Doc ID**: `RES-EMBED-001` | **Status**: SUPERSEDED IN PART — see banner | **Date**: 2026-09-17
 **Owner**: Build Agent (Node 1) | **Audience**: Omega Engine community + federation operators
+
+> **SUPERSESSION (2026-10-01, operator ruling; P5.1b):** The canonical
+> embedding dimension for **all nodes** is `qwen3-embedding:0.6b` at its
+> **native 1024** — NOT the 768 Matryoshka truncation this doc originally
+> recommended. On Ollama the output-dimension parameter is `dimensions`
+> (integer); `truncate_dim` is a sentence-transformers name that Ollama
+> silently ignores and returns 1024 regardless. Everything below the
+> comparison table still stands (model choice, MRL analysis, pooling and
+> preprocessing contract); every "768" below reads as superseded.
+> Live-verified 2026-10-13: `/api/embed` returns 1024-float vectors.
+> See `docs/ROADMAP.md` P5.1b and Well record `c068a4ae`.
 
 ---
 
 ## Executive Summary (One Paragraph)
 
-**Use `qwen3-embedding:0.6b` at 768 dimensions on both nodes through the standalone ONNX embedding server (`truncate_dim=768`).** This is the current federated semantic-compatibility decision: the model family and dimension match, the server stays outside Ollama's `MAX_LOADED_MODELS=1` path, and the route is instruction-aware and CPU-local. The historical comparison remains useful, but the current Node 1 deployment is not an `ollama pull` migration. Existing legacy vectors must be re-embedded before they can participate in a shared Qwen3 index.
+**Use `qwen3-embedding:0.6b` at native 1024 dimensions on both nodes through the standalone ONNX embedding server (`TRUNCATE_DIM=1024`; the original `truncate_dim=768` rec is superseded — see banner).** This is the current federated semantic-compatibility decision: the model family and dimension match, the server stays outside Ollama's `MAX_LOADED_MODELS=1` path, and the route is instruction-aware and CPU-local. The historical comparison remains useful, but the current Node 1 deployment is not an `ollama pull` migration. Existing legacy vectors must be re-embedded before they can participate in a shared Qwen3 index.
 
 ---
 
@@ -37,9 +48,9 @@
 | **Different models** | Different geometries | ❌ Scores not comparable | Projection layer OR re-embedding |
 | Different models, different dim | Different geometries + dim | ❌ Double incompatibility | Projection + dim alignment |
 
-### Current State (2026-09-23)
+### Current State (2026-09-23; dim corrected 2026-10-02 — see supersession banner)
 - **Canonical route:** standalone Qwen3 ONNX server,
-  `qwen3-embedding:0.6b`, `truncate_dim=768`, outside Ollama.
+  `qwen3-embedding:0.6b`, **native 1024** (`TRUNCATE_DIM=1024`), outside Ollama.
 - **Node 0:** must run the same model family, pooling, normalization, and
   dimension before direct cross-node cosine claims are valid.
 - **Legacy route:** `nomic-embed-text:latest` remains installed in Ollama for

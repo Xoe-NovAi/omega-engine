@@ -8,11 +8,16 @@
 #   solo:    t6 20.49 > t5 19.32 > t4 19.44  (t4 real -5.1% vs t6)
 #   contended (embed 8.0/s @1024-dim): t5 15.72 (CV 0.17) ~ t6 15.27 (2.71)
 #     > t4 excluded CV 8.3.  t5 wins on TTFT (76ms) + repeatability.
-# OVERRIDE: when the embed sidecar is under sustained load, use num_thread 5.
-# t4 is NOT the fallback (fails the CV gate under load).
+# OVERRIDE: when the embed sidecar is under sustained load, use num_thread 5
+#   (15.72 t/s, CV 0.17, TTFT 76ms — the only config never excluded under load).
+# FORBIDDEN under load: t8 (CV 10.0, excluded) and t12 (10.14 t/s = -51%
+#   collapse, the oversubscription regime: >6 inference threads over 6 P-cores
+#   + embed spillover halves throughput, quadruples TTFT).
+# t4 is NOT the contended fallback (fails the CV gate under load).
 # Evidence: docs/research/ZRAM_CONTROL_SERIES_20261013.md,
 # docs/research/LFM_CURVE_FILL_20261013.md,
-# docs/research/LFM_CONTEND_456_20261013.md.
+# docs/research/LFM_CONTEND_456_20261013.md,
+# docs/research/LFM_CONTEND_812_20261013.md.
 
 FROM lfm25-t6:latest
 

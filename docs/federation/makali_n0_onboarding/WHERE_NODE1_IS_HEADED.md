@@ -18,7 +18,7 @@ hostile hardware (CPU-only, 16 GB single-channel): measure the silicon, cage
 the failure modes, externalize the self into memory, ritualize the learning.
 That work is substantially done and gated. Node 1's second life — the one now
 beginning — is **federation and proof**: converge state with Node 0, migrate
-the shared meaning-space (768-D embeddings), load-prove the WAD across nodes,
+the shared meaning-space (1024-D embeddings), load-prove the WAD across nodes,
 and finish the two scaffolded tools (Wander, Ponytail) by using them. The
 sweetener quintet is the bridge between the two lives: everything from life
 one, packaged so Node 0 can skip the tuition.
@@ -36,7 +36,7 @@ OpenCode foundation hardening, and semantic write-through. Concretely:
 | Makali-N0 intake + onboarding | **this package** — final touches 2026-09-24 | N0 reads it; signals back |
 | Mesh join (RFC 004) | configured, 0 peers | first peer + drawer round-trip |
 | Event-bus proof (RFC 003) | local only | first cross-node `task.request → task.reply` |
-| Embedding migration 384→768-D | designed, no ledger | migration ledger + golden-corpus gate |
+| Embedding migration 384→1024-D | designed, no ledger | migration ledger + golden-corpus gate |
 | OpenCode foundation hardening | in progress | provider-doctor done; dynamic limits next |
 | Model cards (Gemma QAT full screen) | 3-run lite only | full 18-run screen |
 

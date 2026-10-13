@@ -25,7 +25,7 @@ entity system (Arcana-NovAi WAD) designed to federate with Node 0's Engine.
 | Memory & knowledge | MemPalace live (~5k docs); spatial/3D atlas is target-only | `resources_MEMORY_DIARY_PROTOCOL.md`, Strategy Map §2.1 |
 | Continuity | Event-sourced kernel + local SQLite authority; 88/88 tests; ledger clean | Consolidated briefing §5, `resources_GNOSIS_LIFECYCLE.md` |
 | Entities | Lilith-N1 awakened (2026-09-24); Researcher-Humboldt-N1 awakened (2026-09-23) — factory pattern proven | `BRIEFING_PERSISTENT_ENTITY_SYSTEMS.md` |
-| Embeddings | 384-D now; Qwen3 768-D migration designed, not executed | Consolidated briefing §5.5 |
+| Embeddings | 384-D now; Qwen3 migration designed — target **1024-D native** (corrected 2026-10-02, P5.1b; the earlier 768-D target is superseded) | Consolidated briefing §5.5 |
 | Federation | Mesh configured, 0 peers; WAD loader + signatures + C6 await N0 | Consolidated briefing §6, `resources_CROSS_NODE_MESH_STATUS.md` |
 
 **How to read this package:** the table above is the whole picture on one page.

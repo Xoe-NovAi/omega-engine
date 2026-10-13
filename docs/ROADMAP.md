@@ -43,7 +43,7 @@ Current state at a glance:
 | P4 | Lilith persistent entity + Tarot factory | active (strategy locked 2026-09-23; implementation queued) |
 | P5 | Omega Memory module (the substrate) | active (priority-one R&D track) |
 | P6 | **Ollama Native MCP Technology** (Industry-First Engine Extension) | 🚀 **HIGH PRIORITY R&D TRACK** |
-| P7 | Local specialist small-model modules | `in-progress` (measuring) — phase 2 filed 2026-10-08: **no role is trainable yet**, do not LoRA |
+| P7 | Local specialist small-model modules | `backlog` — **PIVOTED TO ENCODER** (2026-10-09). Generative ≤350M failed echo-collapse test; P7.3 Encoder A/B now active |
 
 ---
 
@@ -836,8 +836,9 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 - **Rationale**: Only path achieving true federated semantic compatibility (direct cosine similarity) with quality gain (C-MTEB 66.33 vs 62.28), 4× context (32K vs 2K), instruction-aware, zero projection layer
 - **Deliverable**: `docs/research/EMBEDDING_MODEL_DECISION.md` (complete with comparison table, migration path, rollback)
 - **Status**: ✅ **DONE (2026-09-17)**
-- **Addendum (2026-09-25, palace refinement):** RES-EMBED-001 stands for
-  engine/federation (`0.6b@768`-trunc). The PALACE refines to
+- **Addendum (2026-09-25, palace refinement):** RES-EMBED-001 originally
+  fixed engine/federation at `0.6b@768`-trunc — **superseded 2026-10-01
+  (P5.1b): native 1024 on all nodes, never truncated.** The PALACE refines to
   `qwen3-embedding:0.6b` native **1024-dim** via Ollama openai-compat shim —
   measured meaning-first multilingual incl. polytonic Ancient Greek (0.624);
   MemPalace's built-in `embeddinggemma` is MRL-truncated to 384 and fails the
@@ -866,7 +867,8 @@ VR lowest priority (xyz vectors only); Lilith-N0 integration deferred.
 
 ### RES-ECORE-001 — Raptor Lake E-core embedding offload (DONE on N1 2026-09-24)
 - **What**: Isolate the standalone ONNX embedding server (INT8 Qwen3-Embedding-0.6B,
-  Matryoshka 768d, `TRUNCATE_DIM=768` per RES-EMBED-001) to the 4 Gracemont E-cores
+  native **1024-d** since 2026-10-02 — the then-configured `TRUNCATE_DIM=768`
+  per RES-EMBED-001 was superseded by P5.1b) to the 4 Gracemont E-cores
   (CPUs 12–15), leaving P-cores 0–11 fully unencumbered for Ollama.
 - **Authorship**: third-party audit by Cline CLI (Gemini 3.8 Flash, free tier —
   hardware benchmarks only, no private material exposed); reviewed by Build 2026-09-24.
@@ -1257,31 +1259,36 @@ verbatim-first; boosts-never-gates; eval-before-cutover; no silent failures.
 **Research basis**: `docs/research/LFM25_SPECIALIST_MODULES_HUMBOLDT_20261008.md`.
 **Strategy record**: `docs/research/LFM25_SMS_STRATEGY_20261008.md` — the 350M-as-single-turn-contract-executor thesis, role matrix, LoRA recipe, and quantization defaults.
 
-### P7.1 — Extraction/persona specialist pilot (`mempalace-extractor`)
+### P7.1 — Extraction/persona specialist pilot (`mempalace-extractor`) — **PIVOTED TO ENCODER**
 - **Why**: Small models could extract structured memory cards from raw transcripts at a fraction of large-model cost.
 - **First experiment E0**: no training; benchmark prompt+few-shot `LFM2.5-230M-Q6_K` and `LFM2.5-350M.i1-Q6_K` over 100 held-out transcript windows for JSON validity, schema conformance, extraction F1, and p95 latency.
 - **Decision gate**:
   - If 350M already meets validity ≥95%, conformance ≥95%, F1 ≥0.70 → ship prompt-only Modelfile/OMER card; do **not** train.
   - If it fails → E1: TRL/PEFT/LoRA on `LFM2.5-350M-Base`, merge, GGUF, eval.
 - **Done when**: OMER card exists, dataset hash recorded, eval report committed, and the model is behind a schema-validated fallback.
-- **Status**: `in-progress` — E0 smoke test run 2026-10-08; both `lfm25-230m-q6k` and `lfm25-350m-q6k` produce JSON with `format: "json"`, but exact schema fidelity needs a larger held-out benchmark before training. See `docs/research/LFM25_SMS_E0_RESULTS_20261008.md`. P7.1a: scored SMS gauntlet shipped 2026-10-08 (`scripts/sms/gauntlet.py`, schemas, scoring, 37-row synthetic smoke dataset); smoke benchmark on both models: 100% JSON validity, schema conformance 0–28.6% (230M) / 12.5–100% (350M), extractor F1 ≈ 0 — see `docs/research/LFM25_SMS_GAUNTLET_SMOKE_20261008.md`. P7.1b: real dataset capture shipped 2026-10-08 (`scripts/sms/capture_real_dataset.py` → 303 redacted rows from the Well corpus, the MemPalace palace, live gauntlet traces and documented rules; raw stays in `~/WanderGround/datasets/sms/`). Measured A/B on the holdout with 2 exemplars per role: few-shot lifts well-curator exact-match 0.000 → 0.767 and schema conformance 0% → 90%, and tool-router conformance 25% → 67%; extractor, failure-classifier and privacy-sentinel stay near zero. **well-curator was the only role close to trainable prompt-only** — see `docs/research/LFM25_SMS_REAL_DATASET_20261008.md`. Next: extractor/privacy prompt redesign, then LoRA on `LFM2.5-350M-Base` for the two roles that clear the gate.
-  **P7.1c (phase 2, 2026-10-08) — the P7.1b conclusion was WRONG and is withdrawn.** Echo instrumentation (`distinct_output_ratio`, `modal_output_share`, `copy_suspect`) now ships in every aggregate. Measured on `lfm25-350m-q6k`: few-shot well-curator exact-match **0.852 is below the 0.898 a constant predictor gets from the model's own modal output**, against a majority-gold `action_exact` floor of 0.972 — `copy_suspect` TRUE (distinct ratio 0.083, 34/36 identical), and `tags_f1` 0.013. Zero-shot on the same 20 cases gives 20 distinct answers and 0% conformance, so **the exemplars are the cause of the collapse**: they buy output shape and sell content. A paraphrase probe (`scripts/sms/paraphrase_probe.py`, deterministic, no LLM) confirms it by invariance, not collapse — accuracy did not move (Δ +0.034, inside the ±0.10 noise floor) because only **3/20** answers changed when the input was rewritten. **Tool-router scaled 20 → 88 rows (66 holdout) and went DOWN: `tool_exact` 0.136 vs a 0.242 majority floor.** Failure-classifier now has real 4-class gold from deliberate runner probes (`--inject-failure auto`: truncation / malformed JSON / forced HTTP timeout / dropped key) and scores 0.056 vs a 0.444 floor. The contract-decomposition hypothesis **lost its own verdict rule on all four pairs**: flat contracts cut output 4–13× and reach 100% conformance, but every one lands at or below the majority-gold floor, and the two that "beat" their parent collapsed into echo. Latency: neither `num_predict` (256 vs 512: −6.7% latency, 8.3% → 0.0% conformance) nor `num_thread` (6 vs 8: 0.1%) is a lever; the ~241 extractor tokens are a property of the contract, and p95 ≤ 2 s at this model ≈ 55–75 output tokens. **No role is trainable; nothing should be LoRA'd yet.** Full numbers and the per-role go/no-go table: `docs/research/LFM25_SMS_PHASE2_ECHO_DECOMPOSITION_20261008.md`. Next: exemplar diversification (N=4, spanning kinds/domains/tags/actions) with `copy_suspect=false` as the acceptance gate, adversarial supersession pairs to de-skew the curator gold, and only then a LoRA pilot on `failure_classifier` (the one role that is *not* echo-collapsed).
+- **Status**: `backlog` — **PIVOTED 2026-10-09**. Phase 2 (2026-10-08) demonstrated **echo collapse** on generative LFM2.5 230M/350M: few-shot exemplars buy output shape but sell content (`copy_suspect=true`, distinct ratio 0.083). No role passed paraphrase invariance (only 3/20 outputs mutated). Well-curator exact-match 0.852 < 0.898 constant predictor floor. Tool-router regressed on more data (0.136 vs 0.242 majority floor). **Generative autoregressive models at ≤350M params are not viable for extraction/classification tasks via few-shot or LoRA.** See `docs/research/LFM25_SMS_PHASE2_ECHO_DECOMPOSITION_20261008.md`.
+- **Pivot**: Move P7.1 to **Encoder architectures** (`LFM2.5-Encoder-230M/350M`, `ModernBERT-base`). Encoders natively support span classification, token classification, and sequence classification without autoregressive generation collapse.
 
-### P7.2 — Well curator pilot
+### P7.2 — Well curator pilot — **BLOCKED ON ENCODER PIVOT**
 - **Why**: turns sessions into durable corrections/preferences/anti-patterns without waiting for a human to manually run the Well sweep.
 - **Dataset**: `make well-export`, sessions, correction-labeled examples.
 - **Done when**: curator accuracy ≥0.80, supersession direction 100%, privacy scan clean, and Well write occurs only through explicit validation.
-- **Status**: `backlog` — **blocked, not ready.** Phase 2 (2026-10-08) measured the curator at exact-match 0.852, which is below the 0.898 a constant predictor achieves from the model's own modal output, with `copy_suspect` TRUE and `tags_f1` 0.013. The "accuracy ≥0.80" gate cannot currently distinguish capability from a copied prior. Two prerequisites before this leaves `backlog`: (a) exemplar diversification that lifts `distinct_output_ratio` above 0.35, (b) adversarial supersession gold — the holdout is 35/36 `keep`, so `action_exact` cannot separate a trained model from a constant one. See `docs/research/LFM25_SMS_PHASE2_ECHO_DECOMPOSITION_20261008.md` §8.
+- **Status**: `backlog` — **blocked**. Generative approach failed echo-collapse test. Requires Encoder variant or larger base model (≥1.4B).
 
-### P7.3 — Encoder vs generative A/B
-- **Why**: classification/routing may be better served by `LFM2.5-Encoder-230M/350M` than generative models.
-- **Done when**: side-by-side eval on privacy-sentinel / failure-classifier / tool-router tasks picks a measured winner.
-- **Status**: `backlog`.
+### P7.3 — Encoder vs generative A/B — **ACTIVE (NEW PRIORITY)**
+- **Why**: classification/routing/sentinel tasks are native encoder territory. Generative models at ≤350M suffer echo collapse.
+- **Scope**: Side-by-side eval of `LFM2.5-Encoder-230M/350M` vs `ModernBERT-base` vs `LFM2.5-350M` (generative) on:
+  - `tool_router` (sequence classification)
+  - `privacy_sentinel` (token classification / span extraction)
+  - `failure_classifier` (sequence classification)
+  - `mempalace_extractor` (span extraction)
+- **Done when**: measured winner selected with statistical significance; OMER card filed.
+- **Status**: `active` — **NEW PRIORITY 2026-10-09**.
 
 ### P7.4 — Specialist registry + Modelfile factory
 - **Why**: specialists must be versioned artifacts, not loose GGUFs. Every adapter gets a dataset hash, OMER card, eval report, and owner.
 - **Done when**: registry under `docs/models/specialists/` and factory scripts can produce/inspect a specialist Modelfile without hidden paths.
-- **Status**: `backlog`.
+- **Status**: `backlog` — depends on P7.3 winner.
 
 ---
 
