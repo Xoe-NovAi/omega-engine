@@ -125,8 +125,8 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 ### Option A: From GitHub Release (Fastest)
 ```bash
 # Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega-1.6.0a0-py3-none-any.whl
-pip install omega-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
+pip install omega_engine-1.6.0a0-py3-none-any.whl
 
 # PyPI: `pip install omega-engine` — publishing pending (see ANNOUNCEMENT_v1.6.0-alpha.md)
 
