@@ -820,6 +820,15 @@ check-mandate-compliance-json:
 	@$(PYTHON) scripts/check_mandate_compliance.py --json
 
 # ─────────────────────────────────────────────────────────────────────────────
+# check-doc-facts — Single Source of Truth for Public Docs [P1-1]
+# ─────────────────────────────────────────────────────────────────────────────
+# Validates that all public docs (README, QUICKSTART, ANNOUNCEMENT, docs/**)
+# match the authoritative FACTS.yaml. Fails on any mismatch or forbidden phrase.
+check-doc-facts:
+	@$(PYTHON) scripts/check_doc_facts.py
+	@echo "$(GREEN)Doc facts check passed$(NC)"
+
+# ─────────────────────────────────────────────────────────────────────────────
 # check-sahs — Single Authoritative Handoff Surface gate [M29, 2026-09-28]
 # ─────────────────────────────────────────────────────────────────────────────
 # Three assertions, not counts:

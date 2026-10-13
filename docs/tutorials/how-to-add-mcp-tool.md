@@ -4,7 +4,7 @@
 
 **Date**: 2026-10-02
 **Purpose**: Step-by-step tutorial for adding a new MCP tool to the Omega Engine.
-**Prerequisites**: Python 3.11+, `omega-engine` repo cloned, basic MCP knowledge
+**Prerequisites**: Python 3.12+, `omega-engine` repo cloned, basic MCP knowledge
 **Tags**: tutorial, mcp, tool, development
 
 ---

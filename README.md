@@ -65,7 +65,7 @@ Omega’s dynamic router operates on a strict law: **Match the TASK to the most 
 
 ### 3. Persistent Beings, Not Throwaway Sessions
 In Omega, an agent is an enduring entity with an attributable history, an identity constitution (`soul.yaml`), and continuous cognitive development:
-- **Compaction-Immune Memory**: Standard LLM summarization silently destroys up to 83% of operational constraints (arXiv:2606.22528 *Governance Decay*). Omega uses a dual prospective-retrospective hook structure guaranteeing **100% constraint survival across context compactions**.
+- **Compaction-Immune Memory**: Standard LLM summarization silently destroys **30% of operational constraints** after compaction, up to **59% for some models** (arXiv:2606.22528 *Governance Decay*, §4). Omega uses a dual prospective-retrospective hook structure guaranteeing **constraint-pinning design with reproducible benchmark**.
 - **L1 → L2 → L3 Gnosis Distillation**: Raw chat observations (L1) distill into validated tactical lessons (L2), which graduate into fundamental architectural truths (L3) with complete session provenance.
 - **Temporal Depth & Historical Recall**: Your working history is indexed into a high-speed local engine (FTS5 lexical search + native 1024-dim `sqlite-vec` semantic similarity). Agents can instantly recall architectural pivots, past decisions, and rationale established weeks or months ago.
 

@@ -6,9 +6,9 @@ Get running in under 5 minutes. No cloud keys needed.
 
 ## Prerequisites
 
-- **Linux** (Ubuntu 24.04+ or equivalent)
+- **Linux** (Ubuntu 22.04+, Debian 12+, Arch, Fedora)
 - **Python 3.12+**
-- **4GB RAM** minimum (14GB recommended)
+- **8GB RAM** minimum (16GB recommended)
 - **~2GB disk** (engine + model)
 - **x86-64 CPU with AVX2** (most modern CPUs)
 
@@ -76,7 +76,7 @@ echo "GOOGLE_API_KEY=your_key_here" >> .env
 echo "OPENROUTER_API_KEY=your_key_here" >> .env
 ```
 
-Cloud providers are **never called unless local inference fails**.
+Cloud providers are **opt-in fallbacks**; local inference is primary. Routing follows: **Task → Most Capable Model** (cloud for synthesis, local for embeddings/privacy/background).
 
 ---
 

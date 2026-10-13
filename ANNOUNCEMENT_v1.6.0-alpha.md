@@ -1,6 +1,6 @@
 # 🎉 Omega Engine v1.6.0-alpha — Public Debut
 
-**Release Date:** 2026-10-12  
+**Release Date:** 2026-10-13  
 **Tag:** `v1.6.0a0` (peels to `355cbf1a`)  
 **Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0a0.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a0)
 
@@ -24,8 +24,8 @@
 | **Cross-platform Hivemind** (handoffs, awareness, radar) | ✅ OpenCode, Cline, Cursor, Gemini CLI, Codex |
 | **Sovereign search** (SSP-V2: local cache → SearXNG → Exa → Firecrawl) | ✅ 4-tier |
 | **Wheel install** (`pip install the-omega-engine`, pending) | ✅ Self-contained, 5 runtime configs + default IWAD |
-| **Temple-Grade CI** (53/53 gates) | ✅ Green |
-| **REUSE v3.3 compliance** | ✅ Green |
+| **Temple-Grade CI** (53/53 dashboard self-test prerequisite; temple-grade exit 0) | ✅ Green |
+| **REUSE v3.3 compliance** | ⚠️ Partial (107 files outstanding) |
 
 ---
 
@@ -108,10 +108,10 @@ omega talk "Hello, Omega"
 | 12 persistent entities | REUSE/SPDX debt (107 files) |
 | Cross-client Hivemind | Lesson promotion pipeline (partial) |
 | Wheel + source install | D-AVGN-006 N1 response pending |
-| Temple-Grade 53/53 gates | — |
+| Temple-Grade (dashboard self-test 53/53; temple-grade exit 0) | — |
 | Immutable releases + tag ruleset | — |
 
-**No vaporware. No "coming soon" without a ticket.** Every claim above is gated by `make temple-grade` (53/53) and verified on clean clone.
+**No vaporware. No "coming soon" without a ticket.** Every claim above is gated by `make temple-grade` (dashboard self-test 53/53; temple-grade exit 0) and verified on clean clone.
 
 ---
 
