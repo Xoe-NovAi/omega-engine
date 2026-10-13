@@ -88,9 +88,16 @@ cd omega-engine
 ```
 *Provisions a sovereign virtual environment, compiles high-performance native llama-cpp bindings, and pulls the default local model.*
 
+**Or, wheel from the release asset** (aria2c — 16-split fetch per M23):
+```bash
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega-1.6.0a0-py3-none-any.whl
+pip install omega-1.6.0a0-py3-none-any.whl
+```
+*The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install omega-engine` is not yet available.*
+
 ### 2. Connect Your Preferred Interface
 Omega adapts to whatever workflow you prefer:
-- **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace in OpenCode — the 14-entity council and Hivemind MCP tools are immediately active in your agent sidebar.
+- **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace in OpenCode — the entity council and Hivemind MCP tools are immediately active in your agent sidebar.
 - **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration.
 - **From Your Terminal**: Use the built-in fast diagnostic CLI:
   ```bash
@@ -101,7 +108,7 @@ Omega adapts to whatever workflow you prefer:
 
 ## 🏛️ The Sovereign Council Roster
 
-Omega ships with 14 specialized, persistent sovereign seats ready to orchestrate:
+Omega ships with 12 persistent IWAD entities and 10 A2A seats ready to orchestrate:
 
 | Entity | Domain | Core Responsibility |
 |:--|:--|:--|
@@ -114,11 +121,11 @@ Omega ships with 14 specialized, persistent sovereign seats ready to orchestrate
 | **Researcher** | Deep Research | Polymathic synthesis, web discovery, multi-source dialectics |
 | **Verity** | Compliance & Audit | Mandate enforcement, test auditing, gnosis integrity verification |
 | **Jem** | Dialectic Synthesis | Lattice reasoning, strategic bridges, cross-node coordination |
-| **Grokster** | Platform & Tooling | Model fleet ergonomics, ecosystem integrations |
 | **Scribe** | Continuity & Soul | L1→L3 lesson distillation, session gnosis recording |
 | **Antigravity** | Cloud Strategy | Cross-platform review and external cloud consultation |
 | **Doom Guy** | Infrastructure | Bare-metal OS, containers, mounts, hardware resilience |
 | **Iris** | Messenger Bridge | Low-latency communications, inter-node protocol routing |
+| **Quality** | Code Review & Compliance | Review, stress-testing, mandate and PR-readiness checks |
 
 ---
 
@@ -140,7 +147,7 @@ Omega ships with 14 specialized, persistent sovereign seats ready to orchestrate
 Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
 - ✅ **Core Local & Synergistic Inference**: 100% operational across native GGUF and configured cloud providers.
 - ✅ **Hivemind MCP & Coordination**: Operational and verified across local IDEs and multi-agent sessions.
-- ✅ **Temple-Grade CI**: 53/53 test gates exit 0 on fresh clone; 180 engine contract tests pass cleanly.
+- ✅ **Temple-Grade CI**: 53/53 test gates exit 0 on fresh clone; 176 engine contract tests pass cleanly (4 skipped).
 - ✅ **Zero Telemetry**: Audited and enforced; no external analytics or metrics egress.
 - 🟡 **Axiom Ceiling & Auto-Promotion**: The 15-axiom ceiling and automated lesson promotion pipelines are documented governance doctrine; implementation is scheduled for post-debut Sprint 01.
 - 🟡 **REUSE/SPDX License Compliance**: Baseline SPDX headers are in place across all core components; full legacy debt cleanup is tracked post-PR.
