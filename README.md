@@ -114,33 +114,24 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 
 ## 🚀 Quick Start
 
-### Option A: From GitHub Release (Fastest)
-```bash
-# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/the_omega_engine-1.6.0a0-py3-none-any.whl
-pip install the_omega_engine-1.6.0a0-py3-none-any.whl
-
-# PyPI: `pip install the-omega-engine` — pending publisher exists; verify live before relying on it (see ANNOUNCEMENT_v1.6.0-alpha.md)
-
-omega list-entities          # See the sovereign council
-omega talk "Hello, Omega"    # Route to the best entity automatically
-```
-*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option B below.*
-
-### Option B: From Source (Full Development)
+### Option A: From Source (Recommended)
 ```bash
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
 ./scripts/install.sh
 ```
-*Provisions a sovereign virtual environment, compiles high-performance native llama-cpp bindings, and pulls the default local model.*
+*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), and compiles native llama-cpp bindings (pre-fetched, 6-way build). Runs verification gates at the end.*
 
-**Or, wheel from the release asset** (aria2c — 16-split fetch per M23):
+### Option B: Wheel from the GitHub Release (alternative — no native GGUF build)
 ```bash
+# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
 pip install the_omega_engine-1.6.0a0-py3-none-any.whl
+
+omega list-entities          # See the sovereign council
+omega talk "Hello, Omega"    # Route to the best entity automatically
 ```
-*The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "the-omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
+*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option A. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
 
 ### 2. Connect Your Preferred Interface
 Omega adapts to whatever workflow you prefer:
