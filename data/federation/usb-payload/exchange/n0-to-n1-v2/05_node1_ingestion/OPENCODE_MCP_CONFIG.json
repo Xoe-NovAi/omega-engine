@@ -2,7 +2,7 @@
   "mcp": {
     "omega-hub": {
       "type": "remote",
-      "url": "https://n0.tail51f14a.ts.net:8016/mcp",
+      "url": "https://n0.example.invalid:8016/mcp",
       "enabled": true
     }
   }

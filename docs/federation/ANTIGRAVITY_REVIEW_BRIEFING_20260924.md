@@ -44,8 +44,8 @@ Node 0 is the HP Pavilion / Ryzen 7 5700U archival bastion and Omega Engine core
 Measured or observed:
 
 - hostname: `xnai-n0-hp`;
-- Tailscale address: `100.123.51.67`;
-- MagicDNS: `n0.tail51f14a.ts.net`;
+- Tailscale address: `100.64.0.1`;
+- MagicDNS: `n0.example.invalid`;
 - official Engine branch observed: `release/debut-v1.6.0`;
 - Git HEAD observed: `75bde939ace7ff46ed2fef0056880a0814ab0e11`;
 - Python: `3.13.7`;
@@ -116,9 +116,9 @@ Node 1 is the development branch for ANAi/WAD and entity continuity. It must not
 
 The current transport is direct LAN WireGuard:
 
-- Node 0: `n0.tail51f14a.ts.net`, `100.123.51.67`;
-- Node 1: `n1.tail51f14a.ts.net`, `100.89.40.17`;
-- direct path observed through `192.168.10.174:41641`;
+- Node 0: `n0.example.invalid`, `100.64.0.1`;
+- Node 1: `n1.example.invalid`, `100.64.0.2`;
+- direct path observed through `192.168.1.101:41641`;
 - no subnet-router or exit-node dependency was observed;
 - Node 1 still carries deprecated `tag:asus` alongside `tag:node1`.
 

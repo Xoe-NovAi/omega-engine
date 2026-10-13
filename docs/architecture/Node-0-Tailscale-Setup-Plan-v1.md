@@ -18,7 +18,7 @@
 | **Authkey for Tagged Devices** | One-off + pre-approved + tag enabled = device joins with tag automatically; key expiry disabled by default for tagged devices | Confirms: **One-shot, pre-approved, `tag:node1`** is correct |
 | **Tailscale SSH `check` vs `accept`** | `check` = requires periodic re-auth (default 12h, configurable via `checkPeriod`); `accept` = no re-auth. `check` only works for Tailscale SSH (port 22 interception) | Confirms: **Admin SSH uses `check`** (high-risk), Node 0→Node 1 automation uses `check` (non-root) |
 | **AutoApprovers** | `routes` and `exitNodes` auto-approve subnet route advertisements; only applies to NEW advertisements, not retroactive | Confirms: **`autogroup:admin` for both** is correct |
-| **MagicDNS Hostnames** | Services binding to Tailscale IPs must allow MagicDNS FQDNs in `allowed_hosts` (already done in commit `213abf44`) | Confirms: **`omega-hub.tail51f14a.ts.net` + `*.tail51f14a.ts.net`** already configured |
+| **MagicDNS Hostnames** | Services binding to Tailscale IPs must allow MagicDNS FQDNs in `allowed_hosts` (already done in commit `213abf44`) | Confirms: **`omega-hub.example.invalid` + `*.example.invalid`** already configured |
 | **DERP vs Direct** | `tailscale netcheck` shows `Direct: true` when UDP hole-punching works; DERP fallback is same security (E2E WireGuard) | Verification step: **`tailscale netcheck` → verify Direct** |
 
 ---
@@ -42,10 +42,10 @@
 
 ```bash
 # Phase A (paste first):
-cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/phase_a_acl_policy.hujson
+cat /home/USER/Documents/Xoe-NovAi/omega-engine/phase_a_acl_policy.hujson
 
 # Phase B (paste after verification):
-cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/phase_b_acl_policy.hujson
+cat /home/USER/Documents/Xoe-NovAi/omega-engine/phase_b_acl_policy.hujson
 ```
 
 **Ready when you are.** Paste Phase A in the admin console at `https://login.tailscale.com/admin/acls`, then run the re-tag command on this machine.

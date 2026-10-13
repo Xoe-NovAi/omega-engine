@@ -207,7 +207,7 @@ Establish a clean, verified communication bridge between Node 0 and Node 1.
    ```
 2. Ensure manifest reflects all exchange payloads:
    ```bash
-   python3 -c "import json; d=json.load(open('/home/arcana-novai/exchange/manifest.json')); print('Artifact count:', len(d.get('artifacts', [])))"
+   python3 -c "import json; d=json.load(open('/home/USER/exchange/manifest.json')); print('Artifact count:', len(d.get('artifacts', [])))"
    ```
 
 ### Step 4.2: Structured Handshake with Node 1

@@ -59,8 +59,8 @@
 //      805 proposal Node 1 raised is recorded below as NOT adopted, with why.
 //
 // NOT ADOPTED — the 805 Node 1 proposed, and why:
-//   Not a collision. Ports are PER-HOST: 8019 on 100.123.51.67 and 8019 on
-//   100.89.40.17 are different sockets. 805 was an artefact of the plane/stack
+//   Not a collision. Ports are PER-HOST: 8019 on 100.64.0.1 and 8019 on
+//   100.64.0.2 are different sockets. 805 was an artefact of the plane/stack
 //   architecture, where each plane is a separately bound socket on one host and
 //   distinct ports are how you bind them apart. Both nodes bind 8019 and run
 //   the IDENTICAL omega_exchange_server.py — same port, same code.
@@ -112,7 +112,7 @@
 		// Same port number, same service, each bound to its own loopback and
 		// fronted by its own Tailscale Serve. Keep both on 127.0.0.1 -- do NOT
 		// bind 0.0.0.0. Unblock proof, from Node 1:
-		//   curl -sk https://n0.tail51f14a.ts.net:8019/manifest.json
+		//   curl -sk https://n0.example.invalid:8019/manifest.json
 		{"src": ["tag:node0"], "dst": ["tag:node1"], "ip": ["tcp:8016", "tcp:8019"]},
 		{"src": ["tag:node1"], "dst": ["tag:node0"], "ip": ["tcp:8016", "tcp:8019"]},
 

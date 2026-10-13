@@ -104,7 +104,7 @@ These are the signatures that unblock work. Listed by ROI (return on a single si
 ### 3.4 OMEGA-ORIGINS-AND-RETURN.md promotion
 
 **Source**: heritage  
-**What it brings into the repo**: the single most important origin document, currently in the legacy partition at `/media/arcana-novai/omega_vault/legacy-repos/xna-omega-legacy/`.  
+**What it brings into the repo**: the single most important origin document, currently in the legacy partition at `/media/USER/omega_vault/legacy-repos/xna-omega-legacy/`.  
 **What you sign**: Roc's copy + provenance header → `docs/heritage/OMEGA_ORIGINS_AND_RETURN.md`. NOT a symlink (M2 firewall + PUBLIC_ALLOWLIST explicitness).  
 **Cost of delay**: the launch narrative ships without its founding confession. The "gift of gratitude to Lilith" story is incomplete.
 

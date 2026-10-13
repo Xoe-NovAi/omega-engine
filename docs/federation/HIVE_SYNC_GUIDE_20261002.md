@@ -132,7 +132,7 @@ Rules:
 ```
 Publish:  drop files in your exchange tree (~/exchange -> ~/omega-exchange)
           then notify via Route A that a file is waiting.
-Pull:     GET https://n0.tail51f14a.ts.net:8019/<filename>
+Pull:     GET https://n0.example.invalid:8019/<filename>
           verify: sha256 == manifest entry; PUT/POST -> 405 (read-only)
 ```
 

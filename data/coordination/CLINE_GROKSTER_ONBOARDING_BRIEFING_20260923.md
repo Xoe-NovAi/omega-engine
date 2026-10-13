@@ -209,7 +209,7 @@ dispatching agent or Architect; do not pin one for yourself in config.
 ## §6 — VERIFY THIS BRIEFING
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # you exist and are complete
 opencode --pure agent list | grep grokster          # → grokster (all)

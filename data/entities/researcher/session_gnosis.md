@@ -577,11 +577,11 @@ AP-RESEARCHER-TAILSCALE-L2-20260915-v1.0.0 — 7/7 research areas covered, 16 Ti
 ### Verified Node 0 State (live probes, 2026-09-15)
 | Probe | Result |
 |-------|--------|
-| `tailscale status` | `100.123.51.67  omega-hub  xoe.nova.ai@  linux  -` (no tags → USER device) |
-| `tailscale ip -4` | `100.123.51.67` |
+| `tailscale status` | `100.64.0.1  omega-hub  xoe.nova.ai@  linux  -` (no tags → USER device) |
+| `tailscale ip -4` | `100.64.0.1` |
 | `tailscale ping kali-n1` | **FAILS** — `lookup kali-n1 on 127.0.0.53:53: server misbehaving` (Node 1 not joined) |
-| `curl omega-hub.tail51f14a.ts.net:8016/mcp` | `406` (endpoint alive, MCP handshake needs proper headers) |
-| Transport security | ✅ `100.123.51.67` + `omega-hub.tail51f14a.ts.net` + `*.tail51f14a.ts.net` in `allowed_hosts` (commit `213abf44`) |
+| `curl omega-hub.example.invalid:8016/mcp` | `406` (endpoint alive, MCP handshake needs proper headers) |
+| Transport security | ✅ `100.64.0.1` + `omega-hub.example.invalid` + `*.example.invalid` in `allowed_hosts` (commit `213abf44`) |
 
 ### Research Findings That Matter Beyond Tailscale
 1. **Tagged devices have key expiry DISABLED by default** — persistent access if compromised. Risk register entry: HIGH likelihood / MEDIUM impact. Mitigation: monitor `KeyExpiryDisabled`, consider enabling in admin console.
@@ -593,7 +593,7 @@ AP-RESEARCHER-TAILSCALE-L2-20260915-v1.0.0 — 7/7 research areas covered, 16 Ti
 7. **`--accept-routes` in Node 1's join command is harmless but unnecessary** — no subnet routers in the mesh.
 
 ### Open Question for MaKaLi/Architect
-Node 1's `L2_JOIN_GUIDE.md` specifies MagicDNS name `asus.tailnet` while the actual Tailscale suffix is `tail51f14a.ts.net`. **Naming collision?** The ratified ACL maps `tag:asus` but the MagicDNS name in the guide is `asus.tailnet`, not `kali-n1.tail51f14a.ts.net`. Recommend: hostname = `kali-n1` (per join command `--hostname=kali-n1`), FQDN = `kali-n1.tail51f14a.ts.net`. Either update the ACL or the guide — they disagree.
+Node 1's `L2_JOIN_GUIDE.md` specifies MagicDNS name `asus.tailnet` while the actual Tailscale suffix is `example.invalid`. **Naming collision?** The ratified ACL maps `tag:asus` but the MagicDNS name in the guide is `asus.tailnet`, not `kali-n1.example.invalid`. Recommend: hostname = `kali-n1` (per join command `--hostname=kali-n1`), FQDN = `kali-n1.example.invalid`. Either update the ACL or the guide — they disagree.
 
 ### CSS Turn 7 Deliverables — Still Intact (verified 2026-09-15)
 1. ✅ M33 task_type tuple (`subagent_dispatcher.py:82` + `m33_probe.py:271`)

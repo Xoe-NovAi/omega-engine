@@ -270,7 +270,7 @@ tailscale ssh xnai@n1 "systemctl is-active mcp-server nfs-kernel-server ssh"
 tailscale ping n1
 
 # 3. NFS port probe
-nc -zv -w 5 n1.tail51f14a.ts.net 2049
+nc -zv -w 5 n1.example.invalid 2049
 
 # 4. NFS automount
 ls /mnt/node-drive/exchange/
@@ -279,20 +279,20 @@ ls /mnt/node-drive/exchange/
 ### P2-2: Bidirectional MCP Verification
 ```bash
 # n0 → n1
-SESSION_ID=$(curl -s -i -X POST http://n1.tail51f14a.ts.net:8016/mcp \
+SESSION_ID=$(curl -s -i -X POST http://n1.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"n0-verify","version":"1.0"}}}' \
   | grep -i 'mcp-session-id:' | tr -d '\r' | awk '{print $2}')
 
-curl -s -X POST http://n1.tail51f14a.ts.net:8016/mcp \
+curl -s -X POST http://n1.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -H "mcp-session-id: $SESSION_ID" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"FED-VERIFIED-20260921"}}}'
 
 # n1 → n0 (via SSH)
-tailscale ssh xnai@n1 'curl -s -X POST http://n0.tail51f14a.ts.net:8016/mcp \
+tailscale ssh xnai@n1 'curl -s -X POST http://n0.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '"'"'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"n1-verify","version":"1.0"}}}'"'"''

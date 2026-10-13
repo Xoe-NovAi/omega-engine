@@ -13,7 +13,7 @@ title: "Full comms-channel review — deep focus: 8019 exchange pipe + Hivemind 
 status: "ACTIVE — FINDINGS, NOT FIXES (ratification pending)"
 date: "2026-10-02"
 reviewer: "maat"
-vantage: "NODE 0 (n0.tail51f14a.ts.net / this host) ONLY — every live probe, test run and
+vantage: "NODE 0 (n0.example.invalid / this host) ONLY — every live probe, test run and
           count below is from N0. N1 vantage: UNTESTED (UNTESTED where noted)."
 git: "branch debut-v1.6.0-alpha, HEAD d01aca21, working tree reviewed as-is"
 live_services_at_review: "omega-hub active (127.0.0.1:8016 /health → v1.6.0-alpha.1),
@@ -92,7 +92,7 @@ Disposition for each: **rewrite, not delete** (§7).
 - **Traversal**: `..%2f`, `%2e%2e%2f`, `%252e`, `..%5c`, `....//`, `%2fetc%2fpasswd`,
   `/../../etc/shadow`, `../../../etc/passwd` → 404 JSON envelope. Safe.
 - **Suite green live**: `pytest scripts/test_exchange_false_success.py` → **15/15 passed
-  in 2.01s** from N0 (includes tailnet TLS leg `n0.tail51f14a.ts.net:8019`).
+  in 2.01s** from N0 (includes tailnet TLS leg `n0.example.invalid:8019`).
 - **url_form fix landed on N0**: manifest publishes single HTTPS-ONLY/BROKEN url_form
   (ba8a3849); `SELF_IP_URL_FORM` is computed (but see COM-08 — env key is broken).
 - **CLI `put` works**: `python scripts/omega_exchange_server.py put … --root …` → exit 0,
@@ -102,7 +102,7 @@ Disposition for each: **rewrite, not delete** (§7).
 
 | ID | Sev | Defect | Evidence | Failure scenario | Fix shape |
 |----|-----|--------|----------|------------------|-----------|
-| COM-08 | **P1** | Node identity incomplete cross-node. `SELF_IP_URL_FORM = f"http://{os.environ.get(chr(39)+chr(39), '100.123.51.67')}:{NODE_PORT}/…"` — env key is literally `"''"` (never set) → hardcoded n0 IP regardless of node. `OMEGA_NODE_NAME`/`OMEGA_NODE_HOST` (lines 128-129) referenced nowhere else in repo; N1 unit `scripts/deploy/n1/omega-exchange.service` + drop-in `10-port-8019.conf` set neither. Tests/verify script never assert node identity (only substring "HTTPS ONLY"/"BROKEN"). | `scripts/omega_exchange_server.py:128-132`; `scripts/deploy/n1/…` (absence); test only checks substrings | N1 serves manifest with `url_form`/`served_by` claiming `n0…:8019` → the exact false-success class ba8a3849 fixed, still live cross-node. One-vantage: N0 leg OK, N1 UNTESTED | Fix env key (`OMEGA_SELF_IP` or derive from hostname); set `OMEGA_NODE_NAME/HOST` in N1 unit; assert `served_by == expected node` in verify script + test |
+| COM-08 | **P1** | Node identity incomplete cross-node. `SELF_IP_URL_FORM = f"http://{os.environ.get(chr(39)+chr(39), '100.64.0.1')}:{NODE_PORT}/…"` — env key is literally `"''"` (never set) → hardcoded n0 IP regardless of node. `OMEGA_NODE_NAME`/`OMEGA_NODE_HOST` (lines 128-129) referenced nowhere else in repo; N1 unit `scripts/deploy/n1/omega-exchange.service` + drop-in `10-port-8019.conf` set neither. Tests/verify script never assert node identity (only substring "HTTPS ONLY"/"BROKEN"). | `scripts/omega_exchange_server.py:128-132`; `scripts/deploy/n1/…` (absence); test only checks substrings | N1 serves manifest with `url_form`/`served_by` claiming `n0…:8019` → the exact false-success class ba8a3849 fixed, still live cross-node. One-vantage: N0 leg OK, N1 UNTESTED | Fix env key (`OMEGA_SELF_IP` or derive from hostname); set `OMEGA_NODE_NAME/HOST` in N1 unit; assert `served_by == expected node` in verify script + test |
 | COM-09 | P2 | Manifest cache saves nothing and can go stale. `_build_manifest` does full rglob + sha256 of the whole tree BEFORE checking the `(max_mtime, entry_count)` key; key collides on add+remove, move, or `copy2` (mtime-preserving) → stale manifest served forever (silent artifact omission). | `scripts/omega_exchange_server.py` `_build_manifest` | Client believes a put artifact exists; manifest omits it → pull 404 → silent miss downstream | Key on content digest or record entry set; build before key check only for listing, hash lazily |
 | COM-10 | P2 | Null byte → live HTTP 500 with **bare** `Internal Server Error` (text/plain). Reproduced 2026-10-02: `GET /%00` → 500 bare; all other bad paths → 404 JSON. Violates the service's own "every error is an envelope" promise (M23). | live probe; `serve_file`/`_safe_resolve` | Any client expecting JSON errors parses a bare string; masks the true cause | Catch `ValueError` from null byte in path handling → 404 JSON envelope |
 | COM-11 | P2 | `_MANIFEST_MAX_ENTRIES = 5000` truncates silently (`break`, no `truncated` flag). | server constant; documented in `EXCHANGE_DUPLEX_DEPLOY_N1.md` §9.2 | >5000 files → later artifacts unlisted, no signal | Emit `truncated`/`entries_total` in manifest |

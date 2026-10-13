@@ -83,7 +83,7 @@ lessons:
   level: L1
   title: 'An entity is not a location: I routed a Node 1 task to a Node 0 session'
   observation: I dispatched work to stand up Node 1's exchange substrate to the Lilith EIS, reasoning
-    that N1's runtime is Lilith's slot. The Lilith EIS executes on Node 0. She verified hostname=Arcana-NovAi,
+    that N1's runtime is Lilith's slot. The Lilith EIS executes on Node 0. She verified hostname=node0,
     tailscale self=n0, ~/exchange present, and 8019 as her own origin, then stopped without changing anything.
     GE-N1 is a separate session on the ASUS with its own OpenCode instance and its own store. Sovereignty
     and execution are different properties and I conflated them.
@@ -96,7 +96,7 @@ lessons:
 - id: l1-mine-001
   level: L1
   title: Three of my own claims were facts carried forward without a query
-  observation: (a) I asserted "the server log has never shown a hit from 100.89.40.17" about a log that
+  observation: (a) I asserted "the server log has never shown a hit from 100.64.0.2" about a log that
     cannot exist — python3 -m http.server writes no access log, and I had repeated the claim from a report
     that could not have supported it. (b) I stated a child-session count read from a truncated tool list
     as a total; Carmack queried it and the true number was 60, not 22. (c) I told the Architect a tailnet
@@ -311,7 +311,7 @@ lessons:
   title: Assorted Tailscale tailnet facts confirmed in the field
   observation: 'Tailscale Serve is subject to tailnet ACLs exactly like any other service, so a correctly
     configured local backend can still be unreachable from a peer node. The effective policy was a selective
-    per-port allowlist enumerating 8016 and 22 but not 8017, producing ''Drop: TCP{100.89.40.17:* > 100.123.51.67:8017}
+    per-port allowlist enumerating 8016 and 22 but not 8017, producing ''Drop: TCP{100.64.0.2:* > 100.64.0.1:8017}
     no rules matched''.'
   evidence: tailscaled journal on N0; N1 curl to 8017 timed out while 8016 succeeded.
   tags:

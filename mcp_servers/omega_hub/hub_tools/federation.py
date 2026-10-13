@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 from datetime import datetime, timezone
 from typing import Any
@@ -38,7 +39,9 @@ from mcp_servers.omega_hub.protocol_version import (
 logger = logging.getLogger(__name__)
 
 # Tailnet domain suffix — used to build MagicDNS hostnames.
-_TAILNET_DOMAIN = "tail51f14a.ts.net"
+# OMEGA_TAILNET_DOMAIN wins (third-party tailnets differ); the default below is
+# a placeholder (P0-2 cut redaction).
+_TAILNET_DOMAIN = os.environ.get("OMEGA_TAILNET_DOMAIN", "example.invalid")
 
 # ── Internal helpers ────────────────────────────────────────────────
 
@@ -112,8 +115,8 @@ def _probe_peer_direct(ip: str) -> bool:
     """Probe a peer with `tailscale ping` to resolve direct vs relayed path.
 
     Parses the human-readable output:
-      "pong from n1 (100.89.40.17) via 192.168.10.174:41641 in 104ms"  → direct
-      "pong from n1 (100.89.40.17) via DERP(mia) in 242ms"             → relayed
+      "pong from n1 (100.64.0.2) via 192.168.1.101:41641 in 104ms"  → direct
+      "pong from n1 (100.64.0.2) via DERP(mia) in 242ms"             → relayed
     """
     try:
         result = subprocess.run(
@@ -164,7 +167,7 @@ def _self_dns_name(status: dict[str, Any]) -> str:
 def _tailnet_hostname(host: str) -> str:
     """Return a fully-qualified tailnet hostname for a peer.
 
-    Accepts bare hostnames (``n1``), FQDNs (``n1.tail51f14a.ts.net``),
+    Accepts bare hostnames (``n1``), FQDNs (``n1.example.invalid``),
     and IPs — returns the input unchanged for the latter two.
     """
     if "." in host or ":" in host:
@@ -423,7 +426,7 @@ async def omega_federation_diagnose(
     checks.append({
         "name": "transport_security",
         "status": "PASS",
-        "detail": "allowed_hosts includes omega-hub.tail51f14a.ts.net:* (commit 213abf44)",
+        "detail": "allowed_hosts includes omega-hub.example.invalid:* (commit 213abf44)",
     })
 
     # 5. Relay check — uses corrected direct detection (PeerRelay/CurAddr)

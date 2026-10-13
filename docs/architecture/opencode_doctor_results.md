@@ -1,29 +1,29 @@
 arcana-novai@Arcana-NovAi:~/Documents/Xoe-NovAi/omega-engine$ ./opencode_provider_doctor.sh --apply
 === opencode provider doctor — 2026-09-18T20:33:48Z ===
-home=/home/arcana-novai project=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine apply=1
+home=/home/USER project=/home/USER/Documents/Xoe-NovAi/omega-engine apply=1
 opencode: 1.18.23
 [WARN] opencode < 1.18.30: OpenAI provider SDK compatibility fixes landed in .30 — consider 'opencode upgrade' for parity (not a diagnosis)
 --- layers ---
-present: /home/arcana-novai/.config/opencode/opencode.json
-absent:  /home/arcana-novai/.config/opencode/opencode.jsonc
+present: /home/USER/.config/opencode/opencode.json
+absent:  /home/USER/.config/opencode/opencode.jsonc
 absent:  /nonexistent-openconfig
-present: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json
-absent:  /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.jsonc
+present: /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json
+absent:  /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.jsonc
 project plugins: awareness.ts error-capture.ts silent-stall-sensor.ts test-event.js.DISABLED test-event.js.DISABLED.license 
 [WARN] project plugins load — a provider-hooking plugin (e.g. *-auth) can rewrite requests
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.google-standard enumerates 4 model(s): gemini-2.5-pro, gemini-2.5-flash, gemma-4-31b-it, gemma-4-26b-a4b-it — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[PASS] /home/arcana-novai/.config/opencode/opencode.json ollama.baseURL resolves: 127.0.0.1
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.ollama enumerates 1 model(s): qwen3:4b — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.opencode enumerates 1 model(s): x-preview-f-free — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[PASS] /home/arcana-novai/.config/opencode/opencode.json native-gguf-extractor.baseURL resolves: 127.0.0.1
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.native-gguf-extractor enumerates 1 model(s): qwen3-1.7b-extractor — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[PASS] /home/arcana-novai/.config/opencode/opencode.json native-gguf-reasoner.baseURL resolves: 127.0.0.1
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.native-gguf-reasoner enumerates 1 model(s): qwen3-4b-thinking — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[PASS] /home/arcana-novai/.config/opencode/opencode.json lmstudio.baseURL resolves: localhost
-[WARN] /home/arcana-novai/.config/opencode/opencode.json provider.lmstudio enumerates 2 model(s): qwen3-1.7b-q6_k, qwen3-4b-thinking — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[PASS] /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json lmstudio.baseURL resolves: localhost
-[WARN] /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json provider.lmstudio enumerates 6 model(s): qwen3-4b-thinking, qwen3-1.7b, qwen3-1.7b-q6_k, phi-4-mini, krikri-8b, deepseek-r1-qwen3-8b — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
-[WARN] /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json provider.opencode enumerates 3 model(s): nemotron-3-ultra-free, mimo-v2.5-free, big-pickle — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[WARN] /home/USER/.config/opencode/opencode.json provider.google-standard enumerates 4 model(s): gemini-2.5-pro, gemini-2.5-flash, gemma-4-31b-it, gemma-4-26b-a4b-it — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[PASS] /home/USER/.config/opencode/opencode.json ollama.baseURL resolves: 127.0.0.1
+[WARN] /home/USER/.config/opencode/opencode.json provider.ollama enumerates 1 model(s): qwen3:4b — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[WARN] /home/USER/.config/opencode/opencode.json provider.opencode enumerates 1 model(s): x-preview-f-free — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[PASS] /home/USER/.config/opencode/opencode.json native-gguf-extractor.baseURL resolves: 127.0.0.1
+[WARN] /home/USER/.config/opencode/opencode.json provider.native-gguf-extractor enumerates 1 model(s): qwen3-1.7b-extractor — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[PASS] /home/USER/.config/opencode/opencode.json native-gguf-reasoner.baseURL resolves: 127.0.0.1
+[WARN] /home/USER/.config/opencode/opencode.json provider.native-gguf-reasoner enumerates 1 model(s): qwen3-4b-thinking — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[PASS] /home/USER/.config/opencode/opencode.json lmstudio.baseURL resolves: localhost
+[WARN] /home/USER/.config/opencode/opencode.json provider.lmstudio enumerates 2 model(s): qwen3-1.7b-q6_k, qwen3-4b-thinking — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[PASS] /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json lmstudio.baseURL resolves: localhost
+[WARN] /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json provider.lmstudio enumerates 6 model(s): qwen3-4b-thinking, qwen3-1.7b, qwen3-1.7b-q6_k, phi-4-mini, krikri-8b, deepseek-r1-qwen3-8b — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
+[WARN] /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json provider.opencode enumerates 3 model(s): nemotron-3-ultra-free, mimo-v2.5-free, big-pickle — Zen rotates; each entry is future rot (keep only limit-corrections you can justify)
 --- registry drift (custom limits vs live models.dev) ---
 [WARN] google-standard/gemini-2.5-pro: absent from live registry (removed upstream?)
 [WARN] google-standard/gemini-2.5-flash: absent from live registry (removed upstream?)

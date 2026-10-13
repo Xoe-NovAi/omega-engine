@@ -95,10 +95,10 @@ the commands in the banner above; do not inherit these numbers.
 ## ⚡ §2 DAEMONS, NETWORKING & RUNTIME (LILITH & DOOM GUY)
 
 ### 2.1 Listening Sockets Audit
-Audited via `ss -tulpn` on Node 0 (`100.123.51.67`):
-* `127.0.0.1:8016` + `100.123.51.67:8016`: FastMCP Omega Hub.
+Audited via `ss -tulpn` on Node 0 (`100.64.0.1`):
+* `127.0.0.1:8016` + `100.64.0.1:8016`: FastMCP Omega Hub.
 * `127.0.0.1:8018`: Internal SearXNG wrapper.
-* `127.0.0.1:8019` + `100.123.51.67:8019`: Omega Exchange Pipe (AnyIO server with structured JSON access logs to systemd journal).
+* `127.0.0.1:8019` + `100.64.0.1:8019`: Omega Exchange Pipe (AnyIO server with structured JSON access logs to systemd journal).
 * **LAN Binds**: Zero non-loopback wildcard (`0.0.0.0` or `::`) bindings for engine services. Clean LAN audit.
 
 ### 2.2 Tailnet ACL Posture
@@ -114,12 +114,12 @@ Audited via `ss -tulpn` on Node 0 (`100.123.51.67`):
 ## 📦 §3 ARTIFACT & DISCOVERY READINESS
 
 ### 3.1 Exchange Pipe (8019)
-* Live payload directory: `/home/arcana-novai/exchange`
+* Live payload directory: `/home/USER/exchange`
 * Contains:
   - `full-pack-20260926.zip` (122,463 bytes, SHA256 verified)
   - `n0-to-n1-20260929-vnr.zip` (455,778 bytes, SHA256 verified)
   - `n1-to-n0-20260927.zip` (11,864 bytes)
-* Dynamic manifest `/manifest.json` serves 88 indexed files with sha256 checksums, explicit `url_form` (`https://n0.tail51f14a.ts.net:8019/<path>`), and explicit `broken_url_form` warnings.
+* Dynamic manifest `/manifest.json` serves 88 indexed files with sha256 checksums, explicit `url_form` (`https://n0.example.invalid:8019/<path>`), and explicit `broken_url_form` warnings.
 
 ### 3.2 Session Discovery Primitive
 * `mcp_servers.omega_hub.who_is`: Authoritative, read-only session resolver.

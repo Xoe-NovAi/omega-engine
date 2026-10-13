@@ -298,8 +298,8 @@ confidence: "🟢 HIGH (all claims file:line grounded, contradictions resolved)"
 - **189/190 refs ORPHAN** (gc'd from object store)
 
 ### 13.2 Two WorkOS Accounts
-- `secrets.json.cline`: Rob (antipode2727@gmail.com, JWT expired 2026-06-02) — STALE
-- `providers.json.cline.auth`: Taylor (xoe.nova.ai@gmail.com, JWT exp 2026-08-23) — LIVE
+- `secrets.json.cline`: Rob (user3@example.com, JWT expired 2026-06-02) — STALE
+- `providers.json.cline.auth`: Taylor (user2@example.com, JWT exp 2026-08-23) — LIVE
 
 ### 13.3 4 Working Artifacts (Round 4)
 1. VaultCore-aware config resolver (closes env:VAR sites)

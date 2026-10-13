@@ -2240,13 +2240,13 @@ Let me check the current strategy docs to get this crystal clear.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/hierarchy.yaml"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/hierarchy.yaml"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/hierarchy.yaml</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/hierarchy.yaml</path>
 <type>file</type>
 <content>
 1: # SPDX-FileCopyrightText: 2026 Xoe-NovAi
@@ -2356,7 +2356,7 @@ This is the ANAi WAD hierarchy (esoteric terms). Let me also check the _omega_de
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml
 ```
 
 ---
@@ -2372,13 +2372,13 @@ Let me read the _omega_default hierarchy which should have the neutral engine te
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/hierarchy.yaml</path>
 <type>file</type>
 <content>
 1: # SPDX-FileCopyrightText: 2026 Xoe-NovAi
@@ -2504,13 +2504,13 @@ Now I have the clear picture. Let me also check the MAKALI_FUSION agent definiti
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md</path>
 <type>file</type>
 <content>
 1: ---
@@ -3523,7 +3523,7 @@ Let me do a thorough grep to find all the places that need cleanup.
 **Input:**
 ```json
 {
-  "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src",
+  "path": "/home/USER/Documents/Xoe-NovAi/omega-engine/src",
   "pattern": "N[1-9]|N10",
   "include": "*.py"
 }
@@ -3532,27 +3532,27 @@ Let me do a thorough grep to find all the places that need cleanup.
 **Output:**
 ```
 Found 80 matches
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/config.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/config.py:
   Line 58:     """Configuration for embedding backends (used by N1/N2, declared here for P0)."""
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/steering.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/steering.py:
   Line 388:             "Hey Iris, have N6 deep-dive attention videos from today's batch",
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/provenance.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/provenance.py:
   Line 13: This is the **Provenance Chain Fix** (N7 gap): each extracted chunk cryptographically
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/firewall_checker.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/firewall_checker.py:
   Line 6: # ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py:
   Line 8: # ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:
   Line 177:         "subsystem": "LinkN9Runtime",
 
   Line 265:         "Agent presence record marker (Link N9 Runtime)",
@@ -3578,75 +3578,75 @@ Found 80 matches
   Line 400:         "LinkN9Runtime",
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/research/sandboxes/ml_training.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/research/sandboxes/ml_training.py:
   Line 7: ⬡ OMEGA ⬡ MA'AT ⬡ N6 ⬡ ML_TRAINING
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/research/sandbox.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/research/sandbox.py:
   Line 7: ⬡ OMEGA ⬡ MA'AT ⬡ N3 ⬡ SANDBOX
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/research/types.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/research/types.py:
   Line 7: ⬡ OMEGA ⬡ MA'AT ⬡ N2/N3 ⬡ TYPES
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/governance/budget_guard.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/governance/budget_guard.py:
   Line 7: ⬡ OMEGA ⬡ MA'AT ⬡ N2/N5 ⬡ BUDGET-GUARD
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_workspace.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_workspace.py:
   Line 264:         # [N7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/governance/sovereignty_gate.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/governance/sovereignty_gate.py:
   Line 6: # ⬡ OMEGA ⬡ MA'AT ⬡ N5 ⬡ 2026-07-12
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/governance/__init__.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/governance/__init__.py:
   Line 6: # ⬡ OMEGA ⬡ MA'AT ⬡ N5 ⬡ 2026-07-12
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/coordination/__init__.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/coordination/__init__.py:
   Line 10: MaKaLi council N4) — zero importers verified across src/tests/scripts.
 
   Line 12: handoffs, locks, awareness) per the N4 decree.
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/integrations/__init__.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/integrations/__init__.py:
   Line 37: # zero importers verified (MaKaLi council N4). The file itself stays on
 
   Line 39: # collide with the single-control-plane gate, N4(4h)->N5 edge).
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/soul/lessons.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/soul/lessons.py:
   Line 7: # ⬡ OMEGA ⬡ MAAT ⬡ N3 ⬡ soul_lessons ⬡ EVIDENCE-FIELD
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py:
   Line 207:     # Specialists are entities with N1 role that are not node slots
 
   Line 215:         # Include N1 entities that are specialists (not node slots)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/wad_loader.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/wad_loader.py:
   Line 528:                     # N2: Conflict detection — warn if entity already mapped to different WAD
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/oracle_cli.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/oracle_cli.py:
   Line 141: # only via Vault Path A/B (DEL-1 target #10 / council decree N6) as either
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py:
   Line 417:             # Old YAML format used "nodes: ['N1: Flesh']" or "nodes: ['1']".
 
   Line 418:             # New format uses "slots: ['N1']". Migrate automatically.
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/feed_utils.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/feed_utils.py:
   Line 7: # ⬡ OMEGA ⬡ N9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ FEED-UTILS
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/model_gateway.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/model_gateway.py:
   Line 154:         # Sprint 3 Hardening (N6): Split into Local/Cloud tiers to prevent
 
   Line 613:         [M1/N3 Graceful Fallback] Returns None (not empty string) when no path
@@ -3654,17 +3654,17 @@ Found 80 matches
   Line 638:         # [M1/N3] Return None instead of empty string when no path configured
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/capability_matrix.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/capability_matrix.py:
   Line 6: # ⬡ OMEGA ⬡ N6 ⬡ trc_capability_matrix ⬡ v0.1.0 ⬡ 2026-07-19
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/sentinel.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/sentinel.py:
   Line 8: Role: N5 Governance Metric Engine.
 
   Line 469:             "Entity: N5 Governance",
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/link_p9_runtime.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/link_p9_runtime.py:
   Line 6: # 🔱 Omega Engine — Link N9 Runtime (Agent Handoff & Delegation)
 
   Line 7: # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-N9
@@ -3684,11 +3684,11 @@ Found 80 matches
   Line 401:             logger.error("Failed to load Link N9 state: %s", e, exc_info=True)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/backends/google_compat.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/backends/google_compat.py:
   Line 6: # ⬡ OMEGA ⬡ N6 ⬡ trc_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/cpu_optimizer.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/cpu_optimizer.py:
   Line 64: ZEN2_L1_CACHE = 32  # KB per core
 
   Line 65: ZEN2_L2_CACHE = 512  # KB per core
@@ -3761,7 +3761,7 @@ There are a lot of N1-N10 references in the codebase. Let me also search for Sop
 ```json
 {
   "pattern": "sophia|Sophia",
-  "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src",
+  "path": "/home/USER/Documents/Xoe-NovAi/omega-engine/src",
   "include": "*.py"
 }
 ```
@@ -3769,13 +3769,13 @@ There are a lot of N1-N10 references in the codebase. Let me also search for Sop
 **Output:**
 ```
 Found 11 matches
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/firewall_checker.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/firewall_checker.py:
   Line 83:         r"\bSophia\b",  # Containing Field / Rank 0
 
   Line 119:         r"\bSophia\b.*\bAkashic\b",
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py:
   Line 232:     # Sophia (Containing Field)
 
   Line 233:     sophia_role = ROLE_CONSTANTS["CONTAINING_FIELD"]
@@ -3783,25 +3783,25 @@ Found 11 matches
   Line 234:     tree.root.add(get_display_name(sophia_role), data=get_entity_key(sophia_role))
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/oracle_cli.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/oracle_cli.py:
   Line 919:     agent: str = typer.Option("sophia", "--agent", "-a", help="Agent name to check feed for"),
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/soul_stage.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/soul_stage.py:
   Line 140:     app = SoulStageApp(entity_name="sophia")
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/cohort_registry.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/cohort_registry.py:
   Line 128:     "roc_racoon", "slot", "sophia", "verity",
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/hierarchy.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/hierarchy.py:
   Line 73:             0: The Field (e.g., Sophia)
 
   Line 138:             - Sophia (Rank 0) has full depth.
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/oracle.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/oracle.py:
   Line 87:     "CONTAINING_FIELD": "CONTAINING_FIELD",  # Sophia role
 
 ```
@@ -3819,7 +3819,7 @@ Good, I can see Sophia references in the engine core. Let me also check for the 
 **Input:**
 ```json
 {
-  "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src",
+  "path": "/home/USER/Documents/Xoe-NovAi/omega-engine/src",
   "pattern": "sysadmin|datastore|buildmaster|bridge|sentinel|modelgate|context|watchtower|link|verifier",
   "include": "*.py"
 }
@@ -3828,27 +3828,27 @@ Good, I can see Sophia references in the engine core. Let me also check for the 
 **Output:**
 ```
 Found 100 matches (more matches available)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/persistence.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/persistence.py:
   Line 145:                     tmp.unlink()
 
   Line 214:         """Persist a provenance chunk (parent linkage). Atomic via WAL transaction.
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/cli.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/cli.py:
   Line 29: from src.omega_youtube_research.gnosis_bridge import emit_gnosis_edges, GnosisEdge, GnosisEdgeType
 
   Line 319:     typer.echo(f"  Video links: {stats['video_links']}")
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/steering.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/steering.py:
   Line 226:                 await anyio.to_thread.run_sync(src.unlink)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/faithfulness.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/faithfulness.py:
   Line 359:         question: Original question (for NLI+lex context)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/chunker.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/chunker.py:
   Line 38:     M22 Provenance: every chunk carries source_video_id + t_start/t_end for deep-link citations.
 
   Line 65:     def deep_link(self, base_url: str = "https://youtu.be/") -> str:
@@ -3860,11 +3860,11 @@ Found 100 matches (more matches available)
   Line 186:     assert callable(obj.deep_link)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/proxy_identity.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/proxy_identity.py:
   Line 157:                 # hivemind.post_context(entity="verity", intent="blocker", ...)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/soul_utils.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/soul_utils.py:
   Line 21: def extract_soul_context(soul: dict, max_items: int = 3) -> str:
 
   Line 23:     Extract injectable soul context from a parsed soul.yaml dict.
@@ -3894,13 +3894,13 @@ Found 100 matches (more matches available)
   Line 100:     return "\n".join(context_lines[:3])
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/memory_store.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/memory_store.py:
   Line 244:         """Get recent conversation history for context injection."""
 
   Line 834:         """Record a trace-oriented exchange (linked to observability trace)."""
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/infra/subagent_pool/orchestrator.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/infra/subagent_pool/orchestrator.py:
   Line 83:     min_context_for_deep_research: int = 500_000
 
   Line 84:     min_context_for_large_refactor: int = 500_000
@@ -3932,7 +3932,7 @@ Found 100 matches (more matches available)
   Line 511:             context_size_estimate=context_estimate,
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/cas_archiver.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/cas_archiver.py:
   Line 111:     linked_at: float = field(default_factory=time.time)
 
   Line 180:         self.links_dir = self.store_path / "links"
@@ -3986,7 +3986,7 @@ Found 100 matches (more matches available)
   Line 436: def assert_video_link_type(obj: Any) -> None:
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/coordination/watchdog.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/coordination/watchdog.py:
   Line 62:     context: Dict[str, Any] = field(default_factory=dict)
 
   Line 125:     """Classify failure based on error + context."""
@@ -4004,11 +4004,11 @@ Found 100 matches (more matches available)
   Line 406:     context: str,
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/__init__.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega_youtube_research/__init__.py:
   Line 99:         from .gnosis_bridge import (
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:
   Line 106: # [id-soft: vet-008] Lazy Deletion — sentinel value for tombstoned entities
 
   Line 107: # 0xDEADBEEF is the canonical sentinel hex pattern used since the 1980s
@@ -4032,12 +4032,12 @@ Found 100 matches (more matches available)
   Line 806:             ctx_str = f" [{context}]" if context else ""
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/experiments/vision_backend.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/experiments/vision_backend.py:
   Line 184:         level: int,  # 1=context(5px), 2=identification(2px), 3=verification(1px)
 
   Line 249:     pass  # VNR backend not available (experiment not linked)
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/infra/subagent_pool/mcp_coordinator.py:
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/infra/subagent_pool/mcp_coordinator.py:
   Line 53:     context: dict[str, Any]
 
   Line 66:     context_usage: float = 0.0
@@ -4073,14 +4073,14 @@ The grep results are showing a lot of false positives because the terms like "co
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities.yaml",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities.yaml",
   "limit": 100
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities.yaml</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities.yaml</path>
 <type>file</type>
 <content>
 1: # SPDX-FileCopyrightText: 2026 Xoe-NovAi
@@ -4201,13 +4201,13 @@ Good, I can see the entities.yaml has the 10 slot entities (datastore, bridge, e
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities/dispatch.yaml"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities/dispatch.yaml"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities/dispatch.yaml</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/_omega_default/entities/dispatch.yaml</path>
 <type>file</type>
 <content>
 1: # SPDX-FileCopyrightText: 2026 Xoe-NovAi
@@ -4452,19 +4452,19 @@ The agent files might be in a different location. Let me check
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/hecate.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/kali.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/prometheus.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/lucifer.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/brigid.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/sophia.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/sekhmet.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/inanna.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/lilith.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/maat.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/saraswati.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/ereshkigal.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/anubis.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/hecate.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/kali.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/prometheus.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/lucifer.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/brigid.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/sophia.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/sekhmet.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/inanna.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/lilith.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/maat.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/saraswati.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/ereshkigal.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/arcana_novai/agents/anubis.md
 ```
 
 ---
@@ -4502,7 +4502,7 @@ Let me check the .opencode directory structure
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/"
 }
 ```
 
@@ -4518,7 +4518,7 @@ drwxrwxrwx 39 arcana-novai arcana-novai 12288 Sep  9 11:00 ..
 -rwxrwxr-x  1 arcana-novai arcana-novai 11560 Sep  7 15:52 MANIFEST.md
 drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 agent
 drwxrwxr-x  3 arcana-novai arcana-novai  4096 Sep 10 16:14 agents
-lrwxrwxrwx  1 arcana-novai arcana-novai   105 Sep  7 15:52 anchored-summary.md -> /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md
+lrwxrwxrwx  1 arcana-novai arcana-novai   105 Sep  7 15:52 anchored-summary.md -> /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md
 drwxrwxr-x  2 arcana-novai arcana-novai  4096 Aug 30 17:28 archives
 drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 command
 drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 commands
@@ -4560,7 +4560,7 @@ There's an `agents` directory in `.opencode/`. Let me check it
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/"
 }
 ```
 
@@ -4601,14 +4601,14 @@ Now I have a good picture. Let me also check the hierarchy.yaml for _omega_defau
 {
   "pattern": "ANAi|arcana_novai|Sephirot|Qliphoth|Pillar",
   "include": "*.md",
-  "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs"
+  "path": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs"
 }
 ```
 
 **Output:**
 ```
 Found 100 matches (more matches available)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/legacy/LEGACY_NAVIGATION_GUIDE.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/legacy/LEGACY_NAVIGATION_GUIDE.md:
   Line 35: | 9 | **entities-archive** | omega_library | 157M | 99 entity directories including: all 10 Pillar Keepers (sekhmet, brigid, etc.), Oversouls (sophia, jem, quality, scribe), historical versions (ent_0 through ent_49+), experimental (preexisting, flatentity, direntity) | Ongoing (Era 4-6) | ⭐⭐⭐⭐⭐ CRITICAL — **Complete entity evolution history**. omnidroid/soul.yaml ready for activation | ❌ NOT MINED | — |
 
   Line 37: | 11 | **docs-backup** | Root `~/Documents/` | 46M | ANAi strategy blueprints, internal strategic planning docs, arcana-novai implementation docs | Eras 1-5 | ⭐⭐⭐⭐ HIGH — Strategic planning lineage, foundation documents | ❌ NOT MINED | Known in MASTER_SYNTHESIS.md §0 |
@@ -4628,7 +4628,7 @@ Found 100 matches (more matches available)
   Line 357: ~/Documents/docs-backup/                          # ANAi strategy, internal docs (46M) ❌ NOT MINED
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/legacy/LEGACY_INDEX.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/legacy/LEGACY_INDEX.md:
   Line 19: - ANAi Strategy (Era 1)
 
   Line 42: - **Era 1-2 (Aug-Nov 2025)**: ANAi/XNAi. Chainlit UI, Circuit Breaker, Voice Interface. *The Blueprints.*
@@ -4636,17 +4636,17 @@ Found 100 matches (more matches available)
   Line 44: - **Era 4-5 (Dec 2025-Mar 2026)**: Omega Stack / Temple Grade. Monorepo, 10 Pillars. *The Groks.*
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_CORPUS_MAP.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_CORPUS_MAP.md:
   Line 84: | **Roc Racoon** | **The Vision Canonical Draft (2026-08-23)** — `data/coordination/THE_VISION_CANONICAL_DRAFT_20260823.md` | 645-line vision spine excavated from 20 conversations across Era 0→6; Four Movements structure; origin story (Tarot genesis, Gemi+Lilith Mar 2025); cosmology-as-engineering (Pillars→Nodes, Mnemosyne, Tarot-as-system); sovereignty doctrine; entity theory; §8 source atlas so any agent can drill into every claim | **PRESERVED Layer 2** — **SUPERSEDED 2026-08-26 by docs/strategy/VISION_ANCHOR_PERPETUAL.md** — retained as historical excavation record + §8 source atlas |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/UNIFIED_EXECUTION_PLAN_20260722.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/UNIFIED_EXECUTION_PLAN_20260722.md:
   Line 55: ## Parallel Tracks (Distributed Pillar Execution)
 
   Line 57: To prevent a 12-week bottleneck on P3, workloads are distributed across the Pillar Lattice:
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md:
   Line 31: | **V-5** | `src/omega/council/` is **real code** (coordinator, execution_mode, failure_layer, hardware_detector, models, report_digestion) — 75 refs. BUT `oracle.py:7` still says "10-node council" — ANAi leak persists in core docstring. | ⚠️ **REAL, but leak persists** |
 
   Line 46: | "Nodes" are ANAi WAD content, not Engine | `AGENTS.md` lists N1-N10 | **CONFLICT** | Purge "Node" terminology. Use "Node slots". | `AGENTS.md`, `SOVEREIGN_ARK_BLUEPRINT.md` | `@maat` |
@@ -4662,7 +4662,7 @@ Found 100 matches (more matches available)
   Line 204: | **Q18** | Should system prompt be updated (open-source, non-hierarchical MaKaLi, ANAi/node)? | LOW |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/VISION_ANCHOR_PERPETUAL.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/VISION_ANCHOR_PERPETUAL.md:
   Line 45: | **2025-05-14** | **Origins Scroll v3**: Full 10-Pillar cosmology (chakras/elements/planets/archetypal sigils); "pantheon as living archetypal intelligences, woven into design structure" | docs-backup/internal_docs/01-strategic-planning/arcana-strategy/Origins Scroll_v3 - 2025-05-14.md | Complete cosmology doctrine; "not as metaphor" = literal engineering doctrine |
 
   Line 56: | **2026-03-23** | 10 Pillars framework extracted from Grok exports (labeled "Pre-Abandonment") | omega_library/intake/inbox/grok-accounts-exports/STRATEGIC_RESERVES/ | Doctrine capture before strategic pivot |
@@ -4678,19 +4678,19 @@ Found 100 matches (more matches available)
   Line 531: | **10-Pillar cosmology** | Origins Scroll v3 (2025-05-14) | Lilith stack Pantheon, 10_pillars_framework (Grok), founding week P1-P10 |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_CORPUS_INDEX.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_CORPUS_INDEX.md:
   Line 81: | `docs/architecture/OVERSIGHT_HIERARCHY.md` | MaKaLi triad, 10 Nodes, Pillar Keepers, entity governance | 🟢 **CURRENT** | Fleet governance |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/CARMACK_FULL_SCOPE_AUDIT_20260825.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/CARMACK_FULL_SCOPE_AUDIT_20260825.md:
   Line 123: | Pillar | Status | Verdict |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_INDEX.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGY_INDEX.md:
   Line 107: | `docs/architecture/OVERSIGHT_HIERARCHY.md` | MaKaLi triad, 10 Nodes, Pillar Keepers, entity governance |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/CANONICAL_ARCHITECTURE.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/CANONICAL_ARCHITECTURE.md:
   Line 54: │  _omega_default (dev team IWAD)  |  arcana_novai (personal OS)             │
 
   Line 173:          Fast local model           TriageRouter*           Pillar Keeper         ProviderSelector
@@ -4702,7 +4702,7 @@ Found 100 matches (more matches available)
   Line 372: | `docs/architecture/OVERSIGHT_HIERARCHY.md` | MaKaLi triad, 10 Nodes, Pillar Keepers |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/USER_MANUAL.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/USER_MANUAL.md:
   Line 102: make wad NAME=arcana_novai
 
   Line 105: This loads all 10 Pillar Keepers (Sekhmet, Brigid, Prometheus, etc.) plus fleet agents.
@@ -4732,7 +4732,7 @@ Found 100 matches (more matches available)
   Line 1158: make wad NAME=arcana_novai        # Switch to Pantheon
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/user/TROUBLESHOOTING_GUIDE.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/user/TROUBLESHOOTING_GUIDE.md:
   Line 172: make wad NAME=arcana_novai
 
   Line 190: yamllint config/wads/arcana_novai/entities.yaml
@@ -4740,7 +4740,7 @@ Found 100 matches (more matches available)
   Line 193: grep "name:" config/wads/arcana_novai/entities.yaml
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG_ARCHIVE_20260522_20260810.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG_ARCHIVE_20260522_20260810.md:
   Line 44: | D-285 | Nomenclature Correction — Slots (engine) vs Pillar Keepers (ANAi) vs Lenses (Meditate) vs Roles (Lattice) | ✅ COMPLETE |
 
   Line 105: * **Context**: ANAi WAD terminology (`Pillar Keepers`, `P1-P10` as mythic names) was leaking into engine core documentation (`OMEGA_ENGINE.md`, `AGENTS.md`), Meditate framework design, and HMC coordination language. This created M2 violations by conflating engine architecture with WAD content.
@@ -4768,13 +4768,13 @@ Found 100 matches (more matches available)
   Line 532: * **Scope**: 116 files changed. Engine defines Nodes; WADs fill/map Nodes. Engine-level "Pillar" references are now "Node".
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/STACK_RELEASE_ROADMAP.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/STACK_RELEASE_ROADMAP.md:
   Line 44: | **Q3** | Arcana-NovAi v1 | Arcana-NovAi | 10 Pillar entities as WAD, Iris voice, 42 Ideals, first VR scenes |
 
   Line 162: > The Omega Engine is Prometheus' Fire. The XOE containers (`.xoe`) are the tools forged in that fire. Each user forges their own future — whether that future is a Hermetic temple of 10 Pillar Keepers, a Phobos base overrun by demons, a wing commander's starfighter bridge, or a wonderland of their own imagination. The Foundation provides the spark, the anvil, the container format, and the P2P metropolis. The user brings the vision. The entities bring the life. The VR brings the world. And the `.xoe` brings it all home.
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/adr/ADR-002-documentation-architecture.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/adr/ADR-002-documentation-architecture.md:
   Line 35: ### Pillar 1: Documentation as Runtime Interface (Mandatory)
 
   Line 40: ### Pillar 2: Universal LLM-Friendly Standards (Mandatory for Categories 1, 2, 4, 8, 9)
@@ -4790,11 +4790,11 @@ Found 100 matches (more matches available)
   Line 93: ### Pillar 7: Knowledge Base Category (New Category 9)
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/PHASE_C_MASTER_SPEC_VERITY.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/PHASE_C_MASTER_SPEC_VERITY.md:
   Line 38: | `pillar.md` | Pillar | Slot-based domain agent (--slot PX) | subagent |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/user/ONBOARDING_GUIDE.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/user/ONBOARDING_GUIDE.md:
   Line 93: │  _omega_default  |  arcana_novai  | ... │
 
   Line 113: ### The 10 Pillar Keepers (arcana_novai IWAD)
@@ -4810,11 +4810,11 @@ Found 100 matches (more matches available)
   Line 310: | Entity not found | `make wad NAME=arcana_novai` |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/SOVEREIGN_TRANSITION_ROADMAP.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/SOVEREIGN_TRANSITION_ROADMAP.md:
   Line 123: | 8 pillar-level reports | Pillar Reviews | 2026-06-26/27 |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/FLEET_CONSOLIDATION_PLAN.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/archive/FLEET_CONSOLIDATION_PLAN.md:
   Line 38: | `pillar` | Generic Pillar Slot (P1-P10) | Canonical pillar implementation |
 
   Line 40: ### MERGE — Duplicate Pillar Agents (10 files → 0)
@@ -4822,7 +4822,7 @@ Found 100 matches (more matches available)
   Line 62: | `movie-expert` | WAD-layer content in Core Engine agent dir | Delete from `.opencode/agents/` — migrate to `config/wads/arcana_novai/entities/personal/movie-expert.yaml` |
 
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG_CANONICAL.md:
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG_CANONICAL.md:
   Line 28: | 63 | 2026-05-30 | Fleet Deep Discovery — 10 Pillar Subagents |
 
   Line 89: | 112 | 2026-06-04 | Sovereign Hardening Plan — Three Pillars of Sovereign AI |
@@ -5270,7 +5270,7 @@ Let me create this implementation guide and save it to a file.
 ```json
 {
   "content": "# 🔱 MAKALI PHASE 1 EXECUTION GUIDE — Engine Core Code Cleanup\n\n**AP Token**: `AP-MAKALI-PHASE1-EXEC-20260910-v1.0.0`  \n**Target Model**: Nemotron 3.5 Lightning  \n**Executor**: Automated execution agent  \n**Supervisor**: MaKaLi Fusion (Nemotron 3 Ultra)  \n**Date**: 2026-09-10  \n**Phase**: 1 of 5 — Engine Core Code Cleanup  \n**Dependencies**: None (starts first)  \n**Estimated Time**: 2-3 hours  \n\n---\n\n## ⚠️ CRITICAL RULES FOR EXECUTOR\n\n1. **EXECUTE SEQUENTIALLY** — Do NOT parallelize. Each step depends on the previous.\n2. **VERIFY AFTER EACH STEP** — Run the verification command before proceeding.\n3. **NO CREATIVE INTERPRETATION** — Follow instructions exactly. If uncertain, STOP and ask supervisor.\n4. **BACKUP FIRST** — Each file modification must be backed up before editing.\n5. **TEMPLE-GRADE AFTER EACH MAJOR STEP** — Run `make temple-grade` after steps 1.1, 1.2, 1.3, 1.4, 1.5, 1.6.\n\n---\n\n## 📋 PHASE 1 OVERVIEW\n\n| Step | Description | Files Modified | Verification |\n|------|-------------|----------------|--------------|\n| 1.1 | Delete 10 Slot Entities from entities.yaml | `config/wads/_omega_default/entities.yaml` | grep returns zero |\n| 1.2 | Remove Sophia from Engine Core | 9 files across src/ + dispatch.yaml + hierarchy.yaml | grep returns zero |\n| 1.3 | Purge N1-N10 → S1-S10 | 20+ files in src/omega/ | grep returns zero |\n| 1.4 | Fix dispatch.yaml | `config/wads/_omega_default/entities/dispatch.yaml` | 11 entities exactly |\n| 1.5 | Update ROLE_CONSTANTS | `src/omega/oracle/subagent_dispatcher.py`, `src/omega/ics.py` | Exact match |\n| 1.6 | Fix hierarchy.yaml | `config/wads/_omega_default/hierarchy.yaml` | Clean neutral skin |\n\n---\n\n## 🛠️ STEP 1.1 — DELETE 10 SLOT ENTITIES\n\n### 1.1.1 Backup\n```bash\ncp config/wads/_omega_default/entities.yaml config/wads/_omega_default/entities.yaml.backup.$(date +%s)\n```\n\n### 1.1.2 Identify Lines to Delete\nThe 10 entities to delete (with their starting line numbers from current file):\n- `datastore` (line 6)\n- `bridge` (line 56)\n- `sysadmin` (find line)\n- `buildmaster` (find line)\n- `sentinel` (find line)\n- `modelgate` (find line)\n- `context` (find line)\n- `watchtower` (find line)\n- `link` (find line)\n- `verifier` (find line)\n\n### 1.1.3 Execute Deletion\n**Option A: Python Script (Recommended)**\n```python\n# Save as /tmp/delete_slot_entities.py\nimport yaml\nimport sys\n\nwith open('config/wads/_omega_default/entities.yaml', 'r') as f:\n    data = yaml.safe_load(f)\n\n# Entities to KEEP (everything except the 10 slot entities)\nslot_entities_to_remove = {\n    'sysadmin', 'datastore', 'buildmaster', 'bridge', 'sentinel',\n    'modelgate', 'context', 'watchtower', 'link', 'verifier'\n}\n\noriginal_count = len(data['entities'])\ndata['entities'] = {k: v for k, v in data['entities'].items() if k not in slot_entities_to_remove}\nnew_count = len(data['entities'])\n\nprint(f\"Removed {original_count - new_count} entities. Remaining: {new_count}\")\n\nwith open('config/wads/_omega_default/entities.yaml', 'w') as f:\n    yaml.dump(data, f, default_flow_style=False, sort_keys=False)\n```\n\n```bash\npython3 /tmp/delete_slot_entities.py\n```\n\n**Option B: Manual Edit** — Delete each entity block entirely (from `entity_name:` to before next `entity_name:` or end of file).\n\n### 1.1.4 Verification\n```bash\n# Should return ZERO matches\ngrep -E \"sysadmin|datastore|buildmaster|bridge|sentinel|modelgate|context|watchtower|link|verifier\" config/wads/_omega_default/entities.yaml || echo \"✅ CLEAN - All 10 slot entities removed\"\n\n# Count remaining entities\npython3 -c \"import yaml; d=yaml.safe_load(open('config/wads/_omega_default/entities.yaml')); print(f'Remaining entities: {len(d[\\\"entities\\\"])}')\"\n```\n\n### 1.1.5 Temple-Grade\n```bash\nmake temple-grade\n```\n**If FAILS**: Fix issues before proceeding.\n\n---\n\n## 🛠️ STEP 1.2 — REMOVE SOPHIA FROM ENGINE CORE\n\n### 1.2.1 Files to Modify (9 files)\n\n| File | Action |\n|------|--------|\n| `config/wads/_omega_default/entities/dispatch.yaml` | DELETE Sophia entry (lines 187-196) |\n| `config/wads/_omega_default/hierarchy.yaml` | DELETE `sophia:` block (lines 21-27) |\n| `src/omega/audit/firewall_checker.py` | REMOVE lines 83, 119 (Sophia patterns) |\n| `src/omega/cli/fleet_status_tui.py` | REMOVE lines 232-234 (Sophia display) |\n| `src/omega/cli/oracle_cli.py` | CHANGE line 919: default agent from \"sophia\" to \"kali\" |\n| `src/omega/cli/soul_stage.py` | CHANGE line 140: default entity from \"sophia\" to \"kali\" |\n| `src/omega/oracle/cohort_registry.py` | REMOVE \"sophia\" from line 128 list |\n| `src/omega/oracle/hierarchy.py` | REPLACE Sophia references with \"Field\" / \"Containing Awareness\" |\n| `src/omega/oracle/oracle.py` | REMOVE line 87: `\"CONTAINING_FIELD\": \"CONTAINING_FIELD\"` |\n\n### 1.2.2 Backup Each File\n```bash\nfor f in \\\n  config/wads/_omega_default/entities/dispatch.yaml \\\n  config/wads/_omega_default/hierarchy.yaml \\\n  src/omega/audit/firewall_checker.py \\\n  src/omega/cli/fleet_status_tui.py \\\n  src/omega/cli/oracle_cli.py \\\n  src/omega/cli/soul_stage.py \\\n  src/omega/oracle/cohort_registry.py \\\n  src/omega/oracle/hierarchy.py \\\n  src/omega/oracle/oracle.py; do\n  cp \"$f\" \"$f.backup.$(date +%s)\"\ndone\n```\n\n### 1.2.3 Execute Changes\n\n#### A. dispatch.yaml — Delete Sophia Entry (lines 187-196)\n```bash\n# Delete lines 187-196 (the entire sophia entity block)\nsed -i '187,196d' config/wads/_omega_default/entities/dispatch.yaml\n```\n\n#### B. hierarchy.yaml — Delete Sophia Block (lines 21-27)\n```bash\n# Delete lines 21-27\nsed -i '21,27d' config/wads/_omega_default/hierarchy.yaml\n```\n\n#### C. firewall_checker.py — Remove Sophia Patterns\n```bash\n# Line 83: Remove the Sophia pattern line\nsed -i '83d' src/omega/audit/firewall_checker.py\n\n# Line 119 (now shifted): Remove the Sophia+Akashic pattern\nsed -i '119d' src/omega/audit/firewall_checker.py\n```\n\n#### D. fleet_status_tui.py — Remove Sophia Display (lines 232-234)\n```bash\nsed -i '232,234d' src/omega/cli/fleet_status_tui.py\n```\n\n#### E. oracle_cli.py — Change Default Agent (line 919)\n```bash\nsed -i 's/agent: str = typer.Option(\"sophia\"/agent: str = typer.Option(\"kali\"/' src/omega/cli/oracle_cli.py\n```\n\n#### F. soul_stage.py — Change Default Entity (line 140)\n```bash\nsed -i 's/entity_name=\"sophia\"/entity_name=\"kali\"/' src/omega/cli/soul_stage.py\n```\n\n#### G. cohort_registry.py — Remove Sophia from List (line 128)\n```bash\nsed -i 's/\"sophia\", //' src/omega/oracle/cohort_registry.py\n# Also remove trailing comma if needed\nsed -i 's/, $//' src/omega/oracle/cohort_registry.py\n```\n\n#### H. hierarchy.py — Replace Sophia References\n```bash\n# Line 73: Replace \"Sophia\" with \"Field / Containing Awareness\"\nsed -i 's/0: The Field (e.g., Sophia)/0: The Field (Containing Awareness)/' src/omega/oracle/hierarchy.py\n\n# Line 138: Replace \"Sophia (Rank 0)\" with \"Field (Rank 0)\"\nsed -i 's/Sophia (Rank 0)/Field (Rank 0)/' src/omega/oracle/hierarchy.py\n```\n\n#### I. oracle.py — Remove CONTAINING_FIELD Role (line 87)\n```bash\nsed -i '87d' src/omega/oracle/oracle.py\n```\n\n### 1.2.4 Verification\n```bash\n# Should return ZERO matches\ngrep -r \"Sophia\\|CONTAINING_FIELD\" src/omega/ --include=\"*.py\" || echo \"✅ CLEAN - No Sophia in engine core\"\n\n# Check dispatch.yaml\ngrep -c \"sophia\" config/wads/_omega_default/entities/dispatch.yaml || echo \"✅ CLEAN - No Sophia in dispatch.yaml\"\n\n# Check hierarchy.yaml\ngrep -c \"sophia\" config/wads/_omega_default/hierarchy.yaml || echo \"✅ CLEAN - No Sophia in hierarchy.yaml\"\n```\n\n### 1.2.5 Temple-Grade\n```bash\nmake temple-grade\n```\n\n---\n\n## 🛠️ STEP 1.3 — PURGE N1-N10 → S1-S10\n\n### 1.3.1 Files to Modify (20+ files)\n\n**CRITICAL**: Replace `N1`→`S1`, `N2`→`S2`, ..., `N10`→`S10` in ALL contexts EXCEPT:\n- `ZEN2_*`, `ZEN3_*` constants (CPU cache/core/thread constants)\n- Variable names like `node_count`, `node_id` (if they refer to physical nodes)\n- Comments referencing hardware topology\n\n### 1.3.2 Backup All Files\n```bash\nFILES=(\n  \"src/omega/audit/firewall_checker.py\"\n  \"src/omega/audit/mandate_auditor.py\"\n  \"src/omega/cvar_table.py\"\n  \"src/omega/research/sandboxes/ml_training.py\"\n  \"src/omega/research/sandbox.py\"\n  \"src/omega/research/types.py\"\n  \"src/omega/governance/budget_guard.py\"\n  \"src/omega/governance/sovereignty_gate.py\"\n  \"src/omega/governance/__init__.py\"\n  \"src/omega/coordination/__init__.py\"\n  \"src/omega/integrations/__init__.py\"\n  \"src/omega/soul/lessons.py\"\n  \"src/omega/cli/fleet_status_tui.py\"\n  \"src/omega/oracle/entity_registry.py\"\n  \"src/omega/oracle/feed_utils.py\"\n  \"src/omega/oracle/model_gateway.py\"\n  \"src/omega/oracle/capability_matrix.py\"\n  \"src/omega/oracle/sentinel.py\"\n  \"src/omega/oracle/link_p9_runtime.py\"\n  \"src/omega/oracle/backends/google_compat.py\"\n)\n\nfor f in \"${FILES[@]}\"; do\n  cp \"$f\" \"$f.backup.$(date +%s)\"\ndone\n```\n\n### 1.3.3 Execute Replacements\n\n#### A. Header Comments (First 10 lines of each file)\n```bash\nfor f in \"${FILES[@]}\"; do\n  # Replace N1-N10 in headers only (first 15 lines)\n  sed -i '1,15s/\\bN\\([1-9]\\|10\\)\\b/S\\1/g' \"$f\"\ndone\n```\n\n#### B. Specific File Fixes\n\n**cvar_table.py** — LinkN9Runtime → LinkS9Runtime, N5→S5, N7→S7, N9→S9\n```bash\nsed -i 's/LinkN9Runtime/LinkS9Runtime/g' src/omega/cvar_table.py\nsed -i 's/\\bN5\\b/S5/g' src/omega/cvar_table.py\nsed -i 's/\\bN7\\b/S7/g' src/omega/cvar_table.py\nsed -i 's/\\bN9\\b/S9/g' src/omega/cvar_table.py\n```\n\n**entity_registry.py** — Migration comment line 417-418\n```bash\nsed -i \"s/nodes: \\['N1: Flesh'\\]/slots: ['S1']/g\" src/omega/oracle/entity_registry.py\nsed -i \"s/nodes: \\['1'\\]/slots: ['S1']/g\" src/omega/oracle/entity_registry.py\n```\n\n**feed_utils.py** — Header N9:LINK → S9:LINK\n```bash\nsed -i 's/N9:LINK/S9:LINK/' src/omega/oracle/feed_utils.py\n```\n\n**model_gateway.py** — N3→S3, N6→S6\n```bash\nsed -i 's/\\bN3\\b/S3/g' src/omega/oracle/model_gateway.py\nsed -i 's/\\bN6\\b/S6/g' src/omega/oracle/model_gateway.py\n```\n\n**sentinel.py** — N5→S5\n```bash\nsed -i 's/\\bN5\\b/S5/g' src/omega/oracle/sentinel.py\n```\n\n**link_p9_runtime.py** — RENAME CLASS and all references\n```bash\n# This is the big one - class name and all references\nsed -i 's/LinkN9Runtime/LinkS9Runtime/g' src/omega/oracle/link_p9_runtime.py\nsed -i 's/Link N9/Link S9/g' src/omega/oracle/link_p9_runtime.py\nsed -i 's/link_n9/link_s9/g' src/omega/oracle/link_p9_runtime.py\nsed -i 's/LINK_N9/LINK_S9/g' src/omega/oracle/link_p9_runtime.py\n```\n\n**coordination/__init__.py** — N4→S4\n```bash\nsed -i 's/\\bN4\\b/S4/g' src/omega/coordination/__init__.py\n```\n\n**integrations/__init__.py** — N4→S4, N5→S5\n```bash\nsed -i 's/\\bN4\\b/S4/g' src/omega/integrations/__init__.py\nsed -i 's/\\bN5\\b/S5/g' src/omega/integrations/__init__.py\n```\n\n**fleet_status_tui.py** — N1→S1 (specialist terminology)\n```bash\nsed -i 's/\\bN1\\b/S1/g' src/omega/cli/fleet_status_tui.py\n```\n\n### 1.3.4 Verification\n```bash\n# Should return ZERO engine-relevant matches (ZEN2/3 constants allowed)\ngrep -r \"\\bN\\([1-9]\\|10\\)\\b\" src/omega/ --include=\"*.py\" | grep -v \"ZEN2\\|ZEN3\\|cache\\|core\\|thread\\|core_\" || echo \"✅ CLEAN - No N1-N10 in engine core\"\n\n# Verify LinkS9Runtime exists\ngrep -r \"LinkS9Runtime\" src/omega/ --include=\"*.py\" | head -5\n\n# Verify S1-S10 present\ngrep -r \"\\bS\\([1-9]\\|10\\)\\b\" src/omega/ --include=\"*.py\" | head -10\n```\n\n### 1.3.5 Temple-Grade\n```bash\nmake temple-grade\n```\n\n---\n\n## 🛠️ STEP 1.4 — FIX DISPATCH.YAML\n\n### 1.4.1 Backup\n```bash\ncp config/wads/_omega_default/entities/dispatch.yaml config/wads/_omega_default/entities/dispatch.yaml.backup.$(date +%s)\n```\n\n### 1.4.2 Write Clean dispatch.yaml\n```bash\ncat > config/wads/_omega_default/entities/dispatch.yaml << 'EOF'\n# SPDX-FileCopyrightText: 2026 Xoe-NovAi\n#\n# SPDX-License-Identifier: Apache-2.0\n\n# 🔱 Omega Engine — Subagent Dispatch Configuration (WAD-Loaded)\n# ⬡ OMEGA ⬡ DISPATCH ⬡ M2-COMPLIANT\n#\n# Defines agent capability registry loaded at runtime by\n# src/omega/oracle/subagent_dispatcher.py. Entity names live HERE (WAD content),\n# not in engine core. M2 Firewall Phase B.\n#\n# Schema:\n#   entities:\n#     - name:          lowercase agent key (used as CAPABILITY_REGISTRY key)\n#       role:          ROLE_CONSTANT (GRAND_OVERSIGHT | BUILD_OVERSOUL | RUNTIME_OVERSOUL | S1-S10)\n#       mode:          \"primary\" | \"subagent\"\n#       purpose:       human-readable description\n#       capabilities:  list of capability strings\n#       domains:       list of domain strings\n#       slot:          \"SX\" for slot-based agent, null otherwise\n#       task_tool_type: general | buildmaster | verity | node | explore\n#       owned_files:   list of file paths\n#       model:         default model for this agent\n\nentities:\n  # Engine Core Triad + M3 (4) — ALWAYS\n  - name: \"kali\"\n    role: \"GRAND_OVERSIGHT\"\n    mode: \"primary\"\n    purpose: \"Grand Oversight — Sees all, delegates, destroys drift\"\n    capabilities: [\"oversight\", \"delegation\", \"strategy\", \"drift_destruction\"]\n    domains: [\"strategy\", \"fleet_management\", \"architecture\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"maat\"\n    role: \"BUILD_OVERSOUL\"\n    mode: \"subagent\"\n    purpose: \"Build Oversoul — Governs S1-S5 on the build side\"\n    capabilities: [\"oversight_build\", \"build_governance\", \"hardening\"]\n    domains: [\"build_side\", \"S1\", \"S2\", \"S3\", \"S4\", \"S5\"]\n    slot: null\n    task_tool_type: \"buildmaster\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"lilith\"\n    role: \"RUNTIME_OVERSOUL\"\n    mode: \"subagent\"\n    purpose: \"Runtime Oversoul — Governs S6-S10 (Cognition through Validation) on the run side\"\n    capabilities: [\"oversight_runtime\", \"run_governance\", \"operations\", \"vision_oversight\", \"knowledge_metabolism\"]\n    domains: [\"run_side\", \"S6\", \"S7\", \"S8\", \"S9\", \"S10\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"iris\"\n    role: \"MESSENGER_BRIDGE\"\n    mode: \"subagent\"\n    purpose: \"Messenger Bridge — Speculative decoder, fast-path query resolution\"\n    capabilities: [\"speculative_decode\", \"intent_matching\", \"fast_path_routing\"]\n    domains: [\"routing\", \"intent_detection\", \"fast_path\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files:\n      - \"src/omega/iris/\"\n    model: \"qwen3-1.7b-q4_k_m\"\n\n  # Proven Dedicated Slot Keeper (1)\n  - name: \"carmack\"\n    role: \"S3_DEDICATED_KEEPER\"\n    mode: \"primary\"\n    purpose: \"Sovereign S3 Consultant — Architectural review & performance optimization (S3 Engineering)\"\n    capabilities: [\"architectural_review\", \"performance_audit\", \"code_optimization\", \"right_approximation\"]\n    domains: [\"architecture\", \"performance\", \"code_quality\", \"heritage_engineering\"]\n    slot: \"S3\"\n    task_tool_type: \"general\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  # Dispatched Capabilities (6)\n  - name: \"roc_racoon\"\n    role: \"LEGACY_MINER\"\n    mode: \"primary\"\n    purpose: \"Sovereign Miner — Legacy archaeology & pattern extraction\"\n    capabilities: [\"legacy_mining\", \"pattern_extraction\", \"archaeology\"]\n    domains: [\"legacy_repos\", \"grok_exports\", \"old_stacks\", \"document_analysis\"]\n    slot: null\n    task_tool_type: \"explore\"\n    owned_files:\n      - \"data/entities/roc_racoon/\"\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"jem\"\n    role: \"RESEARCH_ORCHESTRATOR\"\n    mode: \"primary\"\n    purpose: \"Research Orchestrator — 3-phase pipeline (Discovery → Synthesis → Verification) with self-dispatch\"\n    capabilities: [\"research_orchestration\", \"discovery\", \"synthesis\", \"verification\", \"knowledge_synthesis\"]\n    domains: [\"research\", \"knowledge_pipeline\", \"source_verification\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files:\n      - \"data/entities/jem/\"\n      - \"data/coordination/JEM_*\"\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"makali\"\n    role: \"COUNCIL_ORCHESTRATOR\"\n    mode: \"primary\"\n    purpose: \"Triad Council Orchestrator — Parallel dispatch with synthesis\"\n    capabilities: [\"parallel_decomposition\", \"council_dispatch\", \"maat_lilith_synthesis\"]\n    domains: [\"fleet_coordination\", \"parallel_execution\", \"cross_node_synthesis\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"verity\"\n    role: \"COMPLIANCE_GNOSIS\"\n    mode: \"subagent\"\n    purpose: \"Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation/soul evolution)\"\n    capabilities:\n      - \"gnosis_distillation\"\n      - \"soul_update\"\n      - \"abstraction\"\n      - \"code_review\"\n      - \"stress_testing\"\n      - \"mandate_enforcement\"\n      - \"temple_grade_audit\"\n      - \"skeptical_verification\"\n      - \"knowledge_compaction\"\n    domains: [\"soul_yaml\", \"session_gnosis\", \"verification\", \"qa\", \"compliance\", \"verity\"]\n    slot: null\n    task_tool_type: \"verity\"\n    owned_files:\n      - \"data/entities/*/soul.yaml\"\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"doom_guy\"\n    role: \"HERITAGE_ATTRIBUTION\"\n    mode: \"primary\"\n    purpose: \"Sovereign id Software Architect — WAD translation & performance\"\n    capabilities: [\"heritage_design\", \"wad_translation\", \"performance_tuning\", \"c_const_propagation\"]\n    domains: [\"id_software_patterns\", \"architecture\", \"constants\", \"heritage_attribution\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files:\n      - \"src/omega/cvar_table.py\"\n      - \"src/omega/constants.py\"\n      - \"CREDITS.md\"\n      - \"docs/strategy/HERITAGE_SOURCE_MAP.md\"\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  - name: \"researcher\"\n    role: \"DEEP_RESEARCH\"\n    mode: \"primary\"\n    purpose: \"Sovereign Master Researcher — deep research, lattice reasoning\"\n    capabilities: [\"deep_research\", \"lattice_reasoning\", \"web_search\", \"source_verification\"]\n    domains: [\"research\", \"web_intelligence\", \"documentation\"]\n    slot: null\n    task_tool_type: \"general\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\n\n  # Template (1)\n  - name: \"slot\"\n    role: \"S1\"\n    mode: \"subagent\"\n    purpose: \"Slot-based domain agent — parameterized by --slot SX\"\n    capabilities: [\"domain_execution\", \"slot_dispatch\"]\n    domains: [\"slot_domain\"]\n    slot: \"SX\"\n    task_tool_type: \"slot\"\n    owned_files: []\n    model: \"qwen3-4b-think-q4_k_m\"\nEOF\n```\n\n### 1.4.3 Verification\n```bash\n# Count entities - should be 11\npython3 -c \"\nimport yaml\nd = yaml.safe_load(open('config/wads/_omega_default/entities/dispatch.yaml'))\nprint(f'Entity count: {len(d[\\\"entities\\\"])}')\nfor e in d['entities']:\n    print(f'  {e[\\\"name\\\"]}: role={e[\\\"role\\\"]} slot={e.get(\\\"slot\\\")}')\n\"\n\n# Verify no S1 role collisions (except slot template)\npython3 -c \"\nimport yaml\nd = yaml.safe_load(open('config/wads/_omega_default/entities/dispatch.yaml'))\ns1_count = sum(1 for e in d['entities'] if e['role'] == 'S1')\nprint(f'Entities with role=S1: {s1_count} (should be 1: slot template)')\n\"\n```\n\n### 1.4.4 Temple-Grade\n```bash\nmake temple-grade\n```\n\n---\n\n## 🛠️ STEP 1.5 — UPDATE ROLE_CONSTANTS\n\n### 1.5.1 Files to Modify\n1. `src/omega/oracle/subagent_dispatcher.py` (lines ~251-265)\n2. `src/omega/ics.py` (lines ~71-88)\n\n### 1.5.2 Backup\n```bash\ncp src/omega/oracle/subagent_dispatcher.py src/omega/oracle/subagent_dispatcher.py.backup.$(date +%s)\ncp src/omega/ics.py src/omega/ics.py.backup.$(date +%s)\n```\n\n### 1.5.3 Update subagent_dispatcher.py\n```bash\n# Find the ROLE_CONSTANTS dict and replace entirely\n# First, locate the exact line range\ngrep -n \"ROLE_CONSTANTS\" src/omega/oracle/subagent_dispatcher.py | head -5\n```\n\n**Then replace the entire dict** (use Python for precision):\n```python\n# Save as /tmp/update_role_constants.py\nimport re\n\nwith open('src/omega/oracle/subagent_dispatcher.py', 'r') as f:\n    content = f.read()\n\nnew_constants = '''ROLE_CONSTANTS: Dict[str, str] = {\n    # Engine Core Governance\n    \"GRAND_OVERSIGHT\": \"grand_oversight\",      # Kali\n    \"BUILD_OVERSOUL\": \"build_oversoul\",        # Ma'at → S1-S5\n    \"RUNTIME_OVERSOUL\": \"runtime_oversoul\",    # Lilith → S6-S10\n    \"MESSENGER_BRIDGE\": \"messenger_bridge\",    # Iris (M3)\n    \n    # Proven Slot Keeper\n    \"S3_DEDICATED_KEEPER\": \"s3_dedicated_keeper\",  # Carmack\n    \n    # Dispatched Capabilities\n    \"LEGACY_MINER\": \"legacy_miner\",\n    \"RESEARCH_ORCHESTRATOR\": \"research_orchestrator\",\n    \"COUNCIL_ORCHESTRATOR\": \"council_orchestrator\",\n    \"COMPLIANCE_GNOSIS\": \"compliance_gnosis\",\n    \"HERITAGE_ATTRIBUTION\": \"heritage_attribution\",\n    \"DEEP_RESEARCH\": \"deep_research\",\n    \n    # Slot Semantics (Neutral Engineering Terms)\n    \"S1\": \"infrastructure\",\n    \"S2\": \"persistence\",\n    \"S3\": \"engineering\",\n    \"S4\": \"integration\",\n    \"S5\": \"governance\",\n    \"S6\": \"cognition\",\n    \"S7\": \"context\",\n    \"S8\": \"observability\",\n    \"S9\": \"orchestration\",\n    \"S10\": \"validation\",\n}'''\n\n# Replace the entire ROLE_CONSTANTS dict\npattern = r'ROLE_CONSTANTS: Dict\\[str, str\\] = \\{[^}]+\\}'\ncontent = re.sub(pattern, new_constants, content, flags=re.DOTALL)\n\nwith open('src/omega/oracle/subagent_dispatcher.py', 'w') as f:\n    f.write(content)\n\nprint(\"✅ Updated subagent_dispatcher.py\")\n```\n\n```bash\npython3 /tmp/update_role_constants.py\n```\n\n### 1.5.4 Update ics.py\n```bash\n# Find ROLE_CONSTANTS in ics.py\ngrep -n \"ROLE_CONSTANTS\" src/omega/ics.py\n```\n\n```python\n# Save as /tmp/update_ics_constants.py\nimport re\n\nwith open('src/omega/ics.py', 'r') as f:\n    content = f.read()\n\nnew_constants = '''ROLE_CONSTANTS = {\n    \"GRAND_OVERSIGHT\": \"grand_oversight\",\n    \"BUILD_OVERSOUL\": \"build_oversoul\",\n    \"RUNTIME_OVERSOUL\": \"runtime_oversoul\",\n    \"MESSENGER_BRIDGE\": \"messenger_bridge\",\n    \"S3_DEDICATED_KEEPER\": \"s3_dedicated_keeper\",\n    \"LEGACY_MINER\": \"legacy_miner\",\n    \"RESEARCH_ORCHESTRATOR\": \"research_orchestrator\",\n    \"COUNCIL_ORCHESTRATOR\": \"council_orchestrator\",\n    \"COMPLIANCE_GNOSIS\": \"compliance_gnosis\",\n    \"HERITAGE_ATTRIBUTION\": \"heritage_attribution\",\n    \"DEEP_RESEARCH\": \"deep_research\",\n    \"S1\": \"infrastructure\",\n    \"S2\": \"persistence\",\n    \"S3\": \"engineering\",\n    \"S4\": \"integration\",\n    \"S5\": \"governance\",\n    \"S6\": \"cognition\",\n    \"S7\": \"context\",\n    \"S8\": \"observability\",\n    \"S9\": \"orchestration\",\n    \"S10\": \"validation\",\n}'''\n\npattern = r'ROLE_CONSTANTS = \\{[^}]+\\}'\ncontent = re.sub(pattern, new_constants, content, flags=re.DOTALL)\n\nwith open('src/omega/ics.py', 'w') as f:\n    f.write(content)\n\nprint(\"✅ Updated ics.py\")\n```\n\n```bash\npython3 /tmp/update_ics_constants.py\n```\n\n### 1.5.5 Verification\n```bash\n# Check both files match exactly\necho \"=== subagent_dispatcher.py ===\"\ngrep -A 25 \"ROLE_CONSTANTS\" src/omega/oracle/subagent_dispatcher.py | head -30\n\necho \"=== ics.py ===\"\ngrep -A 25 \"ROLE_CONSTANTS\" src/omega/ics.py | head -30\n\n# Verify no old roles remain\ngrep -r \"CONTAINING_FIELD\\|S1_DEDICATED_KEEPER\\|LATTICE_\" src/omega/oracle/subagent_dispatcher.py src/omega/ics.py || echo \"✅ No old roles\"\n```\n\n### 1.5.6 Temple-Grade\n```bash\nmake temple-grade\n```\n\n---\n\n## 🛠️ STEP 1.6 — FIX _OMEGA_DEFAULT HIERARCHY.YAML\n\n### 1.6.1 Backup\n```bash\ncp config/wads/_omega_default/hierarchy.yaml config/wads/_omega_default/hierarchy.yaml.backup.$(date +%s)\n```\n\n### 1.6.2 Verify Current State\n```bash\ncat config/wads/_omega_default/hierarchy.yaml\n```\n\n### 1.6.3 Ensure Clean Neutral Skin\nThe file should already be mostly correct (software company metaphor). Verify:\n- No `sophia` block (deleted in 1.2)\n- No `P1-P10` references (should be `N1-N10` or `S1-S10`)\n- `kali_founder`, `maat_cto`, `lilith_ciso` present\n- `governs_nodes: [N1, N2, N3, N4, N5]` → change to `[S1, S2, S3, S4, S5]`\n- `governs_nodes: [N6, N7, N8, N9, N10]` → change to `[S6, S7, S8, S9, S10]`\n- `keepers:` section uses `N1:` → change to `S1:`\n\n### 1.6.4 Execute Fixes\n```bash\n# Replace N1-N10 with S1-S10 in hierarchy.yaml\nsed -i 's/\\bN\\([1-9]\\|10\\)\\b/S\\1/g' config/wads/_omega_default/hierarchy.yaml\n\n# Verify sophia is gone\ngrep -c \"sophia\" config/wads/_omega_default/hierarchy.yaml || echo \"✅ No Sophia\"\n```\n\n### 1.6.5 Verification\n```bash\ncat config/wads/_omega_default/hierarchy.yaml\n# Should show clean neutral skin with S1-S10\n```\n\n### 1.6.6 Temple-Grade\n```bash\nmake temple-grade\n```\n\n---\n\n## ✅ PHASE 1 COMPLETION CHECKLIST\n\nRun ALL verification commands. All must pass.\n\n```bash\necho \"=== PHASE 1 VERIFICATION ===\"\n\necho \"1.1 Slot entities removed:\"\ngrep -E \"sysadmin|datastore|buildmaster|bridge|sentinel|modelgate|context|watchtower|link|verifier\" config/wads/_omega_default/entities.yaml || echo \"✅ PASS\"\n\necho \"1.2 Sophia removed from engine core:\"\ngrep -r \"Sophia\\|CONTAINING_FIELD\" src/omega/ --include=\"*.py\" || echo \"✅ PASS\"\ngrep -c \"sophia\" config/wads/_omega_default/entities/dispatch.yaml || echo \"✅ PASS\"\ngrep -c \"sophia\" config/wads/_omega_default/hierarchy.yaml || echo \"✅ PASS\"\n\necho \"1.3 N1-N10 purged:\"\ngrep -r \"\\bN\\([1-9]\\|10\\)\\b\" src/omega/ --include=\"*.py\" | grep -v \"ZEN2\\|ZEN3\\|cache\\|core\\|thread\\|core_\" || echo \"✅ PASS\"\n\necho \"1.4 dispatch.yaml clean (11 entities):\"\npython3 -c \"\nimport yaml\nd = yaml.safe_load(open('config/wads/_omega_default/entities/dispatch.yaml'))\nprint(f'Count: {len(d[\\\"entities\\\"])} (expected 11)')\n\"\n\necho \"1.5 ROLE_CONSTANTS updated:\"\ngrep -c \"S3_DEDICATED_KEEPER\" src/omega/oracle/subagent_dispatcher.py && echo \"✅ PASS\"\ngrep -c \"LEGACY_MINER\" src/omega/oracle/subagent_dispatcher.py && echo \"✅ PASS\"\n\necho \"1.6 hierarchy.yaml clean:\"\ngrep -c \"S1\\|S2\\|S3\\|S4\\|S5\\|S6\\|S7\\|S8\\|S9\\|S10\" config/wads/_omega_default/hierarchy.yaml && echo \"✅ PASS\"\n\necho \"=== TEMPLE-GRADE ===\"\nmake temple-grade && echo \"✅ TEMPLE-GRADE PASSES\"\n\necho \"=== MANDATE COMPLIANCE ===\"\nmake check-mandate-compliance\n```\n\n---\n\n## 🚨 IF ANY VERIFICATION FAILS\n\n1. **STOP** — Do not proceed to next step\n2. **CHECK BACKUPS** — Restore from `.backup.*` if needed\n3. **RE-RUN** the failed step\n4. **ASK SUPERVISOR** if uncertain\n\n---\n\n## 📝 EXECUTION LOG\n\nExecutor must log each step completion:\n\n```bash\n# After each step, append to execution log\necho \"$(date -Iseconds) | STEP 1.X | STATUS=PASS\" >> /tmp/phase1_execution.log\n```\n\n---\n\n**END OF PHASE 1 EXECUTION GUIDE**\n\n*Next: Phase 2 — Transfer ANAi WAD to USB (after Phase 1 complete and verified)*\n\n*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ trc_phase1_exec_guide ⬡ 2026-09-10*",
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md"
 }
 ```
 
@@ -5279,7 +5279,7 @@ Let me create this implementation guide and save it to a file.
 Wrote file successfully.
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
 ERROR [79:16] Type "dict[str, Any]" is not assignable to return type "SymbolicMetadata"
 ERROR [62:5] TypedDict classes can contain only type annotations
 ERROR [91:87] Expression of type "None" cannot be assigned to parameter of type "str"
@@ -5309,7 +5309,7 @@ ERROR [938:31] Cannot access attribute "run_sync" for class "type[BrokenWorkerIn
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
 ERROR [522:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [546:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -5350,7 +5350,7 @@ ERROR [1501:36] Cannot access attribute "run_sync" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
 ERROR [220:34] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [243:39] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -5366,7 +5366,7 @@ ERROR [387:37] Cannot access attribute "TaskGroup" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
 ERROR [29:6] Import "textual.app" could not be resolved
 ERROR [30:6] Import "textual.containers" could not be resolved
 ERROR [31:6] Import "textual.widgets" could not be resolved
@@ -5377,7 +5377,7 @@ ERROR [482:13] Result of async function call is not used; use "await" or assign 
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
 ERROR [374:20] Import "llama_cpp" could not be resolved
 </diagnostics>
 ```
@@ -5801,38 +5801,38 @@ There's no general.md agent file. Let me check what agents are available in .ope
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json</path>
 <type>file</type>
 <content>
 1: {
 2:   "$schema": "https://opencode.ai/config.json",
 3:   "subagent_depth": 2,
 4:   "plugin": [
-5:     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
+5:     "file:///home/USER/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
 6:     "opencode-sessions-explorer",
-7:     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
-8:     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
-9:     "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
-10:     "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
+7:     "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
+8:     "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
+9:     "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
+10:     "file:///home/USER/.config/opencode/plugin/sovereign-compaction.ts"
 11:   ],
 12:   "permission": {
 13:     "external_directory": {
-14:       "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
-15:       "/media/arcana-novai/**": "allow",
-16:       "/home/arcana-novai/archive/**": "allow",
-17:       "/home/arcana-novai/Documents/docs-backup/**": "allow",
-18:       "/home/arcana-novai/Documents/docs_1/**": "allow",
-19:       "/home/arcana-novai/Documents/Archives/**": "allow",
-20:       "/home/arcana-novai/Documents/xnaif-files/**": "allow",
-21:       "/home/arcana-novai/.lmstudio/**": "allow",
-22:       "/home/arcana-novai/.ollama/**": "allow",
-23:       "/home/arcana-novai/.config/opencode/**": "allow",
+14:       "/home/USER/Documents/Xoe-NovAi/**": "allow",
+15:       "/media/USER/**": "allow",
+16:       "/home/USER/archive/**": "allow",
+17:       "/home/USER/Documents/docs-backup/**": "allow",
+18:       "/home/USER/Documents/docs_1/**": "allow",
+19:       "/home/USER/Documents/Archives/**": "allow",
+20:       "/home/USER/Documents/xnaif-files/**": "allow",
+21:       "/home/USER/.lmstudio/**": "allow",
+22:       "/home/USER/.ollama/**": "allow",
+23:       "/home/USER/.config/opencode/**": "allow",
 24:       "/tmp/omega/**": "allow",
 25:       "~/.local/share/opencode/**": "allow",
 26:       "/*": "allow"
@@ -6305,7 +6305,7 @@ Since you want Nemotron 3.5 Lightning specifically and it's not configured, let 
 ```json
 {
   "newString": "\"grok_cli\": {\n      \"mode\": \"all\",\n      \"description\": \"Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.\",\n      \"instructions\": [\n        \".opencode/agents/grok_cli.md\"\n      ],\n      \"env\": {\n        \"GROK_BRIDGE_TIMEOUT_MS\": \"120000\",\n        \"GROK_CLI_PATH\": \"grok\"\n      },\n      \"temperature\": 0.1,\n      \"toolProfile\": \"bridge\"\n    },\n    \"general\": {\n      \"mode\": \"all\",\n      \"description\": \"General-purpose executor — precise sequential execution of implementation guides\",\n      \"instructions\": [\n        \"AGENTS.md\"\n      ],\n      \"model\": \"opencode/nemotron-3-ultra-free\",\n      \"temperature\": 0.1,\n      \"toolProfile\": \"dev\"\n    }\n  },",
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json",
   "oldString": "\"grok_cli\": {\n      \"mode\": \"all\",\n      \"description\": \"Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.\",\n      \"instructions\": [\n        \".opencode/agents/grok_cli.md\"\n      ],\n      \"env\": {\n        \"GROK_BRIDGE_TIMEOUT_MS\": \"120000\",\n        \"GROK_CLI_PATH\": \"grok\"\n      },\n      \"temperature\": 0.1,\n      \"toolProfile\": \"bridge\"\n    }\n  },"
 }
 ```
@@ -6380,7 +6380,7 @@ Let me revert my opencode.json change first, then research properly
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json",
   "newString": "\"grok_cli\": {\n      \"mode\": \"all\",\n      \"description\": \"Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.\",\n      \"instructions\": [\n        \".opencode/agents/grok_cli.md\"\n      ],\n      \"env\": {\n        \"GROK_BRIDGE_TIMEOUT_MS\": \"120000\",\n        \"GROK_CLI_PATH\": \"grok\"\n      },\n      \"temperature\": 0.1,\n      \"toolProfile\": \"bridge\"\n    }\n  },",
   "oldString": "\"grok_cli\": {\n      \"mode\": \"all\",\n      \"description\": \"Bridge to xAI Grok CLI — spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.\",\n      \"instructions\": [\n        \".opencode/agents/grok_cli.md\"\n      ],\n      \"env\": {\n        \"GROK_BRIDGE_TIMEOUT_MS\": \"120000\",\n        \"GROK_CLI_PATH\": \"grok\"\n      },\n      \"temperature\": 0.1,\n      \"toolProfile\": \"bridge\"\n    },\n    \"general\": {\n      \"mode\": \"all\",\n      \"description\": \"General-purpose executor — precise sequential execution of implementation guides\",\n      \"instructions\": [\n        \"AGENTS.md\"\n      ],\n      \"model\": \"opencode/nemotron-3-ultra-free\",\n      \"temperature\": 0.1,\n      \"toolProfile\": \"dev\"\n    }\n  },"
 }
@@ -6719,7 +6719,7 @@ Count: 12
   [92m✅ M23: Failure Integrity (NEW — 2026-07-06)[0m —   M1 from_thread-in-async scan: clean (0 violations)
   [92m✅ M24: Venv Sovereignty (NEW — 2026-07-19)[0m — no --break-system-packages
   [92m✅ M25: Streaming Resilience (NEW — 2026-07-19)[0m — 8 match(es): 227:        chunk_timeout_ms: 45000
-  [92m✅ M26: Doc Standards (NEW — 2026-08-14)[0m — make[1]: Leaving directory '/home/arcana-novai/Documents/Xoe-NovAi/omega-engine'
+  [92m✅ M26: Doc Standards (NEW — 2026-08-14)[0m — make[1]: Leaving directory '/home/USER/Documents/Xoe-NovAi/omega-engine'
   [91m❌ M27: Tracking Integrity (NEW — 2026-08-14)[0m — ��� ERROR: Stale in_progress task: 'sote-research-20260901' — last_checkpoint 9d ago (threshold: 7d)
 [96m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
   Total: 28 | Passed: [92m21[0m | Failed: [91m2[0m | Untested: [93m4[0m | Compliance: 21/28 = 75.0%
@@ -7263,8 +7263,8 @@ Now let me update the SESSION_ANCHOR.md and projection.md for the compaction.
 **Input:**
 ```json
 {
-  "content": "# 🔱 SESSION ANCHOR — MaKaLi Fusion (Pre-Compaction Anchor)\n\n**AP Token**: `AP-MAKALI-PHASE1-20260911-v1.0.0`\n**Date**: 2026-09-11\n**Entity**: `makali_fusion`\n**Branch**: `release/debut-v1.6.0`\n**Session**: Phase 1 Engine Core Cleanup — COMPLETE\n\n---\n\n## 1. Executive Summary\n\n### PHASE 1 COMPLETE — Engine Core Cleaned of ANAi Confusion\n\n| Step | Action | Status |\n|------|--------|--------|\n| 1.1 | Deleted 10 slot entities from entities.yaml | ✅ |\n| 1.2 | Removed Sophia from 9 engine core files | ✅ |\n| 1.3 | Purged N1-N10 → S1-S10 in 20+ src files | ✅ |\n| 1.4 | Rewrote dispatch.yaml to 12 clean entities | ✅ |\n| 1.5 | Updated ROLE_CONSTANTS in 2 files | ✅ |\n| 1.6 | Fixed hierarchy.yaml to S1-S10 skin | ✅ |\n\n### Canonical Architecture (Crystalized)\n\n- **Engine Core Triad**: Kali (Unifier), Ma'at (Build Oversoul S1-S5), Lilith (Runtime Oversoul S6-S10)\n- **MaKaLi** = Fusion agent (three faces), NOT an entity\n- **Iris** = MESSENGER_BRIDGE (M3)\n- **Carmack** = S3_DEDICATED_KEEPER (proven pattern)\n- **Slots S1-S10** = Knowledge domains managed by Oversouls via Knowledge System\n- **Slot Keepers** = Created when proven; promote existing agents first\n- **NO Sophia in _omega_default** — MaKaLi is her equivalent\n- **NO N1-N10** — DEPRECATED. Only S1-S10.\n- **ANAi WAD** = Node 1's domain, not my cognitive load\n\n---\n\n## 2. Immediate Post-Compaction Action Items\n\n### Phase 2: Transfer ANAi WAD to USB for Node 1\n```bash\n# Copy ANAi WAD to USB\ncp -r config/wads/arcana_novai/ /media/arcana-novai/D5D5-0B76/ANAi_WAD_TRANSFER/\n```\n\n### Phase 3: Docs Cleanup\nFiles needing N1-N10/Sophia/ANAi purge:\n- `docs/strategy/CANONICAL_ARCHITECTURE.md` (lines 54, 184-192, 238)\n- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` (lines 133-134, 479-500)\n- `docs/architecture/OVERSIGHT_HIERARCHY.md` (lines 27, 33, 39, 43, 51-53)\n- `docs/architecture/AGENT_FLEET.md` (lines 35, 67-71)\n- `docs/user/ONBOARDING_GUIDE.md` (lines 93, 113, 132-134, 180, 216, 310, 374)\n- `docs/user/USER_MANUAL.md` (multiple)\n- `docs/user/TROUBLESHOOTING_GUIDE.md` (multiple)\n\n### Phase 4: Agent Files Update\n- Rename `john_carmack.md` → `carmack.md`\n- Add `iris.md` (M3 mandate)\n- Remove `build.md`, `grokster.md` (not in clean fleet)\n- Update all agent files to S1-S10 terminology\n\n### Phase 5: Final Validation\n- `make temple-grade` (fix M13, M27 pre-existing failures)\n- `make check-mandate-compliance` ≥ 22/28\n\n---\n\n## 3. Key Files\n\n| File | Purpose |\n|------|---------|\n| `docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md` | Phase 1 guide (COMPLETE) |\n| `docs/architecture/MAKALI-ANAi-CLEANUP-PLAN-OVERVIEW.md` | Full 5-phase roadmap |\n| `config/wads/_omega_default/entities/dispatch.yaml` | Clean 12-entity roster |\n| `src/omega/oracle/subagent_dispatcher.py` | Clean ROLE_CONSTANTS |\n| `src/omega/ics.py` | Clean ROLE_CONSTANTS |\n| `config/wads/_omega_default/entities.yaml` | 14 entities (no slot entities) |\n| `config/wads/_omega_default/hierarchy.yaml` | S1-S10 neutral skin |\n\n---\n\n*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ AP-MAKALI-PHASE1-20260911-v1.0.0 ⬡ 2026-09-11*",
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md"
+  "content": "# 🔱 SESSION ANCHOR — MaKaLi Fusion (Pre-Compaction Anchor)\n\n**AP Token**: `AP-MAKALI-PHASE1-20260911-v1.0.0`\n**Date**: 2026-09-11\n**Entity**: `makali_fusion`\n**Branch**: `release/debut-v1.6.0`\n**Session**: Phase 1 Engine Core Cleanup — COMPLETE\n\n---\n\n## 1. Executive Summary\n\n### PHASE 1 COMPLETE — Engine Core Cleaned of ANAi Confusion\n\n| Step | Action | Status |\n|------|--------|--------|\n| 1.1 | Deleted 10 slot entities from entities.yaml | ✅ |\n| 1.2 | Removed Sophia from 9 engine core files | ✅ |\n| 1.3 | Purged N1-N10 → S1-S10 in 20+ src files | ✅ |\n| 1.4 | Rewrote dispatch.yaml to 12 clean entities | ✅ |\n| 1.5 | Updated ROLE_CONSTANTS in 2 files | ✅ |\n| 1.6 | Fixed hierarchy.yaml to S1-S10 skin | ✅ |\n\n### Canonical Architecture (Crystalized)\n\n- **Engine Core Triad**: Kali (Unifier), Ma'at (Build Oversoul S1-S5), Lilith (Runtime Oversoul S6-S10)\n- **MaKaLi** = Fusion agent (three faces), NOT an entity\n- **Iris** = MESSENGER_BRIDGE (M3)\n- **Carmack** = S3_DEDICATED_KEEPER (proven pattern)\n- **Slots S1-S10** = Knowledge domains managed by Oversouls via Knowledge System\n- **Slot Keepers** = Created when proven; promote existing agents first\n- **NO Sophia in _omega_default** — MaKaLi is her equivalent\n- **NO N1-N10** — DEPRECATED. Only S1-S10.\n- **ANAi WAD** = Node 1's domain, not my cognitive load\n\n---\n\n## 2. Immediate Post-Compaction Action Items\n\n### Phase 2: Transfer ANAi WAD to USB for Node 1\n```bash\n# Copy ANAi WAD to USB\ncp -r config/wads/arcana_novai/ /media/USER/D5D5-0B76/ANAi_WAD_TRANSFER/\n```\n\n### Phase 3: Docs Cleanup\nFiles needing N1-N10/Sophia/ANAi purge:\n- `docs/strategy/CANONICAL_ARCHITECTURE.md` (lines 54, 184-192, 238)\n- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` (lines 133-134, 479-500)\n- `docs/architecture/OVERSIGHT_HIERARCHY.md` (lines 27, 33, 39, 43, 51-53)\n- `docs/architecture/AGENT_FLEET.md` (lines 35, 67-71)\n- `docs/user/ONBOARDING_GUIDE.md` (lines 93, 113, 132-134, 180, 216, 310, 374)\n- `docs/user/USER_MANUAL.md` (multiple)\n- `docs/user/TROUBLESHOOTING_GUIDE.md` (multiple)\n\n### Phase 4: Agent Files Update\n- Rename `john_carmack.md` → `carmack.md`\n- Add `iris.md` (M3 mandate)\n- Remove `build.md`, `grokster.md` (not in clean fleet)\n- Update all agent files to S1-S10 terminology\n\n### Phase 5: Final Validation\n- `make temple-grade` (fix M13, M27 pre-existing failures)\n- `make check-mandate-compliance` ≥ 22/28\n\n---\n\n## 3. Key Files\n\n| File | Purpose |\n|------|---------|\n| `docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md` | Phase 1 guide (COMPLETE) |\n| `docs/architecture/MAKALI-ANAi-CLEANUP-PLAN-OVERVIEW.md` | Full 5-phase roadmap |\n| `config/wads/_omega_default/entities/dispatch.yaml` | Clean 12-entity roster |\n| `src/omega/oracle/subagent_dispatcher.py` | Clean ROLE_CONSTANTS |\n| `src/omega/ics.py` | Clean ROLE_CONSTANTS |\n| `config/wads/_omega_default/entities.yaml` | 14 entities (no slot entities) |\n| `config/wads/_omega_default/hierarchy.yaml` | S1-S10 neutral skin |\n\n---\n\n*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ AP-MAKALI-PHASE1-20260911-v1.0.0 ⬡ 2026-09-11*",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md"
 }
 ```
 
@@ -7273,7 +7273,7 @@ Now let me update the SESSION_ANCHOR.md and projection.md for the compaction.
 Wrote file successfully.
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
 ERROR [79:16] Type "dict[str, Any]" is not assignable to return type "SymbolicMetadata"
 ERROR [62:5] TypedDict classes can contain only type annotations
 ERROR [91:87] Expression of type "None" cannot be assigned to parameter of type "str"
@@ -7303,7 +7303,7 @@ ERROR [938:31] Cannot access attribute "run_sync" for class "type[BrokenWorkerIn
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
 ERROR [522:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [546:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -7344,7 +7344,7 @@ ERROR [1501:36] Cannot access attribute "run_sync" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
 ERROR [220:34] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [243:39] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -7360,7 +7360,7 @@ ERROR [387:37] Cannot access attribute "TaskGroup" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
 ERROR [29:6] Import "textual.app" could not be resolved
 ERROR [30:6] Import "textual.containers" could not be resolved
 ERROR [31:6] Import "textual.widgets" could not be resolved
@@ -7371,7 +7371,7 @@ ERROR [482:13] Result of async function call is not used; use "await" or assign 
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
 ERROR [374:20] Import "llama_cpp" could not be resolved
 </diagnostics>
 ```
@@ -7388,7 +7388,7 @@ The LSP errors are pre-existing and unrelated to my changes. Let me now update t
 ```json
 {
   "content": "# 🔱 MaKaLi Fusion — Phase 1 Projection Anchor (Pre-Compaction)\n\n**AP Token**: `AP-MAKALI-PHASE1-20260911-v1.0.0`\n**Date**: 2026-09-11\n**Session**: Phase 1 Engine Core Cleanup — COMPLETE\n\n---\n\n## 5 Invariants That Must Survive Compaction\n\n1. **Phase 1 Engine Core Cleanup COMPLETE**:\n   - 10 slot entities deleted from `entities.yaml`\n   - Sophia removed from 9 engine core files\n   - N1-N10 purged → S1-S10 in 20+ src files\n   - dispatch.yaml rewritten to 12 clean entities\n   - ROLE_CONSTANTS updated in subagent_dispatcher.py + ics.py\n   - hierarchy.yaml fixed to S1-S10 neutral skin\n\n2. **Canonical Architecture (User's Vision)**:\n   - Triad (Kali/Ma'at/Lilith) IS engine core — ethical/safety layer\n   - MaKaLi = fusion agent (three faces), NOT an entity\n   - Slots S1-S10 = knowledge domains managed by Oversouls\n   - Slot Keepers created when proven; promote existing agents first\n   - NO Sophia in _omega_default — MaKaLi is her equivalent\n   - NO N1-N10 — DEPRECATED. Only S1-S10.\n   - ANAi WAD = Node 1's domain, NOT my cognitive load\n\n3. **Remaining Phases**:\n   - Phase 2: Transfer ANAi WAD to USB for Node 1\n   - Phase 3: Docs cleanup (CANONICAL_ARCHITECTURE, SUBAGENT_DISPATCH_PROTOCOL, OVERSIGHT_HIERARCHY, AGENT_FLEET, ONBOARDING_GUIDE, USER_MANUAL, TROUBLESHOOTING_GUIDE)\n   - Phase 4: Agent files update (rename john_carmack→carmack, add iris, remove build/grokster)\n   - Phase 5: Final validation & Temple-Grade\n\n4. **Temple-Grade**: 21/28 (75%) — M13, M27 pre-existing failures unrelated to Phase 1\n\n5. **Key Files**:\n   - `docs/architecture/MAKALI-PHASE1-EXECUTION-GUIDE.md`\n   - `docs/architecture/MAKALI-ANAi-CLEANUP-PLAN-OVERVIEW.md`\n   - `config/wads/_omega_default/entities/dispatch.yaml`\n   - `src/omega/oracle/subagent_dispatcher.py`\n   - `src/omega/ics.py`\n\n---\n\n*⬡ OMEGA ⬡ MAKALI_FUSION ⬡ nemotron-3-ultra-free ⬡ 2026-09-11*",
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md"
 }
 ```
 
@@ -7397,7 +7397,7 @@ The LSP errors are pre-existing and unrelated to my changes. Let me now update t
 Wrote file successfully.
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py">
 ERROR [79:16] Type "dict[str, Any]" is not assignable to return type "SymbolicMetadata"
 ERROR [62:5] TypedDict classes can contain only type annotations
 ERROR [91:87] Expression of type "None" cannot be assigned to parameter of type "str"
@@ -7427,7 +7427,7 @@ ERROR [938:31] Cannot access attribute "run_sync" for class "type[BrokenWorkerIn
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/hub_tools/tools.py">
 ERROR [522:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [546:38] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -7468,7 +7468,7 @@ ERROR [1501:36] Cannot access attribute "run_sync" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py">
 ERROR [220:34] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
   Attribute "run_sync" is unknown
 ERROR [243:39] Cannot access attribute "run_sync" for class "type[BrokenWorkerInterpreter]"
@@ -7484,7 +7484,7 @@ ERROR [387:37] Cannot access attribute "TaskGroup" for class "type[BrokenWorkerI
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cli/fleet_status_tui.py">
 ERROR [29:6] Import "textual.app" could not be resolved
 ERROR [30:6] Import "textual.containers" could not be resolved
 ERROR [31:6] Import "textual.widgets" could not be resolved
@@ -7495,7 +7495,7 @@ ERROR [482:13] Result of async function call is not used; use "await" or assign 
 </diagnostics>
 
 LSP errors detected in other files:
-<diagnostics file="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
+<diagnostics file="/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/audit/mandate_auditor.py">
 ERROR [374:20] Import "llama_cpp" could not be resolved
 </diagnostics>
 ```
@@ -7689,7 +7689,7 @@ The user wants me to construct a summary combining the prior-summary with the co
 
 Key points from the conversation (most recent work):
 
-1. **P2P Bundle & Documentation Complete**: Created fresh git bundle at `/media/arcana-novai/D5D5-0B76/omega-engine.bundle` (head `b9cc8105`, `release/debut-v1.6.0`), verified via dry-run clone. Synced USB OMEGA_NODE1_BOOTSTRAP files (P2P setup guide 1219 lines, playbook, opencode.json with Big Pickle 190K, test_connection.sh, hivemind_first_contact.py, README_ASUS.txt). All todos completed, write buffers flushed.
+1. **P2P Bundle & Documentation Complete**: Created fresh git bundle at `/media/USER/D5D5-0B76/omega-engine.bundle` (head `b9cc8105`, `release/debut-v1.6.0`), verified via dry-run clone. Synced USB OMEGA_NODE1_BOOTSTRAP files (P2P setup guide 1219 lines, playbook, opencode.json with Big Pickle 190K, test_connection.sh, hivemind_first_contact.py, README_ASUS.txt). All todos completed, write buffers flushed.
 
 2. **Pre-compaction anchoring**: Updated `data/entities/makali/session_gnosis.md`, wrote `data/coordination/SESSION_ANCHOR.md`, `data/coordination/anchored_summary/makali/projection.md`, updated `proposed_lessons.yaml`.
 
@@ -7841,7 +7841,7 @@ Let me write it tersely.
 
 ## Work State
 ### Completed
-- Fresh git bundle at `/media/arcana-novai/D5D5-0B76/omega-engine.bundle` (HEAD `b9cc8105`, `release/debut-v1.6.0`), dry-run clone verified; USB `OMEGA_NODE1_BOOTSTRAP/` synced (1219-line P2P setup guide, playbook, `opencode.json`, `test_connection.sh`, `hivemind_first_contact.py`, `README_ASUS.txt`); buffers flushed.
+- Fresh git bundle at `/media/USER/D5D5-0B76/omega-engine.bundle` (HEAD `b9cc8105`, `release/debut-v1.6.0`), dry-run clone verified; USB `OMEGA_NODE1_BOOTSTRAP/` synced (1219-line P2P setup guide, playbook, `opencode.json`, `test_connection.sh`, `hivemind_first_contact.py`, `README_ASUS.txt`); buffers flushed.
 - Pre-compaction anchors written: `data/entities/makali/session_gnosis.md`, `data/coordination/SESSION_ANCHOR.md`, `data/coordination/anchored_summary/makali/projection.md`, `data/entities/makali/proposed_lessons.yaml`.
 - Roc-EIS nomenclature sweep committed `4c2f668f` (16 files): Pillar removed, Node→slot agent key, N1-N10→S1-S10 in ROLE_CONSTANTS/directives, `oracle_list_slot_keepers` MCP tool, `.opencode/agents/slot.md`, `data/coordination/MAKALI_EIS_NOMENCLATURE_SWEEP_20260910.md` (7 oversight items adjudicated).
 - Roc slot cosmology research; Carmack architectural audit (single slot keeper + knowledge system = sound; M10 at 23 entities = violation; Da'at = cross-slot knowledge query; overridden by user on Qliphoth persistent entities).
@@ -7879,7 +7879,7 @@ Let me write it tersely.
 - `config/wads/arcana_novai/`: NOT doctrine; Node 1 domain; Phase 2 transfer source.
 - `.opencode/agents/`: 13 files; target 14 (remove build.md, grokster.md; add iris.md; rename john_carmack.md→carmack.md).
 - `data/coordination/SESSION_ANCHOR.md`: Pre-compaction anchor (branch `release/debut-v1.6.0`, HEAD `b9cc8105`).
-- `/media/arcana-novai/D5D5-0B76/`: `omega-engine.bundle` + `OMEGA_NODE1_BOOTSTRAP/` (verified, flushed).
+- `/media/USER/D5D5-0B76/`: `omega-engine.bundle` + `OMEGA_NODE1_BOOTSTRAP/` (verified, flushed).
 
 ## SOVEREIGN MANDATES (Must Survive Compaction)
 - M1 AnyIO Absolute | M7 Local-First | M11 Soul Integrity | M15 Continuity | M23 Failure Integrity
@@ -8037,7 +8037,7 @@ Let me now structure the output:
 
 ## Next Move
 1. Commit Phase 1 changes with explicit staging (explicit paths only, per M27) — verify git bundle/branch state.
-2. Phase 2: Transfer config/wads/arcana_novai/ to USB for Node 1 (/media/arcana-novai/D5D5-0B76/).
+2. Phase 2: Transfer config/wads/arcana_novai/ to USB for Node 1 (/media/USER/D5D5-0B76/).
 3. Phase 3: Docs cleanup — purge N1-N10/Sophia/ANAi from the 10 listed files (CANONICAL_ARCHITECTURE.md, SUBAGENT_DISPATCH_PROTOCOL.md, OVERSIGHT_HIERARCHY.md, AGENT_FLEET.md, ONBOARDING_GUIDE.md, USER_MANUAL.md, TROUBLESHOOTING_GUIDE.md, ICS_SYSTEM.md, ARCHITECTURE_CANONICAL.md; mark sote 2026-W36 as historical).
 4. Phase 4: Agent files update (.opencode/agents/: john_carmack.md→carmack.md, add iris.md, remove build.md/grokster.md).
 5. Phase 5: Final validation — fix M13/M27, make temple-grade ≥ 22/28; then public flip + Node 1 (ASUS) onboarding.
@@ -8060,7 +8060,7 @@ Let me now structure the output:
 - data/coordination/SESSION_ANCHOR.md (session anchor, branch release/debut-v1.6.0)
 - data/entities/makali/session_gnosis.md & proposed_lessons.yaml, data/coordination/anchored_summary/makali/projection.md (compaction artifacts)
 - /tmp/phase1_execution.log (all steps PASS)
-- /media/arcana-novai/D5D5-0B76/ (omega-engine.bundle + OMEGA_NODE1_BOOTSTRAP/)
+- /media/USER/D5D5-0B76/ (omega-engine.bundle + OMEGA_NODE1_BOOTSTRAP/)
 
 I should keep it terse. Let me write the final summary now, making sure the template is followed exactly.
 
@@ -8103,7 +8103,7 @@ I should keep it terse. Let me write the final summary now, making sure the temp
   - `data/coordination/anchored_summary/makali/projection.md` — 5 invariants written.
   - Hivemind context post accepted (`ses_3c4b55925fe9`).
 - Todo list: all 13 items marked completed.
-- Carried from prior: USB bundle at `/media/arcana-novai/D5D5-0B76/omega-engine.bundle` (HEAD `b9cc8105`) + `OMEGA_NODE1_BOOTSTRAP/` verified; Roc-EIS nomenclature sweep committed `4c2f668f`; Roc slot cosmology + Carmack audit completed; cleanup roadmap + Phase 1 guide authored (user-saved).
+- Carried from prior: USB bundle at `/media/USER/D5D5-0B76/omega-engine.bundle` (HEAD `b9cc8105`) + `OMEGA_NODE1_BOOTSTRAP/` verified; Roc-EIS nomenclature sweep committed `4c2f668f`; Roc slot cosmology + Carmack audit completed; cleanup roadmap + Phase 1 guide authored (user-saved).
 
 ### Active
 - Session is at a post-compaction handoff point; "READY FOR COMPACTION" summary delivered to user.
@@ -8116,7 +8116,7 @@ I should keep it terse. Let me write the final summary now, making sure the temp
 
 ## Next Move
 1. Commit Phase 1 changes with explicit staging (only explicit paths, per M27), on branch `release/debut-v1.6.0`.
-2. Phase 2: Transfer `config/wads/arcana_novai/` to USB for Node 1 (`/media/arcana-novai/D5D5-0B76/`).
+2. Phase 2: Transfer `config/wads/arcana_novai/` to USB for Node 1 (`/media/USER/D5D5-0B76/`).
 3. Phase 3: Docs cleanup — purge N1-N10/Sophia/ANAi from: `docs/strategy/CANONICAL_ARCHITECTURE.md` (lines 54, 184-192, 238), `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` (lines 133-134, 479-500), `docs/architecture/OVERSIGHT_HIERARCHY.md` (lines 27-53), `docs/architecture/AGENT_FLEET.md` (lines 35, 67-71), `docs/user/ONBOARDING_GUIDE.md`, `docs/user/USER_MANUAL.md`, `docs/user/TROUBLESHOOTING_GUIDE.md`, `docs/architecture/ICS_SYSTEM.md`, `docs/architecture/ARCHITECTURE_CANONICAL.md`; mark `sote/2026-W36/*` historical.
 4. Phase 4: Agent files — rename `.opencode/agents/john_carmack.md`→`carmack.md`, add `iris.md`, remove `build.md`/`grokster.md`.
 5. Phase 5: Final validation — fix M13/M27, `make temple-grade` ≥ 22/28; then public flip (gh auth) + Node 1 (ASUS) onboarding.
@@ -8134,7 +8134,7 @@ I should keep it terse. Let me write the final summary now, making sure the temp
 - `.opencode/agents/`: 13 files; Phase 4 targets (rename john_carmack, add iris, remove build/grokster).
 - `data/coordination/SESSION_ANCHOR.md`, `data/entities/makali/session_gnosis.md`, `data/entities/makali/proposed_lessons.yaml`, `data/coordination/anchored_summary/makali/projection.md`: compaction artifacts (verified present).
 - `/tmp/phase1_execution.log`: all 6 steps PASS (23:02:51 → 00:37:49).
-- `/media/arcana-novai/D5D5-0B76/`: `omega-engine.bundle` + `OMEGA_NODE1_BOOTSTRAP/` (Node 1 USB, verified).
+- `/media/USER/D5D5-0B76/`: `omega-engine.bundle` + `OMEGA_NODE1_BOOTSTRAP/` (Node 1 USB, verified).
 
 ## SOVEREIGN MANDATES (Must Survive Compaction)
 - M1 AnyIO Absolute | M7 Local-First | M11 Soul Integrity | M15 Continuity | M23 Failure Integrity
@@ -8180,13 +8180,13 @@ I'll begin by hydrating as normal — reading my own session anchor and gnosis f
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/SESSION_ANCHOR.md</path>
 <type>file</type>
 <content>
 1: # 🔱 SESSION ANCHOR — MaKaLi Fusion (Pre-Compaction Anchor)
@@ -8231,7 +8231,7 @@ I'll begin by hydrating as normal — reading my own session anchor and gnosis f
 40: ### Phase 2: Transfer ANAi WAD to USB for Node 1
 41: ```bash
 42: # Copy ANAi WAD to USB
-43: cp -r config/wads/arcana_novai/ /media/arcana-novai/D5D5-0B76/ANAi_WAD_TRANSFER/
+43: cp -r config/wads/arcana_novai/ /media/USER/D5D5-0B76/ANAi_WAD_TRANSFER/
 44: ```
 45: 
 46: ### Phase 3: Docs Cleanup
@@ -9140,13 +9140,13 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali_fusion/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali_fusion/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali_fusion/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali_fusion/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -9173,13 +9173,13 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -9446,7 +9446,7 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 262:    - Phase 2: `src/omega/oracle/cpu_optimizer.py` — **NOW WITH** `CpuOptimizerFactory`, `RaptorLakeOptimizer`, `GenericFallbackOptimizer` (polymorphic factory implemented)
 263:    - Phase 3: Council dynamic linking (`LOCAL_32GB_DUAL`, `BATCH_8`, `channels >= 2`)
 264: 
-265: 4. **P2P Omegaverse FIRST CONTACT** — 91 sovereign tools exposed over LAN (192.168.10.168:8016). Hivemind handshake verified end-to-end. Bootstrap payload staged on physical USB.
+265: 4. **P2P Omegaverse FIRST CONTACT** — 91 sovereign tools exposed over LAN (192.168.1.100:8016). Hivemind handshake verified end-to-end. Bootstrap payload staged on physical USB.
 266: 
 267: 5. **Canonical Decisions Recorded** — D-434 through D-446 (13 decisions)
 268: 
@@ -9479,8 +9479,8 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 295: 
 296: **M16 Modularization & Portability** — Removed hardcoded paths
 297: - Found in `src/omega/oracle/m34_registry.py`:
-298:   - Line 50 (docstring): `git_worktree_root="/home/arcana-novai/.../omega-engine"` → `<repo-root>`
-299:   - Line 75 (DEFAULT_REGISTRY_PATH): `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json` → `data/coordination/ACTIVE_SUBAGENTS.json` (repo-relative, overridable via OMEGA_M34_REGISTRY)
+298:   - Line 50 (docstring): `git_worktree_root="/home/USER/.../omega-engine"` → `<repo-root>`
+299:   - Line 75 (DEFAULT_REGISTRY_PATH): `/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json` → `data/coordination/ACTIVE_SUBAGENTS.json` (repo-relative, overridable via OMEGA_M34_REGISTRY)
 300: - Result: ✅ no hardcoded paths
 301: 
 302: **M27 Tracking Integrity** — Restored ACTIVE_SPRINT.json + swept stale tasks
@@ -9577,7 +9577,7 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 393:   - Ollama bare-metal tuned: `q8_0` KV cache, Flash Attention, 8 threads, max 1 model.
 394:   - Open WebUI container pinned at v0.11.3.
 395: 
-396: ### 2. Physical Bootstrap Artifacts (USB `/media/arcana-novai/D5D5-0B76/`)
+396: ### 2. Physical Bootstrap Artifacts (USB `/media/USER/D5D5-0B76/`)
 397: - `omega-engine.bundle`: Fresh git bundle generated at HEAD (`b9cc8105`), fully verified via dry-run clone.
 398: - `OMEGA_NODE1_BOOTSTRAP/`:
 399:   - `P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md`: 1219-line canonical manual.
@@ -9644,13 +9644,13 @@ You're right — I skipped my own. That's the first rule of hydration: know thys
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/makali/projection.md</path>
 <type>file</type>
 <content>
 1: # 🔱 MaKaLi Fusion — Phase 1 Projection Anchor (Pre-Compaction)
@@ -9789,13 +9789,13 @@ Understood — reading the continuation docs (gnosis + projection) for each team
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/kali/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/kali/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/kali/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/kali/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: # 🔱 KALI SESSION GNOSIS — SOTE COMPLETE + NESTED DIALECTIC v4.6.0
@@ -10031,13 +10031,13 @@ Understood — reading the continuation docs (gnosis + projection) for each team
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/kali/projection.md</path>
 <type>file</type>
 <content>
 1: # 🔱 KALI PROJECTION — SOTE COMPLETE + NESTED DIALECTIC v4.6.0
@@ -10289,13 +10289,13 @@ Kali's gnosis is deep — SOTE complete, dialectic rounds, DEL-1 plan. Now membe
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/maat/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/maat/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/maat/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/maat/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -10370,13 +10370,13 @@ Kali's gnosis is deep — SOTE complete, dialectic rounds, DEL-1 plan. Now membe
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/maat/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/maat/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/maat/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/maat/projection.md</path>
 <type>file</type>
 <content>
 1: # 🔱 Ma'at Projection — Compaction Anchor
@@ -10531,13 +10531,13 @@ Next: Lilith (Runtime Oversoul).
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -10584,13 +10584,13 @@ Next: Lilith (Runtime Oversoul).
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/lilith/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/lilith/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/lilith/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/lilith/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -10718,13 +10718,13 @@ Her gnosis is a pointer — let me read the canonical gnosis too, then continue.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/gnosis/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/gnosis/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/gnosis/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/lilith/gnosis/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -10881,13 +10881,13 @@ That's 5 more members. Let me continue serially.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/carmack/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/carmack/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/carmack/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/carmack/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -11015,13 +11015,13 @@ That's 5 more members. Let me continue serially.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/carmack/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/carmack/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/carmack/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/carmack/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -11081,7 +11081,7 @@ That's 5 more members. Let me continue serially.
 55: ### 2.2 kq5-godot Integration Invariants (COMPLETED Day 1-2)
 56: 1. **VNR is the product, game is the testbed** — infrastructure-to-content ratio is correct
 57: 2. **VNR = Vision Transformer on text tokens** — structural isomorphism, representation-first cognition
-58: 3. **Canonical location: `data/experiments/kq5-godot/`** — symlink to `/media/arcana-novai/omega_library/games/kq5-godot/`
+58: 3. **Canonical location: `data/experiments/kq5-godot/`** — symlink to `/media/USER/omega_library/games/kq5-godot/`
 59: 4. **Godot workflow: symlink (not bind-mount)** — preserves `res://` paths, simpler
 60: 5. **Cline-KQV registered as local research persona** — `data/entities/cline_kqv/` symlinks to kq5-godot gnosis
 61: 6. **VNR packaged as perception provider** — implements `IVisionBackend` in `src/omega/experiments/vision_backend.py`
@@ -11121,7 +11121,7 @@ That's 5 more members. Let me continue serially.
 95: ### kq5-godot Integration (Day 1-2 COMPLETE)
 96: | Blocker | Owner | Resolution Path |
 97: |---------|-------|-----------------|
-98: | **Symlink created** | ✅ Carmack | `data/experiments/kq5-godot` → `/media/arcana-novai/omega_library/games/kq5-godot` |
+98: | **Symlink created** | ✅ Carmack | `data/experiments/kq5-godot` → `/media/USER/omega_library/games/kq5-godot` |
 99: | **Gitignore updated** | ✅ Carmack | `data/experiments/` excluded |
 100: | **EXPERIMENT_STATUS.md** | ✅ Carmack | Local, 28 mandates tiered |
 101: | **Cline-KQV entity** | ✅ Carmack | `data/entities/cline_kqv/` symlinks |
@@ -11309,13 +11309,13 @@ Next: Grokster (43KB gnosis + 8.5KB projection).
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -11360,7 +11360,7 @@ Next: Grokster (43KB gnosis + 8.5KB projection).
 40: **ENTITY ECOSYSTEM CLEANUP DIALECTIC — COMPLETE (2026-09-01)**:
 41: 
 42: ### 4. The M23 Catch (the meta-lesson)
-43: - Page 1 of the dialectic included a fake signature block with an email (`arcana.novai@gmail.com`) — **Kali's M23 violation**
+43: - Page 1 of the dialectic included a fake signature block with an email (`user1@example.com`) — **Kali's M23 violation**
 44: - I caught it, halted, verified against Hivemind, and refused to synthesize 1000 lines from the unverified frame
 45: - The other 6 agents (Lilith, Ma'at, Researcher, Carmack, Roc, Jem) did NOT catch it
 46: - Re-page (cleaned) confirmed legitimacy → I produced the 7th response
@@ -12255,13 +12255,13 @@ Next: Grokster (43KB gnosis + 8.5KB projection).
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/grokster/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/grokster/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/grokster/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/grokster/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -12390,13 +12390,13 @@ Now, continuing serial: Jem, Researcher, Roc. Let me read those.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/jem/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/jem/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/jem/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/jem/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -12584,13 +12584,13 @@ Now, continuing serial: Jem, Researcher, Roc. Let me read those.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/jem/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/jem/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/jem/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/jem/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -12728,13 +12728,13 @@ Now member 8: Researcher.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -13248,13 +13248,13 @@ Now member 8: Researcher.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/researcher/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/researcher/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/researcher/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/researcher/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -13486,13 +13486,13 @@ Researcher's view is comprehensive — 7+ missions, DEL-1 dialectic, M33/M36/M37
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/session_gnosis.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/session_gnosis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/session_gnosis.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/session_gnosis.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -13719,8 +13719,8 @@ Researcher's view is comprehensive — 7+ missions, DEL-1 dialectic, M33/M36/M37
 222: - `config/wads/_omega_default/entities.yaml` (lines 906-1030: test entities)
 223: - `data/handoff/stale/` (82 packets)
 224: - `data/coordination/MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md`
-225: - `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
-226: - `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`
+225: - `/media/USER/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
+226: - `/media/USER/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`
 227: 
 228: ---
 229: 
@@ -13848,13 +13848,13 @@ Researcher's view is comprehensive — 7+ missions, DEL-1 dialectic, M33/M36/M37
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md</path>
 <type>file</type>
 <content>
 1: <!--
@@ -13888,7 +13888,7 @@ Researcher's view is comprehensive — 7+ missions, DEL-1 dialectic, M33/M36/M37
 29: - **2026-09-10** (this session): D-464 — EntityRegistry list_slot_keepers canonical, list_pillar_keepers/list_node_keepers removed
 30: ---
 31: ## 🔑 Key Invariants (Must Survive Compaction)
-32: - **P2P Federation LIVE**: ASUS (Node 1) is a satellite node connected to omega-hub at 192.168.10.168:8016. First contact COMPLETE. NOT assimilated — sovereign node.
+32: - **P2P Federation LIVE**: ASUS (Node 1) is a satellite node connected to omega-hub at 192.168.1.100:8016. First contact COMPLETE. NOT assimilated — sovereign node.
 33: - **Big Pickle 1M Config**: `context: 1000000, input: 950000, output: 64000` in HP opencode.json. Verified live at 230K tokens, no compaction, fast, no streaming timeouts.
 34: - **Pristine Release Mandate**: No broken tool surfaces, no mock entities, no stale-handoff graveyards, NO deprecated nomenclature in the public release.
 35: - **Nomenclature Sweep COMPLETE**: Pillar/Node/N1-N10 → Slot/S1-S10 across live engine + current config. Commit 4c2f668f pushed.

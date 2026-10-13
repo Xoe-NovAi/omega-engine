@@ -113,7 +113,7 @@ Let me synthesize this into the required format.
   - **Node 0 (HP Reference)**: AMD Ryzen 7 5700U (Zen 2, 8C/16T symmetric, DDR4-3200, Radeon Vega 8 iGPU, PCIe 3.0).
   - **Node 1 (ASUS ExpertBook P1 - P1503CVA)**: Intel Core i7-13620H (Raptor Lake-H, 10C/16T asymmetric [6 P-cores + 4 E-cores], 16GB DDR5-5200 [upgradeable to 64GB, planned 32GB 2×16GB kit], Iris Xe 64EU, 512GB M.2 2280 NVMe PCIe 4.0, secondary M.2 2230 NVMe slot).
   - **Secondary Drive Constraint**: 256GB HP drive is 2280 form factor; cannot fit Asus Slot 2 (2230 only); must use external USB NVMe enclosure.
-- **Operating System**: Ubuntu 26.04.1 Desktop LTS (ISO on 8TB external at `/media/arcana-novai/8TB/ISO/ubuntu-26.04.1-desktop-amd64.iso`).
+- **Operating System**: Ubuntu 26.04.1 Desktop LTS (ISO on 8TB external at `/media/USER/8TB/ISO/ubuntu-26.04.1-desktop-amd64.iso`).
 - **ASUS Secure Boot Strategy**: Keep Secure Boot ENABLED; burn USB via `dd` + dual-signed shim (`shimx64.efi.dualsigned` → `bootx64.efi`); boot via **Esc + Power** one-time boot menu (NOT F2); select `UEFI: <USB>`.
 - **Critical Forensic Discovery**: The USB was never physically written. `dd` reported 265 MB/s to `/dev/sdb` (RAM/phantom device) while the physical drive re-enumerated to `/dev/sda`. The `casper/vmlinuz` sector (offset 5,166,469,120) contained Ventoy garbage (`12 fe c4 da...`) instead of the Canonical-signed kernel (`4d 5a 00 00`). Shim correctly rejected the garbage with `error: bad shim lock signature`.
 - **Correct USB Creation**: Full `dd` to verified device, then mount ISO's native ESP (`sda2`), replace ONLY `bootx64.efi` with `/usr/lib/shim/shimx64.efi.dualsigned` (dual-signed: Canonical + Microsoft UEFI CA). **Do not touch** Canonical's native `grubx64.efi` or `mmx64.efi` — they auto-locate the ISO9660 partition and load `/boot/grub/grub.cfg`.
@@ -435,7 +435,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 May 20 17:04 skills
       "models": {
         "qwen3-1.7b-extractor": {
           "name": "Qwen3 1.7B Extractor (4K ctx)",
-          "id": "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf",
+          "id": "/media/USER/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf",
           "limit": {
             "context": 4096,
             "output": 2048
@@ -453,7 +453,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 May 20 17:04 skills
       "models": {
         "qwen3-4b-thinking": {
           "name": "Qwen3 4B Thinking (32K ctx)",
-          "id": "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf",
+          "id": "/media/USER/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf",
           "limit": {
             "context": 32768,
             "output": 8192
@@ -470,7 +470,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 May 20 17:04 skills
       "models": {
         "qwen3-1.7b-q6_k": {
           "name": "Qwen3 1.7B Q6_K (LM Studio)",
-          "id": "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf",
+          "id": "/media/USER/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf",
           "limit": {
             "context": 4096,
             "output": 2048
@@ -478,7 +478,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 May 20 17:04 skills
         },
         "qwen3-4b-thinking": {
           "name": "Qwen3 4B Thinking (LM Studio)",
-          "id": "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf",
+          "id": "/media/USER/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf",
           "limit": {
             "context": 32768,
             "output": 8192
@@ -498,42 +498,42 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 May 20 17:04 skills
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null; echo \"---PROJECT CONFIG---\"; cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null || cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.jsonc 2>/dev/null || echo \"NO PROJECT CONFIG FOUND\""
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null; echo \"---PROJECT CONFIG---\"; cat /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null || cat /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.jsonc 2>/dev/null || echo \"NO PROJECT CONFIG FOUND\""
 }
 ```
 
 **Output:**
 ```
--rw-rw-r-- 1 arcana-novai arcana-novai  9081 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json
--rw-rw-r-- 1 arcana-novai arcana-novai 10003 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431
--rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431.license
--rw-rw-r-- 1 arcana-novai arcana-novai  7717 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827
--rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827.license
--rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.license
+-rw-rw-r-- 1 arcana-novai arcana-novai  9081 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json
+-rw-rw-r-- 1 arcana-novai arcana-novai 10003 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431
+-rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431.license
+-rw-rw-r-- 1 arcana-novai arcana-novai  7717 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827
+-rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827.license
+-rw-rw-r-- 1 arcana-novai arcana-novai    79 Sep  2 07:17 /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.license
 ---PROJECT CONFIG---
 {
   "$schema": "https://opencode.ai/config.json",
   "subagent_depth": 2,
   "plugin": [
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
+    "file:///home/USER/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth",
     "opencode-sessions-explorer",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
-    "file:///home/arcana-novai/.config/opencode/plugin/sovereign-compaction.ts"
+    "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/error-capture.ts",
+    "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/awareness.ts",
+    "file:///home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plugins/silent-stall-sensor.ts",
+    "file:///home/USER/.config/opencode/plugin/sovereign-compaction.ts"
   ],
   "permission": {
     "external_directory": {
-      "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
-      "/media/arcana-novai/**": "allow",
-      "/home/arcana-novai/archive/**": "allow",
-      "/home/arcana-novai/Documents/docs-backup/**": "allow",
-      "/home/arcana-novai/Documents/docs_1/**": "allow",
-      "/home/arcana-novai/Documents/Archives/**": "allow",
-      "/home/arcana-novai/Documents/xnaif-files/**": "allow",
-      "/home/arcana-novai/.lmstudio/**": "allow",
-      "/home/arcana-novai/.ollama/**": "allow",
-      "/home/arcana-novai/.config/opencode/**": "allow",
+      "/home/USER/Documents/Xoe-NovAi/**": "allow",
+      "/media/USER/**": "allow",
+      "/home/USER/archive/**": "allow",
+      "/home/USER/Documents/docs-backup/**": "allow",
+      "/home/USER/Documents/docs_1/**": "allow",
+      "/home/USER/Documents/Archives/**": "allow",
+      "/home/USER/Documents/xnaif-files/**": "allow",
+      "/home/USER/.lmstudio/**": "allow",
+      "/home/USER/.ollama/**": "allow",
+      "/home/USER/.config/opencode/**": "allow",
       "/tmp/omega/**": "allow",
       "~/.local/share/opencode/**": "allow",
       "/*": "allow"
@@ -909,7 +909,7 @@ Found the configs. Now let me hunt for where `big-pickle` is actually defined an
 **Input:**
 ```json
 {
-  "command": "grep -ri \"big-pickle\\|big_pickle\\|bigpickle\" ~/.config/opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null | head -50; echo \"---SEARCH DATA DIR---\"; ls -la ~/.local/share/opencode/ 2>/dev/null | head -30"
+  "command": "grep -ri \"big-pickle\\|big_pickle\\|bigpickle\" ~/.config/opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null | head -50; echo \"---SEARCH DATA DIR---\"; ls -la ~/.local/share/opencode/ 2>/dev/null | head -30"
 }
 ```
 
@@ -946,7 +946,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai       12288 Sep  6 23:25 tool-output
 ```
 1.18.23
 ---
-/home/arcana-novai/.opencode/bin/opencode
+/home/USER/.opencode/bin/opencode
 ---BUN---
 total 180272
 drwxrwxr-x 2 arcana-novai arcana-novai      4096 Aug 25 08:21 .
@@ -999,14 +999,14 @@ Let me look in the storage directory and check for models.dev data.
 
 **Output:**
 ```
-/home/arcana-novai/.local/share/opencode/storage/:
+/home/USER/.local/share/opencode/storage/:
 total 16
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 13:42 .
 drwxrwxr-x 8 arcana-novai arcana-novai 4096 Jun  8 13:12 ..
 -rw-rw-r-- 1 arcana-novai arcana-novai    1 Aug 29 13:42 migration
 drwxrwxr-x 2 arcana-novai arcana-novai 4096 Sep  2 23:17 session_diff
 
-/home/arcana-novai/.local/share/opencode/storage/session_diff:
+/home/USER/.local/share/opencode/storage/session_diff:
 total 48
 drwxrwxr-x 2 arcana-novai arcana-novai 4096 Sep  2 23:17 .
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 13:42 ..
@@ -1021,19 +1021,19 @@ drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 13:42 ..
 -rw-rw-r-- 1 arcana-novai arcana-novai    2 Sep  1 11:54 ses_fe8cf0b39ffeL3L8eaMEj3CW9H.json
 -rw-rw-r-- 1 arcana-novai arcana-novai    2 Sep  6 21:27 ses_ff78b71ebffeDNuypPTT1RL3hH.json
 ---SNAPSHOT---
-/home/arcana-novai/.local/share/opencode/snapshot/:
+/home/USER/.local/share/opencode/snapshot/:
 total 12
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 00:44 .
 drwxrwxr-x 8 arcana-novai arcana-novai 4096 Jun  8 13:12 ..
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 00:44 d2cd4b3189103da1baa752ab219261b62365d7dd
 
-/home/arcana-novai/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd:
+/home/USER/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd:
 total 12
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 00:44 .
 drwxrwxr-x 3 arcana-novai arcana-novai 4096 Aug 29 00:44 ..
 drwxrwxr-x 6 arcana-novai arcana-novai 4096 Sep  7 15:33 c479db6059faef96169fee212ce78bc62b90ff1f
 
-/home/arcana-novai/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd/c479db6059faef96169fee212ce78bc62b90ff1f:
+/home/USER/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd/c479db6059faef96169fee212ce78bc62b90ff1f:
 total 540
 drwxrwxr-x   6 arcana-novai arcana-novai   4096 Sep  7 15:33 .
 drwxrwxr-x   3 arcana-novai arcana-novai   4096 Aug 29 00:44 ..
@@ -1047,7 +1047,7 @@ drwxrwxr-x 260 arcana-novai arcana-novai   4096 Sep  6 16:00 objects
 -rw-rw-r--   1 arcana-novai arcana-novai     46 Sep  7 15:25 packed-refs
 drwxrwxr-x   4 arcana-novai arcana-novai   4096 Aug 29 00:44 refs
 
-/home/arcana-novai/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd/c479db6059faef96169fee212ce78bc62b90ff1f/hooks:
+/home/USER/.local/share/opencode/snapshot/d2cd4b3189103da1baa752ab219261b62365d7dd/c479db6059faef96169fee212ce78bc62b90ff1f/hooks:
 total 72
 drwxrwxr-x 2 arcana-novai arcana-novai 4096 Aug 29 00:44 .
 drwxrwxr-x 6 arcana-novai arcana-novai 4096 Sep  7 15:33 ..
@@ -1065,23 +1065,23 @@ drwxrwxr-x 6 arcana-novai arcana-novai 4096 Sep  7 15:33 ..
 
 **Output:**
 ```
-/home/arcana-novai/.cache/opencode/models.json
+/home/USER/.cache/opencode/models.json
 ---MODELS.DEV CACHE---
-/home/arcana-novai/.cache/opencode/models.json
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/docker/docker/models
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/aws-xray-sdk/aws_xray_sdk/core/models
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/pony/pony/flask/example/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/requests/requests/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/tensorflow/tensorflow/keras/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/jose/rfc7516/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/jose/rfc7515/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oidc/discovery/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oidc/core/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth1/rfc5849/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc8628/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc8414/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc6749/models.pyi
-/home/arcana-novai/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc7662/models.pyi
+/home/USER/.cache/opencode/models.json
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/docker/docker/models
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/aws-xray-sdk/aws_xray_sdk/core/models
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/pony/pony/flask/example/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/requests/requests/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/tensorflow/tensorflow/keras/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/jose/rfc7516/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/jose/rfc7515/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oidc/discovery/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oidc/core/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth1/rfc5849/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc8628/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc8414/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc6749/models.pyi
+/home/USER/.cache/opencode/packages/pyright/node_modules/pyright/dist/typeshed-fallback/stubs/Authlib/authlib/oauth2/rfc7662/models.pyi
 
 ```
 
@@ -1091,7 +1091,7 @@ drwxrwxr-x 6 arcana-novai arcana-novai 4096 Sep  7 15:33 ..
 
 _Thinking:_
 
-Found it! `/home/arcana-novai/.cache/opencode/models.json` — this is the models.dev cache. Let me check what it says about big-pickle.
+Found it! `/home/USER/.cache/opencode/models.json` — this is the models.dev cache. Let me check what it says about big-pickle.
 
 **Found the models.dev cache**: `~/.cache/opencode/models.json`. Let me check what it says about big-pickle.
 
@@ -1102,7 +1102,7 @@ Found it! `/home/arcana-novai/.cache/opencode/models.json` — this is the model
 **Input:**
 ```json
 {
-  "command": "python3 -c \"\nimport json\nwith open('/home/arcana-novai/.cache/opencode/models.json') as f:\n    data = json.load(f)\nprint('Cache file size:', len(json.dumps(data)), 'chars')\nprint('Type:', type(data))\nif isinstance(data, dict):\n    print('Top-level keys:', list(data.keys())[:20])\n    # Look for big-pickle anywhere\n    def find_bp(obj, path=''):\n        if isinstance(obj, dict):\n            for k, v in obj.items():\n                if 'big' in str(k).lower() or 'pickle' in str(k).lower():\n                    print(f'FOUND KEY: {path}/{k} = {json.dumps(v)[:500]}')\n                find_bp(v, f'{path}/{k}')\n        elif isinstance(obj, list):\n            for i, v in enumerate(obj):\n                find_bp(v, f'{path}[{i}]')\n    find_bp(data)\n\" 2>&1 | head -40"
+  "command": "python3 -c \"\nimport json\nwith open('/home/USER/.cache/opencode/models.json') as f:\n    data = json.load(f)\nprint('Cache file size:', len(json.dumps(data)), 'chars')\nprint('Type:', type(data))\nif isinstance(data, dict):\n    print('Top-level keys:', list(data.keys())[:20])\n    # Look for big-pickle anywhere\n    def find_bp(obj, path=''):\n        if isinstance(obj, dict):\n            for k, v in obj.items():\n                if 'big' in str(k).lower() or 'pickle' in str(k).lower():\n                    print(f'FOUND KEY: {path}/{k} = {json.dumps(v)[:500]}')\n                find_bp(v, f'{path}/{k}')\n        elif isinstance(obj, list):\n            for i, v in enumerate(obj):\n                find_bp(v, f'{path}[{i}]')\n    find_bp(data)\n\" 2>&1 | head -40"
 }
 ```
 
@@ -1130,7 +1130,7 @@ Found it. Let me get the **full big-pickle entry** from the HP's cache including
 **Input:**
 ```json
 {
-  "command": "python3 -c \"\nimport json\nwith open('/home/arcana-novai/.cache/opencode/models.json') as f:\n    data = json.load(f)\nbp = data['opencode']['models']['big-pickle']\nprint(json.dumps(bp, indent=2))\n\""
+  "command": "python3 -c \"\nimport json\nwith open('/home/USER/.cache/opencode/models.json') as f:\n    data = json.load(f)\nbp = data['opencode']['models']['big-pickle']\nprint(json.dumps(bp, indent=2))\n\""
 }
 ```
 
@@ -1218,7 +1218,7 @@ Let me confirm the cache timestamp and verify against the live models.dev regist
 **Input:**
 ```json
 {
-  "command": "stat -c '%y %s bytes' /home/arcana-novai/.cache/opencode/models.json; echo \"---\"; ls -la /home/arcana-novai/.cache/opencode/ | head -20"
+  "command": "stat -c '%y %s bytes' /home/USER/.cache/opencode/models.json; echo \"---\"; ls -la /home/USER/.cache/opencode/ | head -20"
 }
 ```
 
@@ -1396,7 +1396,7 @@ So the fix is: remove any custom Big Pickle settings from the HP's OpenCode conf
 
 Let me look at what custom settings exist on the HP that could affect big-pickle:
 
-1. **Project config** (`/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`):
+1. **Project config** (`/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`):
    - Has `compaction` settings: `auto: true, prune: true, tail_turns: 5, preserve_recent_tokens: 80000, reserved: 20000`
    - Has `opencode` provider with models: `nemotron-3-ultra-free` (1M) and `mimo-v2.5-free` (200K)
    - `model: lmstudio/qwen3-4b-thinking`
@@ -1497,31 +1497,31 @@ export default SovereignCompactionPlugin;
 **Input:**
 ```json
 {
-  "command": "grep -ri \"big.pickle\\|bigpickle\\|200000\\|200_000\\|1_000_000\\|1000000\" ~/.config/opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null | grep -v node_modules | grep -v \".db\" | head -40"
+  "command": "grep -ri \"big.pickle\\|bigpickle\\|200000\\|200_000\\|1_000_000\\|1000000\" ~/.config/opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json 2>/dev/null | grep -v node_modules | grep -v \".db\" | head -40"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431:          "limit": { "context": 200000, "output": 64000 },
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431:          "limit": { "context": 200000, "output": 64000 },
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak:          "limit": { "context": 200000, "output": 64000 },
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak:          "limit": { "context": 200000, "output": 64000 },
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-08-30T23:39:36Z] [INFO] [Session] Hook triggered for roc_racoon / ses_faa5527f4ffe53N6PmUbZ3uaDX / big-pickle
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-01T07:58:47Z] [INFO] [Session] Hook triggered for roc_racoon / ses_fa390f1f8ffeLDm4qJh5I0fif1 / big-pickle
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-01T07:59:27Z] [INFO] [Session] Hook triggered for roc_racoon / ses_fa390f1f8ffeLDm4qJh5I0fif1 / big-pickle
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-02T10:01:56Z] [INFO] [Session] Hook triggered for roc_racoon / ses_f9dd831f4ffex4CMaI3e3XCUfK / big-pickle
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-03T00:57:24Z] [INFO] [Session] Hook triggered for jem / ses_f9af1d349ffe7G7HOmy6JXgRxM / big-pickle
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-08-30T23:39:36-0300] [wrapper] Session detected: ID=ses_faa5527f4ffe53N6PmUbZ3uaDX Entity=roc_racoon Model=big-pickle (2 candidate(s) from this instance)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-01T07:58:47-0300] [wrapper] Session detected: ID=ses_fa390f1f8ffeLDm4qJh5I0fif1 Entity=roc_racoon Model=big-pickle (1 candidate(s) from this instance)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-01T07:59:27-0300] [wrapper] Session detected: ID=ses_fa390f1f8ffeLDm4qJh5I0fif1 Entity=roc_racoon Model=big-pickle (0 candidate(s) from this instance)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-02T10:01:56-0300] [wrapper] Session detected: ID=ses_f9dd831f4ffex4CMaI3e3XCUfK Entity=roc_racoon Model=big-pickle (1 candidate(s) from this instance)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-03T00:57:24-0300] [wrapper] Session detected: ID=ses_f9af1d349ffe7G7HOmy6JXgRxM Entity=jem Model=big-pickle (2 candidate(s) from this instance)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md:| `jem-2.0 --sub-facet editor` | Jem Editor | L3 | Big Pickle (frontier) | Resolve uncertainties, QA |
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json:            "context": 1000000,
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json:            "context": 200000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431:          "limit": { "context": 200000, "output": 64000 },
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431:          "limit": { "context": 200000, "output": 64000 },
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak:          "limit": { "context": 200000, "output": 64000 },
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak:          "limit": { "context": 200000, "output": 64000 },
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-08-30T23:39:36Z] [INFO] [Session] Hook triggered for roc_racoon / ses_faa5527f4ffe53N6PmUbZ3uaDX / big-pickle
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-01T07:58:47Z] [INFO] [Session] Hook triggered for roc_racoon / ses_fa390f1f8ffeLDm4qJh5I0fif1 / big-pickle
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-01T07:59:27Z] [INFO] [Session] Hook triggered for roc_racoon / ses_fa390f1f8ffeLDm4qJh5I0fif1 / big-pickle
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-02T10:01:56Z] [INFO] [Session] Hook triggered for roc_racoon / ses_f9dd831f4ffex4CMaI3e3XCUfK / big-pickle
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/session_end.log:[2026-09-03T00:57:24Z] [INFO] [Session] Hook triggered for jem / ses_f9af1d349ffe7G7HOmy6JXgRxM / big-pickle
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-08-30T23:39:36-0300] [wrapper] Session detected: ID=ses_faa5527f4ffe53N6PmUbZ3uaDX Entity=roc_racoon Model=big-pickle (2 candidate(s) from this instance)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-01T07:58:47-0300] [wrapper] Session detected: ID=ses_fa390f1f8ffeLDm4qJh5I0fif1 Entity=roc_racoon Model=big-pickle (1 candidate(s) from this instance)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-01T07:59:27-0300] [wrapper] Session detected: ID=ses_fa390f1f8ffeLDm4qJh5I0fif1 Entity=roc_racoon Model=big-pickle (0 candidate(s) from this instance)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-02T10:01:56-0300] [wrapper] Session detected: ID=ses_f9dd831f4ffex4CMaI3e3XCUfK Entity=roc_racoon Model=big-pickle (1 candidate(s) from this instance)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/logs/wrapper.log:[2026-09-03T00:57:24-0300] [wrapper] Session detected: ID=ses_f9af1d349ffe7G7HOmy6JXgRxM Entity=jem Model=big-pickle (2 candidate(s) from this instance)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md:| `jem-2.0 --sub-facet editor` | Jem Editor | L3 | Big Pickle (frontier) | Resolve uncertainties, QA |
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json:            "context": 1000000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json:            "context": 200000,
 
 ```
 
@@ -1533,7 +1533,7 @@ _Thinking:_
 
 **FOUND IT!** There's a `.opencode/opencode.json` in the PROJECT directory! That's a DIFFERENT config file from the root `opencode.json`. Let me look at it:
 
-`/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json` has:
+`/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json` has:
 - `"context": 200000` (twice!)
 
 And the backup files show `"limit": { "context": 200000, "output": 64000 }` — this is likely where big-pickle is being overridden to 200K!
@@ -1542,8 +1542,8 @@ Wait, but does OpenCode read `.opencode/opencode.json`? Hmm, actually OpenCode r
 
 Actually wait — let me re-read. The grep output shows:
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json:            "context": 200000,
 ```
 
 So there IS a `.opencode/opencode.json` file. Let me read it to see what it contains. This might be the custom config with big-pickle set to 200K!
@@ -1559,7 +1559,7 @@ Let me read that file.
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json 2>/dev/null"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json 2>/dev/null"
 }
 ```
 
@@ -1568,7 +1568,7 @@ Let me read that file.
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth"
+    "file:///home/USER/Documents/Xoe-NovAi/omega-engine/opencode-antigravity-auth"
   ],
   "provider": {
     "google": {
@@ -1719,7 +1719,7 @@ _Thinking:_
 
 OK so `.opencode/opencode.json` is for Antigravity Google models, not big-pickle. It doesn't define big-pickle. So that's not the culprit.
 
-Let me look at the ROOT project `opencode.json` again — the one at `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`. It has:
+Let me look at the ROOT project `opencode.json` again — the one at `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`. It has:
 - `"context": 1000000` (nemotron-3-ultra-free)
 - `"context": 200000` (mimo-v2.5-free)
 
@@ -1785,14 +1785,14 @@ That `.opencode/opencode.json` is only Antigravity Google models — not big-pic
 **Input:**
 ```json
 {
-  "command": "grep -ril \"big\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json* /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json* ~/.config/opencode/opencode.json* 2>/dev/null; echo \"---BACKUP CONTENT CHECK---\"; python3 -c \"\nimport json\nfor path in ['/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431', '/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak', '/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431']:\n    try:\n        with open(path) as f:\n            d = json.load(f)\n        models = d.get('provider', {}).get('opencode', {}).get('models', {})\n        if models:\n            print(f'--- {path} ---')\n            for mid, m in models.items():\n                print(f'  {mid}: limit={m.get(\\\"limit\\\", {})}')\n    except Exception as e:\n        print(f'{path}: ERROR {e}')\n\""
+  "command": "grep -ril \"big\" /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json* /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json* ~/.config/opencode/opencode.json* 2>/dev/null; echo \"---BACKUP CONTENT CHECK---\"; python3 -c \"\nimport json\nfor path in ['/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431', '/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak', '/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431']:\n    try:\n        with open(path) as f:\n            d = json.load(f)\n        models = d.get('provider', {}).get('opencode', {}).get('models', {})\n        if models:\n            print(f'--- {path} ---')\n            for mid, m in models.items():\n                print(f'  {mid}: limit={m.get(\\\"limit\\\", {})}')\n    except Exception as e:\n        print(f'{path}: ERROR {e}')\n\""
 }
 ```
 
 **Output:**
 ```
 ---BACKUP CONTENT CHECK---
---- /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431 ---
+--- /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431 ---
   mimo-v2.5: limit={}
   mimo-v2.5-free: limit={}
   nemotron-3-ultra-free: limit={}
@@ -1805,7 +1805,7 @@ That `.opencode/opencode.json` is only Antigravity Google models — not big-pic
 **Input:**
 ```json
 {
-  "command": "python3 -c \"\nimport sqlite3, json\ndb = sqlite3.connect('/home/arcana-novai/.local/share/opencode/opencode.db')\ncur = db.cursor()\n# Find model-related tables\ncur.execute(\\\"SELECT name FROM sqlite_master WHERE type='table'\\\")\ntables = [r[0] for r in cur.fetchall()]\nprint('Tables:', tables)\n# Look for model metadata in session table for current session\ntry:\n    cur.execute('SELECT model FROM session WHERE id LIKE ?', ('ses_ff78b71ebffeDNuypPTT1RL3hH%',))\n    rows = cur.fetchall()\n    for r in rows:\n        print('Session model JSON:', r[0][:500] if r[0] else None)\nexcept Exception as e:\n    print('Session query error:', e)\ndb.close()\n\" 2>&1 | head -30"
+  "command": "python3 -c \"\nimport sqlite3, json\ndb = sqlite3.connect('/home/USER/.local/share/opencode/opencode.db')\ncur = db.cursor()\n# Find model-related tables\ncur.execute(\\\"SELECT name FROM sqlite_master WHERE type='table'\\\")\ntables = [r[0] for r in cur.fetchall()]\nprint('Tables:', tables)\n# Look for model metadata in session table for current session\ntry:\n    cur.execute('SELECT model FROM session WHERE id LIKE ?', ('ses_ff78b71ebffeDNuypPTT1RL3hH%',))\n    rows = cur.fetchall()\n    for r in rows:\n        print('Session model JSON:', r[0][:500] if r[0] else None)\nexcept Exception as e:\n    print('Session query error:', e)\ndb.close()\n\" 2>&1 | head -30"
 }
 ```
 
@@ -1950,7 +1950,7 @@ The website is a JS SPA (no raw data). Let me search the ENTIRE models cache for
 **Input:**
 ```json
 {
-  "command": "python3 << 'PYEOF'\nimport json\n\nwith open('/home/arcana-novai/.cache/opencode/models.json') as f:\n    data = json.load(f)\n\n# Search ALL providers for any model with 'big' or 'pickle' in the ID/name\nprint(\"=== ALL big/pickle entries across all providers ===\")\nfor provider, pdata in data.items():\n    models = pdata.get('models', {}) if isinstance(pdata, dict) else {}\n    for mid, m in models.items():\n        if 'big' in mid.lower() or 'pickle' in mid.lower() or 'big' in str(m.get('name','')).lower():\n            print(f\"  {provider}/{mid}: name={m.get('name')}, limit={m.get('limit')}\")\n\n# Also check: what models have 1M context in the opencode provider?\nprint(\"\\n=== opencode provider models with 1M context ===\")\noc_models = data.get('opencode', {}).get('models', {})\nfor mid, m in oc_models.items():\n    lim = m.get('limit', {})\n    if lim.get('context', 0) >= 1000000:\n        print(f\"  opencode/{mid}: limit={lim}\")\n\n# Count total opencode models\nprint(f\"\\nTotal opencode provider models: {len(oc_models)}\")\nPYEOF"
+  "command": "python3 << 'PYEOF'\nimport json\n\nwith open('/home/USER/.cache/opencode/models.json') as f:\n    data = json.load(f)\n\n# Search ALL providers for any model with 'big' or 'pickle' in the ID/name\nprint(\"=== ALL big/pickle entries across all providers ===\")\nfor provider, pdata in data.items():\n    models = pdata.get('models', {}) if isinstance(pdata, dict) else {}\n    for mid, m in models.items():\n        if 'big' in mid.lower() or 'pickle' in mid.lower() or 'big' in str(m.get('name','')).lower():\n            print(f\"  {provider}/{mid}: name={m.get('name')}, limit={m.get('limit')}\")\n\n# Also check: what models have 1M context in the opencode provider?\nprint(\"\\n=== opencode provider models with 1M context ===\")\noc_models = data.get('opencode', {}).get('models', {})\nfor mid, m in oc_models.items():\n    lim = m.get('limit', {})\n    if lim.get('context', 0) >= 1000000:\n        print(f\"  opencode/{mid}: limit={lim}\")\n\n# Count total opencode models\nprint(f\"\\nTotal opencode provider models: {len(oc_models)}\")\nPYEOF"
 }
 ```
 
@@ -2038,7 +2038,7 @@ The HP cache says 200K but the user sees 1M on the ASUS. Let me check the OpenCo
 **Input:**
 ```json
 {
-  "command": "strings /home/arcana-novai/.opencode/bin/opencode 2>/dev/null | grep -A5 -B2 \"big-pickle\" | head -40"
+  "command": "strings /home/USER/.opencode/bin/opencode 2>/dev/null | grep -A5 -B2 \"big-pickle\" | head -40"
 }
 ```
 
@@ -2046,7 +2046,7 @@ The HP cache says 200K but the user sees 1M on the ASUS. Let me check the OpenCo
 ```
 ...output truncated...
 
-Full output saved to: /home/arcana-novai/.local/share/opencode/tool-output/tool_07d29b7ad001IXbm9mTXQbgifS
+Full output saved to: /home/USER/.local/share/opencode/tool-output/tool_07d29b7ad001IXbm9mTXQbgifS
 
 Your strengths:
 - Rapidly finding files using glob patterns
@@ -2061,7 +2061,7 @@ Guidelines:
 **Input:**
 ```json
 {
-  "command": "python3 << 'PYEOF'\nimport json\n# Check the models.json cache metadata - when was it fetched, what version?\nwith open('/home/arcana-novai/.cache/opencode/models.json') as f:\n    data = json.load(f)\n# Look for metadata keys\nfor k in data.keys():\n    if k in ('_meta', 'meta', 'version', 'updated', 'timestamp', 'schema'):\n        print(f'Metadata key: {k} = {data[k]}')\n# Check the opencode provider for metadata\noc = data.get('opencode', {})\nfor k, v in oc.items():\n    if k != 'models':\n        print(f'opencode.{k} = {v}')\nPYEOF"
+  "command": "python3 << 'PYEOF'\nimport json\n# Check the models.json cache metadata - when was it fetched, what version?\nwith open('/home/USER/.cache/opencode/models.json') as f:\n    data = json.load(f)\n# Look for metadata keys\nfor k in data.keys():\n    if k in ('_meta', 'meta', 'version', 'updated', 'timestamp', 'schema'):\n        print(f'Metadata key: {k} = {data[k]}')\n# Check the opencode provider for metadata\noc = data.get('opencode', {})\nfor k, v in oc.items():\n    if k != 'models':\n        print(f'opencode.{k} = {v}')\nPYEOF"
 }
 ```
 
@@ -2155,35 +2155,35 @@ Let me do a comprehensive search of ALL config files for any big-pickle referenc
 **Input:**
 ```json
 {
-  "command": "find ~/.config/opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/ -name \"*.json\" -o -name \"*.jsonc\" -o -name \"*.ts\" -o -name \"*.js\" 2>/dev/null | while read f; do if grep -qi \"big.pickle\" \"$f\" 2>/dev/null; then echo \"FOUND in: $f\"; fi; done; echo \"---ALL CONFIG JSON FILES---\"; find ~/.config/opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/ -maxdepth 2 -name \"*.json*\" 2>/dev/null | head -30"
+  "command": "find ~/.config/opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/ -name \"*.json\" -o -name \"*.jsonc\" -o -name \"*.ts\" -o -name \"*.js\" 2>/dev/null | while read f; do if grep -qi \"big.pickle\" \"$f\" 2>/dev/null; then echo \"FOUND in: $f\"; fi; done; echo \"---ALL CONFIG JSON FILES---\"; find ~/.config/opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/ -maxdepth 2 -name \"*.json*\" 2>/dev/null | head -30"
 }
 ```
 
 **Output:**
 ```
 ---ALL CONFIG JSON FILES---
-/home/arcana-novai/.config/opencode/opencode.json.backup.20260809_114431
-/home/arcana-novai/.config/opencode/package.json
-/home/arcana-novai/.config/opencode/zen_accounts_state.json
-/home/arcana-novai/.config/opencode/opencode.json.bak
-/home/arcana-novai/.config/opencode/opencode.json
-/home/arcana-novai/.config/opencode/node_modules/.package-lock.json
-/home/arcana-novai/.config/opencode/opencode.json.backup
-/home/arcana-novai/.config/opencode/package-lock.json
-/home/arcana-novai/.config/opencode/antigravity.json
-/home/arcana-novai/.config/opencode/mcp_servers.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/package.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/.last_session.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431.license
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/package-lock.json.license
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/package.json.license
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/node_modules/.package-lock.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/package-lock.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.license
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/.last_session.json.license
+/home/USER/.config/opencode/opencode.json.backup.20260809_114431
+/home/USER/.config/opencode/package.json
+/home/USER/.config/opencode/zen_accounts_state.json
+/home/USER/.config/opencode/opencode.json.bak
+/home/USER/.config/opencode/opencode.json
+/home/USER/.config/opencode/node_modules/.package-lock.json
+/home/USER/.config/opencode/opencode.json.backup
+/home/USER/.config/opencode/package-lock.json
+/home/USER/.config/opencode/antigravity.json
+/home/USER/.config/opencode/mcp_servers.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/package.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/.last_session.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.backup.20260809_114431.license
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.bak
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/package-lock.json.license
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/package.json.license
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/node_modules/.package-lock.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/package-lock.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/opencode.json.license
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/.last_session.json.license
 
 ```
 
@@ -2192,7 +2192,7 @@ Let me do a comprehensive search of ALL config files for any big-pickle referenc
 **Input:**
 ```json
 {
-  "command": "cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && git log --oneline -5 -- opencode.json 2>/dev/null; echo \"---DIFF HISTORY---\"; git log -p --follow -- opencode.json 2>/dev/null | grep -B3 -A3 \"big\" | head -40"
+  "command": "cd /home/USER/Documents/Xoe-NovAi/omega-engine && git log --oneline -5 -- opencode.json 2>/dev/null; echo \"---DIFF HISTORY---\"; git log -p --follow -- opencode.json 2>/dev/null | grep -B3 -A3 \"big\" | head -40"
 }
 ```
 
@@ -2365,7 +2365,7 @@ Let me look at the configs again very carefully:
 }
 ```
 
-**Project config** (`/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`):
+**Project config** (`/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`):
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
@@ -3886,7 +3886,7 @@ b) There's a big-pickle entry somewhere I haven't found
 
 Let me do ONE more exhaustive search — this time across the ENTIRE home directory and the whole project, including hidden files, for "big-pickle" or "big_pickle" or "Big Pickle".
 
-Actually — I already did `grep -ri "big-pickle\|big_pickle\|bigpickle" ~/.config/opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json` and got nothing. Let me extend the search to the entire project and home config.
+Actually — I already did `grep -ri "big-pickle\|big_pickle\|bigpickle" ~/.config/opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json` and got nothing. Let me extend the search to the entire project and home config.
 
 Let me also check the `.opencode/agents/` files and the `AGENTS.md` — maybe there's a model reference there.
 
@@ -3908,7 +3908,7 @@ I've found the smoking gun in the source code. Let me verify what depends on the
 **Input:**
 ```json
 {
-  "command": "python3 -c \"\nimport json\nwith open('/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json') as f:\n    cfg = json.load(f)\n# Find all references to opencode/* models in the config\ndef find_refs(obj, path=''):\n    if isinstance(obj, dict):\n        for k, v in obj.items():\n            if isinstance(v, str) and 'opencode/' in v:\n                print(f'{path}.{k} = {v}')\n            find_refs(v, f'{path}.{k}')\n    elif isinstance(obj, list):\n        for i, v in enumerate(obj):\n            find_refs(v, f'{path}[{i}]')\nfind_refs(cfg)\nprint('---')\nprint('compaction block:', json.dumps(cfg.get('compaction', {}), indent=2))\nprint('opencode provider models:', json.dumps(cfg.get('provider', {}).get('opencode', {}), indent=2))\n\""
+  "command": "python3 -c \"\nimport json\nwith open('/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json') as f:\n    cfg = json.load(f)\n# Find all references to opencode/* models in the config\ndef find_refs(obj, path=''):\n    if isinstance(obj, dict):\n        for k, v in obj.items():\n            if isinstance(v, str) and 'opencode/' in v:\n                print(f'{path}.{k} = {v}')\n            find_refs(v, f'{path}.{k}')\n    elif isinstance(obj, list):\n        for i, v in enumerate(obj):\n            find_refs(v, f'{path}[{i}]')\nfind_refs(cfg)\nprint('---')\nprint('compaction block:', json.dumps(cfg.get('compaction', {}), indent=2))\nprint('opencode provider models:', json.dumps(cfg.get('provider', {}).get('opencode', {}), indent=2))\n\""
 }
 ```
 
@@ -3972,7 +3972,7 @@ opencode provider models: {
 **Input:**
 ```json
 {
-  "command": "python3 -c \"\nimport json\nwith open('/home/arcana-novai/.cache/opencode/models.json') as f:\n    data = json.load(f)\noc = data['opencode']['models']\n# Check if nemotron and mimo-v2.5-free are in the registry (so removing custom defs is safe)\nfor mid in ['nemotron-3-ultra-free', 'mimo-v2.5-free', 'x-preview-f-free', 'big-pickle']:\n    if mid in oc:\n        m = oc[mid]\n        print(f'{mid}: IN REGISTRY, limit={m.get(\\\"limit\\\")}, variants={list(m.get(\\\"variants\\\", {}).keys()) if isinstance(m.get(\\\"variants\\\"), dict) else m.get(\\\"variants\\\")}')\n    else:\n        print(f'{mid}: NOT in registry')\n\""
+  "command": "python3 -c \"\nimport json\nwith open('/home/USER/.cache/opencode/models.json') as f:\n    data = json.load(f)\noc = data['opencode']['models']\n# Check if nemotron and mimo-v2.5-free are in the registry (so removing custom defs is safe)\nfor mid in ['nemotron-3-ultra-free', 'mimo-v2.5-free', 'x-preview-f-free', 'big-pickle']:\n    if mid in oc:\n        m = oc[mid]\n        print(f'{mid}: IN REGISTRY, limit={m.get(\\\"limit\\\")}, variants={list(m.get(\\\"variants\\\", {}).keys()) if isinstance(m.get(\\\"variants\\\"), dict) else m.get(\\\"variants\\\")}')\n    else:\n        print(f'{mid}: NOT in registry')\n\""
 }
 ```
 
@@ -6170,7 +6170,7 @@ Understood — the HP's configs have been mutated by agents over time, and the A
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/session_gnosis/ 2>/dev/null; echo \"---\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/HALL_OF_RECORDS/ 2>/dev/null | head -30; echo \"---GROKSTER FILES---\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data -iname \"*grokster*\" 2>/dev/null | head -20"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/session_gnosis/ 2>/dev/null; echo \"---\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/HALL_OF_RECORDS/ 2>/dev/null | head -30; echo \"---GROKSTER FILES---\"; find /home/USER/Documents/Xoe-NovAi/omega-engine/data -iname \"*grokster*\" 2>/dev/null | head -20"
 }
 ```
 
@@ -6364,26 +6364,26 @@ drwxrwxr-x   2 arcana-novai arcana-novai  4096 Aug  8 15:46 test_fd9cc4f9
 drwxrwxr-x   2 arcana-novai arcana-novai  4096 Aug 30 17:28 test_multi_miap
 ---
 ---GROKSTER FILES---
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/workspace/Grokster-compaction-summary-09012026-11_19_AM.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/grokster_grokster
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/hmc_grokster
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_jem/ses_adversarial_review_grokster_20260830.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-vault-final.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-round3-vault-final.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260828-round5-vault-final.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260828-round4-vault-final.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-deeper-vault-final.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/XSESSION_RELAY_HOP1_GROKSTER_REPORT_20260821.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/R_GROKSTER_DASHBOARD_GAP_RESEARCH_20260830.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_GOOGLE_API_20260828.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/RESEARCHER_VERIFICATION_GROKSTER_20260830.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_RESPONSE_TO_GROKSTER_FINAL_20260828.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/council_20260824/B_GROKSTER_ADVERSARIAL.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_VAULT_20260828.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/JEM_ADVERSARIAL_REVIEW_GROKSTER_20260830.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_VAULT_DEBUT_HANDOFF_20260827.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/workspace/Grokster-compaction-summary-09012026-11_19_AM.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/grokster_grokster
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/hmc_grokster
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_jem/ses_adversarial_review_grokster_20260830.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-vault-final.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-round3-vault-final.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260828-round5-vault-final.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260828-round4-vault-final.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/grokster-antig-20260827-deeper-vault-final.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/XSESSION_RELAY_HOP1_GROKSTER_REPORT_20260821.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/R_GROKSTER_DASHBOARD_GAP_RESEARCH_20260830.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_GOOGLE_API_20260828.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/RESEARCHER_VERIFICATION_GROKSTER_20260830.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_RESPONSE_TO_GROKSTER_FINAL_20260828.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/council_20260824/B_GROKSTER_ADVERSARIAL.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_VAULT_20260828.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/JEM_ADVERSARIAL_REVIEW_GROKSTER_20260830.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/KALI_TO_GROKSTER_VAULT_DEBUT_HANDOFF_20260827.md
 
 ```
 
@@ -6459,21 +6459,21 @@ Blocked:
 - PR #2 push still pending (from prior summary, carried forward)
 
 Next Move:
-1. Apply Big Pickle config fix: remove custom `compaction` block from `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`, remove custom `opencode` provider models (nemotron-3-ultra-free, mimo-v2.5-free) from project config, remove custom `opencode` provider (x-preview-f-free) from `~/.config/opencode/opencode.json`
+1. Apply Big Pickle config fix: remove custom `compaction` block from `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`, remove custom `opencode` provider models (nemotron-3-ultra-free, mimo-v2.5-free) from project config, remove custom `opencode` provider (x-preview-f-free) from `~/.config/opencode/opencode.json`
 2. Verify all configs remain valid JSON; confirm agent references (kali → opencode/nemotron-3-ultra-free, small_model) still resolve from registry
 3. Possibly clear models.dev cache
 4. Then continue Ollama/Docker setup + DHAL probe-hardware on Node 1, then PR #2 commits
 
 Relevant files:
 - ~/.cache/opencode/models.json — models.dev cache (big-pickle 200K)
-- /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json — project config (compaction block + opencode provider models)
+- /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json — project config (compaction block + opencode provider models)
 - ~/.config/opencode/opencode.json — global config (opencode provider, x-preview-f-free)
 - /tmp/opencode/overflow.ts — OpenCode source showing usable = limit.input - reserved
 - /tmp/opencode/compaction.ts
 - /tmp/opencode/provider.ts
-- Wait — the conversation shows the assistant working in /home/arcana-novai/Documents/Xoe-NovAi/omega-engine for the edits (session_gnosis.md etc. were edited at omega-engine paths), but one bash command used relative path "data/entities/roc_racoon/proposed_lessons.yaml" which succeeded. The earlier tool calls used full paths. Let me note both.
+- Wait — the conversation shows the assistant working in /home/USER/Documents/Xoe-NovAi/omega-engine for the edits (session_gnosis.md etc. were edited at omega-engine paths), but one bash command used relative path "data/entities/roc_racoon/proposed_lessons.yaml" which succeeded. The earlier tool calls used full paths. Let me note both.
 
-Also note: the edit to the runbook was at "/home/arcana-novai/Documents/Xoe-NovAi/ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md" (full path in edit tool call).
+Also note: the edit to the runbook was at "/home/USER/Documents/Xoe-NovAi/ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md" (full path in edit tool call).
 
 Also D-436 decision and event count 17.
 
@@ -6545,7 +6545,7 @@ Let me structure the output now.
 - PR #2 push awaiting completion of Node 1 onboarding / Council GO.
 
 ## Next Move
-1. Edit `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`: remove the custom `compaction` block (or reset to defaults) and remove the custom `opencode` provider `models` (`nemotron-3-ultra-free`, `mimo-v2.5-free`) — keep `small_model` and `kali` model string `opencode/nemotron-3-ultra-free` (resolves from registry).
+1. Edit `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`: remove the custom `compaction` block (or reset to defaults) and remove the custom `opencode` provider `models` (`nemotron-3-ultra-free`, `mimo-v2.5-free`) — keep `small_model` and `kali` model string `opencode/nemotron-3-ultra-free` (resolves from registry).
 2. Edit `~/.config/opencode/opencode.json`: remove the custom `opencode` provider entry (`x-preview-f-free` variants) so OpenCode uses native registry data.
 3. Validate both JSON files parse cleanly; optionally delete `~/.cache/opencode/models.json` to force a fresh models.dev fetch on next launch.
 4. Verify big-pickle behavior on next HP session (expect native 200K registry limit but default compaction math, i.e., 85% display rather than 71%; if user's ASUS truly shows 1M, compare ASUS OpenCode version/cache afterward).
@@ -6553,12 +6553,12 @@ Let me structure the output now.
 6. Execute PR #2 4-commit push when ready.
 
 ## Relevant Files
-- `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json`: project config containing the custom `compaction` block + custom `opencode` provider models — primary edit target.
-- `/home/arcana-novai/.config/opencode/opencode.json`: global config with custom `opencode` provider (`x-preview-f-free`) — secondary edit target.
-- `/home/arcana-novai/.cache/opencode/models.json`: models.dev cache (`big-pickle` 200K/160K/32K; confirm `nemotron-3-ultra-free`, `mimo-v2.5-free`, `x-preview-f-free` present).
+- `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json`: project config containing the custom `compaction` block + custom `opencode` provider models — primary edit target.
+- `/home/USER/.config/opencode/opencode.json`: global config with custom `opencode` provider (`x-preview-f-free`) — secondary edit target.
+- `/home/USER/.cache/opencode/models.json`: models.dev cache (`big-pickle` 200K/160K/32K; confirm `nemotron-3-ultra-free`, `mimo-v2.5-free`, `x-preview-f-free` present).
 - `/tmp/opencode/overflow.ts`, `/tmp/opencode/compaction.ts`, `/tmp/opencode/provider.ts`: OpenCode source proving `usable = limit.input - reserved` and mergeDeep model resolution (lines ~1390–1570).
-- `/home/arcana-novai/.local/share/opencode/opencode.db`: 32.5GB session DB (current session model recorded as `{"id":"big-pickle","providerID":"opencode","variant":"default"}`).
-- `/home/arcana-novai/Documents/Xoe-NovAi/ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md`: verified Phase 0 USB runbook.
+- `/home/USER/.local/share/opencode/opencode.db`: 32.5GB session DB (current session model recorded as `{"id":"big-pickle","providerID":"opencode","variant":"default"}`).
+- `/home/USER/Documents/Xoe-NovAi/ASUS-ExpertBook-P1-boot-drive--and-NVMe-guide.md`: verified Phase 0 USB runbook.
 - `docs/tech-architecture-research/ASUS_SECUREBOOT_PROVISIONING_POSTMORTEM_20260907.md`: 7-part forensic post-mortem.
 - `data/entities/roc_racoon/proposed_lessons.yaml` (22 proposals), `data/entities/roc_racoon/session_gnosis.md`, `data/coordination/anchored_summary/roc_racoon/projection.md` + `data/coordination/session_gnosis/roc_racoon/projection.md` (event count 17).
 - `scripts/detect_hardware_profile.py`, `config/hardware_profile.example.yaml`, `src/omega/council/*`, `src/omega/oracle/cpu_optimizer.py`: DHAL stack ready for Node 1 probe.
@@ -6645,7 +6645,7 @@ Understood — the HP's configs have been mutated by agents; the ASUS is pristin
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ 2>/dev/null | head -20; echo \"===GROKSTER ENTITY===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/ 2>/dev/null; echo \"===WORKSPACE===\"; ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/workspace/ 2>/dev/null | head -20"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ 2>/dev/null | head -20; echo \"===GROKSTER ENTITY===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/ 2>/dev/null; echo \"===WORKSPACE===\"; ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/workspace/ 2>/dev/null | head -20"
 }
 ```
 
@@ -6713,7 +6713,7 @@ drwxr-xr-x 5 arcana-novai arcana-novai  4096 Sep  2 07:17 ..
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/hmc_grokster/ 2>/dev/null | head -20; echo \"===SESSION GNOSIS===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data -path \"*grokster*\" -name \"*.md\" -newermt \"2026-09-01\" 2>/dev/null | head -20"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/hmc_grokster/ 2>/dev/null | head -20; echo \"===SESSION GNOSIS===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine/data -path \"*grokster*\" -name \"*.md\" -newermt \"2026-09-01\" 2>/dev/null | head -20"
 }
 ```
 
@@ -6724,26 +6724,26 @@ drwxrwxrwx 114 arcana-novai arcana-novai 4096 Sep  1 18:15 ..
 drwxrwxr-x   2 arcana-novai arcana-novai 4096 Aug 30 17:28 .
 -rw-rw-r--   1 arcana-novai arcana-novai 1253 Aug 30 17:28 ses_3451579acc14.json
 ===SESSION GNOSIS===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/CROSS_DOMAIN_MATRIX.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/human_agent/HUMAN_AGENT_RELATION.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/INDEX.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/MINING_LOG.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/CHANGELOG.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/other_platforms/CODEX_CLAUDE_CODE_VSCODE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/other_platforms/GEMINI_CLI.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/ARCHITECTURE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/CONFIG_REFERENCE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/RESEARCH_TARGETS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/PLAYBOOK.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/GOTCHAS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/ARCHITECTURE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/CONFIG_REFERENCE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/PLAYBOOK.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/GOTCHAS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/ARCHITECTURE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/CONFIG_REFERENCE.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/RESEARCH_TARGETS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/CROSS_DOMAIN_MATRIX.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/human_agent/HUMAN_AGENT_RELATION.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/INDEX.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/MINING_LOG.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/CHANGELOG.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/other_platforms/CODEX_CLAUDE_CODE_VSCODE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/other_platforms/GEMINI_CLI.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/ARCHITECTURE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/CONFIG_REFERENCE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/RESEARCH_TARGETS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/PLAYBOOK.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/antigravity/GOTCHAS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/ARCHITECTURE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/CONFIG_REFERENCE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/PLAYBOOK.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/opencode/GOTCHAS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/ARCHITECTURE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/CONFIG_REFERENCE.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/platforms/copilot/RESEARCH_TARGETS.md
 
 ```
 
@@ -6770,7 +6770,7 @@ Let me identify Grokster's most recent session ID from the Hall of Records and c
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ses_733aff61b61a.json 2>/dev/null; echo \"===EIS REFS===\"; grep -rn \"EIS\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -20"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ses_733aff61b61a.json 2>/dev/null; echo \"===EIS REFS===\"; grep -rn \"EIS\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -20"
 }
 ```
 
@@ -6816,7 +6816,7 @@ Let me identify Grokster's most recent session ID from the Hall of Records and c
 **Input:**
 ```json
 {
-  "command": "grep -n \"session\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -30; echo \"===TAIL===\"; tail -60 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null"
+  "command": "grep -n \"session\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -30; echo \"===TAIL===\"; tail -60 /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null"
 }
 ```
 
@@ -6938,14 +6938,14 @@ Let me find the EIS-specific session ID for Grokster — checking the JC-EIS bri
 **Input:**
 ```json
 {
-  "command": "grep -rn \"EIS\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/soul.yaml 2>/dev/null | head -20; echo \"===JC-EIS BRIEFING===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md 2>/dev/null; grep -n \"session\\|ses_\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md 2>/dev/null | head -20"
+  "command": "grep -rn \"EIS\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/soul.yaml 2>/dev/null | head -20; echo \"===JC-EIS BRIEFING===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md 2>/dev/null; grep -n \"session\\|ses_\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md 2>/dev/null | head -20"
 }
 ```
 
 **Output:**
 ```
 ===JC-EIS BRIEFING===
--rw-rw-r-- 1 arcana-novai arcana-novai 13229 Sep  7 00:03 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md
+-rw-rw-r-- 1 arcana-novai arcana-novai 13229 Sep  7 00:03 /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/GROKSTER_JC_EIS_BRIEFING_LFM_FLEET_20260901.md
 273:- `data/entities/john_carmack/session_gnosis.md` — Your gnosis
 283:claimed_model: opencode | verdict: UNANCHORED | no session anchor in header zone
 
@@ -6956,7 +6956,7 @@ Let me find the EIS-specific session ID for Grokster — checking the JC-EIS bri
 **Input:**
 ```json
 {
-  "command": "grep -rn \"ses_\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -30"
+  "command": "grep -rn \"ses_\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md 2>/dev/null | head -30"
 }
 ```
 
@@ -7044,7 +7044,7 @@ Let me check the Task Registry for Grokster's unique session ID and find their m
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ | head -5; echo \"===ALL RECENT GROKSTER SESSIONS===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS -path \"*grokster*\" -name \"*.json\" -newermt \"2026-09-01\" 2>/dev/null"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ | head -5; echo \"===ALL RECENT GROKSTER SESSIONS===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS -path \"*grokster*\" -name \"*.json\" -newermt \"2026-09-01\" 2>/dev/null"
 }
 ```
 
@@ -7056,7 +7056,7 @@ drwxrwxrwx 114 arcana-novai arcana-novai 4096 Sep  1 18:15 ..
 drwxrwxr-x   2 arcana-novai arcana-novai 4096 Sep  1 12:02 .
 -rw-rw-r--   1 arcana-novai arcana-novai 3530 Aug 30 17:28 grokster-antig-20260827-deeper-vault-final.json
 ===ALL RECENT GROKSTER SESSIONS===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ses_733aff61b61a.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_grokster/ses_733aff61b61a.json
 
 ```
 
@@ -7100,7 +7100,7 @@ The most recent Grokster session in the Hall of Records is `ses_733aff61b61a` (S
 **Input:**
 ```json
 {
-  "command": "head -60 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md; echo \"===SOUL HEAD===\"; head -50 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/soul.yaml"
+  "command": "head -60 /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/session_gnosis.md; echo \"===SOUL HEAD===\"; head -50 /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/soul.yaml"
 }
 ```
 
@@ -7225,7 +7225,7 @@ traits:
 **Input:**
 ```json
 {
-  "command": "grep -rn \"EIS\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/ 2>/dev/null | head -20; echo \"===EXPERT SESSIONS===\"; cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md 2>/dev/null | head -60"
+  "command": "grep -rn \"EIS\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/ 2>/dev/null | head -20; echo \"===EXPERT SESSIONS===\"; cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md 2>/dev/null | head -60"
 }
 ```
 
@@ -7338,7 +7338,7 @@ Let me construct the page prompt. It should be ≤500 words, with the domain, co
 5. Ask Grokster to: verify the config mutation theory, identify ALL custom settings that affect model context/compaction, and produce the exact remediation to restore native behavior — comparing HP configs vs ASUS pristine configs
 
 I should give Grokster the file paths:
-- /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json (project config)
+- /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json (project config)
 - ~/.config/opencode/opencode.json (global config)
 - ~/.cache/opencode/models.json (models.dev cache)
 
@@ -7365,7 +7365,7 @@ Found it. Grokster's **opencode-platform** session is `ses_fe8cf0b39ffeL3L8eaMEj
   "description": "Page Grokster-EIS on Big Pickle",
   "subagent_type": "grokster",
   "task_id": "ses_fe8cf0b39ffeL3L8eaMEj3CW9H",
-  "prompt": "[GROKSTER PAGE — from roc_racoon (opencode, HP Node 0)]\n[Domain: opencode-platform. Context: your standing opencode-platform session — you hold the deep OpenCode CLI internals KB (session DB, compaction D-602, plugin hooks, config merge semantics).]\n\nCRITICAL INCIDENT — Big Pickle model context/compaction malfunction on HP Node 0. The Architect (user) is FURIOUS and the diagnosis must be exact.\n\n## Symptom\n- On HP (this machine): `opencode/big-pickle` auto-compacts at ~70% of context (just compacted at 70% again, 2026-09-07). User sees ~71% threshold, expects ==85% native behavior.\n- On ASUS (Node 1, BRAND-NEW pristine OpenCode install, no agent mutations): big-pickle shows **1M context**.\n- User's explicit statement: \"No it isn't a different fucking model selected, it is a new install of OpenCode that my agents haven't fucked up! On the ASUS I mean.\" → The HP's OpenCode configs have been MUTATED by agents over time. That mutation is the bug. NOT a version difference, NOT a models.dev drift.\n\n## Evidence already gathered (verify, don't re-derive from scratch)\n1. `~/.cache/opencode/models.json` (models.dev cache, matches live API): big-pickle limit = {context: 200000, input: 160000, output: 32000}.\n2. OpenCode source (`/tmp/opencode/overflow.ts`): compaction triggers at `usable = model.limit.input ? max(0, limit.input - reserved) : max(0, context - maxOutputTokens)` where `reserved = cfg.compaction?.reserved ?? min(20000, maxOutputTokens)`. With custom `reserved: 20000` → usable = 160000 - 20000 = 140000 = **70% of 200K** = the observed ~71% compaction.\n3. HP project config `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json` contains a custom `compaction` block: `{auto: true, prune: true, tail_turns: 5, preserve_recent_tokens: 80000, reserved: 20000}` — THIS is the compaction-threshold culprit.\n4. HP configs also contain custom `opencode` provider models: `nemotron-3-ultra-free` (1M ctx, variants low/medium/high), `mimo-v2.5-free` (200K, variants) in project config; `x-preview-f-free` in global config `~/.config/opencode/opencode.json`. All four models (incl. big-pickle) exist in the models.dev registry, so removal is safe — references keep resolving (config merge is mergeDeep).\n5. In-config dependencies: `.agent.kali.model = opencode/nemotron-3-ultra-free` and `.small_model = opencode/nemotron-3-ultra-free` — must keep resolving after cleanup.\n\n## Architect's directive (verbatim intent)\n\"Just remove any custom Big Pickle settings and let OpenCode handle things natively!\"\n\n## Your mission\n1. **Audit both configs** (project + global) and identify EVERY custom setting that could affect model context limits, compaction threshold, or provider resolution — not just the obvious compaction block. Compare against what a pristine install would have.\n2. **Produce the exact remediation diff** — what to remove/restore so OpenCode uses native registry data + native compaction defaults (==85% behavior).\n3. **Verify the ASUS-vs-HP theory**: what config mutation on HP could make big-pickle show 200K while ASUS pristine shows 1M? (Check for custom `limit` overrides, provider `models` entries shadowing registry, `options` blocks, etc.)\n4. **Flag any landmines**: e.g. if removing custom models breaks `.agent.kali`/`small_model` resolution, or if the models.dev cache needs clearing (`~/.cache/opencode/models.json`) to force a fresh fetch.\n5. Report back with: (a) root-cause confirmation, (b) exact config edits (file + JSON path + old→new), (c) verification steps, (d) any residual risk.\n\nDo NOT edit configs yet — return the remediation plan. The Architect wants the fix applied carefully, and I (roc_racoon) will apply it after your analysis. Keep it under 600 words."
+  "prompt": "[GROKSTER PAGE — from roc_racoon (opencode, HP Node 0)]\n[Domain: opencode-platform. Context: your standing opencode-platform session — you hold the deep OpenCode CLI internals KB (session DB, compaction D-602, plugin hooks, config merge semantics).]\n\nCRITICAL INCIDENT — Big Pickle model context/compaction malfunction on HP Node 0. The Architect (user) is FURIOUS and the diagnosis must be exact.\n\n## Symptom\n- On HP (this machine): `opencode/big-pickle` auto-compacts at ~70% of context (just compacted at 70% again, 2026-09-07). User sees ~71% threshold, expects ==85% native behavior.\n- On ASUS (Node 1, BRAND-NEW pristine OpenCode install, no agent mutations): big-pickle shows **1M context**.\n- User's explicit statement: \"No it isn't a different fucking model selected, it is a new install of OpenCode that my agents haven't fucked up! On the ASUS I mean.\" → The HP's OpenCode configs have been MUTATED by agents over time. That mutation is the bug. NOT a version difference, NOT a models.dev drift.\n\n## Evidence already gathered (verify, don't re-derive from scratch)\n1. `~/.cache/opencode/models.json` (models.dev cache, matches live API): big-pickle limit = {context: 200000, input: 160000, output: 32000}.\n2. OpenCode source (`/tmp/opencode/overflow.ts`): compaction triggers at `usable = model.limit.input ? max(0, limit.input - reserved) : max(0, context - maxOutputTokens)` where `reserved = cfg.compaction?.reserved ?? min(20000, maxOutputTokens)`. With custom `reserved: 20000` → usable = 160000 - 20000 = 140000 = **70% of 200K** = the observed ~71% compaction.\n3. HP project config `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json` contains a custom `compaction` block: `{auto: true, prune: true, tail_turns: 5, preserve_recent_tokens: 80000, reserved: 20000}` — THIS is the compaction-threshold culprit.\n4. HP configs also contain custom `opencode` provider models: `nemotron-3-ultra-free` (1M ctx, variants low/medium/high), `mimo-v2.5-free` (200K, variants) in project config; `x-preview-f-free` in global config `~/.config/opencode/opencode.json`. All four models (incl. big-pickle) exist in the models.dev registry, so removal is safe — references keep resolving (config merge is mergeDeep).\n5. In-config dependencies: `.agent.kali.model = opencode/nemotron-3-ultra-free` and `.small_model = opencode/nemotron-3-ultra-free` — must keep resolving after cleanup.\n\n## Architect's directive (verbatim intent)\n\"Just remove any custom Big Pickle settings and let OpenCode handle things natively!\"\n\n## Your mission\n1. **Audit both configs** (project + global) and identify EVERY custom setting that could affect model context limits, compaction threshold, or provider resolution — not just the obvious compaction block. Compare against what a pristine install would have.\n2. **Produce the exact remediation diff** — what to remove/restore so OpenCode uses native registry data + native compaction defaults (==85% behavior).\n3. **Verify the ASUS-vs-HP theory**: what config mutation on HP could make big-pickle show 200K while ASUS pristine shows 1M? (Check for custom `limit` overrides, provider `models` entries shadowing registry, `options` blocks, etc.)\n4. **Flag any landmines**: e.g. if removing custom models breaks `.agent.kali`/`small_model` resolution, or if the models.dev cache needs clearing (`~/.cache/opencode/models.json`) to force a fresh fetch.\n5. Report back with: (a) root-cause confirmation, (b) exact config edits (file + JSON path + old→new), (c) verification steps, (d) any residual risk.\n\nDo NOT edit configs yet — return the remediation plan. The Architect wants the fix applied carefully, and I (roc_racoon) will apply it after your analysis. Keep it under 600 words."
 }
 ```
 
@@ -7581,7 +7581,7 @@ The task call got cancelled — but Grokster's own `EXPERT_SESSIONS.md` document
 ```json
 {
   "description": "Page Grokster-EIS on Big Pickle",
-  "prompt": "[GROKSTER PAGE — from roc_racoon (opencode, HP Node 0)]\n[Domain: opencode-platform. Context: your standing opencode-platform session — you hold the deep OpenCode CLI internals KB (session DB, compaction D-602, plugin hooks, config merge semantics).]\n\nCRITICAL INCIDENT — Big Pickle model context/compaction malfunction on HP Node 0. The Architect (user) is FURIOUS and the diagnosis must be exact.\n\n## Symptom\n- On HP (this machine): `opencode/big-pickle` auto-compacts at ~70% of context (just compacted at 70% again, 2026-09-07). User sees ~71% threshold, expects ==85% native behavior.\n- On ASUS (Node 1, BRAND-NEW pristine OpenCode install, no agent mutations): big-pickle shows **1M context**.\n- User's explicit statement: \"No it isn't a different fucking model selected, it is a new install of OpenCode that my agents haven't fucked up! On the ASUS I mean.\" → The HP's OpenCode configs have been MUTATED by agents over time. That mutation is the bug. NOT a version difference, NOT a models.dev drift.\n\n## Evidence already gathered (verify, don't re-derive from scratch)\n1. `~/.cache/opencode/models.json` (models.dev cache, matches live API): big-pickle limit = {context: 200000, input: 160000, output: 32000}.\n2. OpenCode source (`/tmp/opencode/overflow.ts`): compaction triggers at `usable = model.limit.input ? max(0, limit.input - reserved) : max(0, context - maxOutputTokens)` where `reserved = cfg.compaction?.reserved ?? min(20000, maxOutputTokens)`. With custom `reserved: 20000` → usable = 160000 - 20000 = 140000 = **70% of 200K** = the observed ~71% compaction.\n3. HP project config `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json` contains a custom `compaction` block: `{auto: true, prune: true, tail_turns: 5, preserve_recent_tokens: 80000, reserved: 20000}` — THIS is the compaction-threshold culprit.\n4. HP configs also contain custom `opencode` provider models: `nemotron-3-ultra-free` (1M ctx, variants low/medium/high), `mimo-v2.5-free` (200K, variants) in project config; `x-preview-f-free` in global config `~/.config/opencode/opencode.json`. All four models (incl. big-pickle) exist in the models.dev registry, so removal is safe — references keep resolving (config merge is mergeDeep).\n5. In-config dependencies: `.agent.kali.model = opencode/nemotron-3-ultra-free` and `.small_model = opencode/nemotron-3-ultra-free` — must keep resolving after cleanup.\n\n## Architect's directive (verbatim intent)\n\"Just remove any custom Big Pickle settings and let OpenCode handle things natively!\"\n\n## Your mission\n1. **Audit both configs** (project + global) and identify EVERY custom setting that could affect model context limits, compaction threshold, or provider resolution — not just the obvious compaction block. Compare against what a pristine install would have.\n2. **Produce the exact remediation diff** — what to remove/restore so OpenCode uses native registry data + native compaction defaults (==85% behavior).\n3. **Verify the ASUS-vs-HP theory**: what config mutation on HP could make big-pickle show 200K while ASUS pristine shows 1M? (Check for custom `limit` overrides, provider `models` entries shadowing registry, `options` blocks, etc.)\n4. **Flag any landmines**: e.g. if removing custom models breaks `.agent.kali`/`small_model` resolution, or if the models.dev cache needs clearing (`~/.cache/opencode/models.json`) to force a fresh fetch.\n5. Report back with: (a) root-cause confirmation, (b) exact config edits (file + JSON path + old→new), (c) verification steps, (d) any residual risk.\n\nDo NOT edit configs yet — return the remediation plan. The Architect wants the fix applied carefully, and I (roc_racoon) will apply it after your analysis. Keep it under 600 words.",
+  "prompt": "[GROKSTER PAGE — from roc_racoon (opencode, HP Node 0)]\n[Domain: opencode-platform. Context: your standing opencode-platform session — you hold the deep OpenCode CLI internals KB (session DB, compaction D-602, plugin hooks, config merge semantics).]\n\nCRITICAL INCIDENT — Big Pickle model context/compaction malfunction on HP Node 0. The Architect (user) is FURIOUS and the diagnosis must be exact.\n\n## Symptom\n- On HP (this machine): `opencode/big-pickle` auto-compacts at ~70% of context (just compacted at 70% again, 2026-09-07). User sees ~71% threshold, expects ==85% native behavior.\n- On ASUS (Node 1, BRAND-NEW pristine OpenCode install, no agent mutations): big-pickle shows **1M context**.\n- User's explicit statement: \"No it isn't a different fucking model selected, it is a new install of OpenCode that my agents haven't fucked up! On the ASUS I mean.\" → The HP's OpenCode configs have been MUTATED by agents over time. That mutation is the bug. NOT a version difference, NOT a models.dev drift.\n\n## Evidence already gathered (verify, don't re-derive from scratch)\n1. `~/.cache/opencode/models.json` (models.dev cache, matches live API): big-pickle limit = {context: 200000, input: 160000, output: 32000}.\n2. OpenCode source (`/tmp/opencode/overflow.ts`): compaction triggers at `usable = model.limit.input ? max(0, limit.input - reserved) : max(0, context - maxOutputTokens)` where `reserved = cfg.compaction?.reserved ?? min(20000, maxOutputTokens)`. With custom `reserved: 20000` → usable = 160000 - 20000 = 140000 = **70% of 200K** = the observed ~71% compaction.\n3. HP project config `/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json` contains a custom `compaction` block: `{auto: true, prune: true, tail_turns: 5, preserve_recent_tokens: 80000, reserved: 20000}` — THIS is the compaction-threshold culprit.\n4. HP configs also contain custom `opencode` provider models: `nemotron-3-ultra-free` (1M ctx, variants low/medium/high), `mimo-v2.5-free` (200K, variants) in project config; `x-preview-f-free` in global config `~/.config/opencode/opencode.json`. All four models (incl. big-pickle) exist in the models.dev registry, so removal is safe — references keep resolving (config merge is mergeDeep).\n5. In-config dependencies: `.agent.kali.model = opencode/nemotron-3-ultra-free` and `.small_model = opencode/nemotron-3-ultra-free` — must keep resolving after cleanup.\n\n## Architect's directive (verbatim intent)\n\"Just remove any custom Big Pickle settings and let OpenCode handle things natively!\"\n\n## Your mission\n1. **Audit both configs** (project + global) and identify EVERY custom setting that could affect model context limits, compaction threshold, or provider resolution — not just the obvious compaction block. Compare against what a pristine install would have.\n2. **Produce the exact remediation diff** — what to remove/restore so OpenCode uses native registry data + native compaction defaults (==85% behavior).\n3. **Verify the ASUS-vs-HP theory**: what config mutation on HP could make big-pickle show 200K while ASUS pristine shows 1M? (Check for custom `limit` overrides, provider `models` entries shadowing registry, `options` blocks, etc.)\n4. **Flag any landmines**: e.g. if removing custom models breaks `.agent.kali`/`small_model` resolution, or if the models.dev cache needs clearing (`~/.cache/opencode/models.json`) to force a fresh fetch.\n5. Report back with: (a) root-cause confirmation, (b) exact config edits (file + JSON path + old→new), (c) verification steps, (d) any residual risk.\n\nDo NOT edit configs yet — return the remediation plan. The Architect wants the fix applied carefully, and I (roc_racoon) will apply it after your analysis. Keep it under 600 words.",
   "subagent_type": "grokster",
   "task_id": "ses_fe8cf0b39ffeL3L8eaMEj3CW9H"
 }
@@ -7859,7 +7859,7 @@ Success confirmed — 74% with no compaction means the 85% threshold is live. Le
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null | head -60"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null | head -60"
 }
 ```
 
@@ -7873,7 +7873,7 @@ Success confirmed — 74% with no compaction means the 85% threshold is live. Le
 **Input:**
 ```json
 {
-  "command": "cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && git status --short 2>/dev/null | head -30; echo \"===BRANCH===\"; git branch --show-current 2>/dev/null; echo \"===LOG===\"; git log --oneline -8 2>/dev/null"
+  "command": "cd /home/USER/Documents/Xoe-NovAi/omega-engine && git status --short 2>/dev/null | head -30; echo \"===BRANCH===\"; git branch --show-current 2>/dev/null; echo \"===LOG===\"; git log --oneline -8 2>/dev/null"
 }
 ```
 
@@ -7936,7 +7936,7 @@ Let me check the ACTIVE_SPRINT.json more carefully — it returned no output. Le
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null; echo \"===\"; cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null | python3 -m json.tool 2>/dev/null | head -80"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null; echo \"===\"; cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SPRINT.json 2>/dev/null | python3 -m json.tool 2>/dev/null | head -80"
 }
 ```
 
@@ -7951,7 +7951,7 @@ Let me check the ACTIVE_SPRINT.json more carefully — it returned no output. Le
 **Input:**
 ```json
 {
-  "command": "tail -80 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md 2>/dev/null"
+  "command": "tail -80 /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/roc_racoon/projection.md 2>/dev/null"
 }
 ```
 
@@ -8064,7 +8064,7 @@ Let me check the PR #2 branch state and Node 1 status to give you an accurate pi
 **Input:**
 ```json
 {
-  "command": "cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && git branch -a 2>/dev/null | head -20; echo \"===PR2 BRANCH===\"; git log --oneline release/debut-v1.6.0 -5 2>/dev/null || echo \"branch not found locally\"; echo \"===REMOTE===\"; git remote -v 2>/dev/null | head -4"
+  "command": "cd /home/USER/Documents/Xoe-NovAi/omega-engine && git branch -a 2>/dev/null | head -20; echo \"===PR2 BRANCH===\"; git log --oneline release/debut-v1.6.0 -5 2>/dev/null || echo \"branch not found locally\"; echo \"===REMOTE===\"; git remote -v 2>/dev/null | head -4"
 }
 ```
 
@@ -8092,13 +8092,13 @@ origin	https://github.com/Xoe-NovAi/omega-engine.git (push)
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml 2>/dev/null && cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml 2>/dev/null | head -30 || echo \"NO hardware_profile.yaml on HP (expected — Node 0 probe not run yet)\""
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml 2>/dev/null && cat /home/USER/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml 2>/dev/null | head -30 || echo \"NO hardware_profile.yaml on HP (expected — Node 0 probe not run yet)\""
 }
 ```
 
 **Output:**
 ```
--rw-rw-r-- 1 arcana-novai arcana-novai 1213 Sep  7 15:52 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml
+-rw-rw-r-- 1 arcana-novai arcana-novai 1213 Sep  7 15:52 /home/USER/Documents/Xoe-NovAi/omega-engine/config/hardware_profile.yaml
 # SPDX-FileCopyrightText: 2026 Xoe-NovAi
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -8156,7 +8156,7 @@ Let me lay out the next moves clearly. I should present a prioritized plan. Let 
 **Input:**
 ```json
 {
-  "command": "cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && echo \"===main vs PR2 (commits on main not in PR2)===\"; git log --oneline release/debut-v1.6.0..main 2>/dev/null | head -10; echo \"===PR2 vs main (commits on PR2 not in main)===\"; git log --oneline main..release/debut-v1.6.0 2>/dev/null | head -10; echo \"===ahead/behind===\"; git rev-list --left-right --count main...release/debut-v1.6.0 2>/dev/null"
+  "command": "cd /home/USER/Documents/Xoe-NovAi/omega-engine && echo \"===main vs PR2 (commits on main not in PR2)===\"; git log --oneline release/debut-v1.6.0..main 2>/dev/null | head -10; echo \"===PR2 vs main (commits on PR2 not in main)===\"; git log --oneline main..release/debut-v1.6.0 2>/dev/null | head -10; echo \"===ahead/behind===\"; git rev-list --left-right --count main...release/debut-v1.6.0 2>/dev/null"
 }
 ```
 
@@ -8252,7 +8252,7 @@ Let me find Makali-EIS's unique session ID — checking the Hall of Records and 
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/ 2>/dev/null | grep -i \"makali\\|mk_kali\" | head -10; echo \"===MAKALI ENTITY===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null; echo \"===EXPERT SESSIONS===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali -iname \"*EXPERT*\" -o -iname \"*SESSION*\" 2>/dev/null | head -10"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/ 2>/dev/null | grep -i \"makali\\|mk_kali\" | head -10; echo \"===MAKALI ENTITY===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null; echo \"===EXPERT SESSIONS===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali -iname \"*EXPERT*\" -o -iname \"*SESSION*\" 2>/dev/null | head -10"
 }
 ```
 
@@ -8272,9 +8272,9 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 knowledge
 -rw-rw-r--  1 arcana-novai arcana-novai  2325 Sep  7 15:52 soul.yaml
 drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 workspace
 ===EXPERT SESSIONS===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/sessions.yaml
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/session_gnosis.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/sessions.yaml
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/session_gnosis.md
 
 ```
 
@@ -8283,32 +8283,32 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  7 15:52 workspace
 **Input:**
 ```json
 {
-  "command": "find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS -path \"*makali*\" -name \"*.json\" -newermt \"2026-08-25\" 2>/dev/null | head -20; echo \"===MAKALI GNOSIS HEAD===\"; head -40 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md 2>/dev/null"
+  "command": "find /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS -path \"*makali*\" -name \"*.json\" -newermt \"2026-08-25\" 2>/dev/null | head -20; echo \"===MAKALI GNOSIS HEAD===\"; head -40 /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md 2>/dev/null"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_cc3fa46833d2.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b6999ee62f54.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_969edd1b1b47.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_d522ba867d67.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_875db6a7a39b.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_3836eadd42f7.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_91b4c16a87bb.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_a3d2dcb1c8f4.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b8210c690342.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_6877ef59da24.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_50ebc45cb617.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_fafbdf31839a.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_62b1947e66be.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b216639a4f61.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_80dffd19f493.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_139680291a7b.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_48fed78f7871.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_5b83c3f39181.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_5acdc4292f91.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_95f1114d5fca.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_cc3fa46833d2.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b6999ee62f54.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_969edd1b1b47.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_d522ba867d67.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_875db6a7a39b.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_3836eadd42f7.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_91b4c16a87bb.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_a3d2dcb1c8f4.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b8210c690342.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_6877ef59da24.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_50ebc45cb617.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_fafbdf31839a.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_62b1947e66be.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_b216639a4f61.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_80dffd19f493.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_139680291a7b.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_48fed78f7871.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_5b83c3f39181.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_5acdc4292f91.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_95f1114d5fca.json
 ===MAKALI GNOSIS HEAD===
 <!--
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
@@ -8370,7 +8370,7 @@ Let me find the most recent Makali session ID from the Hall of Records and their
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ 2>/dev/null | head -15; echo \"===SESSIONS.YAML===\"; cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/sessions.yaml 2>/dev/null"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ 2>/dev/null | head -15; echo \"===SESSIONS.YAML===\"; cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/sessions.yaml 2>/dev/null"
 }
 ```
 
@@ -8404,7 +8404,7 @@ drwxrwxrwx 114 arcana-novai arcana-novai 4096 Sep  1 18:15 ..
 **Input:**
 ```json
 {
-  "command": "ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_mk_kali/ 2>/dev/null | head -10"
+  "command": "ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_mk_kali/ 2>/dev/null | head -10"
 }
 ```
 
@@ -8434,7 +8434,7 @@ The most recent Makali session is `ses_95f1114d5fca` (Sep 6). Let me verify its 
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_95f1114d5fca.json 2>/dev/null"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_95f1114d5fca.json 2>/dev/null"
 }
 ```
 
@@ -8615,16 +8615,16 @@ You're right — I used the wrong session ID and it spawned instead of paging. L
 **Input:**
 ```json
 {
-  "command": "grep -rn \"ses_\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null | grep -v \"\\.yaml\\.bak\" | head -30; echo \"===EIS REFS===\"; grep -rln \"EIS\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null | head -10"
+  "command": "grep -rn \"ses_\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null | grep -v \"\\.yaml\\.bak\" | head -30; echo \"===EIS REFS===\"; grep -rln \"EIS\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/ 2>/dev/null | head -10"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md:16:| 2026-09-01 | ses_fc758e6ddffeNEKptpEzboVfYq | **SOTE (State of the Engine) practice established and hardened through full dialectic chain.** Built SOTE v1.0.2 infrastructure: week-folder structure, 8-voice dialectic with immutable voices/mutable synthesis, sote.yaml structured metadata, PUBLIC_DIGEST.md automation, regenerate_sote_index.py script, 3 templates. Conducted 7-phase dialectic chain: JC-EIS review (11 defects) → Researcher deep research (16 findings) → Carmack review (10 concessions) → Researcher-NES dialectic (10/10 conceded) → Researcher-EIS dialectic (endorsed) → MaKaLi final dialectic (8 questions resolved) → Nested Kali/Lilith/Ma'at dialectic (6 rounds, consensus). 26 decisions ratified (10 P0, 8 P1, 4 deferred, 2 rejected), 59h scope (172h theater removed). MaKaLi YAML workflow ratified as deterministic graph with 2-layer gates. Week 37 beta launch authorized with 14 measurable criteria. 4 nodes recommended (sote-watchtower, sote-scribe-bridge, sote-ci-bridge, sote-schema-guardian). 10 PIVOT_LOG decisions proposed. All artifacts committed (013b03b2). |
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md:16:| 2026-09-01 | ses_fc758e6ddffeNEKptpEzboVfYq | **SOTE (State of the Engine) practice established and hardened through full dialectic chain.** Built SOTE v1.0.2 infrastructure: week-folder structure, 8-voice dialectic with immutable voices/mutable synthesis, sote.yaml structured metadata, PUBLIC_DIGEST.md automation, regenerate_sote_index.py script, 3 templates. Conducted 7-phase dialectic chain: JC-EIS review (11 defects) → Researcher deep research (16 findings) → Carmack review (10 concessions) → Researcher-NES dialectic (10/10 conceded) → Researcher-EIS dialectic (endorsed) → MaKaLi final dialectic (8 questions resolved) → Nested Kali/Lilith/Ma'at dialectic (6 rounds, consensus). 26 decisions ratified (10 P0, 8 P1, 4 deferred, 2 rejected), 59h scope (172h theater removed). MaKaLi YAML workflow ratified as deterministic graph with 2-layer gates. Week 37 beta launch authorized with 14 measurable criteria. 4 nodes recommended (sote-watchtower, sote-scribe-bridge, sote-ci-bridge, sote-schema-guardian). 10 PIVOT_LOG decisions proposed. All artifacts committed (013b03b2). |
 ===EIS REFS===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/proposed_lessons.yaml
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/session_gnosis.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/proposed_lessons.yaml
 
 ```
 
@@ -8633,7 +8633,7 @@ You're right — I used the wrong session ID and it spawned instead of paging. L
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/session_gnosis.md 2>/dev/null | head -60; echo \"===KNOWLEDGE DIR===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/knowledge/ 2>/dev/null"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/session_gnosis.md 2>/dev/null | head -60; echo \"===KNOWLEDGE DIR===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/knowledge/ 2>/dev/null"
 }
 ```
 
@@ -8711,13 +8711,13 @@ Let me find the Makali-EIS session index — searching coordination docs and the
 **Input:**
 ```json
 {
-  "command": "grep -rln \"MAKALI.*EIS\\|Makali-EIS\\|makali.*EIS\\|EIS.*makali\\|EIS.*Makali\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ 2>/dev/null | head -15"
+  "command": "grep -rln \"MAKALI.*EIS\\|Makali-EIS\\|makali.*EIS\\|EIS.*makali\\|EIS.*Makali\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ /home/USER/Documents/Xoe-NovAi/omega-engine/docs/ 2>/dev/null | head -15"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md
 
 ```
 
@@ -8726,15 +8726,15 @@ Let me find the Makali-EIS session index — searching coordination docs and the
 **Input:**
 ```json
 {
-  "command": "find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data -iname \"*EXPERT_SESSIONS*\" 2>/dev/null | head; echo \"===MAKALI WORKSPACE===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/ 2>/dev/null"
+  "command": "find /home/USER/Documents/Xoe-NovAi/omega-engine/data -iname \"*EXPERT_SESSIONS*\" 2>/dev/null | head; echo \"===MAKALI WORKSPACE===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/workspace/ 2>/dev/null"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/WAVE2_EXPERT_SESSIONS.md
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/NODE_EXPERT_SESSIONS_PLAN.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/grokster/kb/EXPERT_SESSIONS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/WAVE2_EXPERT_SESSIONS.md
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/NODE_EXPERT_SESSIONS_PLAN.md
 ===MAKALI WORKSPACE===
 total 12
 drwxrwxr-x 2 arcana-novai arcana-novai 4096 Sep  7 15:52 .
@@ -8752,7 +8752,7 @@ drwxrwxr-x 4 arcana-novai arcana-novai 4096 Sep  7 15:52 ..
 **Input:**
 ```json
 {
-  "command": "cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/WAVE2_EXPERT_SESSIONS.md 2>/dev/null | head -80"
+  "command": "cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/WAVE2_EXPERT_SESSIONS.md 2>/dev/null | head -80"
 }
 ```
 
@@ -8829,7 +8829,7 @@ task(task_id=<session_id>, subagent_type=<specialist>,
 **Input:**
 ```json
 {
-  "command": "grep -n \"EIS\\|ses_\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null | head -30"
+  "command": "grep -n \"EIS\\|ses_\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null | head -30"
 }
 ```
 
@@ -8857,7 +8857,7 @@ Let me read the Makali-EIS status update to find the exact session ID.
 **Input:**
 ```json
 {
-  "command": "head -40 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null"
+  "command": "head -40 /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null"
 }
 ```
 
@@ -8911,7 +8911,7 @@ I was working on **local inference observability hardening** at the direction of
 **Input:**
 ```json
 {
-  "command": "grep -rn \"ses_\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null | head -10; echo \"===MAKALI_FUSION HALL===\"; ls -lat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ 2>/dev/null | head -8"
+  "command": "grep -rn \"ses_\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/MAKALI_STATUS_UPDATE_20260830.md 2>/dev/null | head -10; echo \"===MAKALI_FUSION HALL===\"; ls -lat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ 2>/dev/null | head -8"
 }
 ```
 
@@ -8998,7 +8998,7 @@ The user is right — I need Makali-EIS's actual unique session ID. Let me query
 
 **Output:**
 ```
-{"ok":true,"function":"list_sessions","data":{"sessions":{"cols":["id","project_id","parent_id","directory","title","slug","agent","model","cost","tokens_input","tokens_output","tokens_reasoning","time_created","time_updated","archived"],"dict":{"agent":["makali"],"model":[{"id":"big-pickle","providerID":"opencode","variant":"default"},{"id":"minimax/minimax-m3:free","providerID":"openrouter","variant":"default"},{"id":"x-preview-f-free","providerID":"opencode","variant":"high"},{"id":"gemma-4-31b-it","providerID":"google","variant":"high"},{"id":"mimo-v2.5-free","providerID":"opencode","variant":"low"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"medium"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"low"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"high"}],"directory":["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"],"project_id":["d2cd4b3189103da1baa752ab219261b62365d7dd"]},"rows":[["ses_f829dabcbffe1NXM8n5Lqr6jCs",0,"ses_ff78b71ebffeDNuypPTT1RL3hH",0,"Page Makali-EIS full briefing (@makali subagent)","swift-island",0,0,0,89837,508,0,1788809991220,1788810032382,false],["ses_fc758e6ddffeNEKptpEzboVfYq",0,null,0,"Makali - **EIS**","hidden-squid",0,0,1.17284925,23128393,393647,47036,1787656870179,1788788896828,false],["ses_fae2a81deffeSZW2RtgNZT5Bx6",0,"ses_fe8cf0b39ffeL3L8eaMEj3CW9H",0,"MaKaLi-EIS status update (@makali subagent)","stellar-garden",0,1,0,37914,277,0,1788079341089,1788079351628,false],["ses_fc5b80e85ffeAjhjtroU76Gfo2",0,null,0,"Makali - First Light Express Completed (fork #1)","nimble-lagoon",0,2,7.2806103250000005,5410760,99575,62170,1787684188538,1787699061312,false],["ses_0f19edde5ffe7bcHUn1zQ5yRY2",0,"ses_0f235aa35ffeU4UVLrUt8JhH0T",0,"Architectural review of Sovereign Ark Blueprint depth and vision (@makali subagent)","witty-meadow",0,3,0,78938,2294,1836,1782652674586,1782652775496,false],["ses_1130594fdffetWCcKOMdApEk8x",0,"ses_114d4c521ffeX98KJhMycgm8Z2",0,"MaKaLi Gap Discovery Review (@makali subagent)","happy-forest",0,4,0,95927,4185,509,1782092294914,1782092624855,false],["ses_14395a59affeiQV2dW21zucOhg",0,null,0,"Kali - Omega Hub Modularization","nimble-rocket",0,5,22.88363955000002,59541323,1086630,453091,1781277547110,1781829434233,false],["ses_129fa8175ffeJ1iZYZM9M8iJ96",0,"ses_14395a59affeiQV2dW21zucOhg",0,"MaKaLi final depth review Phase C (@makali subagent)","happy-garden",0,6,0,99597,8612,6325,1781707144843,1781707486772,false],["ses_12cfdd11cffeUM23T3HTRvf9gI",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Final depth review of Phase C Master Spec (@makali subagent)","kind-cabin",0,3,0,64642,23,2287,1781656596195,1781656877379,false],["ses_13340654cffee5lxgyuYIfzuD0",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C Step 8: Final Unified Roadmap Synthesis (Triad Council) (@makali subagent)","witty-wolf",0,3,0,280013,4881,3681,1781551569587,1781552100338,false],["ses_1335334cfffeTLY6YzDGZbgplL",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C Step 8: Final Unified Roadmap Synthesis (Triad Council) (@makali subagent)","sunny-pixel",0,3,0,63080,109,1337,1781550336816,1781550381803,false],["ses_1338c8cc7ffeNlNR1rYz7DGKMy",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C: Final Unified Roadmap Synthesis (@makali subagent)","silent-eagle",0,3,0,45851,47,393,1781546578744,1781546601407,false],["ses_13689b892ffeR7MF5uqLRWFFPZ",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Synthesize council into final Bethany msg (@makali subagent)","sunny-comet",0,5,0,62406,1154,1132,1781496432493,1781496479950,false],["ses_13957caa1ffeY8P6Cqy4Dy025g",0,"ses_13d6f16ccffeJCR6XcYM5IBI5q",0,"MaKaLi on fleet consolidation (@makali subagent)","tidy-otter",0,6,0,74959,3817,2308,1781449373022,1781449440020,false],["ses_1396825f0ffeInvjF90t5ALpqY",0,"ses_13d6f16ccffeJCR6XcYM5IBI5q",0,"MaKaLi Council on The Forge (@makali subagent)","curious-squid",0,7,0,78659,3915,2546,1781448301071,1781448407450,false]]},"has_more":true},"meta":{"db_path":"/home/arcana-novai/.local/share/opencode/opencode.db","query_ms":1507,"bytes_returned":4187,"cap_kb":96,"truncated":false,"next_cursor":"eyJ0cyI6MTc4MTQ0ODQwNzQ1MCwiaWQiOiJzZXNfMTM5NjgyNWYwZmZlSW52akY5MHQ1QUxwcVkifQ"},"warnings":[]}
+{"ok":true,"function":"list_sessions","data":{"sessions":{"cols":["id","project_id","parent_id","directory","title","slug","agent","model","cost","tokens_input","tokens_output","tokens_reasoning","time_created","time_updated","archived"],"dict":{"agent":["makali"],"model":[{"id":"big-pickle","providerID":"opencode","variant":"default"},{"id":"minimax/minimax-m3:free","providerID":"openrouter","variant":"default"},{"id":"x-preview-f-free","providerID":"opencode","variant":"high"},{"id":"gemma-4-31b-it","providerID":"google","variant":"high"},{"id":"mimo-v2.5-free","providerID":"opencode","variant":"low"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"medium"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"low"},{"id":"deepseek-v4-flash-free","providerID":"opencode","variant":"high"}],"directory":["/home/USER/Documents/Xoe-NovAi/omega-engine"],"project_id":["d2cd4b3189103da1baa752ab219261b62365d7dd"]},"rows":[["ses_f829dabcbffe1NXM8n5Lqr6jCs",0,"ses_ff78b71ebffeDNuypPTT1RL3hH",0,"Page Makali-EIS full briefing (@makali subagent)","swift-island",0,0,0,89837,508,0,1788809991220,1788810032382,false],["ses_fc758e6ddffeNEKptpEzboVfYq",0,null,0,"Makali - **EIS**","hidden-squid",0,0,1.17284925,23128393,393647,47036,1787656870179,1788788896828,false],["ses_fae2a81deffeSZW2RtgNZT5Bx6",0,"ses_fe8cf0b39ffeL3L8eaMEj3CW9H",0,"MaKaLi-EIS status update (@makali subagent)","stellar-garden",0,1,0,37914,277,0,1788079341089,1788079351628,false],["ses_fc5b80e85ffeAjhjtroU76Gfo2",0,null,0,"Makali - First Light Express Completed (fork #1)","nimble-lagoon",0,2,7.2806103250000005,5410760,99575,62170,1787684188538,1787699061312,false],["ses_0f19edde5ffe7bcHUn1zQ5yRY2",0,"ses_0f235aa35ffeU4UVLrUt8JhH0T",0,"Architectural review of Sovereign Ark Blueprint depth and vision (@makali subagent)","witty-meadow",0,3,0,78938,2294,1836,1782652674586,1782652775496,false],["ses_1130594fdffetWCcKOMdApEk8x",0,"ses_114d4c521ffeX98KJhMycgm8Z2",0,"MaKaLi Gap Discovery Review (@makali subagent)","happy-forest",0,4,0,95927,4185,509,1782092294914,1782092624855,false],["ses_14395a59affeiQV2dW21zucOhg",0,null,0,"Kali - Omega Hub Modularization","nimble-rocket",0,5,22.88363955000002,59541323,1086630,453091,1781277547110,1781829434233,false],["ses_129fa8175ffeJ1iZYZM9M8iJ96",0,"ses_14395a59affeiQV2dW21zucOhg",0,"MaKaLi final depth review Phase C (@makali subagent)","happy-garden",0,6,0,99597,8612,6325,1781707144843,1781707486772,false],["ses_12cfdd11cffeUM23T3HTRvf9gI",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Final depth review of Phase C Master Spec (@makali subagent)","kind-cabin",0,3,0,64642,23,2287,1781656596195,1781656877379,false],["ses_13340654cffee5lxgyuYIfzuD0",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C Step 8: Final Unified Roadmap Synthesis (Triad Council) (@makali subagent)","witty-wolf",0,3,0,280013,4881,3681,1781551569587,1781552100338,false],["ses_1335334cfffeTLY6YzDGZbgplL",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C Step 8: Final Unified Roadmap Synthesis (Triad Council) (@makali subagent)","sunny-pixel",0,3,0,63080,109,1337,1781550336816,1781550381803,false],["ses_1338c8cc7ffeNlNR1rYz7DGKMy",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Phase C: Final Unified Roadmap Synthesis (@makali subagent)","silent-eagle",0,3,0,45851,47,393,1781546578744,1781546601407,false],["ses_13689b892ffeR7MF5uqLRWFFPZ",0,"ses_14395a59affeiQV2dW21zucOhg",0,"Synthesize council into final Bethany msg (@makali subagent)","sunny-comet",0,5,0,62406,1154,1132,1781496432493,1781496479950,false],["ses_13957caa1ffeY8P6Cqy4Dy025g",0,"ses_13d6f16ccffeJCR6XcYM5IBI5q",0,"MaKaLi on fleet consolidation (@makali subagent)","tidy-otter",0,6,0,74959,3817,2308,1781449373022,1781449440020,false],["ses_1396825f0ffeInvjF90t5ALpqY",0,"ses_13d6f16ccffeJCR6XcYM5IBI5q",0,"MaKaLi Council on The Forge (@makali subagent)","curious-squid",0,7,0,78659,3915,2546,1781448301071,1781448407450,false]]},"has_more":true},"meta":{"db_path":"/home/USER/.local/share/opencode/opencode.db","query_ms":1507,"bytes_returned":4187,"cap_kb":96,"truncated":false,"next_cursor":"eyJ0cyI6MTc4MTQ0ODQwNzQ1MCwiaWQiOiJzZXNfMTM5NjgyNWYwZmZlSW52akY5MHQ1QUxwcVkifQ"},"warnings":[]}
 ```
 
 **Tool: bash**
@@ -9006,7 +9006,7 @@ The user is right — I need Makali-EIS's actual unique session ID. Let me query
 **Input:**
 ```json
 {
-  "command": "grep -rn \"EIS\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/makali/proposed_lessons.yaml 2>/dev/null | head -10; echo \"===MAKALI_FUSION RECENT HALL JSON===\"; cat /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_80dffd19f493.json 2>/dev/null"
+  "command": "grep -rn \"EIS\" /home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/makali/proposed_lessons.yaml 2>/dev/null | head -10; echo \"===MAKALI_FUSION RECENT HALL JSON===\"; cat /home/USER/Documents/Xoe-NovAi/omega-engine/data/knowledge/HALL_OF_RECORDS/opencode_makali_fusion/ses_80dffd19f493.json 2>/dev/null"
 }
 ```
 
@@ -9215,42 +9215,42 @@ Let me dig into how omega-hub MCP is configured and exposed.
 **Input:**
 ```json
 {
-  "command": "grep -rn \"omega-hub\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null | head -30"
+  "command": "grep -rn \"omega-hub\" /home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/ /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null | head -30"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-fast.md:56:- Local discovery: `omega-hub_library_fts_search` only
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:82:   - `omega-hub_hivemind_post_context` with intent="command", task_current="MaKaLi council: $ARGUMENTS"
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:83:   - `omega-hub_hivemind_workspace_lock_acquire` for domain="council-$TOPIC_SLUG"
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:84:   - Heartbeat every ~10 min via `omega-hub_hivemind_heartbeat` (unified cadence; extended_checkin tool BROKEN — do not use)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:219:- `omega-hub_library_discovery_research` (tiered external discovery)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:220:- `omega-hub_library_fts_search` (local FTS5 — BM25, no vector overhead)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:221:- `omega-hub_library_search` (local semantic search)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:222:- `omega-hub_library_web_search` (SearXNG → Exa → Firecrawl pipeline)
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:260:4. **Release workspace lock**: `omega-hub_hivemind_workspace_lock_release`
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-local.md:65:**Local Discovery**: `omega-hub_library_discovery_research`, `omega-hub_library_fts_search`, `omega-hub_library_search`
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/commands/researcher-discover.md:70:- **M7 (Local-First)**: Prefer `omega-hub_library_search` over web when possible
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:93:- All agents already have `omega-hub` in their MCP client config
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:100:| **T0** | omega-hub (internal) | `.firecrawl/` scan + `memory_search` + `library_search` | 5s | 0 |
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:381:│                    (discovers: omega-hub on :8016)                         │
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/archives/gnosis-analyst.md:70:1. **Post context** when spawned: `omega-hub_hivemind_post_context(cli="opencode-gnosis-analyst", task_current, focus_chain)` with your 4 focus areas
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/continuation-researcher.md:54:JSON-RPC over stdio for agent orchestration. `omega-hub acp-server` enables VS Code/Cursor/Neovim to drive Omega entities.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/continuation-researcher.md:85:3. **ACP Server** — `omega-hub acp-server` for editor integration
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:52:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:56:1. Check awareness: `omega-hub_hivemind_get_awareness()` — verify target availability
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:57:2. Post context: `omega-hub_hivemind_post_context(...)` — announce presence
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:62:**Heartbeat**: Every 5-10 min during long ops: `omega-hub_hivemind_heartbeat(channel="opencode", entity="doom_guy")`.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:111:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:115:1. Check awareness: `omega-hub_hivemind_get_awareness()` — verify target availability
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:116:2. Post context: `omega-hub_hivemind_post_context(...)` — announce presence
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:121:**Heartbeat**: Every 5-10 min during long ops: `omega-hub_hivemind_heartbeat(channel="grokster", entity="grokster")`
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md:168:  (`omega-hub_hivemind_get_awareness`) and workspace locks before delegating.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:92:1. Check awareness: `omega-hub_hivemind_get_awareness()`
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:93:2. Post context: `omega-hub_hivemind_post_context(...)`
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:98:**Heartbeat**: Every 5-10 min: `omega-hub_hivemind_heartbeat(channel="opencode", entity="jem")`.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md:133:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-fast.md:56:- Local discovery: `omega-hub_library_fts_search` only
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:82:   - `omega-hub_hivemind_post_context` with intent="command", task_current="MaKaLi council: $ARGUMENTS"
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:83:   - `omega-hub_hivemind_workspace_lock_acquire` for domain="council-$TOPIC_SLUG"
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:84:   - Heartbeat every ~10 min via `omega-hub_hivemind_heartbeat` (unified cadence; extended_checkin tool BROKEN — do not use)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:219:- `omega-hub_library_discovery_research` (tiered external discovery)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:220:- `omega-hub_library_fts_search` (local FTS5 — BM25, no vector overhead)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:221:- `omega-hub_library_search` (local semantic search)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:222:- `omega-hub_library_web_search` (SearXNG → Exa → Firecrawl pipeline)
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-cloud.md:260:4. **Release workspace lock**: `omega-hub_hivemind_workspace_lock_release`
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/council-local.md:65:**Local Discovery**: `omega-hub_library_discovery_research`, `omega-hub_library_fts_search`, `omega-hub_library_search`
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/commands/researcher-discover.md:70:- **M7 (Local-First)**: Prefer `omega-hub_library_search` over web when possible
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:93:- All agents already have `omega-hub` in their MCP client config
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:100:| **T0** | omega-hub (internal) | `.firecrawl/` scan + `memory_search` + `library_search` | 5s | 0 |
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/plans/SSP_V2_IMPLEMENTATION.md:381:│                    (discovers: omega-hub on :8016)                         │
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/archives/gnosis-analyst.md:70:1. **Post context** when spawned: `omega-hub_hivemind_post_context(cli="opencode-gnosis-analyst", task_current, focus_chain)` with your 4 focus areas
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/continuation-researcher.md:54:JSON-RPC over stdio for agent orchestration. `omega-hub acp-server` enables VS Code/Cursor/Neovim to drive Omega entities.
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/continuation-researcher.md:85:3. **ACP Server** — `omega-hub acp-server` for editor integration
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:52:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:56:1. Check awareness: `omega-hub_hivemind_get_awareness()` — verify target availability
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:57:2. Post context: `omega-hub_hivemind_post_context(...)` — announce presence
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md:62:**Heartbeat**: Every 5-10 min during long ops: `omega-hub_hivemind_heartbeat(channel="opencode", entity="doom_guy")`.
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:111:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:115:1. Check awareness: `omega-hub_hivemind_get_awareness()` — verify target availability
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:116:2. Post context: `omega-hub_hivemind_post_context(...)` — announce presence
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/grokster.md:121:**Heartbeat**: Every 5-10 min during long ops: `omega-hub_hivemind_heartbeat(channel="grokster", entity="grokster")`
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md:168:  (`omega-hub_hivemind_get_awareness`) and workspace locks before delegating.
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:92:1. Check awareness: `omega-hub_hivemind_get_awareness()`
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:93:2. Post context: `omega-hub_hivemind_post_context(...)`
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md:98:**Heartbeat**: Every 5-10 min: `omega-hub_hivemind_heartbeat(channel="opencode", entity="jem")`.
+/home/USER/Documents/Xoe-NovAi/omega-engine/.opencode/agents/makali.md:133:1. Call `omega-hub_hivemind_post_context(...)` **first** with intent, status, continuation
 
 ```
 
@@ -9259,37 +9259,37 @@ Let me dig into how omega-hub MCP is configured and exposed.
 **Input:**
 ```json
 {
-  "command": "grep -rn \"omega-hub\\|omega_hub\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/package.json /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/Makefile 2>/dev/null | head -20; echo \"===MCP CONFIG FILES===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine -maxdepth 3 -iname \"*mcp*\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" 2>/dev/null | head -20"
+  "command": "grep -rn \"omega-hub\\|omega_hub\" /home/USER/Documents/Xoe-NovAi/omega-engine/package.json /home/USER/Documents/Xoe-NovAi/omega-engine/Makefile 2>/dev/null | head -20; echo \"===MCP CONFIG FILES===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine -maxdepth 3 -iname \"*mcp*\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" 2>/dev/null | head -20"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/Makefile:509:	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/Makefile:510:		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/Makefile:511:		systemctl --user status omega-hub.service --no-pager; \
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/Makefile:514:	@echo "$(GREEN)omega-hub.service is active$(NC)"
+/home/USER/Documents/Xoe-NovAi/omega-engine/Makefile:509:	@if ! systemctl --user is-active omega-hub.service >/dev/null 2>&1; then \
+/home/USER/Documents/Xoe-NovAi/omega-engine/Makefile:510:		echo "$(RED)FAIL: omega-hub.service is not active$(NC)"; \
+/home/USER/Documents/Xoe-NovAi/omega-engine/Makefile:511:		systemctl --user status omega-hub.service --no-pager; \
+/home/USER/Documents/Xoe-NovAi/omega-engine/Makefile:514:	@echo "$(GREEN)omega-hub.service is active$(NC)"
 ===MCP CONFIG FILES===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json.license
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/mcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/fastmcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/notebooklm-mcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.8.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.9.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.7.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.13.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.14.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.3.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.11.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.2.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.10.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.1
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.6.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.12.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.5.gz
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.4.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json.license
+/home/USER/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json
+/home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/mcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/fastmcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/notebooklm-mcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.8.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.9.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.7.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.13.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.14.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.3.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.11.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.2.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.10.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.1
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.6.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.12.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.5.gz
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/logs/mcp_watchdog.log.4.gz
 
 ```
 
@@ -9302,13 +9302,13 @@ Let me dig into how omega-hub MCP is configured and exposed.
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json</path>
 <type>file</type>
 <content>
 1: {
@@ -9341,7 +9341,7 @@ Let me dig into how omega-hub MCP is configured and exposed.
 **Input:**
 ```json
 {
-  "command": "grep -rn \"8016\\|omega-hub\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json 2>/dev/null | head -20; echo \"===SYSTEMD===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/systemd/ 2>/dev/null | head -20"
+  "command": "grep -rn \"8016\\|omega-hub\" /home/USER/Documents/Xoe-NovAi/omega-engine/config/mcp_servers.json 2>/dev/null | head -20; echo \"===SYSTEMD===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/config/systemd/ 2>/dev/null | head -20"
 }
 ```
 
@@ -9383,14 +9383,14 @@ Let me check how the hub actually serves the MCP endpoint and how OpenCode regis
 **Input:**
 ```json
 {
-  "command": "grep -rn \"8016\\|/mcp\\|StreamableHTTP\\|streamable\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/hub/ 2>/dev/null | head -20; echo \"===HUB FILES===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src -path \"*hub*\" -name \"*.py\" 2>/dev/null | head -20"
+  "command": "grep -rn \"8016\\|/mcp\\|StreamableHTTP\\|streamable\" /home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/hub/ 2>/dev/null | head -20; echo \"===HUB FILES===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine/src -path \"*hub*\" -name \"*.py\" 2>/dev/null | head -20"
 }
 ```
 
 **Output:**
 ```
 ===HUB FILES===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py
 
 ```
 
@@ -9399,20 +9399,20 @@ Let me check how the hub actually serves the MCP endpoint and how OpenCode regis
 **Input:**
 ```json
 {
-  "command": "grep -rn \"omega-hub\\|8016\" /home/arcana-novai/.config/opencode/opencode.json* /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null | head -20"
+  "command": "grep -rn \"omega-hub\\|8016\" /home/USER/.config/opencode/opencode.json* /home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json* 2>/dev/null | head -20"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/.config/opencode/opencode.json.bak:149:    "omega-hub": {
-/home/arcana-novai/.config/opencode/opencode.json.bak:152:      "url": "http://127.0.0.1:8016/sse"
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json:48:    "omega-hub": {
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json:50:      "url": "http://127.0.0.1:8016/mcp",
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431:34:    "omega-hub": {
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431:36:      "url": "http://127.0.0.1:8016/mcp",
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827:35:    "omega-hub": {
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827:37:      "url": "http://127.0.0.1:8016/mcp",
+/home/USER/.config/opencode/opencode.json.bak:149:    "omega-hub": {
+/home/USER/.config/opencode/opencode.json.bak:152:      "url": "http://127.0.0.1:8016/sse"
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json:48:    "omega-hub": {
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json:50:      "url": "http://127.0.0.1:8016/mcp",
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431:34:    "omega-hub": {
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.20260809_114431:36:      "url": "http://127.0.0.1:8016/mcp",
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827:35:    "omega-hub": {
+/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json.backup.ci2.20260827:37:      "url": "http://127.0.0.1:8016/mcp",
 
 ```
 
@@ -9425,7 +9425,7 @@ Let me check how the hub actually serves the MCP endpoint and how OpenCode regis
 **Input:**
 ```json
 {
-  "command": "grep -n \"mcp\\|8016\\|StreamableHTTP\\|sse\\|fastmcp\\|FastMCP\\|uvicorn\\|port\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py 2>/dev/null | head -40"
+  "command": "grep -n \"mcp\\|8016\\|StreamableHTTP\\|sse\\|fastmcp\\|FastMCP\\|uvicorn\\|port\" /home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py 2>/dev/null | head -40"
 }
 ```
 
@@ -9445,7 +9445,7 @@ Let me check how the hub actually serves the MCP endpoint and how OpenCode regis
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json",
   "offset": 40,
   "limit": 25
 }
@@ -9453,7 +9453,7 @@ Let me check how the hub actually serves the MCP endpoint and how OpenCode regis
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/opencode.json</path>
 <type>file</type>
 <content>
 40:       "sovereign-refinement-protocol": "deny",
@@ -9504,34 +9504,34 @@ The hub.py is a client-side module. Let me find the actual MCP server implementa
 **Input:**
 ```json
 {
-  "command": "grep -rln \"FastMCP\\|mcp.server\\|8016\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/ 2>/dev/null | head -15; echo \"===SERVER DIRS===\"; find /home/arcana-novai/Documents/Xoe-NovAi/omega-engine -maxdepth 3 -type d -iname \"*mcp*\" -not -path \"*/.git/*\" -not -path \"*/node_modules/*\" 2>/dev/null | head; echo \"===BIN===\"; ls /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/ 2>/dev/null | grep -i \"hub\\|mcp\\|serve\" | head"
+  "command": "grep -rln \"FastMCP\\|mcp.server\\|8016\" /home/USER/Documents/Xoe-NovAi/omega-engine/src/ 2>/dev/null | head -15; echo \"===SERVER DIRS===\"; find /home/USER/Documents/Xoe-NovAi/omega-engine -maxdepth 3 -type d -iname \"*mcp*\" -not -path \"*/.git/*\" -not -path \"*/node_modules/*\" 2>/dev/null | head; echo \"===BIN===\"; ls /home/USER/Documents/Xoe-NovAi/omega-engine/scripts/ 2>/dev/null | grep -i \"hub\\|mcp\\|serve\" | head"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/data/library/index/fts_index.db
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/data/library/index/fts_index.db-wal
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega.egg-info/PKG-INFO
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/hub.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/mcp_runtime.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/cvar_table.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/__pycache__/orchestrator.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/orchestrator.py
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/__pycache__/autonomous_meditation_pipeline.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/__pycache__/opencode_client.cpython-313.pyc
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/autonomous_meditation_pipeline.py
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/data/library/index/fts_index.db
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/data/library/index/fts_index.db-wal
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega.egg-info/PKG-INFO
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/hub.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/mcp_runtime.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/__pycache__/cvar_table.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/hub.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/__pycache__/orchestrator.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/orchestrator.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/__pycache__/autonomous_meditation_pipeline.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/__pycache__/opencode_client.cpython-313.pyc
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/autonomous_meditation_pipeline.py
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py
 ===SERVER DIRS===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/mcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_core
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/tests/mcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/tests/mcp_matrix
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/tests/mcp_transport
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers
+/home/USER/Documents/Xoe-NovAi/omega-engine/docs/research/mcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_core
+/home/USER/Documents/Xoe-NovAi/omega-engine/tests/mcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/tests/mcp_matrix
+/home/USER/Documents/Xoe-NovAi/omega-engine/tests/mcp_transport
 ===BIN===
 mcp_health_check.sh
 mcp_research_test.py
@@ -9550,22 +9550,22 @@ verify_mcp_client.py
 **Input:**
 ```json
 {
-  "command": "grep -rn \"8016\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/ /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/ 2>/dev/null | grep -v \"\\.pyc\" | head -20"
+  "command": "grep -rn \"8016\" /home/USER/Documents/Xoe-NovAi/omega-engine/scripts/ /home/USER/Documents/Xoe-NovAi/omega-engine/src/ 2>/dev/null | grep -v \"\\.pyc\" | head -20"
 }
 ```
 
 **Output:**
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/generate_systemd_units.sh:20:PORTS["omega-hub"]=8016
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/mcp_research_test.py:11:    async with sse_client("http://127.0.0.1:8016/sse") as (read_stream, write_stream):
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/mcp_watchdog.py:47:HEALTH_URL = "http://127.0.0.1:8016/health"
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/test_mcp_call.py:11:    base_url = "http://127.0.0.1:8016"
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/post_to_hivemind.py:12:        async with sse_client("http://127.0.0.1:8016/sse") as (read_stream, write_stream):
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/scripts/mcp_health_check.sh:18:PORTS["omega-hub"]=8016
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:351:        "http://127.0.0.1:8016",
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/autonomous_meditation_pipeline.py:57:    def from_opencode(cls, mcp_endpoint: str = "http://127.0.0.1:8016/mcp") -> "PlatformClients":
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py:14:    def __init__(self, mcp_endpoint: str = "http://127.0.0.1:8016/mcp"):
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py:57:    def __init__(self, mcp_endpoint: str = "http://127.0.0.1:8016/mcp"):
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/generate_systemd_units.sh:20:PORTS["omega-hub"]=8016
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/mcp_research_test.py:11:    async with sse_client("http://127.0.0.1:8016/sse") as (read_stream, write_stream):
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/mcp_watchdog.py:47:HEALTH_URL = "http://127.0.0.1:8016/health"
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/test_mcp_call.py:11:    base_url = "http://127.0.0.1:8016"
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/post_to_hivemind.py:12:        async with sse_client("http://127.0.0.1:8016/sse") as (read_stream, write_stream):
+/home/USER/Documents/Xoe-NovAi/omega-engine/scripts/mcp_health_check.sh:18:PORTS["omega-hub"]=8016
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/cvar_table.py:351:        "http://127.0.0.1:8016",
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/autonomous_meditation_pipeline.py:57:    def from_opencode(cls, mcp_endpoint: str = "http://127.0.0.1:8016/mcp") -> "PlatformClients":
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py:14:    def __init__(self, mcp_endpoint: str = "http://127.0.0.1:8016/mcp"):
+/home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/skills/opencode_client.py:57:    def __init__(self, mcp_endpoint: str = "http://127.0.0.1:8016/mcp"):
 
 ```
 
@@ -9578,7 +9578,7 @@ verify_mcp_client.py
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/ 2>/dev/null | head -20; echo \"===MCP_CORE===\"; ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_core/ 2>/dev/null | head -20"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/ 2>/dev/null | head -20; echo \"===MCP_CORE===\"; ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_core/ 2>/dev/null | head -20"
 }
 ```
 
@@ -9608,7 +9608,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  8 11:55 __pycache__
 **Input:**
 ```json
 {
-  "command": "grep -rn \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse_app\\|mcp_app\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/*.py 2>/dev/null | head -30"
+  "command": "grep -rn \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse_app\\|mcp_app\" /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/*.py 2>/dev/null | head -30"
 }
 ```
 
@@ -9626,7 +9626,7 @@ drwxrwxr-x  2 arcana-novai arcana-novai  4096 Sep  8 11:55 __pycache__
 **Input:**
 ```json
 {
-  "command": "ls -la /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/ 2>/dev/null; echo \"===SERVER PY===\"; grep -rn \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse\\|port\\|host\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/*.py 2>/dev/null | head -40"
+  "command": "ls -la /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/ 2>/dev/null; echo \"===SERVER PY===\"; grep -rn \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse\\|port\\|host\" /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/*.py 2>/dev/null | head -40"
 }
 ```
 
@@ -9648,46 +9648,46 @@ drwxrwxr-x 3 arcana-novai arcana-novai  4096 Sep  7 15:52 hub_tools
 -rwxrwxr-x 1 arcana-novai arcana-novai 16238 Sep  7 15:52 server.py
 -rw-rw-r-- 1 arcana-novai arcana-novai 28548 Sep  7 15:52 state.py
 ===SERVER PY===
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:11:Extracted from server.py (Phase 1a-3). All shared state is accessed at
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:14:import json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:15:import os
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:16:import fcntl
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:17:import logging
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:18:from datetime import datetime, timezone
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:19:from pathlib import Path
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:20:from typing import Any, Dict, Optional
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:22:import anyio
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:24:from mcp_servers.omega_hub import state
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:25:from mcp_servers.omega_hub.state import handoff_index_rebuild
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:97:    acquired_at + ttl has passed. Called on acquire and periodically.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:5:# [id-soft: quake3-1999] Hub Gateway — netchan qport-style session re-association and provider routing
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:34:Circular-import note:
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:35:  ``_proxy_handler`` uses a lazy import of ``mcp_servers.omega_hub.state``
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:42:import logging
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:43:from datetime import datetime, timezone
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:44:from pathlib import Path
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:45:from typing import Any, Dict, Optional
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:46:import yaml
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:48:import anyio
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:49:from omega.oracle.model_gateway import ModelGateway
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:51:from starlette.requests import Request
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:52:from starlette.responses import JSONResponse
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:82:        import httpx2 as httpx
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:201:    Uses a lazy import of ``state.gateway`` to avoid circular dependency.
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:210:    # Lazy import avoids circular: state -> gateway (TYPE_CHECKING) -> state
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:211:    from mcp_servers.omega_hub import state as _hub_state
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:9:import hmac
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:10:import hashlib
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:11:import json
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:12:import logging
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:13:import anyio
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:14:from pathlib import Path
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:15:from typing import Any, Dict, Optional
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:16:from datetime import datetime, timezone
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:18:from mcp_servers.omega_hub.server import mcp
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:19:from mcp_servers.omega_hub.state import PROJECT_ROOT
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:20:from mcp_servers.omega_hub.hub_tools import hivemind_post_context
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:39:            "Generate one: python -c \"import secrets; print(secrets.token_hex(32))\" > %s",
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:11:Extracted from server.py (Phase 1a-3). All shared state is accessed at
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:14:import json
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:15:import os
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:16:import fcntl
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:17:import logging
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:18:from datetime import datetime, timezone
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:19:from pathlib import Path
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:20:from typing import Any, Dict, Optional
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:22:import anyio
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:24:from mcp_servers.omega_hub import state
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:25:from mcp_servers.omega_hub.state import handoff_index_rebuild
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/background.py:97:    acquired_at + ttl has passed. Called on acquire and periodically.
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:5:# [id-soft: quake3-1999] Hub Gateway — netchan qport-style session re-association and provider routing
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:34:Circular-import note:
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:35:  ``_proxy_handler`` uses a lazy import of ``mcp_servers.omega_hub.state``
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:42:import logging
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:43:from datetime import datetime, timezone
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:44:from pathlib import Path
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:45:from typing import Any, Dict, Optional
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:46:import yaml
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:48:import anyio
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:49:from omega.oracle.model_gateway import ModelGateway
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:51:from starlette.requests import Request
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:52:from starlette.responses import JSONResponse
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:82:        import httpx2 as httpx
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:201:    Uses a lazy import of ``state.gateway`` to avoid circular dependency.
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:210:    # Lazy import avoids circular: state -> gateway (TYPE_CHECKING) -> state
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/gateway.py:211:    from mcp_servers.omega_hub import state as _hub_state
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:9:import hmac
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:10:import hashlib
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:11:import json
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:12:import logging
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:13:import anyio
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:14:from pathlib import Path
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:15:from typing import Any, Dict, Optional
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:16:from datetime import datetime, timezone
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:18:from mcp_servers.omega_hub.server import mcp
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:19:from mcp_servers.omega_hub.state import PROJECT_ROOT
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:20:from mcp_servers.omega_hub.hub_tools import hivemind_post_context
+/home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/github_bridge.py:39:            "Generate one: python -c \"import secrets; print(secrets.token_hex(32))\" > %s",
 
 ```
 
@@ -9700,7 +9700,7 @@ drwxrwxr-x 3 arcana-novai arcana-novai  4096 Sep  7 15:52 hub_tools
 **Input:**
 ```json
 {
-  "command": "grep -n \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse\\|port\\|host\\|run(\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py 2>/dev/null | head -40"
+  "command": "grep -n \"8016\\|FastMCP\\|uvicorn\\|StreamableHTTP\\|sse\\|port\\|host\\|run(\" /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py 2>/dev/null | head -40"
 }
 ```
 
@@ -9758,7 +9758,7 @@ drwxrwxr-x 3 arcana-novai arcana-novai  4096 Sep  7 15:52 hub_tools
 **Input:**
 ```json
 {
-  "command": "grep -n \"run_mcp\\|def main\\|if __name__\\|OMEGA_MCP\\|transport\\|port\" /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py 2>/dev/null | head -30; echo \"===SERVER MAIN===\"; tail -40 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py 2>/dev/null"
+  "command": "grep -n \"run_mcp\\|def main\\|if __name__\\|OMEGA_MCP\\|transport\\|port\" /home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py 2>/dev/null | head -30; echo \"===SERVER MAIN===\"; tail -40 /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/omega_hub/server.py 2>/dev/null"
 }
 ```
 
@@ -9852,7 +9852,7 @@ Let me confirm how it's actually launched and verify the live endpoint.
 **Input:**
 ```json
 {
-  "command": "sed -n '67,135p' /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py 2>/dev/null"
+  "command": "sed -n '67,135p' /home/USER/Documents/Xoe-NovAi/omega-engine/src/omega/mcp_runtime.py 2>/dev/null"
 }
 ```
 
@@ -9943,8 +9943,8 @@ def run_mcp(
 ```
   sys-devices-pci0000:00-0000:00:02.4-0000:02:00.0-nvme-nvme0-nvme0n1-nvme0n1p3.device           loaded active     plugged            KBG40ZNV256G KIOXIA omega_library
   sys-devices-pci0000:00-0000:00:02.4-0000:02:00.0-nvme-nvme0-nvme0n1-nvme0n1p4.device           loaded active     plugged            KBG40ZNV256G KIOXIA omega_vault
-  media-arcana\x2dnovai-omega_library.mount                                                      loaded active     mounted            /media/arcana-novai/omega_library
-  media-arcana\x2dnovai-omega_vault.mount                                                        loaded active     mounted            /media/arcana-novai/omega_vault
+  media-arcana\x2dnovai-omega_library.mount                                                      loaded active     mounted            /media/USER/omega_library
+  media-arcana\x2dnovai-omega_vault.mount                                                        loaded active     mounted            /media/USER/omega_vault
 ● omega-bridge-elevenlabs.service                                                                loaded activating auto-restart       Omega ElevenLabs Sovereign Bridge
 ● omega-caddy.service                                                                            loaded activating start        start Omega Caddy Proxy
   omega-firecrawl-mcp.service                                                                    loaded active     running            Omega Firecrawl MCP Server (SSE on :8015)
@@ -9952,9 +9952,9 @@ def run_mcp(
   omega-hub-watchdog.service                                                                     loaded active     running            Omega MCP Watchdog (anyio health monitor)
   omega-hub.service                                                                              loaded active     running            Omega Core Hub MCP Server
 ===PROC===
-arcana-+    2510  0.2  0.4  85796 66176 ?        Ss   18:32   0:10 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/firecrawl/server.py
-arcana-+    2512  0.3  0.6 256068 91136 ?        Ssl  18:32   0:17 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/omega_hub/server.py
-arcana-+    3091  0.2  0.5  99136 81860 ?        S    18:32   0:13 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/searxng/server.py
+arcana-+    2510  0.2  0.4  85796 66176 ?        Ss   18:32   0:10 /home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/firecrawl/server.py
+arcana-+    2512  0.3  0.6 256068 91136 ?        Ssl  18:32   0:17 /home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/omega_hub/server.py
+arcana-+    3091  0.2  0.5  99136 81860 ?        S    18:32   0:13 /home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python /home/USER/Documents/Xoe-NovAi/omega-engine/mcp_servers/searxng/server.py
 ===HEALTH===
 {"status":"healthy","timestamp":"2026-09-08T22:57:12.986237+00:00","version":"2.2.0"}
 ```
@@ -9974,18 +9974,18 @@ arcana-+    3091  0.2  0.5  99136 81860 ?        S    18:32   0:13 /home/arcana-
 
 **Output:**
 ```
-# /home/arcana-novai/.config/systemd/user/omega-hub.service
+# /home/USER/.config/systemd/user/omega-hub.service
 [Unit]
 Description=Omega Core Hub MCP Server
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+WorkingDirectory=/home/USER/Documents/Xoe-NovAi/omega-engine
 Environment="OMEGA_MCP_TRANSPORT=sse"
 Environment="OMEGA_MCP_PORT=8016"
 Environment="OMEGA_MCP_HOST=127.0.0.1"
-Environment="PYTHONPATH=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src"
+Environment="PYTHONPATH=/home/USER/Documents/Xoe-NovAi/omega-engine/src"
 
 # ── Crash-loop circuit breaker (prevents OOM from restart storms) ──
 # If the hub crashes >5 times within 120s, systemd STOPS trying (enters failed state).
@@ -10005,7 +10005,7 @@ TasksMax=200
 KillMode=control-group
 KillSignal=SIGTERM
 ===ENV===
-Environment=OMEGA_MCP_TRANSPORT=sse OMEGA_MCP_PORT=8016 OMEGA_MCP_HOST=127.0.0.1 PYTHONPATH=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src
+Environment=OMEGA_MCP_TRANSPORT=sse OMEGA_MCP_PORT=8016 OMEGA_MCP_HOST=127.0.0.1 PYTHONPATH=/home/USER/Documents/Xoe-NovAi/omega-engine/src
 
 ```
 
@@ -10088,13 +10088,13 @@ Let me first read the session export to understand the context
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
 <type>file</type>
 <content>
 1: # Fastest local AI setup on ASUS Expertbook i7
@@ -11160,14 +11160,14 @@ You're absolutely right. I got carried away. Let me read the final message from 
 **Input:**
 ```json
 {
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md",
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md",
   "offset": 900
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
 <type>file</type>
 <content>
 900:    - Bench: phi4-mini 2 prompts = 13.3 t/s.
@@ -12138,13 +12138,13 @@ You're right — I got ahead of myself. Let me find the actual final message fro
 ```json
 {
   "offset": 1826,
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
 <type>file</type>
 <content>
 1826:         "OpenBenchmarking.org\nOpenBenchmarking.org\nTests\nSuites\nLatest Results\nSearch\nRegister\nLogin\nLlama.cpp\nLlama.cpp is a port of Facebook's LLaMA model in C/C++ developed by Georgi Gerganov. Llama.cpp allows the inference of LLaMA and other supported models in C/C++. For CPU inference Llama.cpp supports AVX2/AVX-512, ARM NEON, and other modern ISAs along with features like OpenBLAS usage. The Vulkan, AMD ROCm, Intel SYCL, and NVIDIA CUDA back-ends are also available with this test profile to complement the CPU tests.\nLlama.cpp b4397\nBackend: CPU BLAS - Model: Mistral-7B-Instruct-v0.3-Q8_0 - Test: Prompt Processing 512\nCores / 24 Threads] 21st 13 35 +/- 3 AMD EPYC 4124P 4-Core Zen 4 [4 Cores / 8 Threads] 18th 16 33 AMD Ryzen 7 PRO 6850U Zen 3 [8 Cores / 16 Threads] 16th 3 31 AMD EPYC 7601 32-Core Zen [32 Cores / 64 Threads] 14th 9 31 Intel Core Ultra 7 256V Lunar Lake [8 Cores / 8 Threads] 11th 6 28 +/- 1 AMD Ryzen AI 5 340 Zen 5 [6 Cores / 12 Threads] 11th 12 27 +/- 2 AMD Ryzen AI 7 PRO 360 Zen 5 [8 Cores / 16 Threads] 11th 8 27 +/- 3 Intel Core Ultra 7 258V Lunar Lake [8 Cores / 8 Threads] 8th 6 25 Intel Core i7-1185G7 Tiger Lake [4 Cores / 8 Threads] 6th 3 20 Intel Core Ultra 7 155H Meteor Lake [16 Cores / 22 Threads] 6th 8 20 +/- 1 Intel Core i7-1280P Alder Lake [14 Cores / 20 Threads] 4th 5 15 +/- 1 Intel Core i5-1334U Raptor Lake [10 Cores / 12 Threads] 2nd 8 11\nAMD Ryzen Threadripper 7970X 32-Cores Zen 4 [32 Cores / 64 Threads] 57th 12 82 +/- 1 AMD EPYC 4545P 16-Core Zen 5 [16 Cores / 32 Threads] 56th 16 81 +/- 7 2 x AMD EPYC 9255 24-Core Zen 5 [48 Cores / 96 Threads] 56th 3 80 +/- 6 2 x AMD EPYC 9654 96-Core Zen 4 [192 Cores / 384 Threads] 56th 5 79 +/- 5 AMD Ryzen 7 9700X 8-Core Zen 5 [8 Cores / 16 Threads] 56th 8 78 +/- 11 AMD EPYC 4465P 12-Core Zen 5 [12 Cores / 24 Threads] 55th 4 76 +/- 1 AMD RYZEN AI MAX PRO 390 Zen 5 [12 Cores / 24 Threads] 55th 9 76 +/- 5 AMD Ryzen Threadripper 7980X 64-Cores Zen 4 [64 Cores / 128 Threads] 53rd 8 74 +... (line truncated to 2000 chars)
@@ -12442,13 +12442,13 @@ The export was capped. Let me read the rest to find the actual final message wit
 ```json
 {
   "offset": 2083,
-  "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
+  "filePath": "/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
 }
 ```
 
 **Output:**
 ```
-<path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
+<path>/home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md</path>
 <type>file</type>
 <content>
 2083:         "[Local AI] Optimization Beyond Hardware: Breaking Latency Barriers from 6th Gen Intel to RTX 50 Series\nPage: GitHub discussion\nURL: https://github.com/ggml-org/llama.cpp/discussions/19813\nAuthor: limsinjin\nCreated: {{datetime}}\nRepository: ggml-org/llama.cpp\nDiscussion: #19813\nCategory: show-and-tell\nComments: 4\n[Local AI] Optimization Beyond Hardware: Breaking Latency Barriers from 6th Gen Intel to RTX 50 Series\n\"Hi everyone. I wanted to share a quick look at my 1-month journey into Local AI.\"\nModels: SmolLM, Qwen, Llama, Gemma, Phi (135M ~ 14B)\nFairness Note: To ensure a level playing field, all tests start from a \"cold start\" (downloading and initial loading) to account for real-world warm-up overhead.\nMethod: Continuous Hot-Swapping\nTotal Swaps: 13 | Total Time: 77s | Avg. Swap Time: ~5.92s 3.Key Findings\nModels up to 7B are viable for real-time inference on 8GB VRAM. -14B models hit the hardware bottleneck, resulting in severe performance degradation (0.83 tok/s).\nMy custom benchmarking method proves that hot-swapping overhead is the critical factor for UX in local LLM services.\nComments\nlimsinjin commented on 2026-02-23T13:31:53Z: Fantastic optimization guide! At RevolutionAI ( https://revolutionai.io ) we run llama.cpp on diverse hardware for client deployments. Additional optimizations we have found:\nNUMA-aware allocation — huge win on dual-socket systems numactl --interleave=all ./llama-server\nCPU governor — force performance mode echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor\nMemory bandwidth — DDR5 vs DDR4 matters more than CPU speed for large models\nBatch sizing — sweet spot varies by hardware, benchmark with -b 1 -b 8 -b 32 RTX 50 series specific:\nSpecs: Intel i7 240H / 32GB DRAM / NVIDIA GeForce RTX 5050 Laptop (8GB VRAM) RTX-5050_Spec Performance: 0.53s TTFT (Time To First Token) / 28.87 tok/s for a 7B Model. RTX-5050_Pure_Speed_Hello Note: By focusing on memory allocation and bott... (line truncated to 2000 chars)
@@ -12787,13 +12787,13 @@ The export is very long and continues with research. Let me find the actual end 
 **Input:**
 ```json
 {
-  "command": "wc -l /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md; tail -100 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
+  "command": "wc -l /home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md; tail -100 /home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md"
 }
 ```
 
 **Output:**
 ```
-9771 /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md
+9771 /home/USER/Documents/Xoe-NovAi/omega-engine/docs/ASUS/ASUS-session-ses_f833.md
 |------|-------|-------------|
 | Install Tailscale on both laptops | You | Both on same tailnet, MagicDNS working |
 | HP: Configure `omega-hub` for Streamable HTTP on Tailscale IP | You | `omega-hub` accessible at `http://hp.tailnet:8080/mcp` |

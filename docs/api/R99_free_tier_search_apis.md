@@ -107,8 +107,8 @@ Image=docker.io/searxng/searxng:latest
 ContainerName=omega-searxng
 PublishPort=8888:8080
 Environment=SEARXNG_BASE_URL=http://localhost:8888/
-Volume=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng:U
-Volume=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/searxng/static:/usr/local/searxng:U
+Volume=/home/USER/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng:U
+Volume=/home/USER/Documents/Xoe-NovAi/omega-engine/data/searxng/static:/usr/local/searxng:U
 
 [Service]
 Restart=always

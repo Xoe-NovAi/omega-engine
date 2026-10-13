@@ -46,14 +46,14 @@ SPDX-License-Identifier: Apache-2.0
 ## 🗺 Where everything is
 
 - **Internal repo**: remote `internal`, tip `78ab6877` · **Public repo**: remote `origin`, tip `6307b204`; tag `v1.6.0a0` @ `355cbf1a`; release live (pre-release, audited notes, 4 assets)
-- **Timing logs**: `/media/arcana-novai/omega_library/staging/install-timing-20261013/`
+- **Timing logs**: `/media/USER/omega_library/staging/install-timing-20261013/`
 - **PyPI verify**: `/tmp/omega-rename-verify/` (`the_omega_engine` wheel `e452d8ed…`, smoke PASS)
 - **Retired-repo backup**: `data/handoff/retired-repo-backup/` (issues #1, #7) + `retired/*` refs on internal
-- **opencode.db rollback**: `/media/arcana-novai/8TB/opencode_backups/opencode.db.rollback-20261013014834`
+- **opencode.db rollback**: `/media/USER/8TB/opencode_backups/opencode.db.rollback-20261013014834`
 
 ## 🔑 Working rules to carry forward
 
-- **Two remotes, two flows**: internal work → push `internal` ONLY. Public changes → develop on internal, cherry-pick onto the `public/main` worktree (`/media/arcana-novai/omega_library/staging/public-main`), push `origin main`.
+- **Two remotes, two flows**: internal work → push `internal` ONLY. Public changes → develop on internal, cherry-pick onto the `public/main` worktree (`/media/USER/omega_library/staging/public-main`), push `origin main`.
 - **`set -euo pipefail` + `fuser`-in-`$()` = silent death** (root-caused twice). `|| true` is load-bearing. Same class: `timeout`-kill read as empty = false-PASS on gates — always capture rc.
 - **`OMEGA_*_MODEL` defaults must match the mount**, not `~/omega_library`.
 - **Never reference GitHub tag `v1.6.0-alpha` again.** Use `v1.6.0a0`.

@@ -2,7 +2,7 @@
 
 **Owner:** doom_guy (S1 Infrastructure) · **Executor:** Lilith-N1 (has N1 shell access)
 **Origin:** `scripts/omega_exchange_server.py` @ `2aa3a7f7` — **one** implementation, no forks
-**Law:** `https://n1.tail51f14a.ts.net:805/<path>` — **HTTPS ONLY**
+**Law:** `https://n1.example.invalid:805/<path>` — **HTTPS ONLY**
 **Date:** 2026-10-01
 
 ---
@@ -66,25 +66,25 @@ Context first, so the numbers are interpretable:
 
 ```
 $ tailscale status
-100.123.51.67  n0  n0.tail51f14a.ts.net  linux  -
-100.89.40.17   n1  tagged-devices        linux  active; direct 192.168.10.174:41641, tx 254152 rx 42480
+100.64.0.1  n0  n0.example.invalid  linux  -
+100.64.0.2   n1  tagged-devices        linux  active; direct 192.168.1.101:41641, tx 254152 rx 42480
 
 # Health check:
 #     - Tailscale SSH enabled, but access controls don't allow anyone to access
 #       this device. Ask your admin to update your tailnet's ACLs to allow access.
 ```
 
-Note `direct 192.168.10.174:41641` — **same physical LAN, WireGuard direct, no
+Note `direct 192.168.1.101:41641` — **same physical LAN, WireGuard direct, no
 relay.** A same-LAN RTT is single-digit milliseconds, which is what makes the
 refusal below meaningful rather than a middlebox artifact.
 
 ```
 $ tailscale status --json | jq '.Peer[].DNSName, .Peer[].Tags'
-n1.tail51f14a.ts.net.
+n1.example.invalid.
 ["tag:node1"]
 ```
 
-Port matrix, N0 → N1 (`timeout 5 bash -c 'cat </dev/null >/dev/tcp/100.89.40.17/PORT'`):
+Port matrix, N0 → N1 (`timeout 5 bash -c 'cat </dev/null >/dev/tcp/100.64.0.2/PORT'`):
 
 ```
 port   22: TIMEOUT  (rc=124) -> packet DROPPED (filter)
@@ -99,13 +99,13 @@ port 9999: TIMEOUT  (rc=124) -> packet DROPPED (filter)
 Confirmed by `curl`, and stable across two rounds:
 
 ```
-$ curl -sv http://100.89.40.17:8019/
-*   Trying 100.89.40.17:8019...
-* connect to 100.89.40.17 port 8019 from 100.123.51.67 port 57562 failed: Connection refused
-* Failed to connect to 100.89.40.17 port 8019 after 4 ms: Could not connect to server
+$ curl -sv http://100.64.0.2:8019/
+*   Trying 100.64.0.2:8019...
+* connect to 100.64.0.2 port 8019 from 100.64.0.1 port 57562 failed: Connection refused
+* Failed to connect to 100.64.0.2 port 8019 after 4 ms: Could not connect to server
 
-$ curl -sv http://100.89.40.17:805/
-*   Trying 100.89.40.17:805...
+$ curl -sv http://100.64.0.2:805/
+*   Trying 100.64.0.2:805...
 * Connection timed out after 6002 milliseconds
 ```
 
@@ -147,7 +147,7 @@ local ones in §6, plus pulling from N0 in §7.2.
 
 On N1, as `xnai`:
 
-- [ ] `tailnet` identity: `tailscale status` shows `n1` / `n1.tail51f14a.ts.net`
+- [ ] `tailnet` identity: `tailscale status` shows `n1` / `n1.example.invalid`
 - [ ] `systemd --user` running **and lingering** — without linger the unit dies
       at logout and a reboot-surviving service is a fiction:
       `loginctl show-user xnai -p Linger` → must be `Linger=yes`
@@ -211,8 +211,8 @@ forks the tree and creates a second source of truth that can drift. A symlink
 cannot drift, because it has no content of its own.
 
 > **N0 cannot follow this convention literally, and does not need to.**
-> On N0, `$HOME` **is** `/home/arcana-novai`, so `~/exchange` and the real tree
-> `/home/arcana-novai/exchange` are **the same path**. Making it a symlink to
+> On N0, `$HOME` **is** `/home/USER`, so `~/exchange` and the real tree
+> `/home/USER/exchange` are **the same path**. Making it a symlink to
 > itself is not a thing you can do. N0 satisfies the convention *in substance*
 > — the served path is `~/exchange` and it is the real store — while the form
 > differs (real directory, not symlink). Recorded here so nobody later reads
@@ -283,7 +283,7 @@ Expected in the journal — a startup line, then serving:
 ```
 
 `root=` must be `/home/xnai/exchange` — i.e. the symlink resolved. If it shows
-`/home/arcana-novai/exchange` you are running the **N0 unit**; stop.
+`/home/USER/exchange` you are running the **N0 unit**; stop.
 
 Local liveness, from N1 itself:
 
@@ -324,14 +324,14 @@ tailscale serve status
 Expected shape (mirror of N0's working config):
 
 ```
-https://n1.tail51f14a.ts.net:805 (tailnet only)
+https://n1.example.invalid:805 (tailnet only)
 |-- / proxy http://127.0.0.1:805
 ```
 
 The client URL is then:
 
 ```
-https://n1.tail51f14a.ts.net:805/<path>      # HTTPS ONLY
+https://n1.example.invalid:805/<path>      # HTTPS ONLY
 ```
 
 **If the Architect takes Option B (8019)**, the serve command is:
@@ -350,7 +350,7 @@ positions and the Architect should know it exists.**
 ## 4. THE ONLY SUPPORTED URL FORM
 
 ```
-https://n1.tail51f14a.ts.net:805/<path>
+https://n1.example.invalid:805/<path>
 ```
 
 **HTTPS only. Always `curl -f`.** Plain HTTP to the tailnet IP is answered by
@@ -360,7 +360,7 @@ false-success bug this origin exists to close — full analysis in
 `EXCHANGE_PIPE_RUNBOOK.md` §"The Broken URL Form".
 
 ```bash
-curl -sf -o /tmp/artifact.zip https://n1.tail51f14a.ts.net:805/<path>
+curl -sf -o /tmp/artifact.zip https://n1.example.invalid:805/<path>
 ```
 
 ---
@@ -371,7 +371,7 @@ curl -sf -o /tmp/artifact.zip https://n1.tail51f14a.ts.net:805/<path>
 envelope — never a bare body, never a 200.**
 
 ```bash
-BASE=https://n1.tail51f14a.ts.net:805
+BASE=https://n1.example.invalid:805
 for M in PUT POST DELETE PATCH; do
   printf '%-6s -> ' "$M"
   curl -s -o /dev/null -w '%{http_code}\n' -X "$M" \
@@ -445,8 +445,8 @@ A one-sided green check is the same false success as a 48-byte download.
 ```bash
 # ON N1
 ./scripts/exchange_verify_duplex.sh \
-    https://n0.tail51f14a.ts.net:8019 \
-    /home/arcana-novai/exchange \
+    https://n0.example.invalid:8019 \
+    /home/USER/exchange \
     /home/xnai/exchange 10
 ```
 
@@ -459,9 +459,9 @@ the transfer did not regress. Re-run rather than trusting the old number.
 ```bash
 # ON N0   (repo: ~/Documents/Xoe-NovAi/omega-engine)
 ./scripts/exchange_verify_duplex.sh \
-    https://n1.tail51f14a.ts.net:805 \
+    https://n1.example.invalid:805 \
     /home/xnai/exchange \
-    /home/arcana-novai/exchange 10
+    /home/USER/exchange 10
 ```
 
 Both legs green ⇒ duplex. One leg green ⇒ half-channel, and the report must say
@@ -490,9 +490,9 @@ The script was exercised before shipping, including against the live blocked por
 
 | Test | Invocation (abbreviated) | Result |
 |---|---|---|
-| A — happy path | `… 127.0.0.1:8019 /home/arcana-novai/exchange /home/xnai/exchange 3` | **12/12 PASS, exit 0** |
-| B — self-fetch trap | `… 127.0.0.1:8019 /home/arcana-novai/exchange /home/arcana-novai/exchange 2` | **exit 1** — "ORIGIN IS THIS NODE'S OWN STORE" |
-| C — live ACL drop | `… https://n1.tail51f14a.ts.net:805 …` | **exit 1** — `curl (28) Connection timed out`, diagnosed as ACL drop |
+| A — happy path | `… 127.0.0.1:8019 /home/USER/exchange /home/xnai/exchange 3` | **12/12 PASS, exit 0** |
+| B — self-fetch trap | `… 127.0.0.1:8019 /home/USER/exchange /home/USER/exchange 2` | **exit 1** — "ORIGIN IS THIS NODE'S OWN STORE" |
+| C — live ACL drop | `… https://n1.example.invalid:805 …` | **exit 1** — `curl (28) Connection timed out`, diagnosed as ACL drop |
 
 Test C is the finding from §1 reproduced through the tooling: pointed at the
 port the Architect ruled, the verifier reports a timeout and names it as a
@@ -537,14 +537,14 @@ force, the unit itself is unchanged; only the public port mapping moves.
 `omega_exchange_server.py` hardcodes, in **both** `/` and `/manifest.json`:
 
 ```python
-"url_form": "https://n0.tail51f14a.ts.net:8019/<path>  (HTTPS ONLY)"
+"url_form": "https://n0.example.invalid:8019/<path>  (HTTPS ONLY)"
 ```
 
 Confirmed live on N0, 2026-10-01:
 
 ```
-url_form : https://n0.tail51f14a.ts.net:8019/<path>  (HTTPS ONLY)
-root     : /home/arcana-novai/exchange
+url_form : https://n0.example.invalid:8019/<path>  (HTTPS ONLY)
+root     : /home/USER/exchange
 ```
 
 The string is **not** parameterised by the node serving it. So **N1's manifest

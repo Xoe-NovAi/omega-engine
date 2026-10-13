@@ -131,19 +131,19 @@ sudo systemctl restart nfs-mountd
 ### Immediate Actions
 ```bash
 # 1. Find the biggest offenders
-du -sh /home/arcana-novai/.local/share/containers/ 2>/dev/null  # Podman images
-du -sh /home/arcana-novai/.cache/ 2>/dev/null
+du -sh /home/USER/.local/share/containers/ 2>/dev/null  # Podman images
+du -sh /home/USER/.cache/ 2>/dev/null
 du -sh /var/log/journal/ 2>/dev/null
-du -sh /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/ 2>/dev/null
+du -sh /home/USER/Documents/Xoe-NovAi/omega-engine/data/ 2>/dev/null
 
 # 2. Clean journal (usually 500MB-2GB on active systems)
 sudo journalctl --vacuum-size=100M
 
 # 3. Clean pip cache
-rm -rf /home/arcana-novai/.cache/pip/
+rm -rf /home/USER/.cache/pip/
 
 # 4. Clean any model downloads not in use
-ls -lh /home/arcana-novai/models/ 2>/dev/null
+ls -lh /home/USER/models/ 2>/dev/null
 ```
 
 **This should be treated as P0-INFRA, ahead of the NFSv4 fix.** If the disk fills completely, you lose the ability to fix anything else.
@@ -153,14 +153,14 @@ ls -lh /home/arcana-novai/models/ 2>/dev/null
 ## 🟡 Finding 4: Node 1 is ALIVE — MCP Up, NFS Down, SSH Timed Out
 
 ```
-tailscale ping n1 → pong from n1 (100.89.40.17) via 192.168.10.174:41641 in 2ms
-nc -zv 100.89.40.17 8016 → succeeded!      ← MCP ALIVE
-nc -zv 100.89.40.17 2049 → Connection refused  ← NFS NOT RUNNING
-nc -zv 100.89.40.17 22   → timed out        ← SSH DOWN/FIREWALLED
+tailscale ping n1 → pong from n1 (100.64.0.2) via 192.168.1.101:41641 in 2ms
+nc -zv 100.64.0.2 8016 → succeeded!      ← MCP ALIVE
+nc -zv 100.64.0.2 2049 → Connection refused  ← NFS NOT RUNNING
+nc -zv 100.64.0.2 22   → timed out        ← SSH DOWN/FIREWALLED
 ```
 
 This changes the picture dramatically:
-- **Node 1 is on the local LAN** (192.168.10.174 — not a WireGuard relay, direct path)
+- **Node 1 is on the local LAN** (192.168.1.101 — not a WireGuard relay, direct path)
 - **MCP server is up** — you can call Node 1's MCP tools right now
 - **NFS is not running on Node 1** — so n0 cannot mount Node 1's exchange directory even after fixing the automount
 - **SSH is blocked** — you can't remote-administer Node 1 via SSH
@@ -171,13 +171,13 @@ The handoff says "Node 1 (ASUS) has omega-sweeteners on `/mnt/node-drive/exchang
 
 The export entries on n0 suggest the **export direction** is:
 ```
-n0 exports /mnt/node-drive/exchange TO 100.89.40.17 (n1)
-n0 exports /mnt/node-drive/exchange TO 100.123.51.67 (n0 — self, for testing?)
+n0 exports /mnt/node-drive/exchange TO 100.64.0.2 (n1)
+n0 exports /mnt/node-drive/exchange TO 100.64.0.1 (n0 — self, for testing?)
 ```
 
 So n0 is the **NFS server**, and the fstab line that was commented out:
 ```
-#100.89.40.17:/ /mnt/node-drive nfs4 ...
+#100.64.0.2:/ /mnt/node-drive nfs4 ...
 ```
 
 Was n0 trying to **mount Node 1 AS a client**. But Node 1 has no NFS server (port 2049 refused). This means the fstab entry was always going to fail — it pointed at a host with no NFS exports.
@@ -220,9 +220,9 @@ P0-1 file deletion is confirmed. The file is gone. But per the Dialectic doc: "t
 ```bash
 # Check what's eating disk
 sudo du -sh /var/log/journal/
-sudo du -sh /home/arcana-novai/.cache/
-sudo du -sh /home/arcana-novai/.local/share/containers/
-du -sh /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/
+sudo du -sh /home/USER/.cache/
+sudo du -sh /home/USER/.local/share/containers/
+du -sh /home/USER/Documents/Xoe-NovAi/omega-engine/data/
 
 # Vacuum journal (usually biggest win)
 sudo journalctl --vacuum-size=100M

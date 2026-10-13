@@ -103,14 +103,14 @@ check-hub-health:
 ```
 
 ### 1.3 Calibrate Storage Paths & Disk Safety Guards
-> **Agent Callout — Roc & Doom Guy**: The root partition has only **1.08 GB free**. Downloading a 1.6 GB model to `~/.omega/models` causes catastrophic disk exhaustion (`ENOSPC`). The dedicated NVMe partition `/media/arcana-novai/omega_library/` has ample room and already holds 18 GGUF weights.
+> **Agent Callout — Roc & Doom Guy**: The root partition has only **1.08 GB free**. Downloading a 1.6 GB model to `~/.omega/models` causes catastrophic disk exhaustion (`ENOSPC`). The dedicated NVMe partition `/media/USER/omega_library/` has ample room and already holds 18 GGUF weights.
 
 #### Remediation Step
 Ensure `scripts/download_model.sh` and `src/omega/cli/oracle_cli.py` fail-closed if free space is less than 4 GB on the target path, and set the default destination to the NVMe library:
 
 ```bash
 # In scripts/download_model.sh:
-TARGET_DIR="${OMEGA_MODELS_DIR:-/media/arcana-novai/omega_library/models/gguf}"
+TARGET_DIR="${OMEGA_MODELS_DIR:-/media/USER/omega_library/models/gguf}"
 MIN_DISK_GB=4
 ```
 

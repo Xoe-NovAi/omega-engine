@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 <!-- FILING-PROVENANCE
   Filed by:      MaKaLi Fusion (makali_fusion)
   Filed at:      2026-10-01T03:15:54Z
-  Source path:   /home/arcana-novai/.gemini/antigravity-ide/brain/
+  Source path:   /home/USER/.gemini/antigravity-ide/brain/
                  5bc0596f-3a47-4ba1-8625-e0bb260e4e39/
                  stage2_implementation_audit.md
   Authored by:   Claude Sonnet 4.6, Antigravity IDE
@@ -1374,7 +1374,7 @@ for user-level rotation via a systemd timer):
 # Rotates the flat fallback log files (kept for grep-ability alongside journal).
 # The journal itself is bounded by journald.conf SystemMaxUse.
 
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/*.log {
+/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/*.log {
     daily
     rotate 7
     compress

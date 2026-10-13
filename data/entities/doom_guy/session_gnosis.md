@@ -40,7 +40,7 @@ Last Updated: 2026-09-27
 ### 2. Exchange Pipe — `omega-exchange.service` on port 8019
 - Systemd **user** unit, `active` + `enabled`, with **`Linger=yes`** → survives logout/reboot.
 - Bound strictly to **`127.0.0.1:8019`** (loopback only — never `0.0.0.0`).
-- Serves `/home/arcana-novai/exchange/full-pack-20260926/` — **44 files**.
+- Serves `/home/USER/exchange/full-pack-20260926/` — **44 files**.
 - **Read-only**: `GET`/`HEAD` only; `PUT` returns **501 Unsupported method**. Standard Python `http.server` semantics — no upload path exists on this surface.
 - Published to the tailnet via Tailscale Serve (tailnet-only, no funnel, no firewall ports opened, no NFS/SSH touched).
 - **Port 8018 reserved and clear for SearXNG MCP.**
@@ -104,12 +104,12 @@ The tailnet grants removed *tailnet reachability*; the host sockets were still L
 **1. Redis — `omega-redis` (Podman quadlet) — REBOUND TO LOOPBACK ✅**
 - Was: `PublishPort=6379:6379` → bound `*:6379` (0.0.0.0 wildcard, LAN-reachable). Hardcoded `--requirepass omega`.
 - Dependency check: `DBSIZE=0` (empty), no hub client socket to 6379, `connected_clients:1` (the healthcheck). Runtime-idle. But redis is still *imported* in live code (`memory_store`, `budget_guard`, `failure_registry`, `watchdog`, `hivemind_bridge`, etc.) — so a full stop could break a lazy code path.
-- **Action (minimal-risk):** changed quadlet `PublishPort=6379:6379` → `PublishPort=127.0.0.1:6379:6379`, regenerated + restarted. Now `127.0.0.1:6379` only; `192.168.10.168:6379` → Connection refused. Survives reboot (quadlet `WantedBy=default.target`, `Restart=always`).
+- **Action (minimal-risk):** changed quadlet `PublishPort=6379:6379` → `PublishPort=127.0.0.1:6379:6379`, regenerated + restarted. Now `127.0.0.1:6379` only; `192.168.1.100:6379` → Connection refused. Survives reboot (quadlet `WantedBy=default.target`, `Restart=always`).
 - **Not done:** hardcoded password rotation + full stop (deferred; needs decision on the still-referenced code paths).
 
 **2. NFS + rpcbind stack — BLOCKED (needs root password) ⛔**
 - Targets confirmed running + wildcard: `0.0.0.0/[::]` on `2049` (nfsd), `20048` (mountd), `32803` (lockd), `662` (rquotad/statd), `111` (rpcbind).
-- Dependency check: fstab NFS client entry (`100.89.40.17:/` → `/mnt/node-drive`) is **commented out**; `/mnt/node-drive` is a local dir, NOT mounted; no active NFS client mounts; no established NFS/rpc connections; kernel export table empty. **Nothing is using NFS.** `/etc/exports` still lists an old export of `/mnt/node-drive/exchange` (a stale dir, separate inode from the live `/home/arcana-novai/exchange`).
+- Dependency check: fstab NFS client entry (`100.64.0.2:/` → `/mnt/node-drive`) is **commented out**; `/mnt/node-drive` is a local dir, NOT mounted; no active NFS client mounts; no established NFS/rpc connections; kernel export table empty. **Nothing is using NFS.** `/etc/exports` still lists an old export of `/mnt/node-drive/exchange` (a stale dir, separate inode from the live `/home/USER/exchange`).
 - **Action attempted:** `sudo systemctl stop/disable nfs-server rpcbind …` → **blocked**, no passwordless sudo (NOPASSWD allowlist is warp-node/swap/zram/sysctl only). Leaving running per "a wrong stop is worse than a documented exposure."
 - **To finish (needs Architect/root):** `sudo systemctl disable --now nfs-server rpcbind` (and nfs-mountd/rpc-statd), then `sudo exportfs -ua`.
 
@@ -119,7 +119,7 @@ The tailnet grants removed *tailnet reachability*; the host sockets were still L
 
 **4. P13 8017 Serve route — REMOVED ✅**
 - Was: live `https://n0…:8017 → 127.0.0.1:8017` (SearXNG container). Filter also granted N1→N0:8017.
-- **Action:** `tailscale serve --https=8017 off` (exit 0). Route gone; `100.123.51.67:8017` + `[fd7a…]:8017` tailscaled listeners gone. SearXNG container on `127.0.0.1:8017` **untouched** (still HTTP 200 on loopback). 8016 + 8019 routes intact.
+- **Action:** `tailscale serve --https=8017 off` (exit 0). Route gone; `100.64.0.1:8017` + `[fd7a…]:8017` tailscaled listeners gone. SearXNG container on `127.0.0.1:8017` **untouched** (still HTTP 200 on loopback). 8016 + 8019 routes intact.
 
 **5. P15 8018 SearXNG MCP — reported, unchanged**
 - `127.0.0.1:8018` (pid 3669, `mcp_servers/searxng/server.py`), loopback-only, **no Serve route**, not in filter. N1 cannot reach it. Intent = Architect decision (E6). No change made.
@@ -153,7 +153,7 @@ Three times now a service was found bound to a non-loopback interface while the
 tailnet policy was believed to describe total exposure:
 1. NFS — `0.0.0.0/[::]` 2049, 20048, 32803
 2. Redis — `*:6379` via the `omega-redis` quadlet
-3. deluged — `192.168.10.168%wlo1:51372` AND `100.123.51.67%tailscale0:51372`
+3. deluged — `192.168.1.100%wlo1:51372` AND `100.64.0.1%tailscale0:51372`
 
 None appeared in any policy file. **A tailnet bind is gated by the tailscaled
 packet filter; a LAN bind is gated by nothing.** Treating the policy as the whole
@@ -207,7 +207,7 @@ remain: rpcbind 111/662 (v4+v6), deluged ×5, rygel ×7 (DLNA media server on LA
 + docker bridges — **previously unknown, not yet reviewed**).
 
 ### ARCHIVE STAGING (confirmed)
-`/media/arcana-novai/omega_library/archive_staging` — `/dev/nvme0n1p3`, ext4,
+`/media/USER/omega_library/archive_staging` — `/dev/nvme0n1p3`, ext4,
 36.9 G free, internal NVMe. **Never stage on `/`** (100% full, 807 M free).
 
 ---
@@ -240,7 +240,7 @@ remain: rpcbind 111/662 (v4+v6), deluged ×5, rygel ×7 (DLNA media server on LA
 RESULT: PASS — no unapproved non-loopback binds.      (20 listeners, 6 non-loopback)
 RESULT: PASS — 22/22 negative tests green.
 ```
-Last entry added: `100.123.51.67:43961` = **tailscaled peer/telemetry**, confirmed
+Last entry added: `100.64.0.1:43961` = **tailscaled peer/telemetry**, confirmed
 by a root-side `ss -ltnp` (pid 2280, fd=22). Infrastructure, tailnet-scoped, not
 a user service.
 
@@ -283,7 +283,7 @@ was filesystem, `ss`, `systemctl`, `journalctl`, and the live MCP HTTP endpoint.
 whether the quarantine *location itself* was safe. Quarantining a secret into a
 public repo is not quarantine.
 
-Both moved to `/home/arcana-novai/quarantine/` (outside the repo and outside git
+Both moved to `/home/USER/quarantine/` (outside the repo and outside git
 tracking). `data/quarantine/README.md` is now a stub that states the rule:
 **this directory is public; sanitised summaries only.** The deluge password is
 preserved at `~/quarantine/deluge_20260928/config/auth` (mode 0600, not tracked).
@@ -444,7 +444,7 @@ Failures oscillate 35/45/29 → **flaky**. 13 named tests failed post-restart an
 
 ### The defect (Carmack, verified by execution — I reproduced it byte-for-byte)
 ```
-$ curl -o /tmp/tail.zip http://100.123.51.67:8019/full-pack-20260926.zip
+$ curl -o /tmp/tail.zip http://100.64.0.1:8019/full-pack-20260926.zip
 $ file /tmp/tail.zip   →  ASCII text, 48 bytes
 $ xxd  →  43 6c 69 65 6e 74 ...  "Client sent an HTTP request to an HTTPS server.\n"
 ```
@@ -457,7 +457,7 @@ succeeded, and fails later at `unzip` — far from the cause.
 Proof — three independent lines:
 1. `HTTP/1.0 400` with **no headers at all** (no content-type, no content-length).
    `http.server` always emits both.
-2. tailscaled journal: `http: TLS handshake error from 100.123.51.67:55616:
+2. tailscaled journal: `http: TLS handshake error from 100.64.0.1:55616:
    client sent an HTTP request to an HTTPS server`.
 3. The origin's access log records **no** entry for those requests — the
    connection dies **before** it is proxied.
@@ -489,20 +489,20 @@ After the swap: **15/15 PASS**, `Ran 15 tests in 0.16s — OK`.
 
 ### Second defect closed: the log that did not exist
 `http.server` wrote **no** access log. I had previously asserted "the log has
-never shown a hit from 100.89.40.17" **about a log that cannot log requests** —
+never shown a hit from 100.64.0.2" **about a log that cannot log requests** —
 so we never knew whether an N1 pull had ever succeeded. The new origin emits one
 JSON line per request (ts UTC +00:00, method, path, status, bytes, client_ip,
 user_agent, note). **A genuine tailnet request is now on record:**
 ```json
 {"ts":"2026-09-29T08:28:25.867+00:00","service":"omega-exchange/2.0","method":"GET",
  "path":"/full-pack-20260926.zip","status":200,"bytes":122463,
- "client_ip":"100.123.51.67","user_agent":"curl/8.14.1",
+ "client_ip":"100.64.0.1","user_agent":"curl/8.14.1",
  "note":"sha256=36ac1468f2397c00 dur_ms=0.6"}
 ```
 
 ### URL form published
-`https://n0.tail51f14a.ts.net:8019/<path>` — **HTTPS only**.
-`http://100.123.51.67:8019/<path>` is named **BROKEN** in the runbook, the
+`https://n0.example.invalid:8019/<path>` — **HTTPS only**.
+`http://100.64.0.1:8019/<path>` is named **BROKEN** in the runbook, the
 manifest, and the index — not omitted, so nobody rediscovers it.
 Runbook: `docs/operations/EXCHANGE_PIPE_RUNBOOK.md`
 

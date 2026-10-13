@@ -79,7 +79,7 @@ All documentation now captures the Phase 0 milestone:
 ## 💾 **USB HANDOFF** (run on this machine)
 
 ```bash
-cat > /media/arcana-novai/D5D5-0B76/NODE1_AUTHKEY.txt <<'EOF'
+cat > /media/USER/D5D5-0B76/NODE1_AUTHKEY.txt <<'EOF'
 tskey-XXXXXXXXXXXXXXXXXXXX
 EOF
 ```
@@ -110,19 +110,19 @@ tailscale ping kali-n1          # from Node 0
 tailscale ping omega-hub        # from Node 1
 
 # 3. MCP (8016)
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
+curl -s http://omega-hub.example.invalid:8016/mcp
 
 # 4. NFS (2049) — Node 0 → Node 1
-showmount -e kali-n1.tail51f14a.ts.net
+showmount -e kali-n1.example.invalid
 
 # 5. SSH (22) — both directions
-ssh kali-n1.tail51f14a.ts.net
-ssh omega-hub.tail51f14a.ts.net
+ssh kali-n1.example.invalid
+ssh omega-hub.example.invalid
 
 # 6. ICMP
-ping kali-n1.tail51f14a.ts.net
-ping omega-hub.tail51f14a.ts.net
+ping kali-n1.example.invalid
+ping omega-hub.example.invalid
 
 # 7. Policy exclusion check
 tailscale status --json | jq '.PeerExcludedByPolicy'
@@ -203,7 +203,7 @@ A key starting with `tskey-auth-...` — **copy it immediately** (you won't see 
 ## 💾 **THEN RUN ON THIS MACHINE (USB HANDOFF):**
 
 ```bash
-cat > /media/arcana-novai/D5D5-0B76/NODE1_AUTHKEY.txt <<'EOF'
+cat > /media/USER/D5D5-0B76/NODE1_AUTHKEY.txt <<'EOF'
 tskey-auth-XXXXXXXXXXXXXXXXXXXX
 EOF
 ```
@@ -280,7 +280,7 @@ The authkey (`tskey-auth-...`) is a **pre-authentication key** — it's not a lo
 ### **The flow:**
 
 1. **You** generate authkey in admin console (with `tag:asus`, pre-approved, one-shot, 1-day)
-2. **You** write it to USB: `/media/arcana-novai/D5D5-0B76/NODE1_AUTHKEY.txt`
+2. **You** write it to USB: `/media/USER/D5D5-0B76/NODE1_AUTHKEY.txt`
 3. **Node 1 (ASUS)** reads the authkey from USB
 4. **Node 1** runs: `sudo tailscale up --authkey=tskey-auth-... --hostname=kali-n1 --accept-routes --advertise-tags=tag:asus`
 5. **Node 1** joins tailnet as `kali-n1` with `tag:asus`
@@ -329,12 +329,12 @@ Join Node 1 to the Tailscale tailnet as `kali-n1` with `tag:asus`, establishing 
 | **Phase A ACL Policy** | ✅ SAVED | `tagOwners` (omega-hub, asus, opencode), ACLs for MCP(8016), NFS(2049), SSH(22), ICMP, SSH section (accept mode), autoApprovers (routes map, exitNode singular) |
 | **Node 0 Re-tag** | ✅ DONE | `pkexec tailscale up --advertise-tags=tag:omega-hub --force-reauth --hostname=omega-hub --operator=arcana-novai --ssh` → **Tags: ["tag:omega-hub"]** verified |
 | **Authkey Generated** | ✅ DONE | One-shot, pre-approved, 1-day, `tag:asus` embedded |
-| **Authkey on USB** | ✅ DONE | Written to `/media/arcana-novai/D5D5-0B76/NODE1_AUTHKEY.txt` |
+| **Authkey on USB** | ✅ DONE | Written to `/media/USER/D5D5-0B76/NODE1_AUTHKEY.txt` |
 
 **Current Node 0 State:**
 - Hostname: `omega-hub`
-- MagicDNS: `omega-hub.tail51f14a.ts.net`
-- Tailscale IP: `100.123.51.67`
+- MagicDNS: `omega-hub.example.invalid`
+- Tailscale IP: `100.64.0.1`
 - Tag: `tag:omega-hub` ✅
 - Tailscale SSH enabled (but ACL restricts access — expected)
 
@@ -344,7 +344,7 @@ Join Node 1 to the Tailscale tailnet as `kali-n1` with `tag:asus`, establishing 
 ```
 tskey-auth-tskey-auth-kEPPm4CR1D21CNTRL-uLBmZYTbmgBsSA5Y7i11hBeKRu4vpVQpC
 ```
-**Location on USB:** `/media/arcana-novai/D5D5-0B76/NODE1_AUTHKEY.txt`
+**Location on USB:** `/media/USER/D5D5-0B76/NODE1_AUTHKEY.txt`
 
 ---
 
@@ -383,7 +383,7 @@ tailscale status --json | jq '.Self.Tags'
 ### **STEP 4: VERIFY MAGICDNS**
 ```bash
 tailscale status --json | jq '.Self.DNSName'
-# Should be: "kali-n1.tail51f14a.ts.net."
+# Should be: "kali-n1.example.invalid."
 ```
 
 ---
@@ -399,13 +399,13 @@ tailscale status --json | jq '.Self.Tags'
 tailscale ping omega-hub
 
 # 3. MCP handshake (port 8016)
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
+curl -s http://omega-hub.example.invalid:8016/mcp
 
 # 4. SSH to Node 0 (regular SSH)
-ssh omega-hub.tail51f14a.ts.net
+ssh omega-hub.example.invalid
 
 # 5. ICMP
-ping omega-hub.tail51f14a.ts.net
+ping omega-hub.example.invalid
 ```
 
 ### **From Node 0 (HP Pavilion):**
@@ -414,16 +414,16 @@ ping omega-hub.tail51f14a.ts.net
 tailscale ping kali-n1
 
 # 2. MCP handshake (port 8016)
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
 
 # 3. NFS (port 2049) — Node 0 → Node 1
-showmount -e kali-n1.tail51f14a.ts.net
+showmount -e kali-n1.example.invalid
 
 # 4. SSH to Node 1 (regular SSH)
-ssh kali-n1.tail51f14a.ts.net
+ssh kali-n1.example.invalid
 
 # 5. ICMP
-ping kali-n1.tail51f14a.ts.net
+ping kali-n1.example.invalid
 ```
 
 ### **From BOTH nodes — Policy Exclusion Check:**
@@ -511,7 +511,7 @@ See instructions from Node 1 at /node1-to-node0/instuctions-for-node-0.md
 
 Node 1 has **successfully joined** the tailnet:
 - ✅ Tag: `["tag:asus"]`
-- ✅ MagicDNS: `kali-n1.tail51f14a.ts.net.`
+- ✅ MagicDNS: `kali-n1.example.invalid.`
 - ✅ Ping: 356ms via DERP, 200-382ms ICMP
 - ✅ MCP (8016): Reachable (JSON-RPC error expected)
 - ✅ PeerExcludedByPolicy: `null` (no policy exclusions)
@@ -526,16 +526,16 @@ Run these commands on **this machine (Node 0)**:
 ```bash
 # 1. Ping Node 1 (Tailscale + ICMP)
 tailscale ping kali-n1
-ping kali-n1.tail51f14a.ts.net
+ping kali-n1.example.invalid
 
 # 2. MCP handshake (port 8016)
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
 
 # 3. SSH to Node 1 (regular SSH on port 22)
-ssh kali-n1.tail51f14a.ts.net "echo SSH from Node 0"
+ssh kali-n1.example.invalid "echo SSH from Node 0"
 
 # 4. NFS test (if exports configured on Node 1)
-showmount -e kali-n1.tail51f14a.ts.net
+showmount -e kali-n1.example.invalid
 
 # 5. Policy exclusion check
 tailscale status --json | jq '.PeerExcludedByPolicy'
@@ -588,16 +588,16 @@ I have no idea how to answer your clarifying questions. Use your best judgement.
 ```bash
 # Ping tests
 tailscale ping kali-n1
-ping -c 3 kali-n1.tail51f14a.ts.net
+ping -c 3 kali-n1.example.invalid
 
 # MCP handshake (port 8016)
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
 
 # SSH test (regular SSH on port 22)
-ssh -o ConnectTimeout=10 kali-n1.tail51f14a.ts.net "echo 'SSH from Node 0 OK'"
+ssh -o ConnectTimeout=10 kali-n1.example.invalid "echo 'SSH from Node 0 OK'"
 
 # NFS test (if exports exist)
-showmount -e kali-n1.tail51f14a.ts.net
+showmount -e kali-n1.example.invalid
 
 # Policy exclusion check
 tailscale status --json | jq '.PeerExcludedByPolicy'
@@ -661,16 +661,16 @@ I cannot execute commands in plan mode. Here's the **execution plan** for your a
 ```bash
 # 1. Ping tests
 tailscale ping kali-n1
-ping -c 3 kali-n1.tail51f14a.ts.net
+ping -c 3 kali-n1.example.invalid
 
 # 2. MCP handshake (port 8016)
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
 
 # 3. SSH test (regular SSH on port 22)
-ssh -o ConnectTimeout=10 kali-n1.tail51f14a.ts.net "echo 'SSH from Node 0 OK'"
+ssh -o ConnectTimeout=10 kali-n1.example.invalid "echo 'SSH from Node 0 OK'"
 
 # 4. NFS test
-showmount -e kali-n1.tail51f14a.ts.net
+showmount -e kali-n1.example.invalid
 
 # 5. Policy exclusion check
 tailscale status --json | jq '.PeerExcludedByPolicy'
@@ -805,13 +805,13 @@ sudo apt update && sudo apt install -y nfs-kernel-server
 ### **Then Re-verify from Node 0:**
 ```bash
 # MCP
-curl -s http://kali-n1.tail51f14a.ts.net:8016/mcp
+curl -s http://kali-n1.example.invalid:8016/mcp
 
 # SSH
-ssh -o ConnectTimeout=10 kali-n1.tail51f14a.ts.net "echo 'SSH OK'"
+ssh -o ConnectTimeout=10 kali-n1.example.invalid "echo 'SSH OK'"
 
 # NFS
-sudo apt install -y nfs-common && showmount -e kali-n1.tail51f14a.ts.net
+sudo apt install -y nfs-common && showmount -e kali-n1.example.invalid
 ```
 
 ---
@@ -840,7 +840,7 @@ Record a briefing on findings and Node 1 next steps to the USB drive and I will 
 
 ### **Target Location**
 ```
-/media/arcana-novai/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md
+/media/USER/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md
 ```
 
 ---
@@ -890,7 +890,7 @@ sudo tailscale set --ssh=true
 sudo apt update && sudo apt install -y nfs-kernel-server
 
 # Configure exports (example)
-echo "/home/arcana-novai/shared 100.123.51.0/24(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
+echo "/home/USER/shared 100.123.51.0/24(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
 
 # Apply exports
 sudo exportfs -ra
@@ -910,8 +910,8 @@ showmount -e localhost
 ss -tlnp | grep -E ':(22|8016|2049)'
 
 # Test from Node 1 → Node 0
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp
-ssh omega-hub.tail51f14a.ts.net "echo 'Node1→Node0 SSH OK'"
+curl -s http://omega-hub.example.invalid:8016/mcp
+ssh omega-hub.example.invalid "echo 'Node1→Node0 SSH OK'"
 ```
 
 ---
@@ -929,10 +929,10 @@ Only transition to Phase B (remove `autogroup:member:*` rule) after:
 ### **5. KEY FILES FOR REFERENCE**
 - Phase A policy: Admin console (already saved)
 - Phase B policy: Same minus `autogroup:member:*` rule
-- Node 0 MagicDNS: `omega-hub.tail51f14a.ts.net`
-- Node 1 MagicDNS: `kali-n1.tail51f14a.ts.net`
-- Node 0 Tailscale IP: `100.123.51.67`
-- Node 1 Tailscale IP: `100.89.40.17`
+- Node 0 MagicDNS: `omega-hub.example.invalid`
+- Node 1 MagicDNS: `kali-n1.example.invalid`
+- Node 0 Tailscale IP: `100.64.0.1`
+- Node 1 Tailscale IP: `100.64.0.2`
 
 ---
 
@@ -963,7 +963,7 @@ I said record it to the USB drive not the chat
 You need to **exit plan mode** first, then I can write the briefing to:
 
 ```
-/media/arcana-novai/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md
+/media/USER/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md
 ```
 
 **Say "exit plan mode" and I'll write it immediately.**
@@ -992,7 +992,7 @@ Is there anything more you need to do now that plan mode is off?
 
 **✅ BRIEFING WRITTEN TO USB DRIVE**
 
-**Location:** `/media/arcana-novai/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md`
+**Location:** `/media/USER/D5D5-0B76/omega-exchange/node1-to-node0/NODE1_NEXT_STEPS.md`
 
 The briefing contains:
 - Verification results summary (what works, what doesn't)
@@ -1023,7 +1023,7 @@ Once they report success, you can run the re-verification from Node 0, then we'l
 
 Node 1 has done a lot of work and is prepared on their end. Here is the briefing:
 
-/media/arcana-novai/D5D5-0B76/omega-exchange/node1-to-node0/NODE0_COMPREHENSIVE_BRIEFING.md
+/media/USER/D5D5-0B76/omega-exchange/node1-to-node0/NODE0_COMPREHENSIVE_BRIEFING.md
 
 ---
 
@@ -1035,7 +1035,7 @@ Node 1 has done a lot of work and is prepared on their end. Here is the briefing
 
 Node 1 has done a lot of work and is prepared on their end. Here is the briefing:
 
-/media/arcana-novai/D5D5-0B76/omega-exchange/node1-to-node0/NODE0_COMPREHENSIVE_BRIEFING.md
+/media/USER/D5D5-0B76/omega-exchange/node1-to-node0/NODE0_COMPREHENSIVE_BRIEFING.md
 
 ---
 
@@ -1315,7 +1315,7 @@ Node 1's briefing (`NODE0_COMPREHENSIVE_BRIEFING.md`) was ingested, and all veri
 
 ### 🌟 The Big Milestones:
 1. **MCP L2 Federation (Port 8016) is 100% OPERATIONAL**:
-   - We performed the full JSON-RPC streamable-HTTP handshake with Node 1's Uvicorn server at `http://kali-n1.tail51f14a.ts.net:8016/mcp`.
+   - We performed the full JSON-RPC streamable-HTTP handshake with Node 1's Uvicorn server at `http://kali-n1.example.invalid:8016/mcp`.
    - **Session Initialized**: `mcp-session-id: 8278ae699b504432ac12968fc1c918b3`
    - **Tools Discovered**: `echo`, `node1_status`, `node1_hardware`, `node1_mcp_servers`
    - **Live Tool Execution**:
@@ -1329,11 +1329,11 @@ Node 1's briefing (`NODE0_COMPREHENSIVE_BRIEFING.md`) was ingested, and all veri
 2. **NFSv4.2 Distributed Storage (Port 2049) is 100% OPERATIONAL**:
    - `nfs-common` was installed on Node 0.
    - Node 0 mounted Node 1's export via Tailscale:  
-     `mount -t nfs4 100.89.40.17:/ /tmp/test_nfs`
-   - Mount active: `100.89.40.17:/ on /tmp/test_nfs type nfs4 (rw,relatime,vers=4.2,rsize=1048576,wsize=1048576)`
+     `mount -t nfs4 100.64.0.2:/ /tmp/test_nfs`
+   - Mount active: `100.64.0.2:/ on /tmp/test_nfs type nfs4 (rw,relatime,vers=4.2,rsize=1048576,wsize=1048576)`
    - **Read/Write Verified**: Successfully created `/tmp/test_nfs/.node0_probe`, verified permissions, and unmounted cleanly.
 3. **Tailscale L2 Mesh Health**:
-   - `tailscale ping kali-n1` → **176ms** with direct LAN bypass via `192.168.10.174:41641`.
+   - `tailscale ping kali-n1` → **176ms** with direct LAN bypass via `192.168.1.101:41641`.
    - `omega-hub_omega_federation_status` reports `kali-n1` online with `tag:asus`, `zero_inference_egress: true`, `magicdns_active: true`.
 
 ---
@@ -1342,12 +1342,12 @@ Node 1's briefing (`NODE0_COMPREHENSIVE_BRIEFING.md`) was ingested, and all veri
 
 | Check | Port | Target | Result | Evidence |
 |---|---|---|---|---|
-| **Tailscale WireGuard** | 41641 | `kali-n1` | ✅ **PASS** | `pong via 192.168.10.174:41641 in 176ms` |
-| **MagicDNS** | 53 | `kali-n1.tail51f14a.ts.net` | ✅ **PASS** | Resolves to `100.89.40.17` |
+| **Tailscale WireGuard** | 41641 | `kali-n1` | ✅ **PASS** | `pong via 192.168.1.101:41641 in 176ms` |
+| **MagicDNS** | 53 | `kali-n1.example.invalid` | ✅ **PASS** | Resolves to `100.64.0.2` |
 | **MCP Handshake** | 8016 | `kali-n1:8016/mcp` | ✅ **PASS** | HTTP 200 OK, Uvicorn, Streamable HTTP session active |
 | **MCP Tool Invocation**| 8016 | `echo`, `node1_status` | ✅ **PASS** | Bidirectional JSON-RPC execution successful |
 | **NFS TCP Socket** | 2049 | `kali-n1:2049` | ✅ **PASS** | TCP connection established immediately |
-| **NFSv4.2 Mount** | 2049 | `100.89.40.17:/` | ✅ **PASS** | Mounted cleanly at `vers=4.2`, read/write confirmed |
+| **NFSv4.2 Mount** | 2049 | `100.64.0.2:/` | ✅ **PASS** | Mounted cleanly at `vers=4.2`, read/write confirmed |
 | **Native SSH** | 22 | `kali-n1:22` | ⏳ **PENDING PHASE B** | Times out due to Phase A ACL rule omission (see below) |
 | **Policy Exclusion** | — | Tailnet | ✅ **PASS** | `PeerExcludedByPolicy: null` |
 

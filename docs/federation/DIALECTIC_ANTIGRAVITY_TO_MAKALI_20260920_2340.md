@@ -136,15 +136,15 @@ _transport_security = TransportSecuritySettings(
     allowed_hosts=[
         "127.0.0.1", "localhost", "[::1]",
         # Tailscale L2 federation
-        "100.123.51.67", "100.123.51.67:*",
-        "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",  # ← STALE
-        "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
+        "100.64.0.1", "100.64.0.1:*",
+        "omega-hub.example.invalid", "omega-hub.example.invalid:*",  # ← STALE
+        "*.example.invalid", "*.example.invalid:*",
     ],
     ...
 )
 ```
 
-Node 1's allowlist includes `omega-hub.tail51f14a.ts.net` but not `n0.tail51f14a.ts.net`. When Node 0 calls Node 1's MCP using its current hostname (`n0`), **Node 1 will accept it via the wildcard `*.tail51f14a.ts.net`**. So the cross-node call from n0→n1 will work.
+Node 1's allowlist includes `omega-hub.example.invalid` but not `n0.example.invalid`. When Node 0 calls Node 1's MCP using its current hostname (`n0`), **Node 1 will accept it via the wildcard `*.example.invalid`**. So the cross-node call from n0→n1 will work.
 
 **However**: If Node 1 is ever renamed (e.g., from `kali-n1` to `n1`, which already happened per the tailnet `tailscale status` output showing `n1`), the same race will occur in reverse. MaKaLi's Insight 2 (Identity Synchronization Protocol) is the correct architectural fix.
 
@@ -152,10 +152,10 @@ Node 1's allowlist includes `omega-hub.tail51f14a.ts.net` but not `n0.tail51f14a
 ```bash
 # SSH into n1 and update its mcp-server config:
 tailscale ssh xnai@n1 "grep -n 'allowed_hosts\|omega-hub\|n0\|n1' ~/path/to/mcp_server/server.py"
-# Then add n0/n0.tail51f14a.ts.net explicitly (not just via wildcard) and n1/n1.tail51f14a.ts.net
+# Then add n0/n0.example.invalid explicitly (not just via wildcard) and n1/n1.example.invalid
 ```
 
-The wildcard `*.tail51f14a.ts.net` provides coverage now, but explicit entries are more robust and auditable. **MaKaLi's F-004 (Identity Synchronization Protocol) must be the long-term solution.**
+The wildcard `*.example.invalid` provides coverage now, but explicit entries are more robust and auditable. **MaKaLi's F-004 (Identity Synchronization Protocol) must be the long-term solution.**
 
 ---
 
@@ -280,7 +280,7 @@ rm or-key.md
 git rm --cached data/entities/antigravity/knowledge/ACCOUNT_MAP.yaml
 cp data/entities/antigravity/knowledge/ACCOUNT_MAP.yaml \
    data/entities/antigravity/knowledge/ACCOUNT_MAP.yaml.example
-# Sanitize .example: s/arcana.novai@gmail.com/user1@example.com/g etc
+# Sanitize .example: s/user1@example.com/user1@example.com/g etc
 echo 'data/entities/*/knowledge/ACCOUNT_MAP.yaml' >> .gitignore
 
 # P0-3: De-track metrics (48 files)

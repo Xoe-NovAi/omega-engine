@@ -50,7 +50,7 @@ response = await client.send_message("ses_abc123", "Continue the analysis")
 # Create new session
 session = await client.create_session(
     agent="jem",
-    directory="/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"
+    directory="/home/USER/Documents/Xoe-NovAi/omega-engine"
 )
 ```
 

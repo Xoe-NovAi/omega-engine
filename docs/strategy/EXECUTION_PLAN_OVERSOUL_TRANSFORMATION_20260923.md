@@ -55,7 +55,7 @@ phase: "SOVEREIGN_REORGANIZATION"
 │ STAGE 4: PHYSICAL FEDERATION DELIVERY (NODE 0 ↔ NODE 1)                │
 │ • Architect transfers data/federation/usb-payload/ via USB to Node 1   │
 │ • Node 1 applies: sshd ListenAddress 0.0.0.0, canonical tag:node1      │
-│ • Node 1 updates opencode.json URL to http://n0.tail51f14a.ts.net:8016 │
+│ • Node 1 updates opencode.json URL to http://n0.example.invalid:8016 │
 │ • Node 1 starts NFS server for bidirectional exchange                  │
 │ • Gate: Direct SSH & bidirectional NFS mount confirmed between nodes   │
 └───────────────────────────────────┬────────────────────────────────────┘
@@ -168,11 +168,11 @@ Bridge the physical air-gap between Node 0 and Node 1. Remediate Node 1's local 
 * **Node 1 Operational Checklist** (Executed per `N1_REMEDIATION_REPORT_20260922.md`):
   1. **SSHD Binding**: Update `/etc/ssh/sshd_config.d/tailscale.conf` to `ListenAddress 0.0.0.0` and reload `sshd`.
   2. **Tailscale Tagging**: Run `sudo tailscale set --tag=tag:node1` (permanently drops legacy `tag:asus`).
-  3. **OpenCode Configuration**: Update `~/.config/opencode/opencode.json` so `omega-hub` points to `http://n0.tail51f14a.ts.net:8016/mcp`.
+  3. **OpenCode Configuration**: Update `~/.config/opencode/opencode.json` so `omega-hub` points to `http://n0.example.invalid:8016/mcp`.
   4. **OpenCode Cache Purge**: Restart OpenCode client on Node 1 to flush phantom tool cache (`oracle_list_pillar_keepers`).
   5. **NFS Activation**: Start `nfs-kernel-server` on Node 1 exporting `/mnt/node-drive/exchange`.
 * **Stage 4 Verification Gate**:
-  - Node 0 can SSH into Node 1 via `ssh arcana-novai@100.89.40.17`.
+  - Node 0 can SSH into Node 1 via `ssh arcana-novai@100.64.0.2`.
   - Node 0 successfully mounts Node 1's NFS export at `/mnt/node-drive/exchange-n1`.
   - `omega_federation_status` reports `n1` has tags `["tag:node1"]` only.
 

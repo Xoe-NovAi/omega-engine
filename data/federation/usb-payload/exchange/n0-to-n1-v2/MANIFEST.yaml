@@ -11,7 +11,7 @@ engine_head: fa9c4edc68fe0f23a052e941f88d573f47c6c249
 mandatory_node1_checkout: fa9c4edc68fe0f23a052e941f88d573f47c6c249
 engine_branch: release/debut-v1.6.0
 operative_version: 1.6.0-alpha.1
-canonical_endpoint: https://n0.tail51f14a.ts.net:8016/mcp
+canonical_endpoint: https://n0.example.invalid:8016/mcp
 historical_evidence:
   wad_contract_baseline: 75bde939 (historical only)
   hub_version_before_ssot: 2.2.0 (historical only)

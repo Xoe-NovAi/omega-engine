@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 <!-- FILING-PROVENANCE
   Filed by:      MaKaLi Fusion (makali_fusion)
   Filed at:      2026-10-01T03:15:54Z
-  Source path:   /home/arcana-novai/.gemini/antigravity-ide/brain/
+  Source path:   /home/USER/.gemini/antigravity-ide/brain/
                  5bc0596f-3a47-4ba1-8625-e0bb260e4e39/
                  stage3_epistemic_synthesis.md
   Authored by:   Claude Opus 4.6 (Thinking), Antigravity IDE

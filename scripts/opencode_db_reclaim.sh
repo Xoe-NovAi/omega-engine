@@ -46,8 +46,10 @@ set -uo pipefail
 SRC="$HOME/.local/share/opencode/opencode.db"
 SRC_WAL="$SRC-wal"
 SRC_SHM="$SRC-shm"
-BACKUP="/media/arcana-novai/8TB/opencode_backups/opencode.db.20261013.sqlite"
-STAGE_DIR="/media/arcana-novai/omega_library/staging"
+# Mount-relative defaults: same paths on any host with the sovereign layout;
+# no machine identity in shipped source (P0-2). Override via env when needed.
+BACKUP="${OMEGA_RECLAIM_BACKUP:-/media/USER/8TB/opencode_backups/opencode.db.20261013.sqlite}"
+STAGE_DIR="${OMEGA_RECLAIM_STAGE:-/media/USER/omega_library/staging}"
 RECLAIMED="$STAGE_DIR/opencode-reclaimed.db"
 PRE_RECLAIM_COPY=""   # optional extra fixture
 BATCH=5000

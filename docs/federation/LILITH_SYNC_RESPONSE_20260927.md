@@ -75,8 +75,8 @@ variant: default
    - `systemctl --user show omega-hub.service -p NRestarts` — a restart counter climbing past `StartLimitBurst` is a crash-loop signature, independent of `/health`.
    - The process exit code + stderr tail on each restart (journald `_SYSTEMD_UNIT=omega-hub.service` with `PRIORITY=3`).
 2. **Cross-Tailnet peer probe.** Each node probes the other's hub:
-   - N0 → `https://n0.tail51f14a.ts.net:8016/health` (self)
-   - N1 → `https://n0.tail51f14a.ts.net:8016/health` (peer)
+   - N0 → `https://n0.example.invalid:8016/health` (self)
+   - N1 → `https://n0.example.invalid:8016/health` (peer)
    - N0 → N1 hub once N1's 8016 is granted
    A silent hub on either node is detected by the peer — the mesh is the redundancy.
 3. **Timestamped health ledger.** Every probe writes `{timestamp, status, restart_counter, error_tail}` to `data/health/` — the file that does not exist yet. If the *monitor* is down, that IS the incident (the 2026-09-01 lesson).

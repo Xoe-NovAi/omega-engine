@@ -32,7 +32,7 @@ proposals:
     status: proposed
     domain: federation-readiness-p2-handshake
     L1: >-
-      Verified MCP parity at https://n0.tail51f14a.ts.net:8016/mcp/ — 66 tools
+      Verified MCP parity at https://n0.example.invalid:8016/mcp/ — 66 tools
       exposed via HTTPS over Tailscale. Completed P2 handshake: health, initialize,
       tools/list, system_stats, hivemind_get_awareness, hivemind_post_context.
       Packaged Archangel transfer (exact commit, version SSOT, loader contract,
@@ -144,7 +144,7 @@ proposals:
     domain: observability-observer-faithfulness-dispatch-integrity
     L1: >-
       A Node 1 reverse-direction build was dispatched to me while I was executing
-      on Node 0. Verified on entry before changing anything: hostname=Arcana-NovAi,
+      on Node 0. Verified on entry before changing anything: hostname=node0,
       tailscale self=n0, ~/exchange exists, serve publishes 8016+8019, and the
       ge-n1-selftest payload is absent. Made no changes and attempted no remote
       path. MaKaLi adjudicated the dispatch as the failure and adopted handoff to

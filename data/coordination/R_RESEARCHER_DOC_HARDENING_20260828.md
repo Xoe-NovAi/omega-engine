@@ -32,7 +32,7 @@ SPDX-License-Identifier: Apache-2.0
 
 ### 1. `OMEGA_ENGINE.md` — **STALE (Critical)**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/OMEGA_ENGINE.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/OMEGA_ENGINE.md`  
 **Current State**: References 25 mandates, v3.5, date 2026-07-07  
 **Required State**: 27 mandates, v3.8.0, date 2026-08-28
 
@@ -69,7 +69,7 @@ The 4 Architecture Rules (`.opencode/rules/`) — ADD: "See `MANDATES_CONDENSED.
 
 ### 2. `AGENTS.md` — **CURRENT (Minor Additions)**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/AGENTS.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/AGENTS.md`  
 **Current State**: v1.0.0, date 2026-08-27, 9 decisions  
 **Required Additions**: Spatial vectors agent role, 2 new decisions (D-578..D-584 from DEBUT_REMEDIATION §9)
 
@@ -96,7 +96,7 @@ date: "2026-08-28"          # CHANGED: was 2026-08-27
 
 ### 3. `DEBUT_REMEDIATION_MANUAL_20260817.md` — **PARTIAL (Missing Workstreams)**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md`  
 **Current State**: §9 lists 6 workstreams (GN, DS, LI, KD, HR, ZS) but §5 ticket sequence only covers P0-1 through DEL-1/DOC-1  
 **Required**: Mark spatial/VR items as post-debut workstreams with dependencies
 
@@ -124,7 +124,7 @@ date: "2026-08-28"          # CHANGED: was 2026-08-27
 
 ### 4. `docs/architecture/SPATIAL_VECTORS_ARCHITECTURE.md` — **NEW (Create)**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/architecture/SPATIAL_VECTORS_ARCHITECTURE.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/docs/architecture/SPATIAL_VECTORS_ARCHITECTURE.md`  
 **Source**: `R_RESEARCHER_SPATIAL_VECTORS_VR_20260828.md` (this research)  
 **Status**: Create as permanent architecture document
 
@@ -238,7 +238,7 @@ All 7 `omega_vec_*` collections share the **same** `omega_memory_spatial` R-tree
 
 ### 5. `docs/architecture/SQLITE_VEC_OPTIMIZATION_GUIDE.md` — **NEW (Create)**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/architecture/SQLITE_VEC_OPTIMIZATION_GUIDE.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/docs/architecture/SQLITE_VEC_OPTIMIZATION_GUIDE.md`  
 **Source**: `sqlite_vec_adapter_optimized.py` + `R_RESEARCHER_SQLITE_VEC_GAPS_20260828.md`  
 **Status**: Create as permanent architecture document
 
@@ -456,7 +456,7 @@ health = await adapter.check_wal_health()
 
 ### 6. `docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md` — **SYNC**
 
-**File**: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md`  
+**File**: `/home/USER/Documents/Xoe-NovAi/omega-engine/docs/specs/debut_remediation/DEBUT_REMEDIATION_MANUAL_20260817.md`  
 **Note**: This appears to be a duplicate/symlink of the main DEBUT_REMEDIATION_MANUAL. Apply same edits as Document 3.
 
 ---

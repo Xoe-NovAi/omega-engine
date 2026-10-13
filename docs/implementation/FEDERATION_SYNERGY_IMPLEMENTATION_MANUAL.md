@@ -142,7 +142,7 @@ sudo tailscale up \
 **Validation** (from Node 1):
 ```bash
 tailscale ping omega-hub
-# Expected: pong from omega-hub (100.123.51.67) via direct connection
+# Expected: pong from omega-hub (100.64.0.1) via direct connection
 ```
 
 ### 2.5 Step 0.5 — MCP Handshake Verification (MAKALI)
@@ -150,7 +150,7 @@ tailscale ping omega-hub
 **Command** (from Node 1, or Node 0 to self):
 
 ```bash
-curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp \
+curl -X POST http://omega-hub.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -360,12 +360,12 @@ print('omega_federation registered:', entities['omega_federation']['archetype'])
 
 **Find**:
 ```
-| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.tail51f14a.ts.net:*`). Restart hub service if needed: `systemctl --user restart omega-hub`. |
+| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.example.invalid:*`). Restart hub service if needed: `systemctl --user restart omega-hub`. |
 ```
 
 **Replace with**:
 ```
-| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.tail51f14a.ts.net:*`). Restart hub service if needed: `systemctl --user restart omega-hub.service` (Podman Quadlet) or `podman container restart omega-hub` (direct). |
+| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.example.invalid:*`). Restart hub service if needed: `systemctl --user restart omega-hub.service` (Podman Quadlet) or `podman container restart omega-hub` (direct). |
 ```
 
 ### 3.5 Step 1.5 — Create Coordination Artifacts
@@ -527,7 +527,7 @@ async def _verify_magicdns() -> bool:
     def _resolve() -> bool:
         try:
             result = subprocess.run(
-                ["getent", "hosts", "omega-hub.tail51f14a.ts.net"],
+                ["getent", "hosts", "omega-hub.example.invalid"],
                 capture_output=True, text=True, timeout=5, check=False,
             )
             return result.returncode == 0 and "100." in result.stdout
@@ -549,7 +549,7 @@ async def _verify_zero_inference_egress() -> bool:
         try:
             result = subprocess.run(
                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-                 "http://omega-hub.tail51f14a.ts.net:8016/v1/chat/completions"],
+                 "http://omega-hub.example.invalid:8016/v1/chat/completions"],
                 capture_output=True, text=True, timeout=5, check=False,
             )
             # 404/405 = endpoint does not exist = PASS
@@ -628,7 +628,7 @@ async def omega_federation_diagnose(target_peer: str | None = None) -> dict[str,
         try:
             r = subprocess.run(
                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-                 f"http://{host}.tail51f14a.ts.net:8016/mcp"],
+                 f"http://{host}.example.invalid:8016/mcp"],
                 capture_output=True, text=True, timeout=10, check=False,
             )
             code = r.stdout.strip()
@@ -644,7 +644,7 @@ async def omega_federation_diagnose(target_peer: str | None = None) -> dict[str,
     checks.append({
         "name": "transport_security",
         "status": "PASS",
-        "detail": "allowed_hosts includes omega-hub.tail51f14a.ts.net:* (commit 213abf44)",
+        "detail": "allowed_hosts includes omega-hub.example.invalid:* (commit 213abf44)",
     })
 
     # 5. Relay check
@@ -699,7 +699,7 @@ register_federation_tools(mcp)
 python3 -c "import ast; ast.parse(open('mcp_servers/omega_hub/server.py').read()); print('Syntax OK')"
 # Then restart hub and verify:
 systemctl --user restart omega-hub.service
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp | grep -i federation || echo "Check tool list via MCP"
+curl -s http://omega-hub.example.invalid:8016/mcp | grep -i federation || echo "Check tool list via MCP"
 ```
 
 ### 4.3 Step 2.3 — Implement Interactive Installer
@@ -1134,7 +1134,7 @@ FORBIDDEN_ENDPOINTS = [
     "/v1/embeddings",  # embeddings stay local, never exposed to mesh
 ]
 
-HUB_BASE = "http://omega-hub.tail51f14a.ts.net:8016"
+HUB_BASE = "http://omega-hub.example.invalid:8016"
 
 
 async def verify_zero_inference_egress() -> dict[str, Any]:
@@ -1287,13 +1287,13 @@ print('Node 1 tagged OK:', n1[0]['HostName'])
 "
 
 # 3. MCP handshake
-curl -s -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp \
+curl -s -X POST http://omega-hub.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ceremony-replay","version":"0.1"}}}' \
   | python3 -c "import sys, json; d=json.load(sys.stdin); print('MCP handshake OK:', d.get('result', {}).get('serverInfo', {}).get('name'))"
 
 # 4. Federation MCP tools present
-curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp | grep -c federation || echo "Check tool list"
+curl -s http://omega-hub.example.invalid:8016/mcp | grep -c federation || echo "Check tool list"
 
 # 5. Zero inference egress
 python3 src/omega/governance/federation_invariant.py

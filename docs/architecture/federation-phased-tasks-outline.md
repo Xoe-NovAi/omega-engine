@@ -29,7 +29,7 @@
 | 0.2 | `pkexec tailscale up --advertise-tags=tag:node0 --force-reauth` | MaKaLi-N0 | `tailscale status --json` shows `Tags: ["tag:node0"]` |
 | 0.3 | Mint one-shot authkey (`tag:node1`, pre-approved, 1-day) | User | Key copied: `tskey-auth-...` |
 | 0.4 | Node 1: `sudo tailscale up --authkey=... --hostname=kali-n1 --advertise-tags=tag:node1` | Node 1 | `tailscale ping omega-hub` → direct pong |
-| 0.5 | Verify MCP handshake: `curl http://omega-hub.tail51f14a.ts.net:8016/mcp` | MaKaLi-N0 | JSON-RPC `initialize` returns `Omega Core Hub 1.28.1` |
+| 0.5 | Verify MCP handshake: `curl http://omega-hub.example.invalid:8016/mcp` | MaKaLi-N0 | JSON-RPC `initialize` returns `Omega Core Hub 1.28.1` |
 
 > **Note**: This phase is **complete when both nodes show tagged, direct connectivity**. All subsequent phases assume the wire is live.
 

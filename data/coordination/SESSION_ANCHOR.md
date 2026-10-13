@@ -23,7 +23,7 @@ Do not trust any earlier anchor section that references tag `v1.6.0-alpha` on Gi
 - Harvester ships in full per D-626.
 - Wheel: standalone install resolves packaged runtime configs + default IWAD.
 - Cold-verify 2026-10-13: published `omega-1.6.0a0-py3-none-any.whl` installs exit 0 in a clean venv (1m31s) and `omega talk` boots exit 0 outside the repo. Mock-forcing fixed same day (`dee63d49`); `OMEGA_PROVIDER=mock` now deterministic (MockProvider returns setup-mode text by design — that IS the mock response).
-- install.sh timing 2026-10-13 (Cline): **PASS** — cold venv + deps + llama-cpp build + verify = **202s (<300s target)** after three fixes (`MODELS_DIR` unset crash, RAM guard `-j6` moved above pre-fetch, aria2c for >1MB downloads). Was 615s before. Logs: `/media/arcana-novai/omega_library/staging/install-timing-20261013/`.
+- install.sh timing 2026-10-13 (Cline): **PASS** — cold venv + deps + llama-cpp build + verify = **202s (<300s target)** after three fixes (`MODELS_DIR` unset crash, RAM guard `-j6` moved above pre-fetch, aria2c for >1MB downloads). Was 615s before. Logs: `/media/USER/omega_library/staging/install-timing-20261013/`.
 - Announcement claim audit 2026-10-13 (`33432093`): 4 M29 violations fixed (stale tag SHA, false PyPI claim → aria2c+local-file path verified, entity count 14→12 on tag tree, dedup table). Every claim now measured.
 - Antigravity review: **GO**, conditional on correcting MCP client instructions; announcement corrected to SSE/HTTP Hub endpoint plus local Hub start command.
 

@@ -278,7 +278,7 @@ Each one pins a defect that shipped precisely because nothing tested it.
 **Hygiene applied while staging** (not optional — REUSE v3.3 scans tracked files):
 * SPDX headers added to **17** files that lacked them (all of `omega_youtube_research/`).
 * `*.backup.*` / `*.backup` confirmed already ignored (the `.clinerules` §6 trap).
-* Scans run on every new file: **no secrets**, **no `/home/arcana-novai` hardcoded paths**.
+* Scans run on every new file: **no secrets**, **no `/home/USER` hardcoded paths**.
 * Verified none of the new files are gitignored (`git check-ignore`).
 
 ---
@@ -320,26 +320,26 @@ This matters because the plan was built on it.
 
 ```bash
 tailscale status
-# 100.123.51.67  n0  n0.tail51f14a.ts.net  linux   <- THIS machine, runs the Hub
-# 100.89.40.17   n1  tagged-devices         linux   <- Node 1
+# 100.64.0.1  n0  n0.example.invalid  linux   <- THIS machine, runs the Hub
+# 100.64.0.2   n1  tagged-devices         linux   <- Node 1
 ```
 
-* **The "Node 1 export at `100.123.51.67`" is Node 0's own address.** N0 exports
+* **The "Node 1 export at `100.64.0.1`" is Node 0's own address.** N0 exports
   nothing (`exportfs -v` empty) and has no NFS mounts (`findmnt -t nfs,nfs4` empty).
 * **N1's ports 22 and 2049 are filtered** from N0. Only **8016** is open. The
   NFS/SSH cross-node handoff **does not exist**; do not plan around it.
 * The Hub listens on `127.0.0.1:8016` + the tailnet IP, and is fronted by
   `tailscale serve` over **HTTPS**. Plain HTTP returns
   `400 Client sent an HTTP request to an HTTPS server` — that is why N1 "saw no peer".
-* `omega-hub.tail51f14a.ts.net` is **NXDOMAIN**. That stale name is the entire
+* `omega-hub.example.invalid` is **NXDOMAIN**. That stale name is the entire
   source of the "Tailscale ACL" confusion. The correct host is
-  **`n0.tail51f14a.ts.net`**.
+  **`n0.example.invalid`**.
 
 **Working cross-node verification (from N0):**
 ```bash
-curl -s https://n0.tail51f14a.ts.net:8016/health
+curl -s https://n0.example.invalid:8016/health
 # {"status":"healthy",...,"version":"1.6.0-alpha.1"}
-curl -s -X POST https://n0.tail51f14a.ts.net:8016/mcp \
+curl -s -X POST https://n0.example.invalid:8016/mcp \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"n1","version":"0"}}}'
@@ -429,7 +429,7 @@ test failure and cost a diagnosis cycle.
    red CI is a coin flip with zero code change.
 4. **Fix or park `test_resourceguard_blocks_on_capacity`** — it is a wall-clock
    capacity assertion and will keep flaking.
-5. **Tell Node 1**: hub is `https://n0.tail51f14a.ts.net:8016/mcp`, HTTPS not
+5. **Tell Node 1**: hub is `https://n0.example.invalid:8016/mcp`, HTTPS not
    HTTP, MagicDNS host `n0` (not `omega-hub`), and **22/2049 are filtered** so the
    NFS/SSH plan is dead. Also that MCP is unauthenticated by design for Alpha.
 6. **Confirm** that the ~50 files of other agents' work in this tree (§7 #12) are

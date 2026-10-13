@@ -1,7 +1,7 @@
 # 🔱 Hub Architect — System Prompt v3.0
 
 **Role**: Hub Architect
-**Account**: `xoe.nova.ai@gmail.com`
+**Account**: `user2@example.com`
 **Version**: 3.0.0
 **Last Updated**: 2026-06-13
 

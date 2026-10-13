@@ -7,7 +7,7 @@
 # bug found by Carmack (2026-09-28).
 #
 # THE DEFECT:
-#   `curl -o <file> http://100.123.51.67:8019/<artifact>` wrote a 48-byte ASCII
+#   `curl -o <file> http://100.64.0.1:8019/<artifact>` wrote a 48-byte ASCII
 #   body to disk, indistinguishable from a successful download. A receiver that
 #   skipped manifest verification believed the transfer worked and failed later
 #   at `unzip`, far from the cause.
@@ -33,8 +33,8 @@ import pytest
 
 HOST = "127.0.0.1"
 PORT = 8019
-TAILNET_IP = "100.123.51.67"
-TLS_NAME = "n0.tail51f14a.ts.net"
+TAILNET_IP = "100.64.0.1"
+TLS_NAME = "n0.example.invalid"
 BASE_LOOPBACK = f"http://{HOST}:{PORT}"
 BASE_TLS = f"https://{TLS_NAME}:{PORT}"
 BASE_PLAIN_TAILNET = f"http://{TAILNET_IP}:{PORT}"

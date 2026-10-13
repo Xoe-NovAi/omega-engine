@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 
 The VNR study pack handoff to GE-N1 on Node 1 is **complete and verified**. GE-N1 retrieved the full 24 KB payload (6 files, inlined) via the MCP bridge on first query after the omega-hub MCP server was enabled in OpenCode TUI on Node 1.
 
-**No file transfer occurred.** The packet was served directly from Node 0's handoff store through the MCP bridge at `https://n0.tail51f14a.ts.net:8016/mcp` — a pull model that works across the tailnet without any file synchronization.
+**No file transfer occurred.** The packet was served directly from Node 0's handoff store through the MCP bridge at `https://n0.example.invalid:8016/mcp` — a pull model that works across the tailnet without any file synchronization.
 
 ---
 
@@ -50,7 +50,7 @@ The VNR study pack handoff to GE-N1 on Node 1 is **complete and verified**. GE-N
 │  └────────┬────────┘                     │  └─────┬───────┘  │   │
 │           │                              │        │          │   │
 │           │  HTTPS + JSON-RPC            │        │          │   │
-│           │  https://n0.tail51f14a.ts.net:8016/mcp    │          │   │
+│           │  https://n0.example.invalid:8016/mcp    │          │   │
 │           ▼                              ▼        ▼          │   │
 │  ┌─────────────────┐                     ┌─────────────────┐   │
 │  │ omega-hub MCP   │◄────────────────────│  GE-N1 agent    │   │

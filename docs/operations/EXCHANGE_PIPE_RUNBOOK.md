@@ -9,20 +9,20 @@
 ## ⚠️ THE ONLY SUPPORTED URL FORM
 
 ```
-https://n0.tail51f14a.ts.net:8019/<path>
+https://n0.example.invalid:8019/<path>
 ```
 
 **HTTPS only. Use `curl -f`.**
 
 ```bash
 # correct — refuses to write a file on failure
-curl -sf -o /tmp/artifact.zip https://n0.tail51f14a.ts.net:8019/<path>
+curl -sf -o /tmp/artifact.zip https://n0.example.invalid:8019/<path>
 ```
 
 ## ❌ THE BROKEN URL FORM — NAMED EXPLICITLY, DO NOT REDISCOVER IT
 
 ```
-http://100.123.51.67:8019/<path>     ← BROKEN. DO NOT USE.
+http://100.64.0.1:8019/<path>     ← BROKEN. DO NOT USE.
 ```
 
 The tailnet IP speaks **HTTPS**. A plain-HTTP request is rejected by Tailscale's TLS
@@ -38,7 +38,7 @@ Client sent an HTTP request to an HTTPS server.
 successful download:
 
 ```
-$ curl -o /tmp/tail.zip http://100.123.51.67:8019/full-pack-20260926.zip
+$ curl -o /tmp/tail.zip http://100.64.0.1:8019/full-pack-20260926.zip
 $ file /tmp/tail.zip
 /tmp/tail.zip: ASCII text                    48 bytes     ← NOT the artifact
 $ sha256sum /tmp/tail.zip
@@ -57,7 +57,7 @@ log records **no** such request:
 
 ```
 journalctl -u tailscaled | grep "TLS handshake"
-  http: TLS handshake error from 100.123.51.67:55616:
+  http: TLS handshake error from 100.64.0.1:55616:
         client sent an HTTP request to an HTTPS server
 ```
 
@@ -84,7 +84,7 @@ false success **impossible for a correct client**, in three layers:
 
 ```bash
 # 1. get the manifest
-curl -sf https://n0.tail51f14a.ts.net:8019/manifest.json -o /tmp/m.json
+curl -sf https://n0.example.invalid:8019/manifest.json -o /tmp/m.json
 
 # 2. read the expected size + sha256 for the path you want
 python3 -c "import json;d=json.load(open('/tmp/m.json'));\
@@ -93,7 +93,7 @@ print(e['size'],e['sha256'])"
 
 # 3. download with -f
 curl -sf -o /tmp/artifact.zip \
-  https://n0.tail51f14a.ts.net:8019/full-pack-20260926.zip
+  https://n0.example.invalid:8019/full-pack-20260926.zip
 
 # 4. VERIFY — both must match, or the transfer failed
 sha256sum /tmp/artifact.zip
@@ -115,7 +115,7 @@ download, size check, and sha256 check in one step:
 .venv/bin/python scripts/omega_exchange_server.py get \
   full-pack-20260926/06_archangel_brief/LILITH_N1_ORIGIN_AND_VISION_BRIEF.md \
   /tmp/brief.md \
-  --base-url https://n0.tail51f14a.ts.net:8019
+  --base-url https://n0.example.invalid:8019
 ```
 
 It exits non-zero and does not write the file if the manifest entry is missing,
@@ -162,7 +162,7 @@ Real captured line (a genuine tailnet request from N1's address):
 ```json
 {"ts":"2026-09-29T08:28:25.867+00:00","service":"omega-exchange/2.0","method":"GET",
  "path":"/full-pack-20260926.zip","status":200,"bytes":122463,
- "client_ip":"100.123.51.67","user_agent":"curl/8.14.1",
+ "client_ip":"100.64.0.1","user_agent":"curl/8.14.1",
  "note":"sha256=36ac1468f2397c00 dur_ms=0.6"}
 ```
 

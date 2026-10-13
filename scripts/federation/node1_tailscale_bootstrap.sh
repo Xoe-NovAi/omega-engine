@@ -5,9 +5,9 @@
 # NODE 1 (ASUS / kali-n1) TAILSCALE BOOTSTRAP
 # Run this ON NODE 1 (ASUS ExpertBook)
 #
-# Node 0 (omega-hub) is already connected at 100.123.51.67
-# Tailnet: xoe.nova.ai@gmail.com
-# MagicDNS suffix: tail51f14a.ts.net
+# Node 0 (omega-hub) is already connected at 100.64.0.1
+# Tailnet: user2@example.com
+# MagicDNS suffix: example.invalid
 
 set -euo pipefail
 
@@ -32,7 +32,7 @@ systemctl is-active tailscaled
 echo "[3/4] Joining tailnet..."
 echo ""
 echo ">>> A login URL will appear. Visit it in your browser and authenticate"
-echo ">>> with the SAME account as Node 0: xoe.nova.ai@gmail.com"
+echo ">>> with the SAME account as Node 0: user2@example.com"
 echo ""
 
 # Interactive login (no tags — tags require ACL setup first)
@@ -52,4 +52,4 @@ echo "You should see both 'omega-hub' and 'kali-n1' online."
 echo ""
 echo "Then test the wire from Node 1:"
 echo "  tailscale ping omega-hub"
-echo "  curl -s http://omega-hub.tail51f14a.ts.net:8016/mcp -o /dev/null -w '%{http_code}\\n'"
+echo "  curl -s http://omega-hub.example.invalid:8016/mcp -o /dev/null -w '%{http_code}\\n'"

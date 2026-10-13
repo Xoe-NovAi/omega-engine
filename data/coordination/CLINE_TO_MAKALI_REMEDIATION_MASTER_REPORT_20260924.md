@@ -24,7 +24,7 @@ Three separate incidents, all resolved, all reproducible from this document:
 
 **First commands for the fleet**:
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 git status --short -- opencode.json .opencode/agents data/coordination/CLINE_*   # what's uncommitted
 git ls-files .opencode/agents/ | wc -l                                          # 0 → D1 is real
 opencode run --agent makali -m opencode/mimo-v2.6-flash-free 'Reply: OK'          # must print OK
@@ -134,7 +134,7 @@ Their report claimed a “67-byte corrupted skeleton” — that was our fixed m
 ## §9 — VERIFICATION PROTOCOL (run after ANY config change; command wins over document)
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # 1. Incident A regression (expect 0 hazard keys; the 1 = valid top-level AGENTS.md)
 grep -c '\"toolProfile\"' opencode.json; grep -c '\"instructions\"' opencode.json

@@ -13,8 +13,8 @@
 Node 0 (HP Hub)                                Node 1 (ASUS Vanguard)
 Hostname: omega-hub                            Hostname: kali-n1
 Tag: tag:node0                             Tag: tag:node1
-Tailscale IP: 100.123.51.67                    Tailscale IP: 100.x.x.x (assigned on join)
-MagicDNS: omega-hub.tail51f14a.ts.net          MagicDNS: kali-n1.tail51f14a.ts.net
+Tailscale IP: 100.64.0.1                    Tailscale IP: 100.x.x.x (assigned on join)
+MagicDNS: omega-hub.example.invalid          MagicDNS: kali-n1.example.invalid
 Role: Archival Hub & MCP Host (:8016)          Role: Vanguard Execution & Compute
 ```
 
@@ -57,7 +57,7 @@ Before nodes can claim their tags or communicate with least privilege, the polic
 
 ## 3. Stage 2: Node 0 Tag Attachment
 
-Node 0 is currently active on the tailnet as an untagged device (`100.123.51.67`). Once Stage 1 is saved, run the following command on Node 0 to bind it to `tag:node0`:
+Node 0 is currently active on the tailnet as an untagged device (`100.64.0.1`). Once Stage 1 is saved, run the following command on Node 0 to bind it to `tag:node0`:
 
 ```bash
 pkexec tailscale up --advertise-tags=tag:node0 --force-reauth
@@ -112,7 +112,7 @@ tailscale ping omega-hub
 
 ### 6.2 MCP Handshake Verification (from Node 1)
 ```bash
-curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp \
+curl -X POST http://omega-hub.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -134,7 +134,7 @@ curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp \
 | Symptom | Root Cause | Remediation |
 |---------|------------|-------------|
 | `requested tags are invalid or not permitted` | Stage 1 ACL was not saved or missing `tagOwners` | Save the ACL policy in the admin console before running `tailscale up`. |
-| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.tail51f14a.ts.net:*`). Restart hub service if needed: `systemctl --user restart omega-hub.service` (Podman Quadlet) or `podman container restart omega-hub` (direct). |
+| `Invalid Host header` from MCP | Request hostname missing from `allowed_hosts` | Verified fixed in commit `213abf44` (`omega-hub.example.invalid:*`). Restart hub service if needed: `systemctl --user restart omega-hub.service` (Podman Quadlet) or `podman container restart omega-hub` (direct). |
 | High ping latency (>50ms over LAN) | Connection falling back to DERP relay | Run `tailscale netcheck` on both machines to verify UDP port 41641 is unblocked. |
 
 *⬡ OMEGA ⬡ RUNBOOK-L2-TAILSCALE-v2.0 ⬡ 2026-09-16*

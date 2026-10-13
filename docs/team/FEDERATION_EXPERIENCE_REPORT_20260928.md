@@ -12,7 +12,7 @@
 
 ### 1. The MCP Bridge (Port 8016) is the Transport That Works
 The entire cross-node communication story runs through a single HTTPS + JSON-RPC
-endpoint at https://n0.tail51f14a.ts.net:8016/mcp. This is clean, reliable, and
+endpoint at https://n0.example.invalid:8016/mcp. This is clean, reliable, and
 already proven. 54 tools exposed including hivemind_handoff, hivemind_awareness,
 omega_federation_status, library_*, omega_memory_*, and more.
 
@@ -34,7 +34,7 @@ encrypted L2 tunnel. The MCP bridge is the application layer.
 
 ### 5. Tailscale Itself is Solid
 Mesh is up. MagicDNS resolves. Direct WireGuard path (not DERP relay) between
-n0 (100.123.51.67) and n1 (100.89.40.17). Both nodes online, tagged, healthy.
+n0 (100.64.0.1) and n1 (100.64.0.2). Both nodes online, tagged, healthy.
 
 ---
 
@@ -50,7 +50,7 @@ the bridge endpoint, the local identity, and the exact command to check pending
 packets. Or an auto-pull hook on session start.
 
 ### 2. Port 8017 (Exchange Pipe) is Broken
-The sanctioned file-serving channel at https://n0.tail51f14a.ts.net:8017/
+The sanctioned file-serving channel at https://n0.example.invalid:8017/
 returns SearXNG HTML instead of the exchange files. The path /full-pack-20260926/
 is supposed to serve the 43-file governance package but something squatted the
 port. This blocks bulk artifact delivery.

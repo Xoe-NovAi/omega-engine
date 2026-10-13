@@ -715,7 +715,7 @@ proposals:
   - dual-node
   - first-contact
   L1_narrative: 'Achieved first successful dual-node P2P federation (HP Node 0 AMD
-    Zen 2 + ASUS Node 1 Intel Raptor Lake-H) via LAN Streamable HTTP (192.168.10.168:8016/mcp).
+    Zen 2 + ASUS Node 1 Intel Raptor Lake-H) via LAN Streamable HTTP (192.168.1.100:8016/mcp).
     omega-hub FastMCP bound to 0.0.0.0:8016 with TransportSecuritySettings DNS-rebinding
     allowlist for LAN IP + loopback. Exposed 91 sovereign tools over Streamable HTTP
     and SSE. Verified 4-way Hivemind handshake: post_context -> submit_handoff ->
@@ -870,10 +870,10 @@ proposals:
   - lan-binding
   - host-header
   L1_narrative: 'FastMCP DNS-rebinding protection rejected requests with explicit
-    port Host headers (127.0.0.1:8016, 192.168.10.168:8016) when binding to 0.0.0.0:8016.
+    port Host headers (127.0.0.1:8016, 192.168.1.100:8016) when binding to 0.0.0.0:8016.
     Root cause: TransportSecuritySettings defaults to localhost-only allowlist. Fixed
-    by configuring explicit allowed_hosts with wildcard port patterns: ["192.168.10.168",
-    "192.168.10.168:*", "127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*", "[::1]",
+    by configuring explicit allowed_hosts with wildcard port patterns: ["192.168.1.100",
+    "192.168.1.100:*", "127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*", "[::1]",
     "[::1]:*"] and allowed_origins for HTTP origins. This enables LAN binding while
     preserving DNS-rebinding protection.'
   L2_insight: FastMCP's DNS-rebinding protection is opt-in for loopback but mandatory

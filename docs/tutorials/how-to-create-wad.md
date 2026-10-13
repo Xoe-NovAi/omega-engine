@@ -22,7 +22,7 @@ This tutorial walks through creating a **WAD (Where's All Data)** bundle — the
 ## Prerequisites
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # Verify CLI works

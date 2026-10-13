@@ -20,7 +20,7 @@
 #     BUG #9: `[[ ! -f "$f" ]]` guard before `git rm --cached` is FALSE for a
 #            symlink-to-directory and for a dangling symlink, so removal was
 #            SKIPPED for exactly those entries. `data/library` and
-#            `data/memory` -> /media/arcana-novai/omega_library/... shipped in
+#            `data/memory` -> /media/USER/omega_library/... shipped in
 #            the published release/debut (3c051021), leaking the account name
 #            and mount layout. Now `[[ ! -e "$f" && ! -L "$f" ]]`.
 #     AUDIT: symlink detection reads mode 120000 from the git INDEX, never
@@ -494,7 +494,7 @@ echo
 # === SYMLINK LEAK AUDIT ===
 # [maat 2026-10-03] A symlink in the git index is stored as a blob whose CONTENT
 # is the target path. Publishing it publishes the target — for `data/library`
-# and `data/memory` that was `/media/arcana-novai/omega_library/...`, leaking
+# and `data/memory` that was `/media/USER/omega_library/...`, leaking
 # the account name and the host mount layout into the public repo.
 #
 # The `-f` guard bug (fixed below) let REMOVED symlinks survive the cut. This
@@ -556,8 +556,8 @@ if [[ "$CONFIRM" -eq 1 ]]; then
   # SKIPPED for exactly the entries that most need removing.
   #
   # Real impact on the published release/debut (3c051021):
-  #   data/library -> /media/arcana-novai/omega_library/library-archive
-  #   data/memory  -> /media/arcana-novai/omega_library/memory-archive
+  #   data/library -> /media/USER/omega_library/library-archive
+  #   data/memory  -> /media/USER/omega_library/memory-archive
   # Both were classified REMOVE by this script, listed in the report, and
   # then dropped with "WARN: skip ... (not in working tree)". The symlink
   # blobs shipped publicly, leaking the account name and the mount layout.

@@ -37,7 +37,7 @@
 ```bash
 # 1. Verify venv active
 which python
-# EXPECTED: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python
+# EXPECTED: /home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python
 
 # 2. Verify ruff available
 .venv/bin/ruff --version

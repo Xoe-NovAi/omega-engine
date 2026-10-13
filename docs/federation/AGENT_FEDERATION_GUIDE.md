@@ -33,7 +33,7 @@ This guide governs how sovereign AI agents operating within the **Omega Engine**
              v                                     v
 +-----------------------------+       +------------------------------------+
 |    LOCAL (NODE 0 BASTION)   |       |      REMOTE (NODE 1 VANGUARD)      |
-| Endpoint: localhost:8016    |       | Endpoint: n1.tail51f14a.ts.net:8016|
+| Endpoint: localhost:8016    |       | Endpoint: n1.example.invalid:8016|
 +-----------------------------+       +------------------------------------+
 | • 91+ Core Engine Tools     |       | • Remote Edge MCP Tools:           |
 | • FTS5 Local Library        |       |   - `echo(message)`                |
@@ -51,7 +51,7 @@ This guide governs how sovereign AI agents operating within the **Omega Engine**
 When an agent on Node 0 requires execution or telemetry from Node 1, it communicates using the **FastMCP Streamable-HTTP** wire protocol.
 
 ### Transport Specification
-- **Base URL**: `http://n1.tail51f14a.ts.net:8016/mcp`
+- **Base URL**: `http://n1.example.invalid:8016/mcp`
 - **Method**: `POST`
 - **Headers**:
   ```http
@@ -79,7 +79,7 @@ import anyio
 import httpx
 
 async def call_node1_tool(tool_name: str, arguments: dict) -> dict:
-    url = "http://n1.tail51f14a.ts.net:8016/mcp"
+    url = "http://n1.example.invalid:8016/mcp"
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",

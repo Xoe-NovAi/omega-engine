@@ -11,7 +11,7 @@
 
 By eliminating PrivateBin and the physical USB sneakernet from the steady-state architecture, the entire federation model collapses to **first-principles simplicity**:
 
-1. **The Wire**: Pure **Tailscale L2 WireGuard Mesh + MagicDNS** (`tail51f14a.ts.net`).
+1. **The Wire**: Pure **Tailscale L2 WireGuard Mesh + MagicDNS** (`example.invalid`).
 2. **The Security**: Tag-based, least-privilege ACLs (`tag:node0`, `tag:node1`, `tag:opencode`) enforced directly at the kernel WireGuard interface.
 3. **The Sovereignty (The Synergy Model)**: Sovereignty is **Policy Enforcement**, not local-only isolation. Cloud models accelerate high-context reasoning and code synthesis; local models protect privacy-sensitive embeddings, vault ops, and background loops.
 4. **The Interface**: **OpenCode CLI + MCP Protocol**. Federation health and diagnostics are native MCP tools exposed through `omega-hub` (`omega_federation_status`, `omega_federation_diagnose`).
@@ -33,9 +33,9 @@ By eliminating PrivateBin and the physical USB sneakernet from the steady-state 
 * **No USB Sneakernet**: The USB drive was a temporary debut bootstrap. Ongoing operation uses the native Tailscale wire.
 * **No PrivateBin**: No extra containers, no third-party paste services, no unnecessary encryption shims.
 * **How Nodes Connect**:
-  - Both machines authenticate to the same tailnet (`xoe.nova.ai@gmail.com`).
-  - Node 0 is `omega-hub.tail51f14a.ts.net` (`100.123.51.67`).
-  - Node 1 is `kali-n1.tail51f14a.ts.net` (`100.x.x.x`).
+  - Both machines authenticate to the same tailnet (`user2@example.com`).
+  - Node 0 is `omega-hub.example.invalid` (`100.64.0.1`).
+  - Node 1 is `kali-n1.example.invalid` (`100.x.x.x`).
   - Traffic between them is peer-to-peer WireGuard.
   - Port `8016` exposes `omega-hub` MCP across MagicDNS.
 
@@ -60,9 +60,9 @@ By eliminating PrivateBin and the physical USB sneakernet from the steady-state 
                                       ▼                   ▼
       ┌────────────────────────────────────────┐ ┌────────────────────────────────────────┐
       │             NODE 0 (HP HUB)            │ │          NODE 1 (ASUS VANGUARD)        │
-      │ • Tailscale IP: 100.123.51.67          │ │ • Tailscale IP: 100.x.x.x              │
+      │ • Tailscale IP: 100.64.0.1          │ │ • Tailscale IP: 100.x.x.x              │
       │ • Hostname: omega-hub                  │ │ • Hostname: kali-n1                    │
-      │ • MagicDNS: omega-hub.tail51f14a.ts.net│ │ • MagicDNS: kali-n1.tail51f14a.ts.net  │
+      │ • MagicDNS: omega-hub.example.invalid│ │ • MagicDNS: kali-n1.example.invalid  │
       │ • Role: Archival & Coordination Bastion│ │ • Role: Compute & Vanguard Specialist  │
       │ • Tag: tag:node0                   │ │ • Tag: tag:node1                        │
       └────────────────────────────────────────┘ └────────────────────────────────────────┘
@@ -118,7 +118,7 @@ To be saved in the Tailscale Admin Console (`https://login.tailscale.com/admin/a
    ```bash
    # From Node 1:
    tailscale ping omega-hub
-   curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"kali-n1","version":"0.1"}}}'
+   curl -X POST http://omega-hub.example.invalid:8016/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"kali-n1","version":"0.1"}}}'
    ```
 
 ---
@@ -180,7 +180,7 @@ Expose native tools in `mcp_servers/omega_hub/server.py` so agents and human ope
    - Renders a clean ASCII map in OpenCode chat.
 2. **`omega_federation_diagnose()`**:
    - Checks port `8016` reachability.
-   - Verifies Host Header allowlist matches `omega-hub.tail51f14a.ts.net`.
+   - Verifies Host Header allowlist matches `omega-hub.example.invalid`.
    - Probes latency between Node 0 and Node 1.
 
 ---
@@ -253,4 +253,4 @@ The path is clear of distractions and aligned with your PR timeline.
 
 **What shall we execute first?**
 1. **Mint `data/entities/federation/soul.yaml`** and write **`docs/architecture/SOVEREIGNTY_INVARIANT_SPEC.md`**?
-2. **Execute the Node 0 Re-Tag & generate the Node 1 Auth Key** so the ASUS joins `tail51f14a.ts.net` right now?
+2. **Execute the Node 0 Re-Tag & generate the Node 1 Auth Key** so the ASUS joins `example.invalid` right now?

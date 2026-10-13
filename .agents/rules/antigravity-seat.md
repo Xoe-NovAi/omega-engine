@@ -42,7 +42,7 @@ sprint: "POST-DEBUT-01"
 Antigravity connects to the sovereign mesh via:
 
 - **Local FastMCP SSE:** `http://127.0.0.1:8016/sse`
-- **Tailscale Mesh URL:** `https://n0.tail51f14a.ts.net:8016/` (ACL-gated, WireGuard)
+- **Tailscale Mesh URL:** `https://n0.example.invalid:8016/` (ACL-gated, WireGuard)
 - **Exchange Pipe:** `http://127.0.0.1:8019/`
 - **Exposed MCP Tools:**
   - `hivemind_awareness` — Query fleet presence and active agents

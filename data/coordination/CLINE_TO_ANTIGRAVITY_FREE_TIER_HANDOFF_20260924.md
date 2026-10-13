@@ -16,7 +16,7 @@
 
 **One-line repro** (fails in ~10s):
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 opencode run --agent makali -m opencode/mimo-v2.6-flash-free 'Reply: OK'
 # → Error: OpenCode's free tier can only be used from within OpenCode
 # Control (passes):  opencode run --agent kali -m opencode/mimo-v2.6-flash-free 'Reply: OK'
@@ -182,7 +182,7 @@ Move `bash: deny` out of `makali.md` frontmatter and into `opencode.json → age
 
 **Cheat sheet**:
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # the defect (expect ❌ ~10s)
 opencode run --agent makali -m opencode/mimo-v2.6-flash-free 'Reply: OK'

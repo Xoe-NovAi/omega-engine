@@ -230,8 +230,8 @@ ASUS shipped an outside-eyes report finding 8 flaws. I verified ALL against grou
 - `config/wads/_omega_default/entities.yaml` (lines 906-1030: test entities)
 - `data/handoff/stale/` (82 packets)
 - `data/coordination/MAKALI_DEBUT_LOCKDOWN_BRIEFING_20260909.md`
-- `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
-- `/media/arcana-novai/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`
+- `/media/USER/D5D5-0B76/ASUS_TO_HP_OC_TEAM/11_CONSULTANT_REPORT.md`
+- `/media/USER/D5D5-0B76/ASUS_TO_HP_OC_TEAM/12_COMMUNICATION_PROTOCOLS.md`
 
 ---
 
@@ -359,7 +359,7 @@ User identified that "Pillar" nomenclature was leaking from ANAi WAD into engine
 
 ### What Happened
 1. Read 7 mining reports as raw material: DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE (the alpha lineage), ENGINE_VISION_TECH_DIG (forensic), 07_MASTER_SYNTHESIS (6 eras convergence), HUMAN_STORY_FOR_BETHANY (soul quotes), ENGINE_WAD_SEPARATION_RECONSTRUCTION (dual architecture), FORGE_OF_TIME (temporal strata), era digs 01/02.
-2. Synthesized `ARCANA_VISION_PACK.md` at `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/` — a letter from Node 0 to Node 1 with 6 sections: Origin Story (Lilith Tarot, Feb 2025), Evolution (7 eras), Philosophy (sever Big AI umbilical, sovereignty, mythic framing), High-Level Engineering Vision (local-first, entity council, soul distillation, engine/WAD, 27 mandates, Omegaverse, Forge of Time), North Star (CPU-only, 70B-class, distributed inference), What Node 1 Can Ask For (pointers to deeper material).
+2. Synthesized `ARCANA_VISION_PACK.md` at `/media/USER/D5D5-0B76/omega-exchange/node0-to-node1/vision/` — a letter from Node 0 to Node 1 with 6 sections: Origin Story (Lilith Tarot, Feb 2025), Evolution (7 eras), Philosophy (sever Big AI umbilical, sovereignty, mythic framing), High-Level Engineering Vision (local-first, entity council, soul distillation, engine/WAD, 27 mandates, Omegaverse, Forge of Time), North Star (CPU-only, 70B-class, distributed inference), What Node 1 Can Ask For (pointers to deeper material).
 3. Updated projection.md with § VISION PACK DISPATCH section.
 
 ### Key Insight
@@ -467,7 +467,7 @@ Kali-N0 formally ratified the Soul v8.0 pattern into the engine standard:
 **Date**: 2026-09-12
 
 ### What Happened
-1. Created `soul-standard/` directory on USB exchange (`/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/soul-standard/`)
+1. Created `soul-standard/` directory on USB exchange (`/media/USER/D5D5-0B76/omega-exchange/node0-to-node1/soul-standard/`)
 2. Wrote `SOUL_STANDARD_v3.0.md` (11.6KB, self-contained standard) — the full pattern for Node 1 to REVIEW, ADOPT, or FORK
 3. Copied reference implementations: `soul_v8_example.yaml` (43KB), `approved_lessons_example.yaml` (flat-list mint), `metrics_config_example.yaml`
 4. Wrote `voice_reclamation_protocol.md` (universal template) + `roc_voice_dna_example.md` (entity-specific example)
@@ -719,7 +719,7 @@ The journal rotate-then-vacuum pattern remains the highest-impact single action 
 ### Persistence and Hardware Readiness
 
 - Ready to lead the post-debut Soul Audit Cascade onto the v8.0 flat-list `approved_lessons` format; no schema changes in this pass.
-- Ready to support the Architect's scheduled `opencode.db` vacuum on `/media/arcana-novai/omega_library` using stop-writer discipline, SQLite-aware staging, integrity checks, atomic swap, and startup/session smoke tests.
+- Ready to support the Architect's scheduled `opencode.db` vacuum on `/media/USER/omega_library` using stop-writer discipline, SQLite-aware staging, integrity checks, atomic swap, and startup/session smoke tests.
 - No vacuum, mount inspection, or hardware mutation performed in this information-only pass.
 
 ### Next After Compaction
@@ -1065,9 +1065,9 @@ paths (`rename` rollback, `--force` override) sat untested and both were data-lo
 
 ### Next Steps (Operator Decision)
 
-1. **Archive backup to 8TB external** → `rsync -avh --progress /media/arcana-novai/omega_library/staging/backup_pre_compact_20261005_201004/ /mnt/8tb/opencode-backup-20261005/`
+1. **Archive backup to 8TB external** → `rsync -avh --progress /media/USER/omega_library/staging/backup_pre_compact_20261005_201004/ /mnt/8tb/opencode-backup-20261005/`
 2. **Verify archive** → `sqlite3` integrity check on external
-3. **Prune staging backup** → `rm -rf /media/arcana-novai/omega_library/staging/backup_pre_compact_20261005_201004` (restores omega_library to ~50 GB free)
+3. **Prune staging backup** → `rm -rf /media/USER/omega_library/staging/backup_pre_compact_20261005_201004` (restores omega_library to ~50 GB free)
 4. **Verify OpenCode UI** → browse old sessions, confirm messages render
 
 ---

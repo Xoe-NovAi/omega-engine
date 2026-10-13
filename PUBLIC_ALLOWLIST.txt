@@ -221,7 +221,7 @@ data/entities/jem/session_gnosis_jem-N13.md
 
 # [CUT-20261007-B2] arcana_novai showcase WAD (minus plugins/) — tests/test_world_state.py
 # loads this WAD and lattices core->physics. Plugins stay private: plugins/
-# contains host paths (/media/arcana-novai/*) and is FORGE-listed below.
+# contains host paths (/media/USER/*) and is FORGE-listed below.
 config/wads/arcana_novai/adapters/
 config/wads/arcana_novai/entities/
 config/wads/arcana_novai/world/
@@ -249,8 +249,8 @@ docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 ```
 src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
 tests/unit/test_vault_core.py   # D-565 — vault excluded from debut; test cannot import the cut src/omega/vault/
-tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/arcana-novai/*) — plugin stays private
-config/wads/arcana_novai/plugins/   # host paths /media/arcana-novai/* — FORGE beats any broader entry; keep it private
+tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/USER/*) — plugin stays private
+config/wads/arcana_novai/plugins/   # host paths /media/USER/* — FORGE beats any broader entry; keep it private
 docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above

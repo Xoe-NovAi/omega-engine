@@ -90,7 +90,7 @@ worse than a stale number."*
 performed and is documented. Evidence:
 
 1. `docs/federation/N1_READINESS_REPORT_20260925.md:23` — "MCP Parity ✅ VERIFIED —
-   66 tools exposed via `https://n0.tail51f14a.ts.net:8016/mcp/`", with a
+   66 tools exposed via `https://n0.example.invalid:8016/mcp/`", with a
    per-category breakdown (Hivemind 12, Oracle 8, Library 10, …) and the exact
    `curl` invocations at lines 65-77.
 2. `docs/federation/N1_READINESS_REPORT_20260925.md:82` — "Tools List | `POST /mcp/`
@@ -201,9 +201,9 @@ failure is environmental and is *not* a documentation defect:
 
 ```
 3 LAN EXPOSURE(S) — gate RED
-  LAN  100.123.51.67:43961   process: UNKNOWN-PROCESS
-  LAN  100.123.51.67:8019    process: UNKNOWN-PROCESS
-  LAN  100.123.51.67:8016    process: UNKNOWN-PROCESS
+  LAN  100.64.0.1:43961   process: UNKNOWN-PROCESS
+  LAN  100.64.0.1:8019    process: UNKNOWN-PROCESS
+  LAN  100.64.0.1:8016    process: UNKNOWN-PROCESS
   reason: bound to a routable non-loopback address with no policy in the path
 make: *** [Makefile:1151: check-lan-exposure] Error 1
 ```
@@ -213,7 +213,7 @@ Wiring: `temple-grade` → `check-mandates` (`Makefile:634`) → `check-lan-expo
 
 **This is a D-612 side-effect worth escalating.** D-612 replaced real tailnet IPs
 with placeholders so nothing sensitive ships. But the gate runs against the **live
-host**, where three services genuinely bind `100.123.51.67`. A placeholder entry
+host**, where three services genuinely bind `100.64.0.1`. A placeholder entry
 cannot approve a real bind, so after the sanitization the gate became
 **unpassable while those services run**. D-612 fixed the disclosure and
 inoperabilized the gate.

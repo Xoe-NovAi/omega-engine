@@ -15,8 +15,8 @@ that most need removing, while the script's own report still listed them as
 
 Real impact on the already-published `release/debut` (3c051021):
 
-    data/library -> /media/arcana-novai/omega_library/library-archive
-    data/memory  -> /media/arcana-novai/omega_library/memory-archive
+    data/library -> /media/USER/omega_library/library-archive
+    data/memory  -> /media/USER/omega_library/memory-archive
 
 Both were classified REMOVE, then dropped with "WARN: skip ... (not in working
 tree)". The symlink blobs shipped publicly, leaking the operator account name
@@ -134,7 +134,7 @@ def test_absolute_target_symlink_leak_is_closed(tmp_path: Path):
     """The exact published leak: an absolute host path as the link target."""
     repo = _make_repo(tmp_path)
     (repo / "data").mkdir()
-    (repo / "data" / "memory").symlink_to("/media/arcana-novai/omega_library/memory-archive")
+    (repo / "data" / "memory").symlink_to("/media/USER/omega_library/memory-archive")
 
     _git(repo, "add", "-A")
     _git(repo, "commit", "-qm", "add leak")
@@ -226,7 +226,7 @@ def test_summary_reports_symlink_counts(tmp_path: Path):
     """
     repo = _make_repo(tmp_path)
     (repo / "data").mkdir()
-    (repo / "data" / "library").symlink_to("/media/arcana-novai/omega_library/library-archive")
+    (repo / "data" / "library").symlink_to("/media/USER/omega_library/library-archive")
     (repo / "keep_link.txt").symlink_to("keep.txt")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-qm", "symlinks")
@@ -245,7 +245,7 @@ def test_kept_symlinks_are_reported_with_their_target(tmp_path: Path):
     """
     repo = _make_repo(tmp_path)
     (repo / "keep.txt").unlink()
-    (repo / "keep.txt").symlink_to("/media/arcana-novai/omega_library/library-archive")
+    (repo / "keep.txt").symlink_to("/media/USER/omega_library/library-archive")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-qm", "allowed symlink")
 
@@ -254,7 +254,7 @@ def test_kept_symlinks_are_reported_with_their_target(tmp_path: Path):
     assert "keep.txt" in _tracked(repo), "allowlist must still keep it"
     assert "SYMLINK LEAK AUDIT" in proc.stdout, proc.stdout
     assert "keep.txt" in proc.stdout
-    assert "/media/arcana-novai/omega_library/library-archive" in proc.stdout, (
+    assert "/media/USER/omega_library/library-archive" in proc.stdout, (
         "the audit must print the target that would be published"
     )
     assert "LEAK" in proc.stdout
@@ -281,7 +281,7 @@ def test_audit_does_not_flag_regular_files_as_symlinks(tmp_path: Path):
 def test_strict_refuses_while_a_symlink_is_kept(tmp_path: Path):
     repo = _make_repo(tmp_path)
     (repo / "keep.txt").unlink()
-    (repo / "keep.txt").symlink_to("/media/arcana-novai/omega_library/library-archive")
+    (repo / "keep.txt").symlink_to("/media/USER/omega_library/library-archive")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-qm", "allowed symlink")
 

@@ -665,7 +665,7 @@ If more than one candidate is plausibly live (e.g., two sessions with `parent_id
 > **A fact carried forward without a query is not a fact — and this binds the oversouls, not only the dispatched.**
 
 Three instances in a single exchange, one from the oversoul itself:
-1. Asserted "the server log has never shown a hit from 100.89.40.17" — about a log that does not exist.
+1. Asserted "the server log has never shown a hit from 100.64.0.2" — about a log that does not exist.
 2. Repeated a claim made about a service that cannot log, and built a conclusion on it.
 3. Stated a child count read from a **truncated tool list** as a total.
 

@@ -36,14 +36,14 @@ You can reopen OpenCode against the reclaimed DB. No further action blocks that.
 | Script (patched) | `scripts/opencode_db_reclaim.sh` | All 4 fixes (see Part 2) |
 | Run log | `/tmp/opencode/reclaim.log` | Ends `RECLAIM COMPLETE` |
 | Dry-run / execute captures | `/tmp/opencode/reclaim-dryrun.out`, `/tmp/opencode/reclaim-execute.out` | Mirrors |
-| **Pre-reclaim backup** | `/media/arcana-novai/8TB/opencode_backups/opencode.db.20261013.sqlite` | 27 GB, FK-clean, parity 3139/3139 |
-| **Post-delete rollback** | `/media/arcana-novai/8TB/opencode_backups/opencode.db.rollback-20261013014834` | 27 GB — **DO NOT DELETE** until soak passes |
-| Staging duplicate | `/media/arcana-novai/omega_library/staging/opencode-reclaimed.db` | 6.6 GB, redundant — remove after soak |
+| **Pre-reclaim backup** | `/media/USER/8TB/opencode_backups/opencode.db.20261013.sqlite` | 27 GB, FK-clean, parity 3139/3139 |
+| **Post-delete rollback** | `/media/USER/8TB/opencode_backups/opencode.db.rollback-20261013014834` | 27 GB — **DO NOT DELETE** until soak passes |
+| Staging duplicate | `/media/USER/omega_library/staging/opencode-reclaimed.db` | 6.6 GB, redundant — remove after soak |
 
 Restore (last resort, streaming only — never `cp`):
 ```bash
-sqlite3 "/media/arcana-novai/8TB/opencode_backups/opencode.db.rollback-20261013014834" \
-  "VACUUM INTO '/home/arcana-novai/.local/share/opencode/opencode.db'"
+sqlite3 "/media/USER/8TB/opencode_backups/opencode.db.rollback-20261013014834" \
+  "VACUUM INTO '/home/USER/.local/share/opencode/opencode.db'"
 ```
 
 *Parts 2 (timeline + discoveries + corrections) and 3 (caveats + next actions) follow in sibling files.*

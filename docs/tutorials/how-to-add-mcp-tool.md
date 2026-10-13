@@ -23,7 +23,7 @@ This tutorial walks through adding a new MCP (Model Context Protocol) tool to th
 
 ```bash
 # Ensure you're in the repo
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # Activate venv
 source .venv/bin/activate

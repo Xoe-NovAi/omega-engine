@@ -148,7 +148,7 @@ The `omega-hub` service must bind to `0.0.0.0:8016` for LAN accessibility.
 Environment=OMEGA_HUB_HOST=0.0.0.0
 Environment=OMEGA_HUB_PORT=8016
 ExecStart=
-ExecStart=/home/arcana-novai/.local/bin/omega-hub
+ExecStart=/home/USER/.local/bin/omega-hub
 ```
 
 **Apply**:
@@ -168,11 +168,11 @@ from mcp.server.streamable_http import TransportSecuritySettings
 transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
-        "192.168.10.168", "192.168.10.168:*",
+        "192.168.1.100", "192.168.1.100:*",
         "localhost", "127.0.0.1", "[::1]",
     ],
     allowed_origins=[
-        "http://192.168.10.168:*",
+        "http://192.168.1.100:*",
         "http://localhost:*",
         "http://127.0.0.1:*",
     ],
@@ -378,14 +378,14 @@ The USB bootstrap includes `opencode.json` configured for remote MCP to Node 0. 
 | **Transport** | Streamable HTTP (POST `/mcp`) |
 | **Protocol** | JSON-RPC 2.0 (RFC 7231) |
 | **Binding** | Node 0: `0.0.0.0:8016` |
-| **Client URL** | `http://192.168.10.168:8016/mcp` |
+| **Client URL** | `http://192.168.1.100:8016/mcp` |
 
 ### 6.2 Required Client Headers
 
 ```bash
 Content-Type: application/json
 Accept: application/json
-Host: 192.168.10.168:8016
+Host: 192.168.1.100:8016
 ```
 
 ### 6.3 End-to-End Verification (test_connection.sh)
@@ -396,7 +396,7 @@ The USB bootstrap includes `test_connection.sh` which performs 4 checks:
 #!/bin/bash
 # test_connection.sh
 
-HUB_URL="http://192.168.10.168:8016"
+HUB_URL="http://192.168.1.100:8016"
 
 echo "=== 1. Health Check ==="
 curl -sf "$HUB_URL/health" | jq -e '.status == "healthy"' && echo "✅ PASS" || echo "❌ FAIL"
@@ -423,10 +423,10 @@ timeout 5 curl -sfN -H "Accept: text/event-stream" "$HUB_URL/sse" | head -1 | gr
 
 ### 6.4 IP Drift Mitigation
 
-**Current HP IP**: `192.168.10.168` (wlo1)
+**Current HP IP**: `192.168.1.100` (wlo1)
 
 **Mitigation**:
-1. **Static DHCP Reservation**: Configure router to assign `192.168.10.168` to HP's MAC address
+1. **Static DHCP Reservation**: Configure router to assign `192.168.1.100` to HP's MAC address
 2. **Tailscale MagicDNS**: Phase 1 — eliminates IP dependency entirely
 3. **Verification**: `ip -4 addr show wlo1` on HP before each session
 
@@ -520,7 +520,7 @@ sudo mount /dev/sdX1 /mnt/usb
 ### 8.2 Payload Structure
 
 ```
-/media/arcana-novai/D5D5-0B76/
+/media/USER/D5D5-0B76/
 ├── omega-engine.bundle                    # Git bundle (69MB) — full history, all refs
 └── OMEGA_NODE1_BOOTSTRAP/
     ├── opencode.json                      # OpenCode remote MCP configuration
@@ -534,19 +534,19 @@ sudo mount /dev/sdX1 /mnt/usb
 ### 8.3 Create Git Bundle (Node 0)
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # Create bundle with all refs
-git bundle create /media/arcana-novai/D5D5-0B76/omega-engine.bundle --all
+git bundle create /media/USER/D5D5-0B76/omega-engine.bundle --all
 
 # Verify
-git bundle verify /media/arcana-novai/D5D5-0B76/omega-engine.bundle
-git bundle list-heads /media/arcana-novai/D5D5-0B76/omega-engine.bundle
+git bundle verify /media/USER/D5D5-0B76/omega-engine.bundle
+git bundle list-heads /media/USER/D5D5-0B76/omega-engine.bundle
 ```
 
 ### 8.4 opencode.json (ASUS Remote Config)
 
-**File**: `/media/arcana-novai/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/opencode.json`
+**File**: `/media/USER/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/opencode.json`
 
 ```json
 {
@@ -554,7 +554,7 @@ git bundle list-heads /media/arcana-novai/D5D5-0B76/omega-engine.bundle
   "mcp": {
     "omega-hub": {
       "type": "remote",
-      "url": "http://192.168.10.168:8016/mcp",
+      "url": "http://192.168.1.100:8016/mcp",
       "enabled": true
     }
   },
@@ -589,7 +589,7 @@ git bundle list-heads /media/arcana-novai/D5D5-0B76/omega-engine.bundle
 
 ### 8.5 hivemind_first_contact.py (Ceremonial Handshake)
 
-**File**: `/media/arcana-novai/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/hivemind_first_contact.py`
+**File**: `/media/USER/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/hivemind_first_contact.py`
 
 ```python
 #!/usr/bin/env python3
@@ -604,7 +604,7 @@ import urllib.request
 import uuid
 from datetime import datetime, timezone
 
-HUB_URL = "http://192.168.10.168:8016"
+HUB_URL = "http://192.168.1.100:8016"
 
 def post_context():
     """Post ASUS build context to Hivemind."""
@@ -701,7 +701,7 @@ if __name__ == "__main__":
 
 ### 8.6 README_ASUS.txt (3-Minute Quickstart)
 
-**File**: `/media/arcana-novai/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/README_ASUS.txt`
+**File**: `/media/USER/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/README_ASUS.txt`
 
 ```
 ========================================
@@ -812,7 +812,7 @@ python3 ~/hivemind_first_contact.py
 
 ```bash
 # From ASUS, test a tool call via remote MCP
-curl -sf -X POST http://192.168.10.168:8016/mcp \
+curl -sf -X POST http://192.168.1.100:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"omega-hub_hivemind_get_awareness","arguments":{}}}' | jq .
@@ -1029,10 +1029,10 @@ OpenCode ignores model limit overrides if `opencode.json` mixes V1 (`agent`) and
 
 | Symptom | Root Cause | Exact Remedy |
 |---------|------------|--------------|
-| `421 Misdirected Request` / `Invalid Host header` | Request Host not in `allowed_hosts` | Node 0 server updated with `192.168.10.168:*`. If IP changes, update `mcp_servers/omega_hub/server.py` `_transport_security`. |
+| `421 Misdirected Request` / `Invalid Host header` | Request Host not in `allowed_hosts` | Node 0 server updated with `192.168.1.100:*`. If IP changes, update `mcp_servers/omega_hub/server.py` `_transport_security`. |
 | `406 Not Acceptable` | Client omitted `Accept: application/json` | Ensure `curl` or client sends `-H "Accept: application/json"`. OpenCode remote client does this natively. |
 | `ECONNREFUSED` / Timeout | UFW blocking port 8016 or IP drift | On HP: `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hub MCP LAN access"`. Verify HP IP with `ip -4 addr show wlo1`. Restricts to LAN subnet only. |
-| ASUS OpenCode doesn't see tools | Trailing slash error or wrong path | URL must be `http://192.168.10.168:8016/mcp` (Streamable HTTP), NOT root `/`. |
+| ASUS OpenCode doesn't see tools | Trailing slash error or wrong path | URL must be `http://192.168.1.100:8016/mcp` (Streamable HTTP), NOT root `/`. |
 | Model 70% compaction on ASUS | Missing Big Pickle override in OpenCode | Copy project `opencode.json` `limit.input: 190000` override from HP (85% threshold). ASUS-OC tested 950000 (1M ceiling) but 190000 is safer — matches HP's verified fix. |
 | ASUS MCP tools fail (searxng/firecrawl) | HP services bound to 127.0.0.1 only | searxng (8018) & firecrawl (8015) are LOCALHOST-ONLY on HP. USB config omits them. If needed, rebind on HP to 0.0.0.0 or run locally on ASUS. |
 | `git clone` fails (private repo) | No SSH key / PAT configured | Use git bundle from USB: `git clone /media/$USER/*/omega-engine.bundle omega-engine-alpha` |
@@ -1105,9 +1105,9 @@ This is the **critical test** — the user (Architect) will:
 
 | Task | Command |
 |------|---------|
-| Hub health check | `curl -s http://192.168.10.168:8016/health \| jq .` |
-| MCP tools list | `curl -s -X POST http://192.168.10.168:8016/mcp -H "Content-Type: application/json" -H "Accept: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \| jq '.result.tools \| length'` |
-| Hivemind awareness | `curl -s -X POST http://192.168.10.168:8016/mcp -H "Content-Type: application/json" -H "Accept: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"omega-hub_hivemind_get_awareness","arguments":{}}}' \| jq .` |
+| Hub health check | `curl -s http://192.168.1.100:8016/health \| jq .` |
+| MCP tools list | `curl -s -X POST http://192.168.1.100:8016/mcp -H "Content-Type: application/json" -H "Accept: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \| jq '.result.tools \| length'` |
+| Hivemind awareness | `curl -s -X POST http://192.168.1.100:8016/mcp -H "Content-Type: application/json" -H "Accept: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"omega-hub_hivemind_get_awareness","arguments":{}}}' \| jq .` |
 | Hardware probe | `make probe-hardware` |
 | Temple-grade | `make temple-grade` |
 | UFW rule | `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp` |

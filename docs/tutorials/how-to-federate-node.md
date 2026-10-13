@@ -86,13 +86,13 @@ curl http://localhost:8019/healthz
 ```bash
 # Set Node 0 identity (run once)
 export OMEGA_NODE_NAME="n0"
-export OMEGA_NODE_HOST="n0.tail51f14a.ts.net"  # Your Tailscale MagicDNS name
-export OMEGA_SELF_IP="100.123.51.67"  # Your Tailscale IP
+export OMEGA_NODE_HOST="n0.example.invalid"  # Your Tailscale MagicDNS name
+export OMEGA_SELF_IP="100.64.0.1"  # Your Tailscale IP
 
 # Add to ~/.bashrc or ~/.profile for persistence
 echo 'export OMEGA_NODE_NAME="n0"' >> ~/.bashrc
-echo 'export OMEGA_NODE_HOST="n0.tail51f14a.ts.net"' >> ~/.bashrc
-echo 'export OMEGA_SELF_IP="100.123.51.67"' >> ~/.bashrc
+echo 'export OMEGA_NODE_HOST="n0.example.invalid"' >> ~/.bashrc
+echo 'export OMEGA_SELF_IP="100.64.0.1"' >> ~/.bashrc
 ```
 
 ### 1.3 Start Node 0 Services
@@ -130,12 +130,12 @@ cd omega-engine
 ```bash
 # Set Node 1 identity (CRITICAL - must be unique)
 export OMEGA_NODE_NAME="n1"
-export OMEGA_NODE_HOST="n1.tail51f14a.ts.net"  # Your Tailscale MagicDNS name
+export OMEGA_NODE_HOST="n1.example.invalid"  # Your Tailscale MagicDNS name
 export OMEGA_SELF_IP="100.98.76.54"  # Your Tailscale IP
 
 # Add to ~/.bashrc for persistence
 echo 'export OMEGA_NODE_NAME="n1"' >> ~/.bashrc
-echo 'export OMEGA_NODE_HOST="n1.tail51f14a.ts.net"' >> ~/.bashrc
+echo 'export OMEGA_NODE_HOST="n1.example.invalid"' >> ~/.bashrc
 echo 'export OMEGA_SELF_IP="100.98.76.54"' >> ~/.bashrc
 
 # Verify
@@ -155,7 +155,7 @@ tailscale status
 # Should show both nodes
 
 # Test connectivity
-tailscale ping n0.tail51f14a.ts.net
+tailscale ping n0.example.invalid
 # Should succeed with direct WireGuard
 ```
 
@@ -185,11 +185,11 @@ curl http://localhost:8019/healthz
 
 ```bash
 # From Node 1, test Node 0 exchange
-curl https://n0.tail51f14a.ts.net:8019/healthz
+curl https://n0.example.invalid:8019/healthz
 # Should return 200 OK
 
 # From Node 0, test Node 1 exchange
-curl https://n1.tail51f14a.ts.net:8019/healthz
+curl https://n1.example.invalid:8019/healthz
 # Should return 200 OK
 ```
 
@@ -197,11 +197,11 @@ curl https://n1.tail51f14a.ts.net:8019/healthz
 
 ```bash
 # From Node 1, test Node 0 hub
-curl https://n0.tail51f14a.ts.net:8016/health
+curl https://n0.example.invalid:8016/health
 # {"status":"healthy","version":"1.6.0-alpha"}
 
 # From Node 0, test Node 1 hub
-curl https://n1.tail51f14a.ts.net:8016/health
+curl https://n1.example.invalid:8016/health
 # {"status":"healthy","version":"1.6.0-alpha"}
 ```
 
@@ -212,7 +212,7 @@ curl https://n1.tail51f14a.ts.net:8016/health
 python -c "
 import asyncio
 from omega.federation import diagnose
-result = asyncio.run(diagnose('n1.tail51f14a.ts.net'))
+result = asyncio.run(diagnose('n1.example.invalid'))
 print(result)
 "
 ```
@@ -290,18 +290,18 @@ asyncio.run(check())
 echo "Hello from Node 0 at $(date)" > ~/omega-exchange/federation_test.txt
 
 # Verify it appears in manifest
-curl https://n0.tail51f14a.ts.net:8019/manifest.json | jq '.entries[] | select(.name=="federation_test.txt")'
+curl https://n0.example.invalid:8019/manifest.json | jq '.entries[] | select(.name=="federation_test.txt")'
 ```
 
 ### 5.2 Node 1 Pulls File
 
 ```bash
 # On Node 1, pull the file
-curl -o federation_test.txt https://n0.tail51f14a.ts.net:8019/federation_test.txt
+curl -o federation_test.txt https://n0.example.invalid:8019/federation_test.txt
 
 # Verify SHA256 matches manifest
 sha256sum federation_test.txt
-curl -s https://n0.tail51f14a.ts.net:8019/manifest.json | jq -r '.entries[] | select(.name=="federation_test.txt") | .sha256'
+curl -s https://n0.example.invalid:8019/manifest.json | jq -r '.entries[] | select(.name=="federation_test.txt") | .sha256'
 # Should match!
 ```
 
@@ -309,7 +309,7 @@ curl -s https://n0.tail51f14a.ts.net:8019/manifest.json | jq -r '.entries[] | se
 
 ```bash
 # This should fail with 405
-curl -X PUT https://n0.tail51f14a.ts.net:8019/test.txt -d "data"
+curl -X PUT https://n0.example.invalid:8019/test.txt -d "data"
 # {"error":"method_not_allowed","detail":"PUT is not supported. This origin is READ-ONLY."}
 ```
 
@@ -363,7 +363,7 @@ async def health_check():
     print('Federation:', status)
     
     # Full diagnose
-    diag = await omega_federation_diagnose('n1.tail51f14a.ts.net')
+    diag = await omega_federation_diagnose('n1.example.invalid')
     print('Diagnose:', diag)
 
 asyncio.run(health_check())
@@ -387,8 +387,8 @@ Wants=tailscale.service
 Type=simple
 WorkingDirectory=/home/user/Documents/Xoe-NovAi/omega-engine
 Environment=OMEGA_NODE_NAME=n0
-Environment=OMEGA_NODE_HOST=n0.tail51f14a.ts.net
-Environment=OMEGA_SELF_IP=100.123.51.67
+Environment=OMEGA_NODE_HOST=n0.example.invalid
+Environment=OMEGA_SELF_IP=100.64.0.1
 ExecStart=/home/user/.venv/bin/python -m mcp_servers.omega_hub.server
 Restart=on-failure
 RestartSec=10
@@ -408,8 +408,8 @@ Wants=tailscale.service
 Type=simple
 WorkingDirectory=/home/user/Documents/Xoe-NovAi/omega-engine
 Environment=OMEGA_NODE_NAME=n0
-Environment=OMEGA_NODE_HOST=n0.tail51f14a.ts.net
-Environment=OMEGA_SELF_IP=100.123.51.67
+Environment=OMEGA_NODE_HOST=n0.example.invalid
+Environment=OMEGA_SELF_IP=100.64.0.1
 ExecStart=/home/user/.venv/bin/python scripts/omega_exchange_server.py --root /home/user/omega-exchange --port 8019
 Restart=on-failure
 RestartSec=10
@@ -423,7 +423,7 @@ WantedBy=default.target
 ```ini
 # Same as above but:
 Environment=OMEGA_NODE_NAME=n1
-Environment=OMEGA_NODE_HOST=n1.tail51f14a.ts.net
+Environment=OMEGA_NODE_HOST=n1.example.invalid
 Environment=OMEGA_SELF_IP=100.98.76.54
 ```
 
@@ -469,8 +469,8 @@ curl -sf http://localhost:8016/health | jq -r '.status'
 curl -sf http://localhost:8019/healthz
 
 echo "2. Peer services:"
-PEER="n0.tail51f14a.ts.net"
-if [ "$OMEGA_NODE_NAME" = "n0" ]; then PEER="n1.tail51f14a.ts.net"; fi
+PEER="n0.example.invalid"
+if [ "$OMEGA_NODE_NAME" = "n0" ]; then PEER="n1.example.invalid"; fi
 curl -sf https://$PEER:8016/health | jq -r '.status'
 curl -sf https://$PEER:8019/healthz
 

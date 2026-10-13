@@ -22,7 +22,7 @@ The **Omega Exchange** is a read-only HTTP file server (port 8019) that enables 
 ## Prerequisites
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # Verify exchange script exists
@@ -50,8 +50,8 @@ chmod 755 ~/omega-exchange
 ```bash
 # Set environment variables (add to ~/.bashrc for persistence)
 export OMEGA_NODE_NAME="n0"           # Unique: n0, n1, n2, etc.
-export OMEGA_NODE_HOST="n0.tail51f14a.ts.net"  # Tailscale MagicDNS name
-export OMEGA_SELF_IP="100.123.51.67"  # Your Tailscale IP
+export OMEGA_NODE_HOST="n0.example.invalid"  # Tailscale MagicDNS name
+export OMEGA_SELF_IP="100.64.0.1"  # Your Tailscale IP
 
 # Verify
 echo "Node: $OMEGA_NODE_NAME"
@@ -103,7 +103,7 @@ curl http://localhost:8019/manifest.json | jq .
 ```json
 {
   "served_by": "n0",
-  "url_form": "https://n0.tail51f14a.ts.net:8019",
+  "url_form": "https://n0.example.invalid:8019",
   "entries": [
     {"name": "hello.txt", "size": 18, "sha256": "..."},
     {"name": "configs/providers.yaml", "size": 2048, "sha256": "..."}
@@ -174,8 +174,8 @@ Wants=tailscale.service
 Type=simple
 WorkingDirectory=/home/user/Documents/Xoe-NovAi/omega-engine
 Environment=OMEGA_NODE_NAME=n0
-Environment=OMEGA_NODE_HOST=n0.tail51f14a.ts.net
-Environment=OMEGA_SELF_IP=100.123.51.67
+Environment=OMEGA_NODE_HOST=n0.example.invalid
+Environment=OMEGA_SELF_IP=100.64.0.1
 ExecStart=/home/user/.venv/bin/python scripts/omega_exchange_server.py --root /home/user/omega-exchange --port 8019
 Restart=on-failure
 RestartSec=10
@@ -215,25 +215,25 @@ journalctl --user -u omega-exchange.service -f
 
 ```bash
 # From Node 0, test Node 1 exchange
-curl https://n1.tail51f14a.ts.net:8019/healthz
-curl https://n1.tail51f14a.ts.net:8019/manifest.json | jq .
+curl https://n1.example.invalid:8019/healthz
+curl https://n1.example.invalid:8019/manifest.json | jq .
 
 # From Node 1, test Node 0 exchange
-curl https://n0.tail51f14a.ts.net:8019/healthz
-curl https://n0.tail51f14a.ts.net:8019/manifest.json | jq .
+curl https://n0.example.invalid:8019/healthz
+curl https://n0.example.invalid:8019/manifest.json | jq .
 ```
 
 ### 9.2 Verify Manifest Identity
 
 ```bash
 # Each node's manifest MUST show its own identity
-curl -s https://n0.tail51f14a.ts.net:8019/manifest.json | jq '.served_by, .url_form'
+curl -s https://n0.example.invalid:8019/manifest.json | jq '.served_by, .url_form'
 # "n0"
-# "https://n0.tail51f14a.ts.net:8019"
+# "https://n0.example.invalid:8019"
 
-curl -s https://n1.tail51f14a.ts.net:8019/manifest.json | jq '.served_by, .url_form'
+curl -s https://n1.example.invalid:8019/manifest.json | jq '.served_by, .url_form'
 # "n1"
-# "https://n1.tail51f14a.ts.net:8019"
+# "https://n1.example.invalid:8019"
 ```
 
 **If both show "n0"**: Node 1's `OMEGA_NODE_NAME`/`OMEGA_NODE_HOST`/`OMEGA_SELF_IP` not set correctly.

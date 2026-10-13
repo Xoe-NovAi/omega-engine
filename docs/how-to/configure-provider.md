@@ -7,7 +7,7 @@ This guide explains how to set up the provider fabric for local-first inference.
 The engine tries local backends first.
 
 ### Native GGUF
-Ensure your models are in `/media/arcana-novai/omega_library/models/gguf/`.
+Ensure your models are in `/media/USER/omega_library/models/gguf/`.
 The engine uses `llama-cpp-python` for native inference.
 
 ### LM Studio

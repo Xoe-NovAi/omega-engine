@@ -68,7 +68,7 @@ We have crossed the threshold from a **single-laptop development rig** into a **
 └──────────────────────────────────────┴──────────────────────────────────────┘
                                   ▲
                          P2P LAN STREAMABLE HTTP
-                       (192.168.10.168:8016/mcp)
+                       (192.168.1.100:8016/mcp)
 ```
 
 ---
@@ -144,8 +144,8 @@ The Architect conducted intensive local setup and testing on Node 1:
 ### 1.5 P2P Omegaverse First Contact Implementation (D-444, D-445, D-446)
 * **Philosophy**: Rejected a 6-week bureaucratic migration timeline in favor of id Software / John Carmack rapid execution ("tonight, not weeks").
 * **Hub LAN Projection**:
-  * Configured `omega-hub.service` to bind `0.0.0.0:8016` (HP LAN IP: `192.168.10.168`).
-  * Patched `mcp_servers/omega_hub/server.py` `TransportSecuritySettings` to allow wildcards for LAN IP and loopback ports (`192.168.10.168:*`, `127.0.0.1:*`, `localhost:*`).
+  * Configured `omega-hub.service` to bind `0.0.0.0:8016` (HP LAN IP: `192.168.1.100`).
+  * Patched `mcp_servers/omega_hub/server.py` `TransportSecuritySettings` to allow wildcards for LAN IP and loopback ports (`192.168.1.100:*`, `127.0.0.1:*`, `localhost:*`).
   * Exposed **91 sovereign tools** over Streamable HTTP (`/mcp`) and SSE (`/sse`).
 * **End-to-End Verification**:
   * Tested direct JSON-RPC 2.0 tool execution over the LAN IP.
@@ -153,7 +153,7 @@ The Architect conducted intensive local setup and testing on Node 1:
     `post_context` $\rightarrow$ `submit_handoff` $\rightarrow$ `accept_handoff` $\rightarrow$ `complete_handoff`.
 * **Playbook & Payload**:
   * Authored permanent 7-section doctrine: `docs/strategy/P2P_OMEGAVERSE_FEDERATION_PLAYBOOK.md` (and mirrored to `docs/ASUS/`).
-  * Staged complete bootstrap payload onto physical USB drive (`/media/arcana-novai/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/`):
+  * Staged complete bootstrap payload onto physical USB drive (`/media/USER/D5D5-0B76/OMEGA_NODE1_BOOTSTRAP/`):
     * `opencode.json` (pointing to HP hub + Big Pickle 190k override)
     * `test_connection.sh` (4-point curl validation)
     * `hivemind_first_contact.py` (zero-dependency Python standard-library handshake)
@@ -230,7 +230,7 @@ Per your strategic alignment (D-440 / D-441), the sequencing is tightly locked:
 
 ## 🛡️ 4. RISK & RESIDUAL CONTROLS
 
-1. **Local IP Drift**: HP Node 0 is currently at `192.168.10.168`. If the local Wi-Fi lease reallocates, Node 1 will encounter `ECONNREFUSED`.  
+1. **Local IP Drift**: HP Node 0 is currently at `192.168.1.100`. If the local Wi-Fi lease reallocates, Node 1 will encounter `ECONNREFUSED`.  
    *Mitigation*: User will assign a static DHCP reservation on the local router tomorrow, followed by Tailscale MagicDNS integration.
 2. **Big Pickle 1M Ceiling on ASUS (RESOLVED)**: ASUS-OC tested `limit.input: 950000` (1M ceiling) — **DANGEROUS**. Verified: Big Pickle = 200K model (GLM-4.6), API hard rejects at >200K. All USB/config materials updated to **190K (85% threshold)**. If coherence loss beyond 160K tokens, dial back to 175K (82.5%) or 180K (80%).
 3. **UFW Rule Not Yet Applied (BLOCKER)**: `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp` still pending (sudo requires password). Without this, ASUS `test_connection.sh` will TIMEOUT.

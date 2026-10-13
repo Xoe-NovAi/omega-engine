@@ -127,20 +127,20 @@ network addressing**:
 
 ```yaml
 # config/lan_exposure_allowlist.yaml:12,45
-# 3. deluged — 192.168.10.168%wlo1:51372 and 100.123.51.67%tailscale0:51372
-  - 100.123.51.67      # n0 tailnet IPv4
+# 3. deluged — 192.168.1.100%wlo1:51372 and 100.64.0.1%tailscale0:51372
+  - 100.64.0.1      # n0 tailnet IPv4
 ```
 
 And the negative-test fixtures hard-code the same pair
 (`scripts/test_lan_exposure_audit.py:57-78`):
 
 ```python
-("approved tailnet 8016 v4", L("100.123.51.67", 8016, None, None), True),
-("LAN deluged wlo1 caught", L("192.168.10.168", 51372, "wlo1", "deluged"), False),
+("approved tailnet 8016 v4", L("100.64.0.1", 8016, None, None), True),
+("LAN deluged wlo1 caught", L("192.168.1.100", 51372, "wlo1", "deluged"), False),
 ```
 
-`192.168.10.168` is a real private-LAN address on interface `wlo1`;
-`100.123.51.67` is a real Tailscale CGNAT address on `tailscale0`. Publishing
+`192.168.1.100` is a real private-LAN address on interface `wlo1`;
+`100.64.0.1` is a real Tailscale CGNAT address on `tailscale0`. Publishing
 these discloses internal network topology of the operator's machine and tailnet.
 
 This is the same leak class as `f8d4f0ae` ("username/mount leak" via the
@@ -192,8 +192,8 @@ TOTAL credential-shaped hits: 0
 | `scripts/gnosis_archive.py` | none | none — all paths derived from `REPO_ROOT` | Discovers entities dynamically; no hard-coded roster (entity names appear only in usage examples). |
 | `scripts/load_constraints.py` | none | none | Reads `docs/governance/CONTRAINTS.md`, optional for the gate. |
 | `scripts/lan_exposure_audit.py` | none | **loopback literals only** — `HARDCODED_LOOPBACK` is the tool's *subject*, not a leak | But hard-fails without `config/lan_exposure_allowlist.yaml`. |
-| `scripts/test_lan_exposure_audit.py` | none | **real `192.168.10.168` + `100.123.51.67`** | 🚫 Tier C. |
-| `config/lan_exposure_allowlist.yaml` | none | **real `192.168.10.168` + `100.123.51.67`** | 🚫 Tier C. |
+| `scripts/test_lan_exposure_audit.py` | none | **real `192.168.1.100` + `100.64.0.1`** | 🚫 Tier C. |
+| `config/lan_exposure_allowlist.yaml` | none | **real `192.168.1.100` + `100.64.0.1`** | 🚫 Tier C. |
 
 ### `make gate-secrets` status (M23 — reported as measured, not as claimed)
 

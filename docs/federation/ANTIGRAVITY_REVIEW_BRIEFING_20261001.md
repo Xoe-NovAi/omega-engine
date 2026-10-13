@@ -36,12 +36,12 @@ Before lifting our PR-blocking freeze, we request an independent, adversarial pe
 * **Node 0 (`xnai-n0-hp`)**:
   * Hardware: HP EliteDesk 805 G8 / AMD Ryzen 7 PRO 5700U (8C/16T), 64GB RAM, NVMe.
   * Role: Core Engine authority, SQLite/Vector persistence, Omega Hub (Port 8016), Exchange Server (Port 8019), Sovereign Vault.
-  * Tailnet Address: `100.123.51.67` (`n0.tail51f14a.ts.net`).
+  * Tailnet Address: `100.64.0.1` (`n0.example.invalid`).
 * **Node 1 (`xnai-n1-asus`)**:
   * Hardware: ASUS ROG / Intel Core i7-13620H (10C/16T), CPU-only inference, NVMe.
   * Role: Autonomous exploration laboratory, Lilith-N1, MemPalace, WAD experimentation.
   * Git State: Intentional laboratory divergence (156 ahead / 1,196 behind canonical). Not a rogue fork; canonical engine is to be deployed cleanly without destroying local lab WADs.
-  * Tailnet Address: `100.99.117.76` (`n1.tail51f14a.ts.net`).
+  * Tailnet Address: `100.99.117.76` (`n1.example.invalid`).
 
 ### 2.2 Transport & Network Policy
 * **Tailscale Policy (`tailnet-policy-OMEGA-DEFINITIVE-v2-20260928.hujson`)**:

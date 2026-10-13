@@ -71,7 +71,7 @@ all 10 cards unless noted.
 | Seat remit (prose) | `description` | §4.4.1 | **Yes** | ✅ all | grounded in `entities.yaml` `role` |
 | Card revision | `version` | §4.4.1 | **Yes** | ✅ all | `"1.0.0"` (card version, *not* engine version) |
 | Federation endpoint | `supportedInterfaces[]` | §4.4.1 → §4.4.6 | **Yes** | ✅ all | exactly one entry |
-| Endpoint URL | `AgentInterface.url` | §4.4.6 | **Yes** | ✅ all | `https://n0.tail51f14a.ts.net:8016/` |
+| Endpoint URL | `AgentInterface.url` | §4.4.6 | **Yes** | ✅ all | `https://n0.example.invalid:8016/` |
 | Wire protocol identity | `AgentInterface.protocolBinding` | §4.4.6, §5.8 | **Yes** | ✅ all | custom URI, **not** an official binding |
 | Spec version targeted | `AgentInterface.protocolVersion` | §4.4.6 | **Yes** | ✅ all | `"1.0"` — see §3.3 caveat |
 | Multi-tenant routing hint | `AgentInterface.tenant` | §4.4.6 | No | ❌ omitted | not implemented; §4.4.6 makes it a client MUST when set |
@@ -209,7 +209,7 @@ the validator:
 
 Omega identity is enforced at the **mesh layer**: Tailscale/WireGuard, tailnet
 only, ACL-gated, with `tailscaled` Serve routes. Tailnet addresses are
-`100.123.51.67` (IPv4) and `fd7a:115c:a1e0::d835:3344` (IPv6). The policy lives
+`100.64.0.1` (IPv4) and `fd7a:115c:a1e0::d835:3344` (IPv6). The policy lives
 in `config/lan_exposure_allowlist.yaml`; the hub port is registered in
 `config/omega.yaml` (`mcp.hub_port: 8016`).
 
@@ -295,8 +295,8 @@ Probed on 2026-10-03 against the live host:
 
 | Endpoint | Port | Reachable | Actually speaks | Serves agent card | Speaks A2A |
 |---|---|---|---|---|---|
-| `https://n0.tail51f14a.ts.net:8016/` | 8016 | ✅ `GET /sse` → 200 (MCP SSE, `text/event-stream`); `GET /` → 404 | MCP over SSE + JSON-RPC 2.0 | ❌ 404 | ❌ |
-| `https://n0.tail51f14a.ts.net:8019/` | 8019 | ✅ `GET /` → 200 (`"service":"omega-exchange/2.0"`) | read-only artifact exchange | ❌ 404 (`"No artifact at '.well-known/agent-card.json'"`) | ❌ |
+| `https://n0.example.invalid:8016/` | 8016 | ✅ `GET /sse` → 200 (MCP SSE, `text/event-stream`); `GET /` → 404 | MCP over SSE + JSON-RPC 2.0 | ❌ 404 | ❌ |
+| `https://n0.example.invalid:8019/` | 8019 | ✅ `GET /` → 200 (`"service":"omega-exchange/2.0"`) | read-only artifact exchange | ❌ 404 (`"No artifact at '.well-known/agent-card.json'"`) | ❌ |
 
 Both are declared reachable because they are — but reachability is recorded
 separately from A2A conformance precisely so the two are never conflated.

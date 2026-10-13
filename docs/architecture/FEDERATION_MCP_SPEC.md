@@ -29,8 +29,8 @@ Returns a comprehensive snapshot of the local node's connection to the tailnet, 
 {
   "self": {
     "hostname": "omega-hub",
-    "tailscale_ip": "100.123.51.67",
-    "magicdns": "omega-hub.tail51f14a.ts.net",
+    "tailscale_ip": "100.64.0.1",
+    "magicdns": "omega-hub.example.invalid",
     "tags": ["tag:node0"],
     "backend_state": "Running"
   },
@@ -38,7 +38,7 @@ Returns a comprehensive snapshot of the local node's connection to the tailnet, 
     {
       "hostname": "kali-n1",
       "tailscale_ip": "100.x.x.x",
-      "magicdns": "kali-n1.tail51f14a.ts.net",
+      "magicdns": "kali-n1.example.invalid",
       "tags": ["tag:node1"],
       "online": true,
       "direct": true,

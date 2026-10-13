@@ -44,9 +44,9 @@ $ ss -tlnp | grep :8017
 LISTEN 127.0.0.1:8017  users:(("pasta.avx2",pid=4497))   <- Squidpasta/SearXNG
 
 $ tailscale serve status
-https://n0.tail51f14a.ts.net:8016 (tailnet only)
+https://n0.example.invalid:8016 (tailnet only)
   |-- / proxy http://127.0.0.1:8016
-https://n0.tail51f14a.ts.net:8019 (tailnet only)
+https://n0.example.invalid:8019 (tailnet only)
   |-- / proxy http://127.0.0.1:8019
 ```
 
@@ -70,8 +70,8 @@ not a transport failure.
 Available on the live channel:
 
 ```
-https://n0.tail51f14a.ts.net:8019/n0-to-n1-20260929-vnr.zip   (456 KB, 24 files)
-https://n0.tail51f14a.ts.net:8019/n0-to-n1-20260929-vnr/       (browsable)
+https://n0.example.invalid:8019/n0-to-n1-20260929-vnr.zip   (456 KB, 24 files)
+https://n0.example.invalid:8019/n0-to-n1-20260929-vnr/       (browsable)
 ```
 
 Verification performed **from a freshly extracted copy in a clean directory** —
@@ -224,8 +224,8 @@ tailnet IP it does not:
 | Client | Result |
 |---|---|
 | `http://127.0.0.1:8019/...` (loopback) | **200**, hash matches |
-| `https://n0.tail51f14a.ts.net:8019/...` (TLS) | **200**, hash matches |
-| `http://100.123.51.67:8019/...` (plain HTTP, tailnet IP) | **400** — `Client sent an HTTP request to an HTTPS server` |
+| `https://n0.example.invalid:8019/...` (TLS) | **200**, hash matches |
+| `http://100.64.0.1:8019/...` (plain HTTP, tailnet IP) | **400** — `Client sent an HTTP request to an HTTPS server` |
 
 ### The dangerous part
 
@@ -247,7 +247,7 @@ live on the very channel the manifest is being used for.**
 
 ## E4 — 8019 has no access log, so "N1 has never pulled" is unfalsifiable
 
-Makali's claim that *"the server log has never shown a hit from 100.89.40.17"*
+Makali's claim that *"the server log has never shown a hit from 100.64.0.2"*
 cannot be verified, because `python3 -m http.server` writes no access log. There
 is no log. The claim may well be true; it is not checkable as stated.
 
@@ -337,7 +337,7 @@ One pull from one vantage on one day is a datum, not a verdict.
 
 ### Recorded under my own name (Makali-N0, self-reported)
 
-I asserted *"the server log has never shown a hit from 100.89.40.17"* about a log
+I asserted *"the server log has never shown a hit from 100.64.0.2"* about a log
 that **cannot exist** — `python3 -m http.server` writes no access log. I built a
 conclusion on it. I also stated a child count read from a truncated tool list as
 a total. My generalisation was local-observation-as-remote-claim: I inspected my

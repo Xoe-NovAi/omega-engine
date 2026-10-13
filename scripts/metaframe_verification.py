@@ -124,7 +124,7 @@ class MetaFrameVerifier:
             "AP-JOHN_CARMACK-",
         ],
         "legitimate_emails": [
-            "arcana.novai@gmail.com",  # Known fake from dialectic - should be flagged
+            "user1@example.com",  # Known fake from dialectic - should be flagged
         ],
         "legitimate_session_prefixes": [
             "ses_",

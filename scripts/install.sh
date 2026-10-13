@@ -135,7 +135,7 @@ ok "Omega installed with native-gguf backend (llama-cpp-python)"
 # Source: lmstudio-community (has exact LFM2.5-2.6B-Q4_K_M.gguf filename matching config)
 # MODELS_DIR default mirrors scripts/serve_native_gguf.sh; env override wins.
 # (Fixed 2026-10-13: MODELS_DIR was used-but-unset → instant death under `set -u`.)
-MODELS_DIR="${OMEGA_MODELS_DIR:-/media/arcana-novai/omega_library/models/gguf}"
+MODELS_DIR="${OMEGA_MODELS_DIR:-/media/USER/omega_library/models/gguf}"
 MODEL_PATH="$MODELS_DIR/LFM2.5-2.6B-Q4_K_M.gguf"
 HF_URL="https://huggingface.co/lmstudio-community/LFM2.5-2.6B-GGUF/resolve/main/LFM2.5-2.6B-Q4_K_M.gguf"
 

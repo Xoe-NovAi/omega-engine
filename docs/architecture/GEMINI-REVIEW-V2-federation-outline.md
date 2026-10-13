@@ -19,7 +19,7 @@
 ### 2. Elimination of the USB Sneakernet (Carmack-Style Simplicity)
 * **The Error Excised**: Relying on physical USB thumb drives for ongoing node communication is clunky, high-friction, and archaic. 
 * **The Ratified Law**: **Tailscale is the Sovereign Wire.** Tailscale already provides end-to-end WireGuard encryption, NAT traversal, and cryptographic node keys over commodity internet. 
-* **Zero-Knowledge Courier (PrivateBin)**: We do **not** run Dockerized PrivateBin as an internal IPC or Hivemind database. PrivateBin is strictly an **out-of-band human courier**—a temporary, client-side encrypted, burn-after-read pastebin used only when a human operator needs to pass a single one-shot authkey or bootstrap link across air gaps. Once nodes join the tailnet, **Tailscale MagicDNS (`omega-hub.tail51f14a.ts.net:8016`) is the only wire needed.**
+* **Zero-Knowledge Courier (PrivateBin)**: We do **not** run Dockerized PrivateBin as an internal IPC or Hivemind database. PrivateBin is strictly an **out-of-band human courier**—a temporary, client-side encrypted, burn-after-read pastebin used only when a human operator needs to pass a single one-shot authkey or bootstrap link across air gaps. Once nodes join the tailnet, **Tailscale MagicDNS (`omega-hub.example.invalid:8016`) is the only wire needed.**
 
 ### 3. Installation as Interactive Initiation (Education-First)
 * **The Ratified Law**: **Installation is not a silent script; it is an educational ceremony.**
@@ -50,21 +50,21 @@
                                       ▼                   ▼
       ┌────────────────────────────────────────┐ ┌────────────────────────────────────────┐
       │             NODE 0 (HP HUB)            │ │          NODE 1 (ASUS VANGUARD)        │
-      │ • Tailscale IP: 100.123.51.67          │ │ • Tailscale IP: 100.x.x.x              │
+      │ • Tailscale IP: 100.64.0.1          │ │ • Tailscale IP: 100.x.x.x              │
       │ • Hostname: omega-hub                  │ │ • Hostname: kali-n1                    │
-      │ • MagicDNS: omega-hub.tail51f14a.ts.net│ │ • MagicDNS: kali-n1.tail51f14a.ts.net  │
+      │ • MagicDNS: omega-hub.example.invalid│ │ • MagicDNS: kali-n1.example.invalid  │
       │ • Role: Archival & Coordination Bastion│ │ • Role: Compute & Vanguard Specialist  │
       │ • Tag: tag:node0                   │ │ • Tag: tag:node1                        │
       └────────────────────────────────────────┘ └────────────────────────────────────────┘
 ```
 
 ### 1. The Wire & Security Boundary
-* **Transport**: Tailscale WireGuard mesh (`tail51f14a.ts.net`).
-* **Hub Endpoint**: `http://omega-hub.tail51f14a.ts.net:8016/mcp`.
+* **Transport**: Tailscale WireGuard mesh (`example.invalid`).
+* **Hub Endpoint**: `http://omega-hub.example.invalid:8016/mcp`.
 * **Transport Security Allowlist** (already live in `mcp_servers/omega_hub/server.py` @ `213abf44`):
-  - `100.123.51.67:*`
-  - `omega-hub.tail51f14a.ts.net:*`
-  - `*.tail51f14a.ts.net:*`
+  - `100.64.0.1:*`
+  - `omega-hub.example.invalid:*`
+  - `*.example.invalid:*`
 * **Mesh Traffic Invariant**: The wire carries **coordination metadata, tool invocations, and MCP heartbeats only**. Model weights and raw model streaming remain local to each node's active inference harness.
 
 ### 2. The Tailscale ACL Architecture (`hujson`)
@@ -115,7 +115,7 @@ Instead of waiting months for a custom terminal GUI, we bring the federation int
    ```bash
    # From Node 1:
    tailscale ping omega-hub
-   curl -X POST http://omega-hub.tail51f14a.ts.net:8016/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"kali-n1","version":"0.1"}}}'
+   curl -X POST http://omega-hub.example.invalid:8016/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"kali-n1","version":"0.1"}}}'
    ```
 
 ### Stage 2: Mint the Federation Entity (`omega-federation`)

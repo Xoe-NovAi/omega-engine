@@ -28,7 +28,7 @@
 {
   "self": {
     "hostname": "n0",
-    "tailscale_ip": "100.123.51.67",
+    "tailscale_ip": "100.64.0.1",
     "tags": ["tag:node0"]
   }
 }
@@ -51,9 +51,9 @@ The `omega_federation_status` tool (line 222-251) works as follows:
 - There is **NO hardcoded n0 reference** â€” the identity comes from tailscale itself
 
 **Why it reports n0 when called from Node 1**:
-- The hub process runs on Node 0 (confirmed by systemd unit: `WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine`)
+- The hub process runs on Node 0 (confirmed by systemd unit: `WorkingDirectory=/home/USER/Documents/Xoe-NovAi/omega-engine`)
 - When Node 1 connects to the hub via Tailscale and calls `omega_federation_status`, the tool queries **Node 0's** tailscale daemon
-- Node 0's tailscale daemon correctly reports Node 0's identity (hostname: n0, IP: 100.123.51.67)
+- Node 0's tailscale daemon correctly reports Node 0's identity (hostname: n0, IP: 100.64.0.1)
 - The tool has **no concept of "which node is calling"** â€” it only knows its own local identity
 
 **Is there a hardcoded n0 reference?** No. The only n0 references in the codebase are:
@@ -155,7 +155,7 @@ For a Python `OSError`, `str(e)` returns `[Errno 28] No space left on device` â€
   "error": {
     "code": "disk_full",
     "message": "No space left on device",
-    "path": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/pending/.ho_abc123.json.12345.67890.tmp",
+    "path": "/home/USER/Documents/Xoe-NovAi/omega-engine/data/handoff/pending/.ho_abc123.json.12345.67890.tmp",
     "operation": "temp_file_creation",
     "filesystem": "/dev/sda1",
     "available_bytes": 0
@@ -171,7 +171,7 @@ For a Python `OSError`, `str(e)` returns `[Errno 28] No space left on device` â€
 
 Successful submit returned path:
 ```
-/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/handoff/pending/...
+/home/USER/Documents/Xoe-NovAi/omega-engine/handoff/pending/...
 ```
 The hub is writing under Node 0's home, not Node 1's home.
 
@@ -186,7 +186,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 This resolves to the directory containing the `mcp_servers` directory:
 - `mcp_servers/omega_hub/state.py` -> parent = `mcp_servers/omega_hub/`
 - parent = `mcp_servers/`
-- parent = **omega-engine root** (e.g., `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine`)
+- parent = **omega-engine root** (e.g., `/home/USER/Documents/Xoe-NovAi/omega-engine`)
 
 **All hub paths derive from `PROJECT_ROOT`**:
 ```python
@@ -199,11 +199,11 @@ METRICS_PATH = PROJECT_ROOT / "data" / "coordination" / "metrics.json"  # line 4
 **Systemd unit confirms** (`~/.config/systemd/user/omega-hub.service`):
 ```ini
 [Service]
-WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
-ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/omega_hub/server.py
+WorkingDirectory=/home/USER/Documents/Xoe-NovAi/omega-engine
+ExecStart=/home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp_servers/omega_hub/server.py
 ```
 
-**Is it hardcoded to `/home/arcana-novai`?** No. `PROJECT_ROOT` is relative to the file location. But the hub process is **started from Node 0's directory**, so `PROJECT_ROOT` resolves to Node 0's omega-engine directory.
+**Is it hardcoded to `/home/USER`?** No. `PROJECT_ROOT` is relative to the file location. But the hub process is **started from Node 0's directory**, so `PROJECT_ROOT` resolves to Node 0's omega-engine directory.
 
 **Does the hub detect which node the caller is on?** **No.** There is:
 - No `OMEGA_NODE_ID` environment variable

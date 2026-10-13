@@ -51,9 +51,9 @@ You are NOT the primary executor. roc_racoon runs the steps. You exist to:
 | Thing | Path |
 |---|---|
 | Live DB | `~/.local/share/opencode/opencode.db` (+ `-wal`, `-shm`) |
-| Staging copy (Oct-5 compacted) | `/media/arcana-novai/omega_library/staging/opencode-compact.db` |
-| **8TB external (backup target)** | `/media/arcana-novai/8TB/opencode_backups/` |
-| Reclaimed-file scratch | `/media/arcana-novai/omega_library/staging/` |
+| Staging copy (Oct-5 compacted) | `/media/USER/omega_library/staging/opencode-compact.db` |
+| **8TB external (backup target)** | `/media/USER/8TB/opencode_backups/` |
+| Reclaimed-file scratch | `/media/USER/omega_library/staging/` |
 | Sanctioned read tool | `ocdb-ro` |
 | Research + protocol docs | `data/entities/roc_racoon/workspace/mining_reports/OPENCODE_DB_*.md`, `OPENCODE_2X_UPGRADE_RESEARCH_20261013.md` |
 
@@ -62,7 +62,7 @@ You are NOT the primary executor. roc_racoon runs the steps. You exist to:
 ## 📋 Phases (roc_racoon runs these; you only help if asked)
 
 **Phase 1 — Backup (live-safe, source read-only):**
-1. `VACUUM INTO '/media/arcana-novai/8TB/opencode_backups/opencode.db.20261013.sqlite'`
+1. `VACUUM INTO '/media/USER/8TB/opencode_backups/opencode.db.20261013.sqlite'`
 2. Verify: `quick_check` → `foreign_key_check` → `integrity_check` → 21-table row parity vs source
 3. sha256 manifest
 
@@ -70,7 +70,7 @@ You are NOT the primary executor. roc_racoon runs the steps. You exist to:
 4. Batched DELETE of duplicated `event` rows `type='message.updated.1'` (only where the
    message exists). 2,000–5,000 rows/transaction, `wal_checkpoint(PASSIVE)` each batch,
    resumable/idempotent.
-5. `VACUUM INTO /media/arcana-novai/omega_library/staging/opencode-reclaimed.db` (~6.5 GB)
+5. `VACUUM INTO /media/USER/omega_library/staging/opencode-reclaimed.db` (~6.5 GB)
 6. Verify reclaimed file vs backup
 7. Atomic `mv` into live path
 
@@ -82,7 +82,7 @@ You are NOT the primary executor. roc_racoon runs the steps. You exist to:
 hand-execute SQL.
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 
 # 1. Confirm OpenCode is CLOSED (the script refuses otherwise, but check first):
 fuser ~/.local/share/opencode/opencode.db 2>/dev/null && echo "STILL OPEN - abort" || echo "clear"
@@ -137,14 +137,14 @@ ocdb-ro "SELECT COUNT(*) FROM event"
 ```bash
 # ONLY if roc_racoon explicitly authorizes AND OpenCode is closed.
 # Use streaming, never cp:
-sqlite3 "/media/arcana-novai/8TB/opencode_backups/opencode.db.20261013.sqlite" \
-        "VACUUM INTO '/home/arcana-novai/.local/share/opencode/opencode.db'"
+sqlite3 "/media/USER/8TB/opencode_backups/opencode.db.20261013.sqlite" \
+        "VACUUM INTO '/home/USER/.local/share/opencode/opencode.db'"
 ```
 
 **Rollback files that already exist (DO NOT DELETE):**
-- `/media/arcana-novai/8TB/opencode_backups/opencode.db.backup.20261001-185446.sqlite` (41.4 GB)
-- `/media/arcana-novai/8TB/opencode_backups/opencode.db.backup.20261001-191216.sqlite` (41.4 GB)
-- `/media/arcana-novai/omega_library/staging/opencode-compact.db` (26.3 GB)
+- `/media/USER/8TB/opencode_backups/opencode.db.backup.20261001-185446.sqlite` (41.4 GB)
+- `/media/USER/8TB/opencode_backups/opencode.db.backup.20261001-191216.sqlite` (41.4 GB)
+- `/media/USER/omega_library/staging/opencode-compact.db` (26.3 GB)
 
 ---
 

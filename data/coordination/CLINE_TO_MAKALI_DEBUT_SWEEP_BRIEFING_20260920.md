@@ -65,8 +65,8 @@ box — use `git ls-remote origin 'refs/heads/release/*'` to confirm the remote 
 
 **The two pytest defects** — run `35496559076`, step `python3 -m pytest tests/ -v --tb=short -x`:
 1. **B2 · ERROR** — `tests/jem/test_dispatch_guard_adversarial.py::TestAllLocationsVerification::test_step4_passes_for_existing_file`
-   → `FileNotFoundError: [Errno 2] No such file or directory: '/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/tmp2agc_k3h.py'`.
-   Cause: line 435 hardcoded `dir="/home/arcana-novai/..."` — fails on **any other checkout**.
+   → `FileNotFoundError: [Errno 2] No such file or directory: '/home/USER/Documents/Xoe-NovAi/omega-engine/tmp2agc_k3h.py'`.
+   Cause: line 435 hardcoded `dir="/home/USER/..."` — fails on **any other checkout**.
    ✅ **FIXED** in `783a17fa` (→ `Path(__file__).resolve().parent.parent.parent`; `OK` locally).
 2. **B3 · FAIL** — `tests/test_first_breath.py:74 test_first_breath_recording` → `assert record is not None`.
    **Not an env flake — unwired dead code masked by dirty local state.** `record_first_breath()` is
@@ -339,7 +339,7 @@ nemotron model card, arcana_novai plugin). **Your call** on the remaining five.
    "…disabled by default… It is enabled by default." Always re-grep the prose after multi-pass edits.
 8. **The meter's arithmetic** (P1-F) — read the buckets, not just the percentage. Note that
    `SOVEREIGN_MANDATES.md` holds **28** mandates, so 28 rows is correct — one row is never bucketed.
-9. **Hardcoded absolute paths in tests** — `dir="/home/arcana-novai/..."` fails on every other
+9. **Hardcoded absolute paths in tests** — `dir="/home/USER/..."` fails on every other
    checkout. Derive the root: `Path(__file__).resolve().parent.parent.parent`. Audit with
    `grep -rn 'arcana-novai' tests/ --include='*.py'`
 10. **Tests that pass only because of dirty local state** — `test_first_breath_recording` was green
@@ -386,7 +386,7 @@ nemotron model card, arcana_novai plugin). **Your call** on the remaining five.
    re-derives it. Caveat: `N7`/`N11`/`N13` in entity filenames and AP tokens
    (`session_gnosis_jem-N13.md`, `AP-ROC-N7-GNOSIS`) are **session-arc** labels — leave them alone.
 8. **Federation status conflict** — Roc (09-12): "P2P FEDERATION LIVE, ASUS satellite at
-   192.168.10.168:8016"; your gnosis (09-18): "Phase 0 L2 Ceremony — authkey mint pending". Which
+   192.168.1.100:8016"; your gnosis (09-18): "Phase 0 L2 Ceremony — authkey mint pending". Which
    is current? Also open: **SearXNG dual ownership** (P2-H) — systemd unit inactive while a manual
    process holds :8018.
 

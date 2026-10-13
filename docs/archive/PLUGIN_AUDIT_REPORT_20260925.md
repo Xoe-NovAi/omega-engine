@@ -284,7 +284,7 @@ class ErrorCaptureAdapter:
 
 ### Verify Plugin Loading
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 opencode plugin list
 # Should show: error-capture, awareness, silent-stall-sensor
 ```

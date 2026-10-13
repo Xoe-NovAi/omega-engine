@@ -190,8 +190,8 @@ let filtered = ALL_COMMANDS
 - `omega-sandbox` crate enforces profiles from `~/.omega/sandbox/<entity>.toml`  
 - Profiles define filesystem/network allowed/denied lists  
 - Examples:  
-  - **Kali (P1-P5)**: `deny = ["/*"]`, `allow = ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/config/wads/"]`  
-  - **P7 (Context)**: `allow = { path = "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine", readonly = true }`  
+  - **Kali (P1-P5)**: `deny = ["/*"]`, `allow = ["/home/USER/Documents/Xoe-NovAi/omega-engine/config/wads/"]`  
+  - **P7 (Context)**: `allow = { path = "/home/USER/Documents/Xoe-NovAi/omega-engine", readonly = true }`  
   - **P3 (Engineering)**: Workspace with custom deny lists  
 
 **Key Files from Grok**:  
@@ -239,7 +239,7 @@ These four actions deliver:
 ## 🔗 Traceability to Source
 
 All recommendations are verifiable against the cloned Grok CLI repository at:  
-`/home/arcana-novai/omega-engine/third_party/grok-build/`
+`/home/USER/omega-engine/third_party/grok-build/`
 
 Key directories for deep study:  
 - `crates/codegen/xai-grok-pager/src/app/` - Elm architecture core (actions, dispatch, event_loop)  

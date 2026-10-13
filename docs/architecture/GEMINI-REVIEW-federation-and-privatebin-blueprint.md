@@ -41,9 +41,9 @@ Here is the grounding audit across the 5 major pillars, detailing what holds wei
   - **Where PrivateBin Actually Shines**: As a **dead-simple, zero-knowledge out-of-band courier** for the human operator.
     - If the user wants to hand an authkey or initial config snippet from Node 0 to Node 1 without typing it or risking cleartext email/Discord, they can toss it into a public/semi-public PrivateBin with a 5-minute burn-after-read TTL and open the link on Node 1.
 * **Carmack Simplification**:
-  - Node 0 connects to Tailscale (already done: `100.123.51.67`).
+  - Node 0 connects to Tailscale (already done: `100.64.0.1`).
   - Node 1 connects to the same tailnet account via browser or authkey.
-  - **The moment both are in the tailnet, they talk directly via MagicDNS (`omega-hub.tail51f14a.ts.net:8016`).**
+  - **The moment both are in the tailnet, they talk directly via MagicDNS (`omega-hub.example.invalid:8016`).**
   - No sneakernet. No custom encrypted relay servers. Let Tailscale do what Tailscale spent 7 years perfecting.
 
 ---
@@ -118,7 +118,7 @@ To turn `docs/architecture/federation-and-privatebin-blueprint.md` from a vision
 
 ### 🎯 Immediate Concrete Next Step
 1. **Finish the Tailscale Handshake**:
-   - Provide the exact authkey or login instructions for Node 1 so both machines share `tail51f14a.ts.net`.
+   - Provide the exact authkey or login instructions for Node 1 so both machines share `example.invalid`.
    - Verify Node 0 and Node 1 can ping each other across the mesh.
 2. **Commit and ratify the grounded blueprint** into the codebase.
 

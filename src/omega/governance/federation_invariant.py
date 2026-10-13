@@ -14,6 +14,7 @@ Mandates: M7 (Synergy), M8 (Zero Telemetry), M23 (Failure Integrity)
 from __future__ import annotations
 
 import logging
+import os
 import subprocess
 from datetime import datetime, timezone
 from typing import Any
@@ -32,7 +33,9 @@ FORBIDDEN_ENDPOINTS = [
     "/v1/embeddings",  # embeddings stay local, never exposed to mesh
 ]
 
-HUB_BASE = "http://omega-hub.tail51f14a.ts.net:8016"
+# Hub base for the zero-inference-egress probe. OMEGA_HUB_BASE wins (third-party
+# deployments differ); the default below is a placeholder (P0-2 cut redaction).
+HUB_BASE = os.environ.get("OMEGA_HUB_BASE", "http://omega-hub.example.invalid:8016")
 
 
 async def verify_zero_inference_egress() -> dict[str, Any]:

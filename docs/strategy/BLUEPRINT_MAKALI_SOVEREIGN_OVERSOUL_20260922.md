@@ -190,7 +190,7 @@ Node 0 (HP EliteDesk) and Node 1 (ASUS ROG) are not client and server; they are 
 ┌──────────────────────────────────────┐                   ┌──────────────────────────────────────┐
 │        NODE 0 (HP EliteDesk)         │                   │           NODE 1 (ASUS ROG)          │
 │       Tag: tag:node0 | Name: n0      │                   │       Tag: tag:node1 | Name: n1      │
-│            100.123.51.67             │                   │             100.89.40.17             │
+│            100.64.0.1             │                   │             100.64.0.2             │
 ├──────────────────────────────────────┤                   ├──────────────────────────────────────┤
 │ • Role: Primary Substrate & Core     │                   │ • Role: Satellite & MemPalace        │
 │ • Omega Hub MCP (:8016/mcp)          │                   │ • MemPalace MCP (:8017 / local)      │
@@ -203,14 +203,14 @@ Node 0 (HP EliteDesk) and Node 1 (ASUS ROG) are not client and server; they are 
 ```
 
 ### 5.1 Direct Mesh Invariants
-1. **Physical LAN Supremacy**: Node 0 (`192.168.10.168`) and Node 1 (`192.168.10.174`) communicate directly over bare-metal LAN UDP WireGuard (`:41641`). DERP relays (`mia`) are prohibited during normal operations; connection must register as `direct`.
+1. **Physical LAN Supremacy**: Node 0 (`192.168.1.100`) and Node 1 (`192.168.1.101`) communicate directly over bare-metal LAN UDP WireGuard (`:41641`). DERP relays (`mia`) are prohibited during normal operations; connection must register as `direct`.
 2. **Canonical Tag Discipline**:
    - Node 0 is **strictly** `tag:node0`.
    - Node 1 is **strictly** `tag:node1`.
    - All legacy identifiers (`tag:omega-hub`, `tag:asus`) are permanently dead.
 3. **MagicDNS Addressing**: Inter-node services must bind to MagicDNS hostnames:
-   - Node 0 Hub: `http://n0.tail51f14a.ts.net:8016/mcp`
-   - Node 1 Services: `http://n1.tail51f14a.ts.net:...`
+   - Node 0 Hub: `http://n0.example.invalid:8016/mcp`
+   - Node 1 Services: `http://n1.example.invalid:...`
 4. **Bidirectional NFSv4.2 Exchange**:
    - Unified mount point: `/mnt/node-drive/exchange`
    - Configuration: `all_squash,anonuid=1000,anongid=1000,sec=sys,vers=4.2`

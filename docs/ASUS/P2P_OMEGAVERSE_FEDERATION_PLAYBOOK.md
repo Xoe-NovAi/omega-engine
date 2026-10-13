@@ -124,11 +124,11 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
   TransportSecuritySettings(
       enable_dns_rebinding_protection=True,
       allowed_hosts=[
-          "192.168.10.168", "192.168.10.168:*",
+          "192.168.1.100", "192.168.1.100:*",
           "localhost", "127.0.0.1", "[::1]",
       ],
       allowed_origins=[
-          "http://192.168.10.168:*",
+          "http://192.168.1.100:*",
           "http://localhost:*",
           "http://127.0.0.1:*",
       ],
@@ -137,7 +137,7 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
 * **Required Client Headers**:
   * `Content-Type: application/json`
   * `Accept: application/json`
-  * `Host: 192.168.10.168:8016`
+  * `Host: 192.168.1.100:8016`
 
 ### 3.2 Layer 2: Encrypted Mesh / Tailscale (Phase 1 — Zero-Config Roaming)
 * When roaming outside the local Wi-Fi router, Tailscale establishes WireGuard tunnels between nodes.
@@ -206,10 +206,10 @@ Cross-node interaction follows the strict state machine:
 ## 🚀 5. EXECUTION & TRANSFER RUNBOOK (TONIGHT)
 
 ### Step 1: Physical USB Transfer
-The USB drive is formatted FAT32 (`/media/arcana-novai/D5D5-0B76`).
+The USB drive is formatted FAT32 (`/media/USER/D5D5-0B76`).
 The staging payload is located in:
 ```
-/media/arcana-novai/D5D5-0B76/
+/media/USER/D5D5-0B76/
 ├── omega-engine.bundle                    # Git bundle (69MB) — full history, all refs
 └── OMEGA_NODE1_BOOTSTRAP/
     ├── opencode.json                      # OpenCode remote MCP configuration
@@ -295,10 +295,10 @@ make probe-hardware
 
 | Symptom | Root Cause | Exact Remedy |
 |---|---|---|
-| `421 Misdirected Request` / `Invalid Host header` | Request Host not in `allowed_hosts` | Node 0 server has been updated with `192.168.10.168:*`. If IP changes, update `mcp_servers/omega_hub/server.py` `_transport_security`. |
+| `421 Misdirected Request` / `Invalid Host header` | Request Host not in `allowed_hosts` | Node 0 server has been updated with `192.168.1.100:*`. If IP changes, update `mcp_servers/omega_hub/server.py` `_transport_security`. |
 | `406 Not Acceptable` | Client omitted `Accept: application/json` | Ensure `curl` or client sends `-H "Accept: application/json"`. OpenCode remote client does this natively. |
 | `ECONNREFUSED` / Timeout | UFW blocking port 8016 or IP drift | On HP: `sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hub MCP LAN access"`. Verify HP IP with `ip -4 addr show wlo1`. Restricts to LAN subnet only. |
-| ASUS OpenCode doesn't see tools | Trailing slash error or wrong path | URL must be `http://192.168.10.168:8016/mcp` (Streamable HTTP), NOT root `/`. |
+| ASUS OpenCode doesn't see tools | Trailing slash error or wrong path | URL must be `http://192.168.1.100:8016/mcp` (Streamable HTTP), NOT root `/`. |
 | Model 70% compaction on ASUS | Missing Big Pickle override in OpenCode | Copy project `opencode.json` `limit.input: 190000` override from HP (85% threshold). ASUS-OC tested 950000 (1M ceiling) but 190000 is safer — matches HP's verified fix. |
 | ASUS MCP tools fail (searxng/firecrawl) | HP services bound to 127.0.0.1 only | searxng (8018) & firecrawl (8015) are LOCALHOST-ONLY on HP. USB config omits them. If needed, rebind on HP to 0.0.0.0 or run locally on ASUS. |
 

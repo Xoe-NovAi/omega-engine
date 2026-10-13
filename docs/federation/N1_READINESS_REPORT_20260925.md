@@ -28,7 +28,7 @@ SPDX-License-Identifier: Apache-2.0
 
 | Checkpoint | Status | Evidence |
 |------------|--------|----------|
-| **MCP Parity** | ✅ **VERIFIED** | 66 tools exposed via `https://n0.tail51f14a.ts.net:8016/mcp/` |
+| **MCP Parity** | ✅ **VERIFIED** | 66 tools exposed via `https://n0.example.invalid:8016/mcp/` |
 | **P2 Handshake** | ✅ **COMPLETE** | Health, initialize, tools/list, system_stats, hivemind_get_awareness, hivemind_post_context all operational |
 | **Archangel Transfer** | ✅ **PACKAGED** | `exchange/n0-to-n1/wad_loader_contract/` ready for USB |
 | **Node 1 Config** | 📋 **DOCUMENTED** | OpenCode config template ready for Node 1 |
@@ -62,16 +62,16 @@ SPDX-License-Identifier: Apache-2.0
 
 ```bash
 # Health check
-curl -fsS https://n0.tail51f14a.ts.net:8016/health
+curl -fsS https://n0.example.invalid:8016/health
 
 # MCP initialize
-curl -fsS -X POST https://n0.tail51f14a.ts.net:8016/mcp/ \
+curl -fsS -X POST https://n0.example.invalid:8016/mcp/ \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"node1","version":"1.0"}}}'
 
 # Tools list (66 tools)
-curl -fsS -X POST https://n0.tail51f14a.ts.net:8016/mcp/ \
+curl -fsS -X POST https://n0.example.invalid:8016/mcp/ \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
@@ -118,9 +118,9 @@ curl -fsS -X POST https://n0.tail51f14a.ts.net:8016/mcp/ \
 
 | Aspect | Value |
 |--------|-------|
-| **Node 0 Hub** | `https://n0.tail51f14a.ts.net:8016/mcp` |
+| **Node 0 Hub** | `https://n0.example.invalid:8016/mcp` |
 | **Transport** | HTTPS via `tailscale serve` (TLS 1.3, Let's Encrypt) |
-| **MagicDNS** | `n0.tail51f14a.ts.net` (NOT `omega-hub.tail51f14a.ts.net`) |
+| **MagicDNS** | `n0.example.invalid` (NOT `omega-hub.example.invalid`) |
 | **Auth** | NONE — trust boundary = tailnet itself |
 | **Ports** | Only 8016 open cross-node; 22/2049 filtered |
 | **TLS** | TLS 1.3, ECDSA cert, ALPN h2 |
@@ -176,7 +176,7 @@ exchange/n0-to-n1/wad_loader_contract/
   "mcp": {
     "omega-hub": {
       "type": "remote",
-      "url": "https://n0.tail51f14a.ts.net:8016/mcp",
+      "url": "https://n0.example.invalid:8016/mcp",
       "enabled": true
     }
   }
@@ -205,8 +205,8 @@ opencode mcp
 | **Engine Commit** | `75bde939ace7ff46ed2fef0056880a0814ab0e11` (release/debut-v1.6.0) |
 | **Version** | `1.6.0-alpha.1` (all 4 surfaces) |
 | **Ollama** | `AllowedCPUs=0-11`, `OLLAMA_NUM_THREADS=8`, `OLLAMA_NUM_PARALLEL=1` |
-| **Tailscale** | Connected to tailnet `tail51f14a.ts.net` |
-| **MCP Endpoint** | `https://n0.tail51f14a.ts.net:8016/mcp` |
+| **Tailscale** | Connected to tailnet `example.invalid` |
+| **MCP Endpoint** | `https://n0.example.invalid:8016/mcp` |
 | **Auth** | NONE (trust boundary = tailnet) |
 
 ---
@@ -266,7 +266,7 @@ Node 0 awareness now includes Lilith-N1 presence. Next `hivemind_get_awareness` 
 | **Session** | `ses_fb9721079ffe094GT8MX6a0pXI` |
 | **Node 0 Commit** | `75bde939ace7ff46ed2fef0056880a0814ab0e11` |
 | **Version** | `1.6.0-alpha.1` |
-| **Hub Endpoint** | `https://n0.tail51f14a.ts.net:8016/mcp/` |
+| **Hub Endpoint** | `https://n0.example.invalid:8016/mcp/` |
 | **Hivemind Session** | `ses_fb9721079ffe094GT8MX6a0pXI` |
 | **P2 Handshake Timestamp** | `2026-09-25T05:44:41.423060+00:00` |
 | **Archangel Package** | `exchange/n0-to-n1/wad_loader_contract/` |

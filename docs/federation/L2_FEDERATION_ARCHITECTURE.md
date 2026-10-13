@@ -18,7 +18,7 @@ The federation links two dedicated physical computing nodes into a unified, sove
 ```
 +-----------------------------------------------------------------------------------+
 |                            TAILSCALE L2 WIREGUARD MESH                            |
-|                            Tailnet: tail51f14a.ts.net                             |
+|                            Tailnet: example.invalid                             |
 +-----------------------------------------------------------------------------------+
            |                                                      |
            v                                                      v
@@ -26,8 +26,8 @@ The federation links two dedicated physical computing nodes into a unified, sove
 |       NODE 0 (HP HUB)       |                |      NODE 1 (ASUS VANGUARD)        |
 |  Identity: n0               |                |  Identity: n1                      |
 |  Tag: tag:node0             |                |  Tag: tag:node1                    |
-|  Tailscale IP: 100.123.51.67|                |  Tailscale IP: 100.89.40.17        |
-|  MagicDNS: n0.tail51f14a... |                |  MagicDNS: n1.tail51f14a.ts.net    |
+|  Tailscale IP: 100.64.0.1|                |  Tailscale IP: 100.64.0.2        |
+|  MagicDNS: n0.example-tailnet... |                |  MagicDNS: n1.example.invalid    |
 +-----------------------------+                +------------------------------------+
 | • Archival Bastion          |                | • Vanguard Exploration & Run-Side  |
 | • 91+ Core MCP Tools (:8016)| <=== WireGuard ===> • Streamable-HTTP MCP (:8016)   |
@@ -55,8 +55,8 @@ The federation links two dedicated physical computing nodes into a unified, sove
 | **Primary Oversoul** | Ma'at (Build) & Kali (Synthesis) | Lilith (Runtime) & Vanguard Probes |
 | **Tailnet Hostname** | `n0` | `n1` |
 | **Tailnet Tag** | `tag:node0` | `tag:node1` |
-| **Tailscale IP** | `100.123.51.67` | `100.89.40.17` |
-| **MagicDNS FQDN** | `n0.tail51f14a.ts.net` | `n1.tail51f14a.ts.net` |
+| **Tailscale IP** | `100.64.0.1` | `100.64.0.2` |
+| **MagicDNS FQDN** | `n0.example.invalid` | `n1.example.invalid` |
 | **Key Services** | `omega-hub` MCP (91+ tools), Local Git repo | FastMCP Streamable Server, NFSv4.2 Server |
 
 ---
@@ -158,7 +158,7 @@ The federation utilizes the **Model Context Protocol (MCP)** Streamable-HTTP spe
 - **Node 0 Mount Point**: `/mnt/node-drive`.
 - **Persistent Mount Entry (`/etc/fstab`)**:
   ```text
-  100.89.40.17:/ /mnt/node-drive nfs4 rsize=1048576,wsize=1048576,noatime,nosuid,nodev,nofail,_netdev,x-systemd.automount,x-systemd.idle-timeout=300,x-systemd.mount-timeout=30s 0 0
+  100.64.0.2:/ /mnt/node-drive nfs4 rsize=1048576,wsize=1048576,noatime,nosuid,nodev,nofail,_netdev,x-systemd.automount,x-systemd.idle-timeout=300,x-systemd.mount-timeout=30s 0 0
   ```
 
 ---
@@ -174,19 +174,19 @@ tailscale ping n1
 tailscale ssh xnai@n1 "hostname && uptime"
 
 # 3. Remote MCP Probe
-SESSION_ID=$(curl -s -i -X POST http://n1.tail51f14a.ts.net:8016/mcp \
+SESSION_ID=$(curl -s -i -X POST http://n1.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "n0-verifier", "version": "1.0"}}}' | grep -i 'mcp-session-id:' | tr -d '\r' | awk '{print $2}')
 
-curl -s -X POST http://n1.tail51f14a.ts.net:8016/mcp \
+curl -s -X POST http://n1.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -H "mcp-session-id: $SESSION_ID" \
   -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "echo", "arguments": {"message": "Operational Test"}}}'
 
 # 4. NFS Storage Probe
-nc -zv -w 5 n1.tail51f14a.ts.net 2049
+nc -zv -w 5 n1.example.invalid 2049
 touch /mnt/node-drive/.federation_heartbeat && rm /mnt/node-drive/.federation_heartbeat
 ```
 
