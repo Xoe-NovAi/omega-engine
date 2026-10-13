@@ -84,7 +84,7 @@ await ctx.call_tool("mempalace", "mempalace_sync", {})
 │   └── ...
 ├── mempalace/                # MemPalace palace directory
 │   ├── mempalace.yaml        # Wing/room config
-│   └── sqlite_exact.sqlite3  # Vector DB (768-dim, cosine)
+│   └── sqlite_exact.sqlite3  # Vector DB (1024-dim, cosine; canonical per P5.1b)
 ├── spatial/
 │   └── knowledge_atlas.db    # sqlite-vec atlas (separate from MemPalace)
 ├── domains/                  # Organized long-term storage

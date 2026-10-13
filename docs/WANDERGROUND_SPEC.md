@@ -162,7 +162,7 @@ We implement a two-tier execution pattern:
    - A systemd user timer fires every 30 minutes to clean up untriaged notes, reconcile vector embeddings, and recompute spatial coordinates.
 3. **The Worker Core (`wander-curator.py`)**:
    - Processes all unprocessed Markdown cards in `~/WanderGround/inbox/`.
-   - Generates embeddings through the standalone Qwen3 ONNX server at 768 dimensions (`qwen3-embedding:0.6b`).
+   - Generates embeddings through the standalone Qwen3 ONNX server at 1024 dimensions (native, `qwen3-embedding:0.6b`).
    - Inserts records into `knowledge_atlas.db` (`sqlite-vec`).
    - Updates MemPalace drawers with verbatim extracts.
    - Calculates 3D UMAP coordinates for spatial exploration.

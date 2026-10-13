@@ -1,0 +1,399 @@
+{
+  "environment": {
+    "ollama_version": "ollama version is 0.34.4",
+    "ollama_api_version": "0.34.4",
+    "model": "lfm25-t6:latest",
+    "nproc_logical": 16,
+    "nproc_physical_total": 10,
+    "nproc_physical_p": 6,
+    "nproc_e_cores": 4,
+    "allowed_cpus": "0-11",
+    "power_profile": "performance",
+    "epp": "performance",
+    "ac_online": true,
+    "battery_pct": "100",
+    "pl1_w": 200.0,
+    "pl2_w": 82.0,
+    "domain_max_w": 45.0,
+    "dimm_layout": "Controller0-ChannelA-DIMM0=16 GB, slot2=EMPTY",
+    "mem_type": "DDR5",
+    "mem_configured_mt_s": "5200 MT/s",
+    "mem_theoretical_gb_s": 41.6,
+    "cpu_model": "13th Gen Intel(R) Core(TM) i7-13620H"
+  },
+  "gate_results": [
+    {
+      "threads": 4,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 4,
+      "burned_threads": 9,
+      "total_threads": 12,
+      "token_counts": [
+        512,
+        512,
+        512
+      ],
+      "throttle_delta": 6276,
+      "contamination": [],
+      "thermally_limited": true,
+      "thread_verified": true,
+      "thread_verification_skipped": false,
+      "thread_mismatch": false,
+      "embed_rate": 8.0,
+      "embed_errors": 0,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "100",
+          "battery_status": "Not charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1791886178.2239854,
+        "memory": {
+          "mem_total_gb": 15.79,
+          "mem_available_gb": 6.54,
+          "mem_used_pct": 58.6,
+          "swap_total_gb": 7.9,
+          "swap_used_gb": 1.86,
+          "zram_used_gb": 0.48,
+          "zram_orig_gb": 1.76,
+          "zram_pct": 27.6,
+          "zram_compr_ratio": 0.276,
+          "zram_util_pct": 22.2,
+          "zram_disksize_gb": 7.9
+        },
+        "foreign_cpu_pct": 1.6
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 48.78,
+          "watts_min": 44.65,
+          "watts_max": 51.83,
+          "watts_stdev": 1.9,
+          "peak_mhz": 4205,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886191.9112518
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 46.13,
+          "watts_min": 43.7,
+          "watts_max": 52.99,
+          "watts_stdev": 1.65,
+          "peak_mhz": 4000,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886222.6066973
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 36.23,
+          "watts_min": 31.59,
+          "watts_max": 51.7,
+          "watts_stdev": 4.87,
+          "peak_mhz": 3932,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886252.0639682
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.99,
+          "watts_min": 33.9,
+          "watts_max": 37.63,
+          "watts_stdev": 0.76,
+          "peak_mhz": 3401,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886286.0885005
+        }
+      ]
+    },
+    {
+      "threads": 5,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 5,
+      "burned_threads": 10,
+      "total_threads": 13,
+      "token_counts": [
+        512,
+        512,
+        512
+      ],
+      "throttle_delta": 393,
+      "contamination": [],
+      "thermally_limited": true,
+      "thread_verified": true,
+      "thread_verification_skipped": false,
+      "thread_mismatch": false,
+      "embed_rate": 8.0,
+      "embed_errors": 0,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "100",
+          "battery_status": "Not charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1791886320.3464625,
+        "memory": {
+          "mem_total_gb": 15.79,
+          "mem_available_gb": 6.47,
+          "mem_used_pct": 59.1,
+          "swap_total_gb": 7.9,
+          "swap_used_gb": 1.86,
+          "zram_used_gb": 0.48,
+          "zram_orig_gb": 1.76,
+          "zram_pct": 27.6,
+          "zram_compr_ratio": 0.276,
+          "zram_util_pct": 22.2,
+          "zram_disksize_gb": 7.9
+        },
+        "foreign_cpu_pct": 1.6
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 40.27,
+          "watts_min": 32.53,
+          "watts_max": 53.11,
+          "watts_stdev": 7.7,
+          "peak_mhz": 4002,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886334.0709338
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.95,
+          "watts_min": 31.27,
+          "watts_max": 39.7,
+          "watts_stdev": 1.37,
+          "peak_mhz": 3201,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886366.5477958
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 35.04,
+          "watts_min": 31.1,
+          "watts_max": 40.35,
+          "watts_stdev": 1.44,
+          "peak_mhz": 3400,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886399.7431319
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.98,
+          "watts_min": 31.17,
+          "watts_max": 37.74,
+          "watts_stdev": 1.04,
+          "peak_mhz": 3202,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886432.5769982
+        }
+      ]
+    },
+    {
+      "threads": 6,
+      "ok": true,
+      "failure": "",
+      "runner_flag": 6,
+      "burned_threads": 10,
+      "total_threads": 13,
+      "token_counts": [
+        512,
+        512,
+        512
+      ],
+      "throttle_delta": 476,
+      "contamination": [],
+      "thermally_limited": true,
+      "thread_verified": true,
+      "thread_verification_skipped": false,
+      "thread_mismatch": false,
+      "embed_rate": 8.0,
+      "embed_errors": 0,
+      "preflight": {
+        "ac": {
+          "ac_online": true,
+          "battery_pct": "100",
+          "battery_status": "Not charging"
+        },
+        "power_profile": "performance",
+        "epp": "performance",
+        "expected_profile": "performance",
+        "ts": 1791886466.5220888,
+        "memory": {
+          "mem_total_gb": 15.79,
+          "mem_available_gb": 6.44,
+          "mem_used_pct": 59.2,
+          "swap_total_gb": 7.9,
+          "swap_used_gb": 1.9,
+          "zram_used_gb": 0.49,
+          "zram_orig_gb": 1.79,
+          "zram_pct": 27.6,
+          "zram_compr_ratio": 0.276,
+          "zram_util_pct": 22.7,
+          "zram_disksize_gb": 7.9
+        },
+        "foreign_cpu_pct": 2.1
+      },
+      "per_rep_telemetry": [
+        {
+          "rep": 0,
+          "warmup": true,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 41.12,
+          "watts_min": 29.95,
+          "watts_max": 51.96,
+          "watts_stdev": 7.96,
+          "peak_mhz": 3903,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886480.232304
+        },
+        {
+          "rep": 1,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.9,
+          "watts_min": 29.92,
+          "watts_max": 42.28,
+          "watts_stdev": 1.96,
+          "peak_mhz": 3201,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886513.1890182
+        },
+        {
+          "rep": 2,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 35.0,
+          "watts_min": 30.9,
+          "watts_max": 40.12,
+          "watts_stdev": 1.77,
+          "peak_mhz": 3200,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886547.4299967
+        },
+        {
+          "rep": 3,
+          "warmup": false,
+          "tokens": 512,
+          "anomalies": [],
+          "watts": 34.99,
+          "watts_min": 32.79,
+          "watts_max": 37.02,
+          "watts_stdev": 1.0,
+          "peak_mhz": 3106,
+          "profiles": [
+            "performance"
+          ],
+          "profile_switches": [],
+          "t_first": 1791886580.293426
+        }
+      ]
+    }
+  ],
+  "ranked": [
+    {
+      "threads": 5,
+      "n": 3,
+      "tps_mean": 15.724745444273532,
+      "tps_ci95": 0.030348754304189998,
+      "tps_cv": 0.1705539578366044,
+      "ttft_mean": 0.07577812166224855,
+      "itl_mean": 0.06371885193462386,
+      "power_mean": 34.99,
+      "temp_max": 0,
+      "peak_mhz": 3400,
+      "burned": 10,
+      "thermally_limited": true,
+      "embed_rate": 8.0,
+      "embed_batches": 0,
+      "embed_errors": 0
+    },
+    {
+      "threads": 6,
+      "n": 3,
+      "tps_mean": 15.269658269224967,
+      "tps_ci95": 0.4685698458374433,
+      "tps_cv": 2.711749538829275,
+      "ttft_mean": 0.0808166056619181,
+      "itl_mean": 0.06564946759346069,
+      "power_mean": 34.96333333333333,
+      "temp_max": 0,
+      "peak_mhz": 3201,
+      "burned": 10,
+      "thermally_limited": true,
+      "embed_rate": 8.0,
+      "embed_batches": 0,
+      "embed_errors": 0
+    }
+  ],
+  "verdict": "config 5 leads 6 by only 0.46 t/s, within combined 95% CI (\u00b10.50) \u2014 NOT a significant difference"
+}

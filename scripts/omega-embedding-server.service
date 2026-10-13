@@ -10,7 +10,11 @@ WorkingDirectory=%h/Documents/Projects/omega-engine-alpha
 Environment="PATH=%h/WanderGround/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="OMP_NUM_THREADS=4"
 Environment="EMBED_MODEL_DIR=%h/Documents/Projects/omega-engine-alpha/models/embedding/qwen3-0.6b-onnx"
-Environment="TRUNCATE_DIM=768"
+# CANONICAL: native 1024-dim, NO MRL truncation (operator ruling 2026-10-01,
+# P5.1b). "truncate_dim" is a sentence-transformers name that Ollama ignores.
+# Never set this to 768 — a 768 space is a SEPARATE vector space that must
+# never be compared against the palace space.
+Environment="TRUNCATE_DIM=1024"
 # Hardware affinity: pin strictly to Gracemont E-cores (12-15)
 # Excludes P-cores + HT siblings (0-11) so Ollama has full unencumbered throughput
 CPUAffinity=12 13 14 15

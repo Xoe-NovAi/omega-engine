@@ -1,0 +1,22 @@
+# Modelfile.lfm25-t6 — LFM2.5-2.6B-heretic Q4_K_M, Node 1 production default
+# Build:  ollama create lfm25-t6-prod -f .modelfiles/Modelfile.lfm25-t6
+#
+# Thread default 6: full plateau throughput (20.5 t/s, TTFT 58ms) with least
+# CPU contention for the embed sidecar. t8 is statistically identical but
+# costs 2 extra P-threads for zero gain.
+# EVIDENCE (zRAM-ON, 512 tok, n=3):
+#   solo:    t6 20.49 > t5 19.32 > t4 19.44  (t4 real -5.1% vs t6)
+#   contended (embed 8.0/s @1024-dim): t5 15.72 (CV 0.17) ~ t6 15.27 (2.71)
+#     > t4 excluded CV 8.3.  t5 wins on TTFT (76ms) + repeatability.
+# OVERRIDE: when the embed sidecar is under sustained load, use num_thread 5.
+# t4 is NOT the fallback (fails the CV gate under load).
+# Evidence: docs/research/ZRAM_CONTROL_SERIES_20261013.md,
+# docs/research/LFM_CURVE_FILL_20261013.md,
+# docs/research/LFM_CONTEND_456_20261013.md.
+
+FROM lfm25-t6:latest
+
+PARAMETER num_thread 6
+PARAMETER num_ctx 8192
+PARAMETER num_gpu 0
+PARAMETER temperature 0.1
