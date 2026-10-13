@@ -903,7 +903,7 @@ a known conflict. The Status column distinguishes live gaps from closed ones.
 | G19 | No commit-lint; no PR-template completeness gate; branch-target conflict between `CONTRIBUTING.md` and workflows | Contributors guess the process | @maat | OPEN |
 | G20 | No automated config-path sweep; startup-read config not enumerated | Wheel ships without a config it needs | @makali | OPEN |
 | G21 | No waiver-expiry enforcement; waivers are human-enforced only | Expired waiver silently persists | @verity | OPEN |
-| G22 | TruffleHog is PR-only (`secrets.yml:92`); push events run without it | Fail-open secret path on push | @verity | OPEN |
+| G22 | TruffleHog is PR-only (`secrets.yml:92`); push events run without it | Fail-open secret path on push | @verity | **CLOSED (2026-10-13):** added `trufflehog-push-scan` job for full scan on push; summary gate checks both |
 | G24 | ~~Two checks red on `main`~~ — **RESOLVED (2026-10-12):** `test-and-lint` order-dependence fixed; `sote.yml` install fixed | — | — | **CLOSED** (§6.5) |
 | G25 | No guard against workflows that can only fail invisibly | A red scheduled workflow goes unseen indefinitely | @makali | **CLOSED** (§6.6) |
 | G26 | Tests may assert on gitignored/untracked runtime state | Verdict depends on test ordering; flakiness mistaken for a result | @verity | OPEN (guard would be noisy; see §6.5) |
