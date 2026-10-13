@@ -75,6 +75,69 @@ The Omega Engine is designed with security as a sovereign mandate:
 | Model weight verification | ⚠️ | SHA256 checksums on download; no signature verification yet |
 | Dependency scanning | ✅ | Gitleaks + dependency audit in CI |
 
+## Threat Model
+
+This section answers the mandatory threat-model questions with actual config values **from the public build**.
+
+### 1. Default Bind Address & Authentication
+
+| Endpoint | Bind | Transport | Auth |
+|----------|------|-----------|------|
+| MCP Streamable HTTP (hub server) | `127.0.0.1:8016` | `/mcp` | None (localhost only) |
+| MCP Legacy SSE (hub server) | `127.0.0.1:8016` | `/sse` | None (localhost only) |
+| Exchange | `127.0.0.1:8019` | HTTP | None (localhost only) |
+
+**Hub server config**: `OMEGA_MCP_HOST=127.0.0.1`, `OMEGA_MCP_PORT=8016`, `OMEGA_MCP_TRANSPORT=streamable-http` (default). No authentication on loopback; tailnet exposure controlled by Tailscale ACLs (deny-by-default, explicit grants only).
+
+**Client runtime defaults** (for embedding): `src/omega/mcp_runtime.py` defaults to `stdio` transport with port fallback `8000`. These are **client-side** defaults for embedding the hub; the hub server itself binds `127.0.0.1:8016` with `streamable-http`.
+
+### 2. Handoff-Bus Content Treatment
+
+- **Data vs Instructions**: Handoff packets carry structured task context (JSON), not executable code. The `task` field is a natural-language description; `context` is background metadata.
+- **Poisoned Handoff Risk**: A malicious handoff could steer an agent if the receiving agent trusts `task`/`context` uncritically. Mitigation: receiving agents validate via `_require_service()` and entity registry before acting; `m9_safe` decorator wraps all tools with error boundaries.
+- **Sanitization**: No automatic sanitization of handoff content. Agents must treat handoff context as untrusted input. Future: schema validation on submit.
+
+### 3. Control Planes (Kill / Escalate / Approve / Throttle)
+
+| Plane | What It Gates | Default | Config |
+|-------|---------------|---------|--------|
+| **Kill** | Halt runaway session | Enabled | `OMEGA_KILL_TIMEOUT_S` (default 30s) |
+| **Escalate** | Promote blocker to higher authority | Enabled | Requires `packet_id` + `to_entity` |
+| **Approve** | Gate destructive ops | Enabled (fail-closed) | `OMEGA_APPROVAL_TIMEOUT_S` (default 900s) |
+| **Throttle** | Per-entity token/tool limits | Advisory v1 | `OMEGA_THROTTLE_ENABLED=true` |
+
+**Defaults**: Kill/Escalate/Approve active; Throttle advisory. All planes require explicit human decision for Approve; Kill is idempotent.
+
+**Note**: The config symbols `OMEGA_KILL_TIMEOUT_S`, `OMEGA_APPROVAL_TIMEOUT_S`, `OMEGA_THROTTLE_ENABLED` are read by the control plane implementation. `OMEGA_KILL_TIMEOUT_S` defaults to 30s if unset.
+
+### 4. `vault_ops` Local-Only Enforcement
+
+- **Boundary**: `vault_ops` tool only executes on local VaultCore (python-age encryption). Cloud providers never receive vault credentials.
+- **Public build**: VaultCore is **removed from the public build** (D-565). The `vault_ops` tool exists but returns `RuntimeError: VaultCore unavailable` on public cuts. Local-only enforcement is a no-op on public cuts.
+- **Internal builds**: `VaultCore` class checks `OMEGA_VAULT_LOCAL_ONLY=true` (default). Any cloud provider attempting vault ops receives `RuntimeError: vault_ops is local-only`.
+- **Credential Storage**: python-age encrypted blobs in `~/.config/omega/vault/`. No plaintext keys in memory beyond operation scope.
+
+### 5. Secret Scanners
+
+| Scanner | Runs On | Config |
+|---------|---------|--------|
+| Gitleaks | PR + Push | `.gitleaks.toml` + `.gitleaksignore` baseline |
+| TruffleHog | PR (diff) + Push (full) | `--only-verified` |
+| C3 Secret Scan | PR + Push | `scripts/ci_secret_scan.py` (sk/csk/AIza/ghp/xai patterns) |
+| M35 VAULT Allowlist | PR (staged files) | `data/secrets-public.toml` |
+
+**Fail-closed**: All scanners must pass; any failure blocks merge/push.
+
+### 6. Known Limits
+
+- **No sandbox** for local GGUF execution (in-process CPU inference).
+- **No signature verification** on downloaded model weights (SHA256 only).
+- **Loopback auth** absent by design; tailnet is trust boundary.
+- **Exchange port 8019**: `config/lan_exposure_allowlist.yaml` describes port 8019 as tailnet-reachable for federation; the hub server itself binds `127.0.0.1:8019` only.
+- **Independent human review** pending (P2-3).
+
+---
+
 ## Contact
 
 - **Security Team**: security@xoe-novai.com
