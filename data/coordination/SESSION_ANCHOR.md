@@ -1,16 +1,17 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ⬡ SESSION ANCHOR — MaKaLi (Node 0)
-**Entity**: `makali` · **Updated**: 2026-10-13 (Cline takeover of ses_fc75 + continuation; OpenCode daily-limit exile over) · **Internal**: `78ab6877` · **Public**: `6307b204`
+**Entity**: `makali` · **Updated**: 2026-10-13 · **Internal**: `c3dd7a49` · **Public**: `c3dd7a49`
 
 ---
 
-## ✅ STATUS: v1.6.0a0 RELEASED PUBLICLY — GREEN CI, AWAITING PYPI ORG APPROVAL
+## ✅ STATUS: v1.6.0a0 RELEASED PUBLICLY — GREEN CI, AWAITING PYPI ORG APPROVAL + OPENCODE DB RECLAIM COMPLETE
 
-- **Public** `Xoe-NovAi/omega-engine` (fresh repo, clean history): main = `6307b204` (cut + public-safe commits only); `release/debut` = `355cbf1a`; tag `v1.6.0a0` @ `355cbf1a`; **CI green** (Test/CI/Secret/M35/REUSE). Pre-release flag kept.
+- **Public** `Xoe-NovAi/omega-engine`: main = `c3dd7a49` (cut + public-safe commits); `release/debut` = `355cbf1a`; tag `v1.6.0a0` @ `355cbf1a`; **CI green** (Test/CI/Secret/M35/REUSE). Pre-release flag kept.
 - **Release `v1.6.0a0` is LIVE** with audited announcement as notes + `the_omega_engine-1.6.0a0` assets (wheel `e452d8ed…`, clean-venv smoke PASS).
 - **PyPI**: pending publisher registered (`the-omega-engine`); org approval awaited — after publish lands, flip the `pip install the-omega-engine` doc lines from pending to primary.
-- **Private** `Xoe-NovAi/omega-engine-internal`: full internal main (`78ab6877`); Actions disabled. Push internal work to `internal`, never `origin`.
+- **Private** `Xoe-NovAi/omega-engine-internal`: main = `c3dd7a49`; Actions disabled. Push internal work to `internal`, never `origin`.
 - **Retired repo** (`omega-engine-retired`, private): old public lineage. Fully backed up (11 `retired/*` refs on internal + 2 issue JSONs). Deletion awaits operator `gh auth refresh -s delete_repo`.
+- **OpenCode DB reclaim**: 26.61 GB → **6.58 GB (75% reclaimed)**, zero data loss, all gates verified. Root pressure relieved: 92% → 73%. 4 backups kept (136 GB total, 6.7 TB free). Skills `sqlite-safe-ops` + `opencode-db` created/updated. 4 new M11 lessons (PL-ROC-402-027…030). Gnosis updated (1,339 lines, 6 acts, 9 L3 principles).
 
 Do not trust any earlier anchor section that references tag `v1.6.0-alpha` on GitHub — that tag name is **permanently poisoned** by the old repo's immutable release (GitHub `release_immutable_tags` row follows the name; survives release+tag deletion; archiving does NOT clear it). The release shipped as **`v1.6.0a0`** (same SHA `355cbf1a`, more PEP-440-correct anyway).
 
