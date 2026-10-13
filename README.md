@@ -90,7 +90,7 @@ cd omega-engine
 
 **Or, wheel from the release asset** (aria2c — 16-split fetch per M23):
 ```bash
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/omega_engine-1.6.0a0-py3-none-any.whl
 pip install omega_engine-1.6.0a0-py3-none-any.whl
 ```
 *The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install omega-engine` is not yet available.*

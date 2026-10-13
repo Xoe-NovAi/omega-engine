@@ -1,8 +1,8 @@
 # 🎉 Omega Engine v1.6.0-alpha — Public Debut
 
 **Release Date:** 2026-10-12  
-**Tag:** `v1.6.0-alpha` (peels to `355cbf1a`)  
-**Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0-alpha.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0-alpha)
+**Tag:** `v1.6.0a0` (peels to `355cbf1a`)  
+**Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0a0.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a0)
 
 ---
 
@@ -66,7 +66,7 @@ cd omega-engine
 # Or wheel install (self-contained) — from the GitHub release asset
 # (not yet on PyPI). Download with aria2c (M23: mandatory for >1MB on
 # Node 0 — single-connection pip/curl can crawl at KB/s), then install:
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/omega_engine-1.6.0a0-py3-none-any.whl
 pip install omega_engine-1.6.0a0-py3-none-any.whl
 
 # First run — launches the hub + registers your entities
@@ -117,7 +117,7 @@ omega talk "Hello, Omega"
 
 ## 🔗 Links
 
-- **Release:** https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0-alpha
+- **Release:** https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a0
 - **Docs:** https://github.com/Xoe-NovAi/omega-engine/tree/main/docs
 - **Issues:** https://github.com/Xoe-NovAi/omega-engine/issues
 
