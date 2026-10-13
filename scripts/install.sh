@@ -31,7 +31,7 @@ err()   { echo -e "${RED}[ERR]${NC} $1"; }
 START_TS=$(date +%s)
 
 # ── 0. Locate repo root ────────────────────────────────────────────────────
-if [ -f "pyproject.toml" ] && grep -q "name = \"omega\"" pyproject.toml 2>/dev/null; then
+if [ -f "pyproject.toml" ] && grep -q 'name = "omega' pyproject.toml 2>/dev/null; then
     ROOT_DIR="$(pwd)"
 else
     # Not in repo root — try script location, else clone
