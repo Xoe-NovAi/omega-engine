@@ -21,6 +21,7 @@ Do not trust any earlier anchor section that says announcement is blocked by the
 - Public isolation rulings verified on the tag tree: `docs/federation/`, `src/omega_youtube_research/`, `config/wads/arcana_novai/`, `data/entities/sophia/`, `data/entities/makali_fusion/` absent; internal `data/` paths absent.
 - Harvester ships in full per D-626.
 - Wheel: standalone install resolves packaged runtime configs + default IWAD.
+- Cold-verify 2026-10-13: published `omega-1.6.0a0-py3-none-any.whl` installs exit 0 in a clean venv (1m31s) and `omega talk` boots exit 0 outside the repo. Caveat: `OMEGA_PROVIDER=mock` did not force MockProvider; CLI fell back to setup mode.
 - Antigravity review: **GO**, conditional on correcting MCP client instructions; announcement corrected to SSE/HTTP Hub endpoint plus local Hub start command.
 
 ---
