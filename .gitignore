@@ -92,6 +92,7 @@ data/experiments/
 .ruff_cache/
 .tox/
 .venv/
+.vendor/
 .vscode/
 4Runner_*.md
 CLAUDE.md
