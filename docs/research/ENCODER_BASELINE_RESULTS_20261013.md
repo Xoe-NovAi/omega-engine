@@ -102,6 +102,48 @@ calibration; (c) INT4. Recommend proceeding with LoRA on quality grounds
 (the quality verdict is solid) and carrying latency as a known open gate
 into the 10-17 decision, rather than blocking the track on it.
 
+## LoRA fine-tuning — does it beat the frozen probe? (ModernBERT-base, FC)
+
+Milestone "LoRA fine-tuning runs" (spec §7). Tool: `scripts/sms/encoder_lora.py`.
+LoRA r=8/α=16 on all 88 Linear submodules + mean-pool linear head, AdamW
+lr=1e-4, 20 epochs, best-holdout selection, train+holdout tracked per epoch
+(the Phase-3 negative-result playbook: watch for underfit AND overfit).
+
+| System | Best holdout acc | Note |
+|---|---|---|
+| Frozen encoder + LogisticRegression probe | **0.9643** | no training |
+| **LoRA fine-tuned (this run)** | **0.7857** @ epoch 19 | still rising at cutoff |
+| Generative 350M, 5 SFT steps (Phase 3) | 0.111 | control |
+
+**beats_frozen = False.** The LoRA curve climbed 0.39 → 0.79 over 20 epochs
+and was *still improving* at epoch 19 (train 0.913, holdout 0.786) — it
+underfit, it did not overfit (overfit gap 0.163 and shrinking relative to
+the frozen bar). Two honest reads:
+
+1. **Training-config read:** lr=1e-4 with a fresh head underfits at 20
+   epochs; a converged run (higher lr / more epochs / warm-started head)
+   might close the gap. This run does not prove LoRA *cannot* match.
+2. **Task read:** the frozen probe is a *converged* optimizer (LBFGS) on
+   features that are already linearly separable (0.9643 with zero
+   representation change). LoRA has to both move the representation AND
+   learn the head with a weaker optimizer on 46 examples. For a
+   linearly-separable task, the frozen probe is the stronger, cheaper
+   instrument — consistent with the baseline's linear-separability result.
+
+**Deployment recommendation:** failure_classifier ships as frozen-encoder +
+linear probe, NOT LoRA. LoRA's remaining case is the token/span tasks
+(privacy_sentinel, mempalace_extractor) where mean-pooled features *cannot*
+express the output — that is where representation change is structurally
+required, and it is untested.
+
+**Memory note (permanent fix, validated):** this run held Python RSS at
+~2.1GB / system ~6.6GB for the full 9.6 min and completed. The prior
+OOMs were a missing 6-thread cap + no gradient checkpointing. Both are now
+defaults in `encoder_lora.py` (`--checkpoint on` default, `set_num_threads`
+pinned, `TOKENIZERS_PARALLELISM=false`); a system-RAM watchdog at 11GB is
+used when launching. A single-step memory probe (3GB) does NOT predict the
+multi-epoch pattern — do not trust it over the full-run measurement.
+
 ## Verdict
 
 1. **Pivot validated.** Encoder + linear probe ≥ generative + LoRA by a
