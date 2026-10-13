@@ -145,11 +145,24 @@ pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 ### 2. Connect Your Preferred Interface
 Omega adapts to whatever workflow you prefer:
 - **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace in OpenCode — the entity council and Hivemind MCP tools are immediately active in your agent sidebar.
-- **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration.
+- **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration. Antigravity setup: `docs/guides/connect-antigravity-ide.md`.
 - **From Your Terminal**: Use the built-in fast diagnostic CLI:
   ```bash
   omega talk "Analyze the current architectural state"
   ```
+
+---
+
+## 📦 Create Your Own Content (WADs & Agents)
+
+Omega's **Engine-Stack Firewall** (M2) means your custom agents, skills, and configurations live in **WAD bundles** — not in the engine core.
+
+| Guide | What You'll Build |
+|:--|:--|
+| **[Create a WAD Bundle](docs/tutorials/how-to-create-wad.md)** | Package entities, skills, configs, and prompts into a portable `.wad` file |
+| **[Add a Sovereign Agent](docs/guides/how-to-add-agent.md)** | Create a new entity with soul, config, and Oracle registration |
+| **[WAD Architecture](docs/federation/PERSONA_WAD_ARCHITECTURE.md)** | Deep dive: manifest schema, taxonomy, provenance, versioning |
+| **[Engine Boundary](docs/governance/WAD_ENGINE_BOUNDARY_FIRST_PRINCIPLES.md)** | First principles: what belongs in Engine vs. WAD |
 
 ---
 
