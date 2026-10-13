@@ -115,7 +115,7 @@ async def get_service(name: str) -> Any:
     (Library, Indexer, Discovery, ResearchEngine, SovereignSearchService)
     until they are actually requested by a tool.
     """
-    global library, indexer, discovery, research_engine, sovereign_search_service, gateway, _fc_key, _exa_key
+    global library, indexer, discovery, research_engine, sovereign_search_service, gateway
     
     # Wait for background initialization to complete for services that depend on model_gateway
     if name in ("gateway", "sovereign_search_service", "research_engine", "discovery"):
@@ -212,8 +212,8 @@ async def _init_services() -> None:
     """
     global _init_complete, _init_error
     global registry, model_gateway, oracle, hierarchy
-    global inbox, curator, library, indexer, discovery
-    global research_engine, sovereign_search_service, gateway, mcp_client, _fc_key, _exa_key
+    global inbox, curator
+    global sovereign_search_service, gateway, mcp_client, _fc_key, _exa_key
 
     try:
         logger.info("Background service initialization starting...")
