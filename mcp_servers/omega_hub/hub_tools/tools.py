@@ -2033,13 +2033,16 @@ async def oracle_debug(
         if action == "assess_intent":
             if not query:
                 return json.dumps({"error": "assess_intent requires query"})
-            intent = _detect_intent(query)
-            confidence = _compute_confidence(query, intent)
-            entity_name = _route_by_domain(query)
+            # Use IntentMatcher for intent classification
+            matcher = _get_intent_matcher()
+            intent_type, entity_name = matcher.classify(query)
+            # Confidence heuristic: direct/voice_cmd = high, domain/summon = medium
+            confidence_map = {"direct": 0.9, "voice_cmd": 0.8, "summon": 0.7, "domain": 0.5}
+            confidence = confidence_map.get(intent_type, 0.5)
             escalate = confidence < 0.7
             return json.dumps({
                 "query": query,
-                "intent": intent,
+                "intent": intent_type,
                 "confidence": confidence,
                 "entity": entity_name,
                 "escalate": escalate,
@@ -2048,17 +2051,17 @@ async def oracle_debug(
         elif action == "discover_entity":
             if not query:
                 return json.dumps({"error": "discover_entity requires query"})
-            entity_name = _route_by_domain(query)
-            if entity_name and entity_name != "makali":
-                entity = (await registry).get(entity_name)
-                if entity:
-                    return json.dumps({
-                        "query": query,
-                        "entity": entity_name,
-                        "role": entity.role,
-                        "domain": entity.domain,
-                        "model": entity.model,
-                    })
+            # Use EntityRegistry.find_by_domain for entity discovery
+            reg = await registry
+            entity = reg.find_by_domain(query)
+            if entity:
+                return json.dumps({
+                    "query": query,
+                    "entity": entity.name,
+                    "role": entity.role,
+                    "domain": entity.domain,
+                    "model": entity.model,
+                })
             return json.dumps({
                 "query": query,
                 "entity": "makali",
@@ -2334,32 +2337,52 @@ async def github(
         if action == "create_pr":
             if not all([repo, title, body, base, head]):
                 return json.dumps({"error": "create_pr requires repo, title, body, base, head"})
-            return await _github_create_pr(repo, title, body, base, head)
+            # Parse owner/repo
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            return await github_tools.github_create_pr_with_template(owner, repo_name, head, base, title, body)
         
         elif action == "check_temple_grade":
             if not all([repo, pr_number]):
                 return json.dumps({"error": "check_temple_grade requires repo, pr_number"})
-            return await _github_check_temple_grade(repo, pr_number)
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            return await github_tools.github_check_temple_grade(owner, repo_name, pr_number)
         
         elif action == "add_entity_attribution":
             if not all([repo, entity]):
                 return json.dumps({"error": "add_entity_attribution requires repo, entity"})
-            return await _github_add_entity_attribution(repo, entity)
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            return await github_tools.github_add_entity_attribution(owner, repo_name, entity=entity)
         
         elif action == "list_heritage_issues":
             if not repo:
                 return json.dumps({"error": "list_heritage_issues requires repo"})
-            return await _github_list_heritage_issues(repo)
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            return await github_tools.github_list_heritage_issues(owner, repo_name)
         
         elif action == "create_vet_issue":
             if not all([repo, issue_number]):
                 return json.dumps({"error": "create_vet_issue requires repo, issue_number"})
-            return await _github_create_vet_issue(repo, issue_number)
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            # Need to construct vet_record from issue_number - this is a simplified version
+            return await github_tools.github_create_vet_issue(owner, repo_name, {"issue_number": issue_number})
         
         elif action == "get_repo_health":
             if not repo:
                 return json.dumps({"error": "get_repo_health requires repo"})
-            return await _github_get_repo_health(repo)
+            if "/" not in repo:
+                return json.dumps({"error": "repo must be in 'owner/repo' format"})
+            owner, repo_name = repo.split("/", 1)
+            return await github_tools.github_get_repo_health(owner, repo_name)
     
     except Exception as e:
         logger.warning("github %s failed: %s", action, e)
