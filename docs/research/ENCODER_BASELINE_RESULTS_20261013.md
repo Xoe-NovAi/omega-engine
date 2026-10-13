@@ -57,6 +57,51 @@ after quantization, expected. **Quantized re-measure is the next gate.**
 (For reference, the embed-sidecar route already runs the same class of
 model at 89 ms/query on E-cores with INT8.)
 
+### Latency gate re-test — quantization + threads (same session, same inputs)
+
+All runs: per-case (batch=1) embed of every FC holdout case, CPU, same
+tokenizer protocol as the baseline. Tool: `scripts/sms/quantize_bench.py`
+(+ a thread sweep over 1/2/4/6).
+
+| Config | acc | p50 | p95 | Gate p95 ≤50 |
+|---|---|---|---|---|
+| fp32, default threads (16) | 0.9643 | 116.3 | 177.3 | ❌ |
+| fp32, 6 threads | 0.9643 | 65.6 | 105.4 | ❌ |
+| torch dynamic INT8, default threads | 0.9286 | — | 132.6 | ❌ |
+| torch dynamic INT8, 4 threads | — | 47.6 | 80.8 | ❌ |
+| **torch dynamic INT8, 6 threads** | **0.9286** | **49.7** | **95.2** | ❌ (p50 ✅) |
+| onnxruntime dynamic INT8, 6 thr (un-preprocessed) | 0.8929 | 240.5 | 259.4 | ❌ |
+
+Findings:
+
+1. **Thread count is the dominant lever**, not quantization: fp32 drops
+   177→105 ms p95 just by pinning to 6 P-cores (default 16 threads pays
+   sync overhead). INT8 then gives a further 1.1–1.3×.
+2. **Quality cost is real but within bar**: 0.9643 → 0.9286 (one more
+   holdout case flips; ≤0.05 tolerance).
+3. **The p95 tail is overhead, not compute.** Distribution analysis: the
+   slowest case (86 ms in the sweep run) carries only 103 tokens while
+   84-token cases finish in 42 ms — sequence length does not explain the
+   tail. At ≤170 tokens max, the model's compute is trivial; the 40–95 ms
+   band is per-call dispatch/allocator/thread-migration noise.
+4. **ORT dynamic INT8 is worse** (259 ms, acc 0.8929) — the torch-2.14
+   dynamo export was not ORT-portable (Split/`num_outputs`); the legacy
+   exporter works but un-preprocessed dynamic quantization costs accuracy
+   without buying speed. Static QDQ with calibration data would be the
+   ORT path — not built.
+5. **House-context:** our own production embed sidecar runs a comparable
+   encoder at 89 ms/query on 4 E-cores. INT8 ModernBERT at p50 49.7 ms on
+   6 P-cores already beats that; the ≤50 ms **batch=1 p95** gate is
+   tighter than the house standard for this model class.
+
+Verdict: **gate as written (batch=1 p95) not met by any method tried**;
+best is 95.2 ms p95 (torch INT8, 6 threads), 1.9× over. Remaining levers,
+in order of expected effect: (a) batched serving (changes the protocol —
+p95 is overhead-dominated at batch=1); (b) static QDQ INT8 with
+calibration; (c) INT4. Recommend proceeding with LoRA on quality grounds
+(the quality verdict is solid) and carrying latency as a known open gate
+into the 10-17 decision, rather than blocking the track on it.
+
 ## Verdict
 
 1. **Pivot validated.** Encoder + linear probe ≥ generative + LoRA by a

@@ -129,8 +129,9 @@ SPDX-License-Identifier: Apache-2.0
 |-----------|--------|---|
 | Encoder models pulled & ONNX exported | 2026-10-10 | **WEIGHTS DONE** (fp32 via direct transformers; ONNX export not done — transformers direct inference used per §8 fallback) |
 | Dataset preparation complete | 2026-10-11 | **GAP** — spec's 500-prompt tool_router set never built; real-data capture (8 train/12 holdout) used instead, flagged insufficient |
-| Baseline few-shot eval (no training) | 2026-10-12 | **DONE** — see `ENCODER_BASELINE_RESULTS_20261013.md`. FC: both encoders 0.964 acc / 0.955 macro-F1 vs generative 0.111. Pivot validated. Latency gate FAILS at fp32 (176.8 / 398.6 ms p95 vs ≤50) — quantization is the next gate. |
-| LoRA fine-tuning runs | 2026-10-13 to 2026-10-15 | PENDING (blocked on quantized latency measurement) |
+| Baseline few-shot eval (no training) | 2026-10-12 | **DONE** — see `ENCODER_BASELINE_RESULTS_20261013.md`. FC: both encoders 0.964 acc / 0.955 macro-F1 vs generative 0.111. Pivot validated. |
+| Quantization + latency re-measure | (implied by §5 gate) | **DONE, GATE NOT MET** — best 95.2 ms p95 (torch INT8, 6 thr) vs ≤50; p50 (49.7ms) passes; tail is overhead noise not compute. Carried as open gate into the decision. |
+| LoRA fine-tuning runs | 2026-10-13 to 2026-10-15 | PENDING — proceed on quality grounds per results doc; latency carried open |
 | Final test set evaluation | 2026-10-16 | PENDING |
 | OMER card + decision | 2026-10-17 | PENDING |
 
