@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-HIVE-HARVESTER-20261003-v1.0.0`
+
 # Hive Harvester Research Report
 **Date**: 2026-10-03  
 **Agent**: @researcher (Sovereign Researcher)  

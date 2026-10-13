@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-ADR-004-EXCHANGE-PIPE-v1.0.0`
+
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ADR-004: Read-Only Exchange Pipe
 

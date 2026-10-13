@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-RESEARCH-DOC-STANDARDS-20261002-v1.0.0`
+
 # Documentation Standards & Discovery Report
 **Date**: 2026-10-02
 **Author**: Sovereign Researcher (Jem Analyst, L2)

@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-WEB-RESEARCH-KNOWLEDGE-GAPS-20261002-v1.0.0`
+
 # Web Research: Knowledge Gaps & Blockers for Omega Engine PR
 **Date**: 2026-10-02
 **Author**: Jem (Sovereign Synthesizer)

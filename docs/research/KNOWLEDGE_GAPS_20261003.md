@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-KNOWLEDGE-GAPS-20261003-v1.0.0`
+
 <!--
 SPDX-FileCopyrightText: 2026 Xoe-NovAi
 SPDX-License-Identifier: Apache-2.0

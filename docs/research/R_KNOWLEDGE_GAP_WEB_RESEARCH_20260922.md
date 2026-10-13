@@ -1,3 +1,6 @@
+# ⬡ OMEGA ⬡ DOC-LINT ⬡ opencode ⬡ trc_doc_lint_g1g2 ⬡ REFERENCE
+**AP Token:** `AP-KNOWLEDGE-GAP-WEB-RESEARCH-v1.0.0`
+
 ---
 schema_version: "1.0"
 document_type: research
