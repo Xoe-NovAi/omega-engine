@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-09T18:43:59.477659+00:00 ⬡ 2f6c9cccb342664a ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-10-13T05:24:38.493760+00:00 ⬡ 2f6c9cccb342664a ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-10-09T18:43:59.477659+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-10-13T05:24:38.493760+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -20,27 +20,29 @@ After compaction or restart, execute in strict order:
 ---
 ## 📋 Fleet Todos (opencode.db) — SOTR/SOTE Snapshot
 
-**Generated**: 2026-10-09T18:43:59.492371+00:00
-**Total shown**: 20 (✅ 16 completed · 📋 4 pending)
+**Generated**: 2026-10-13T05:24:38.512406+00:00
+**Total shown**: 20 (✅ 14 completed · 📋 6 pending)
 
 ### ✅ Recently Completed
-- `hidden-squid` @makali: Mine canonical architecture + mandates for novel concepts
-- `hidden-squid` @makali: Mine scattered vision/strategy docs (treasure maps)
-- `eager-harbor` @roc_racoon: Verify all 5 architect facts against HEAD 27dd54b5
-- `eager-harbor` @roc_racoon: Census core-14 axiom status + lesson schema reachability
-- `eager-harbor` @roc_racoon: Write AXIOM_REVIEW_PROTOCOL.md §1-3 (schedule, distillation, falsifiability)
-- `eager-harbor` @roc_racoon: Write §4-8 (human gate, write-only sink, ceiling gap, lessons: ambiguity, bootst
-- `eager-harbor` @roc_racoon: Dry-run: maat (no axioms, wardrobe anomaly)
-- `eager-harbor` @roc_racoon: Dry-run: researcher (40 promoted lessons, L3-reachable)
-- `eager-harbor` @roc_racoon: Verify: validate_soul_architecture.py + make check-engine both pass
-- `sunny-river` @roc_racoon: Verify roster + name→dir mapping (14 core)
-- _...and 6 more completed_
+- `clever-island` @roc_racoon: Phase 1: Stream full DB backup to 8TB external via VACUUM INTO
+- `clever-island` @roc_racoon: Phase 1: Verify backup (FK check + 21-table row parity)
+- `glowing-moon` @jem: A. Tool inventory & validation
+- `glowing-moon` @jem: B. Delete-set SQL + count validation (on slice)
+- `glowing-moon` @jem: C. Batch delete strategy (validated on slice)
+- `glowing-moon` @jem: F. Slice rehearsal (733 MiB, 60.7% reclaimed) + cleanup
+- `glowing-moon` @jem: Event-count reconciliation
+- `glowing-moon` @jem: Write DEEP_DIVE report
+- `glowing-moon` @jem: Write AGENT_PROTOCOL doc
+- `hidden-squid` @makali: Free disk (root cause of phantom failures)
+- _...and 4 more completed_
 
 ### 📋 Currently Pending
-- `hidden-squid` @makali: Collect subagent mining reports (sovereignty + agent ecosystem)
-- `hidden-squid` @makali: Synthesize industry-shifting concepts into positioning brief
-- `hidden-squid` @makali: Update AGY handoff with full-depth brief
-- `misty-moon` @jem: Verify SHA256 against published sum af0bf278... after completion
+- `clever-island` @roc_racoon: WAIT: operator closes OpenCode TUI before Phase 2
+- `clever-island` @roc_racoon: Phase 2: Batched delete of duplicated message.updated.1 events (fk=ON, never eve
+- `clever-island` @roc_racoon: Phase 2: VACUUM INTO reclaimed DB to omega_library/staging (~6.5 GB)
+- `clever-island` @roc_racoon: Phase 2: Verify reclaimed file vs backup
+- `clever-island` @roc_racoon: Phase 2: fuser empty -> rm -wal/-shm -> atomic mv -> verify -> relaunch
+- `clever-island` @roc_racoon: Optional: 2.0 migration fixture backup (~6.5 GB post-reclaim)
 
 > *Source: opencode.db todo table (read-only). Full hierarchy in harvester radar.*
 

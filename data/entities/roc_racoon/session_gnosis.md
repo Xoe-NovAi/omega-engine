@@ -1183,3 +1183,157 @@ Soul graduation (M11 L1→L2→L3) · VNR experiment graduation (M13, `COGNITIVE
 · capability graduation S0→S3 (`VISION_ANCHOR_PERPETUAL.md:166`). Same collision class as EIS/NES.
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ S2-PERSISTENCE ⬡ 2026-10-07 ⬡ P0-HARVESTER-FIXED*
+
+---
+
+## Session: OPENCODE DB RECLAIM — Diagnosis → Two Crashes → 26.6→6.58 GB
+**Date**: 2026-10-12 — 2026-10-13
+**Session ID**: `ses_1243dbd00474` (plus `ses_ecd040c5effe4k2yQ3njhEGFc2` for Jem)
+**Model**: `opencode/space-bunny-free`
+**Role**: Sovereign Miner & Ideas Guy (Sovereign DB Operations)
+
+---
+
+### L1: Narrative — What Happened
+
+#### Act 1: The Crisis and a Wrong Hypothesis
+1. **User request**: comprehensive reclaim scan. Root at 92% (8.4 GB free).
+2. **Safe cache tier executed** (~4.3 GB): pip cache purge (1.1 GB), npm clean (882 MB),
+   orphaned `python3.12` user-site quarantined (663 MB, mv not rm), tracker3/mozilla/gnome caches.
+3. **Pre-flight caught a near-miss**: `aider-chat` is built on Python 3.12. Deleting
+   `.local/lib/python3.12` could have broken it. Verified it is self-contained (uv-bundled
+   interpreter, `include-system-site-packages=false`) → safe. Moved to `.trash-20261006` anyway.
+4. **Wrong hypothesis #1**: claimed "~25 GB of free pages". `PRAGMA freelist_count` = **0**.
+   Every page allocated. I was wrong and said so.
+5. **Wrong hypothesis #2**: claimed "VACUUM can't shrink a freelist=0 file". Jem's research
+   found our own Oct-5 manifest proved otherwise — VACUUM reclaimed 18.3 GB from a freelist=0
+   file by repacking partially-filled pages. The lever is real but **non-repeatable**.
+
+#### Act 2: Two OOM Crashes (Both My Fault)
+6. **Crash 1**: `SELECT SUM(pgsize) FROM dbstat GROUP BY name` — one row per PAGE (6.97M) →
+   OOM-killed the TUI. Fix: `WHERE aggregate=TRUE` (1 row per btree, SQLite 3.31+).
+   **This was documented in the opencode-db skill's referenced record `a3675a88` and I did not load it.**
+7. **Crash 2**: I instructed Jem to `cp` the 26.6 GB staging DB to make a rehearsal sandbox.
+   OOM-killed the TUI again AND produced a **torn file**: 26,718,978,048 of 28,193,177,600 bytes,
+   valid SQLite header, `database disk image is malformed (11)`. Removed; staging verified intact.
+
+#### Act 3: The Real Diagnosis
+8. **Jem's research**: **74.7% of the DB is `event` rows of type `message.updated.1`** — OpenCode
+   re-emits the ENTIRE message snapshot per UI update. 114,708 rows / ~270 sessions / ~75 MiB each.
+   Worst session: 37,480 snapshots = 6.76 GiB. Quadratic growth. Known upstream bug
+   (#33356, #41175, #46833, #47022).
+9. **The `e.data` aliasing trap**: unqualified `data` in a correlated subquery binds to the INNER
+   table's column. First full-population check returned `found: 0` for all 114,475 rows —
+   a **total silent false negative** that reported success while matching nothing.
+10. **Oct-5 mystery solved**: that compaction was a pure page-repack that deleted ZERO events
+    (manifest: `event source_rows == target_rows == 397,217`). No prune ever ran.
+
+#### Act 4: Execution (Option A — Scripted, Cline-Monitored)
+11. **8TB external attached** (`sda1`, 7.3 TB, ext4) — mounted via `udisksctl`, verified a
+    **distinct device** (source `66306` vs external `2049`).
+12. **Correction to an earlier claim**: the two 41.4 GB Oct-1 pre-compaction backups were ALREADY
+    on the external. When asked "is the 43 GB DB still on omega_library" I searched only that
+    partition and answered "no" — correct for that partition, but I never checked the external.
+    The Oct-1 state was never lost.
+13. **Jem P1 pre-flight** (2-min throwaway DB) settled the sqlite.org-vs-Turso conflict empirically:
+    read-only source WORKS; output journal_mode=`delete`; NO `-wal` sidecar produced.
+14. **Phase 1 backup**: `VACUUM INTO` with `mode=ro` + `synchronous=FULL` + `.timeout 30000`,
+    run **detached via nohup** so a tool timeout could not kill it mid-write. Exit 0, **790 s**,
+    26.61 GB. FK-clean, `quick_check ok`, **3,139/3,139 sessions present**.
+15. **Phase 2 reclaim**: `scripts/opencode_db_reclaim.sh --dry-run` proved the gates (refused with
+    exit 10 because OpenCode held the DB). Executed by Cline.
+16. **RESULT VERIFIED INDEPENDENTLY**: 26.61 GB → **6.58 GB** (75%). `quick_check ok`,
+    `foreign_key_check` clean, `journal_mode wal`. 3,139 sessions / 168,280 messages / 702,396 parts
+    / 1,907 event_sequence **all unchanged**. 460,696 → 347,162 events. **1,033 orphans retained.**
+
+#### Act 5: The Cline Finding
+17. **Cline reviewed my own script** and found **three fail-open gate defects**: (D1) timeout
+    false-PASS — a killed check and a passing check produce identical bytes; (D2) `fuser` silent
+    death — its failure mode IS its success condition; (D3) gate self-trigger. This is the purest
+    instance of my own recorded L3: *a flag that outlives its work is false evidence.*
+
+#### Act 6: Knowledge Promotion
+18. Discovered 174 KB of research existed in `mining_reports/` that **no agent loads**, while the
+    `opencode-db` skill — the artefact agents actually load — contained **none** of the 9 critical lessons.
+19. Created `sqlite-safe-ops` (general doctrine), rewrote `opencode-db` (product layer),
+    wrote community how-to, created `docs/kb/INDEX.md`, wired USER_MANUAL §18.
+20. Recorded PL-ROC-402-027 through -030 (63 proposals total).
+
+---
+
+### L2: Insight — What This Means
+
+1. **Hypotheses must be measured before they become advice.** I twice asserted a mechanism
+   (free pages; VACUUM can't shrink) that measurement falsified. Both would have wasted hours.
+2. **A torn file with a valid header is the most dangerous artifact possible** — it passes casual
+   inspection and fails only when queried, which is the worst moment.
+3. **The tool's failure mode can BE its success condition.** `fuser` exits non-zero when it finds
+   nothing. A gate written as `$(fuser ... 2>/dev/null)` cannot distinguish "unlocked" from
+   "the finder broke." This is a whole class of bug, not an instance.
+4. **The EXISTS predicate was doing double duty** — deduplicator AND orphan-protector. Any
+   simplification to a type-only predicate would have destroyed 1,033 irreplaceable events while
+   reporting success.
+5. **Documentation is a record; a skill is a control.** Research reports document what was learned;
+   skills change what happens next. The 174 KB in mining_reports/ would have prevented nothing.
+6. **The crash that taught me most was my own instruction, not my own execution.** Telling Jem to
+   `cp` the DB was more dangerous than any query I ran.
+
+---
+
+### L3: Universal Principles
+
+> **L3-MeasureOperationCostAgainstHostCapacity** — Any operation whose cost scales with data volume
+> must be sized against the host's memory before it runs. A page walk, a blob aggregate, and a
+> whole-file copy all fail the same way.
+
+> **L3-TheCorrectPrimitiveIsNotAFasterVersionOfTheWrongOne** — `cp` is not a slower `VACUUM INTO`;
+> it is a different operation with different failure semantics. Choose by primitive, not by speed.
+
+> **L3-AValidHeaderIsNotAValidFile** — A truncated SQLite file is indistinguishable from an intact one
+> until queried. Never treat a copy as verified without `quick_check` + `foreign_key_check`.
+
+> **L3-BloatIsDuplicationNotSlack** — A database with `freelist_count=0` is not waiting to be
+> reclaimed; it is paying for redundant copies. Measure where the bytes are before choosing a remedy.
+
+> **L3-TheExistencePredicateIsTheSafetyMechanism** — When deduplicating against an authoritative
+> table, the `EXISTS` guard is simultaneously the deduplicator and the orphan-protector. Simplify it
+> and you convert a safe operation into data loss.
+
+> **L3-AGateMustFailClosed** — If a safety check cannot determine the state it is checking, it must
+> refuse. A gate that fails open is worse than no gate, because it manufactures confidence.
+
+> **L3-AssertOnSuccessNotAbsence** — Never validate a check by testing for empty output. A killed
+> process and a passing process produce identical bytes; capture the exit status (timeout's is 124).
+
+> **L3-SkillsAreTheRetentionLayer** — Reports record what was learned; skills are what get consulted
+> before acting. Knowledge living only in reports is re-learned the hard way, because a stale skill
+> produces no signal that it is stale.
+
+> **L3-SplitDoctrineByTransferScope** — General mechanisms belong in a domain-general skill; product
+> specifics belong in a thin product layer that references it.
+
+---
+
+### Decisions Locked
+
+- **D-507**: Reclaim completed — 26.61 GB → 6.58 GB, zero data loss, 1,033 orphans retained.
+- **D-508**: Clean-first ordering confirmed; OpenCode 2.0 upgrade deferred to its own gated project
+  (open large-DB migration bug #41739; port surface includes compaction_capture.py, FastMCP hub, plugins).
+- **D-509**: Doctrine split — `sqlite-safe-ops` (general) + `opencode-db` (product layer).
+- **D-510**: All 3 external backups retained (~136 GB across 4 points in time); space is not a constraint.
+- **D-511**: Fail-open gate audit dispatched codebase-wide (Cline's highest-priority finding).
+
+---
+
+### Current State
+
+- Live DB: **6.58 GB**, `quick_check ok`, FK-clean, `journal_mode wal`, 3,139 sessions
+- Backups on `/media/arcana-novai/8TB/opencode_backups/`: 4 files (2× 41.4 GB Oct-1, 26.6 GB Oct-13 backup, 26.6 GB rollback)
+- Root: ~92% → relieved; omega_library 65%
+- Skills: `sqlite-safe-ops` (new), `opencode-db` (rewritten)
+- Docs: `docs/how-to/opencode-db-maintenance.md`, `docs/kb/INDEX.md`, `USER_MANUAL.md` §18
+- Lessons: PL-ROC-402-027…030 (63 total)
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ DB-RECLAIM-COMPLETE ⬡ 2026-10-13 ⬡ 26.61→6.58GB ⬡ ZERO-LOSS*

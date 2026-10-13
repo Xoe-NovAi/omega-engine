@@ -1,6 +1,6 @@
 {
   "version": "1.2",
-  "updated": "2026-09-30T03:08:14.506368+00:00",
+  "updated": "2026-10-13T04:29:47.628100+00:00",
   "tasks": [
     {
       "task_id": "sote-research-20260901",
@@ -245,6 +245,27 @@
         "background-lane",
         "retro-registered",
         "status-inferred"
+      ]
+    },
+    {
+      "task_id": "opencode-db-reclaim-20261013",
+      "subagent_type": "roc_racoon",
+      "launched_by": "roc_racoon",
+      "channel": "opencode",
+      "entity": "roc_racoon",
+      "description": "OpenCode DB reclaim: backup to 8TB external (Phase 1) + batched event-delete + vacuum + atomic swap (Phase 2)",
+      "status": "in_progress",
+      "created_at": "2026-10-13T04:29:47.628001+00:00",
+      "last_checkpoint": "2026-10-13T04:29:47.628026+00:00",
+      "resumption_count": 0,
+      "context_verified": false,
+      "tags": [
+        "opencode-db",
+        "sqlite",
+        "reclaim",
+        "backup",
+        "vacuum",
+        "mid-cleanup-assist"
       ]
     }
   ]
