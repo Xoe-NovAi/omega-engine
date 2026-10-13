@@ -105,7 +105,7 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 │  IWAD: _omega   │ │  IWAD: arcana   │ │  PWAD: persona_*    │
 │  _default       │ │  _novai         │ │  (Patch WADs)       │
 │                 │ │                 │ │                     │
-│ 14 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
+│ 12 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
 │ Build/Run Slots │ │ 10 Pillars      │ │ • Therapy Bot       │
 │ Engineering     │ │ Sephirotic Tree │ │ • Domain Expert     │
 │ Council         │ │ 42 Ideals       │ │ • Your Creation     │
@@ -113,7 +113,7 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 ```
 
 - **Engine Core** (`src/omega/`): The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
-- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities for software development. `arcana_novai` is a full esoteric AI operating system with its own cosmology. Each is a self-contained universe.
+- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 12 persistent engineering entities for software development. `arcana_novai` is a full esoteric AI operating system with its own cosmology. Each is a self-contained universe.
 - **PWADs** (Patch WADs): Modular add-on packs — a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own.**
 
 Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions — it doesn't merely suggest them.
@@ -122,12 +122,18 @@ Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, a
 
 ## 🚀 Quick Start
 
-### Option A: From PyPI (Fastest)
+### Option A: From GitHub Release (Fastest)
 ```bash
-pip install omega-engine
+# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega-1.6.0a0-py3-none-any.whl
+pip install omega-1.6.0a0-py3-none-any.whl
+
+# PyPI: `pip install omega-engine` — publishing pending (see ANNOUNCEMENT_v1.6.0-alpha.md)
+
 omega list-entities          # See the sovereign council
 omega talk "Hello, Omega"    # Route to the best entity automatically
 ```
+*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "omega-engine[native]"` — or use Option B below.*
 
 ### Option B: From Source (Full Development)
 ```bash
@@ -153,7 +159,7 @@ Omega adapts to whatever workflow you already use:
 
 ## 🏛️ The Sovereign Council
 
-Omega ships with 14 persistent entities, each with a constitutional soul, domain expertise, and continuous cognitive development:
+Omega ships with 12 persistent IWAD entities and 10 A2A seats, each with a constitutional soul, domain expertise, and continuous cognitive development:
 
 | Entity | Domain | What It Does |
 |:--|:--|:--|
@@ -165,7 +171,7 @@ Omega ships with 14 persistent entities, each with a constitutional soul, domain
 | **Scribe** | Continuity & Soul | L1→L3 lesson distillation, session gnosis recording |
 
 <details>
-<summary><strong>See all 14 entities →</strong></summary>
+<summary><strong>See all seats →</strong></summary>
 
 | Entity | Domain | What It Does |
 |:--|:--|:--|
@@ -173,10 +179,10 @@ Omega ships with 14 persistent entities, each with a constitutional soul, domain
 | **Researcher** | Deep Research | Polymathic synthesis, web discovery, multi-source dialectics |
 | **Verity** | Compliance & Audit | Mandate enforcement, test auditing, gnosis integrity |
 | **Jem** | Dialectic Synthesis | Lattice reasoning, strategic bridges, cross-node coordination |
-| **Grokster** | Platform & Tooling | Model fleet ergonomics, ecosystem integrations |
-| **Antigravity** | Cloud Strategy | Cross-platform review and external cloud consultation |
+| **Antigravity** | Cloud Strategy (Seat #10, A2A card) | Cross-platform review and external cloud consultation |
 | **Doom Guy** | Infrastructure | Bare-metal OS, containers, mounts, hardware resilience |
 | **Iris** | Messenger Bridge | Low-latency communications, inter-node protocol routing |
+| **Quality** | Code Review & Compliance | Review, stress-testing, mandate and PR-readiness checks |
 
 </details>
 
@@ -205,7 +211,7 @@ Omega Engine values mechanical truth over marketing illusion:
 |:--|:--|
 | Core Local & Synergistic Inference | ✅ Operational — native GGUF + configured cloud providers |
 | Hivemind MCP & Coordination | ✅ Operational — verified across local IDEs and multi-agent sessions |
-| Temple-Grade CI | ✅ 53/53 gates exit 0 on fresh clone; 180 engine contract tests pass |
+| Temple-Grade CI | ✅ 53/53 gates exit 0 on fresh clone; 176 engine contract tests pass (4 skipped) |
 | Zero Telemetry | ✅ Audited and enforced; no external analytics or metrics egress |
 | REUSE/SPDX Compliance | ✅ v3.3 compliant |
 | Axiom Ceiling & Auto-Promotion | 🟡 Governance doctrine documented; implementation in post-debut Sprint 01 |
