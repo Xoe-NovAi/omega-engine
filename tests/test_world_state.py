@@ -15,6 +15,9 @@ async def test_first_breath_world_query():
     registry = EntityRegistry()
     # Use the actual arcana_novai WAD path
     wads_dir = Path("config/wads")
+    # D-628: arcana_novai is host-side only and absent from the public cut.
+    if not (wads_dir / "arcana_novai").is_dir():
+        pytest.skip("arcana_novai WAD is host-side only (D-628 public cut)")
     loader = WADLoader(registry, wads_dir=wads_dir)
     
     # Load the WAD
