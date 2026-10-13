@@ -80,7 +80,54 @@ In Omega, an agent is an enduring entity with an attributable history, an identi
 
 Omega is designed to get out of your way. You can run it completely offline on local CPU, or plug in your cloud credentials to activate full sovereign synergy.
 
-### 1. One-Click Bootstrap
+In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the maps, textures, sounds, and rules that define the experience. You can swap WADs without touching the engine. You can create total conversions. The engine doesn't care what universe runs on it.
+
+**Omega works the same way:**
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    OMEGA ENGINE (src/omega/)                      │
+│  Universal runtime. Stack-agnostic. Firewalled from all content. │
+│  AnyIO concurrency · FastMCP Hub · 30 Mandates · Control Planes │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │ loads
+         ┌───────────────────┼───────────────────┐
+         ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────┐
+│  IWAD: _omega   │ │  IWAD: arcana   │ │  PWAD: persona_*    │
+│  _default       │ │  _novai         │ │  (Patch WADs)       │
+│                 │ │                 │ │                     │
+│ 12 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
+│ Build/Run Slots │ │ 10 Pillars      │ │ • Therapy Bot       │
+│ Engineering     │ │ Sephirotic Tree │ │ • Domain Expert     │
+│ Council         │ │ 42 Ideals       │ │ • Your Creation     │
+└─────────────────┘ └─────────────────┘ └─────────────────────┘
+```
+
+- **Engine Core** (`src/omega/`): The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
+- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 12 persistent engineering entities for software development. `arcana_novai` is a full esoteric AI operating system with its own cosmology. Each is a self-contained universe.
+- **PWADs** (Patch WADs): Modular add-on packs — a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own.**
+
+Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions — it doesn't merely suggest them.
+
+---
+
+## 🚀 Quick Start
+
+### Option A: From GitHub Release (Fastest)
+```bash
+# Wheel from the release asset — aria2c (M23: 16-split fetch for >1MB)
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
+pip install omega_engine-1.6.0a0-py3-none-any.whl
+
+# PyPI: `pip install the-omega-engine` — pending publisher exists; verify live before relying on it (see ANNOUNCEMENT_v1.6.0-alpha.md)
+
+omega list-entities          # See the sovereign council
+omega talk "Hello, Omega"    # Route to the best entity automatically
+```
+*Note: the core wheel omits llama-cpp-python (source build). For local GGUF inference, install the native extra — `pip install "the-omega-engine[native]"` — or use Option B below.*
+
+### Option B: From Source (Full Development)
 ```bash
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
@@ -93,7 +140,7 @@ cd omega-engine
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/omega_engine-1.6.0a0-py3-none-any.whl
 pip install omega_engine-1.6.0a0-py3-none-any.whl
 ```
-*The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install omega-engine` is not yet available.*
+*The core wheel omits llama-cpp-python (source build); for local GGUF inference use `pip install "the-omega-engine[native]"` or the source install above. PyPI publishing is pending — `pip install the-omega-engine` is not yet available.*
 
 ### 2. Connect Your Preferred Interface
 Omega adapts to whatever workflow you prefer:
