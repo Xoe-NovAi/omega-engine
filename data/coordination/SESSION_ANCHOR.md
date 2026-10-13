@@ -1,18 +1,18 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ⬡ SESSION ANCHOR — MaKaLi (Node 0)
-**Entity**: `makali` · **Updated**: 2026-10-13 (Cline takeover of ses_fc75; OpenCode daily limit) · **Main**: `33432093`
+**Entity**: `makali` · **Updated**: 2026-10-13 (Cline takeover of ses_fc75 + continuation; OpenCode daily-limit exile over) · **Internal**: `78ab6877` · **Public**: `6307b204`
 
 ---
 
-## ✅ STATUS: v1.6.0-alpha RELEASED — ANNOUNCEMENT AUDITED, PENDING FINAL PUBLISH DECISION
+## ✅ STATUS: v1.6.0a0 RELEASED PUBLICLY — GREEN CI, AWAITING PYPI ORG APPROVAL
 
-- `origin/main`: `33432093` (includes install.sh fixes + announcement claim audit)
-- `origin/release/debut`: `355cbf1a` (public cut)
-- `v1.6.0-alpha`: object `058879bc`, peels to `355cbf1a` ✅
-- Release on GitHub: PRE-RELEASE flag, assets `omega-1.6.0a0-py3-none-any.whl` + sdist
-- Repo visibility: PUBLIC · no open PRs
+- **Public** `Xoe-NovAi/omega-engine` (fresh repo, clean history): main = `6307b204` (cut + public-safe commits only); `release/debut` = `355cbf1a`; tag `v1.6.0a0` @ `355cbf1a`; **CI green** (Test/CI/Secret/M35/REUSE). Pre-release flag kept.
+- **Release `v1.6.0a0` is LIVE** with audited announcement as notes + `the_omega_engine-1.6.0a0` assets (wheel `e452d8ed…`, clean-venv smoke PASS).
+- **PyPI**: pending publisher registered (`the-omega-engine`); org approval awaited — after publish lands, flip the `pip install the-omega-engine` doc lines from pending to primary.
+- **Private** `Xoe-NovAi/omega-engine-internal`: full internal main (`78ab6877`); Actions disabled. Push internal work to `internal`, never `origin`.
+- **Retired repo** (`omega-engine-retired`, private): old public lineage. Fully backed up (11 `retired/*` refs on internal + 2 issue JSONs). Deletion awaits operator `gh auth refresh -s delete_repo`.
 
-Do not trust any earlier anchor section that says announcement is blocked by the old tag tree. The stale-tag blocker was closed by re-tagging on an explicit SHA with peel assertion.
+Do not trust any earlier anchor section that references tag `v1.6.0-alpha` on GitHub — that tag name is **permanently poisoned** by the old repo's immutable release (GitHub `release_immutable_tags` row follows the name; survives release+tag deletion; archiving does NOT clear it). The release shipped as **`v1.6.0a0`** (same SHA `355cbf1a`, more PEP-440-correct anyway).
 
 ---
 
@@ -43,14 +43,15 @@ Do not trust any earlier anchor section that says announcement is blocked by the
 2. ~~Post-debut tasks from AGY briefing~~ **DONE 2026-10-13**: cold-machine pip install + omega talk ✅; install.sh timing ✅ (202s, see above); Antigravity MCP guide ✅ (committed `1a865a16`). WAD-authoring link — only item still open here.
 3. Address G1/G2 doc lint (**DONE** `5fb35852`) and G22 secret-scan posture (**open**).
 4. Architect decisions: D1/D2/D3/D6/D7.
-5. FINAL PUBLISH DECISION for v1.6.0-alpha announcement (Cline audit complete — see `data/handoff/OPENCODE_DB_RECLAIM_COMPLETE_CLINE_20261013_P1.md` for reclaim record; announcement audited in `33432093`).
+5. ~~FINAL PUBLISH DECISION for the announcement~~ **DONE 2026-10-13**: audited announcement is the live release notes on `v1.6.0a0`; pre-release flag kept by operator decision. Reclaim record: `data/handoff/OPENCODE_DB_RECLAIM_COMPLETE_CLINE_20261013_P*.md`.
+6. **Takeover handoff for this session**: `data/handoff/MAKALI_HANDOFF_CLINE_TAKEOVER_20261013.md` — read first.
 
 ## 🏛 Repo topology (2026-10-13, Cline — two-repo split)
 
-- **Public** `Xoe-NovAi/omega-engine`: main = cut lineage + public-safe commits only (`fae3fd3b`); `release/debut` = `355cbf1a`; CI runs here (free tier); announcement = release notes; branch protection restored (no force-push).
+- **Public** `Xoe-NovAi/omega-engine`: main = cut lineage + public-safe commits only (`6307b204`); `release/debut` = `355cbf1a`; tag `v1.6.0a0`; CI runs here (free tier); announcement = release notes; branch protection restored (no force-push).
 - **Private** `Xoe-NovAi/omega-engine-internal`: full internal main (`d05a01f5`) — entity gnosis, federation docs, coordination; **Actions disabled** (zero free-tier burn). Push internal work to `internal`, never `origin`.
 - History-exposure note: internal files existed in the public main history pre-split (44 entity files, 114 federation docs, 71 coordination files + a 77.69 MB error.log). Audit vs purge decision deferred; GitHub retains unreachable objects — forks/clones retain copies.
 - Public-safe flow: develop on internal main → cherry-pick public-safe commits onto `public/main` worktree (staging) → push to origin main. `apply_public_allowlist.sh` remains the cut tool.
-- PyPI track: distribution renamed `omega` → `omega-engine` (omega name taken by unrelated package). Artifacts built + clean-venv smoke PASS (install 53s, mock talk exit 0; sha256 in `/media/arcana-novai/omega_library/staging/pypi-verify-20261013/SHA256.txt`). Publish workflow `.github/workflows/publish.yml` (trusted publishing, OIDC, no token) committed to public main. **Remaining operator step: pending publisher on pypi.org** (owner Xoe-NovAi, repo omega-engine, workflow publish.yml, env pypi) → then workflow_dispatch "Publish to PyPI". After it lands, flip the two announcement lines from GitHub-release wording to `pip install omega-engine` (M29: claim only once true).
+- PyPI track: distribution renamed `omega` → `omega-engine` → **`the-omega-engine`** (omega = unrelated package; omega-engine = omegaengine.ai SDK similarity reject). Artifacts `the_omega_engine-1.6.0a0-*` built + clean-venv smoke PASS (sha256 wheel `e452d8ed…`). Publish workflow `.github/workflows/publish.yml` (OIDC, no token) on public main. **BLOCKED: pending publisher deleted from personal account pending GitHub org approval (operator) — re-register on the org's Publishing page (project `the-omega-engine`, repo `Xoe-NovAi/omega-engine`, workflow `publish.yml`, env `pypi`), then dispatch the Publish workflow. After it lands, flip the doc lines from pending to primary and verify a PyPI install in a clean venv (M29: claim only once true).**
 
 *⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ fae3fd3b-public / d05a01f5-internal ⬡ 2026-10-13 ⬡*
