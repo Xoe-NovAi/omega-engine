@@ -322,7 +322,10 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
         self,
         model_path: str = os.environ.get(
             "OMEGA_MINILM_MODEL",
-            str(Path.home() / "omega_library" / "models" / "embeddings" / "all-MiniLM-L6-v2-Q4_K_M.gguf"),
+            # Default mirrors the sovereign models mount; OMEGA_MINILM_MODEL wins.
+            # (Fixed 2026-10-13: was Path.home()/"omega_library" — wrong on Node 0
+            # where the mount is /media/<user>/omega_library, not ~/omega_library.)
+            "/media/arcana-novai/omega_library/models/embeddings/all-MiniLM-L6-v2-Q4_K_M.gguf",
         ),
         dimension: int = 384,
         n_ctx: int = 512,
@@ -539,7 +542,8 @@ class Qwen3GGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
         super().__init__(
             model_path=os.environ.get(
                 "OMEGA_QWEN_EMBED_MODEL",
-                str(Path.home() / "omega_library" / "models" / "embeddings" / "Qwen3-Embedding-0.6B-Q5_K_M.gguf"),
+                # Same mount fix as LocalGGUFEmbeddingProvider above (2026-10-13).
+                "/media/arcana-novai/omega_library/models/embeddings/Qwen3-Embedding-0.6B-Q5_K_M.gguf",
             ),
             dimension=1024,  # native == canonical
             target_dim=target_dim,  # None = emit native 1024
