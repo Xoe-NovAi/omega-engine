@@ -66,8 +66,8 @@ cd omega-engine
 # Or wheel install (self-contained) — from the GitHub release asset
 # (not yet on PyPI). Download with aria2c (M23: mandatory for >1MB on
 # Node 0 — single-connection pip/curl can crawl at KB/s), then install:
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega-1.6.0a0-py3-none-any.whl
-pip install omega-1.6.0a0-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0-alpha/omega_engine-1.6.0a0-py3-none-any.whl
+pip install omega_engine-1.6.0a0-py3-none-any.whl
 
 # First run — launches the hub + registers your entities
 omega talk "Hello, Omega"
