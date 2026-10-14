@@ -166,6 +166,9 @@ def check_facts(facts: Dict[str, Any]) -> Tuple[List[str], List[str]]:
             for f in files:
                 if not f.is_file() or f.suffix not in (".md", ".py", ".yaml", ".yml", ".txt", ".toml"):
                     continue
+                # Skip the baseline file itself (it contains the patterns as deny entries)
+                if f.name == ".secret-history-baseline.toml":
+                    continue
                 try:
                     content = f.read_text(encoding="utf-8")
                 except Exception:

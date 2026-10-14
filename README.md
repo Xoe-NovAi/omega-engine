@@ -126,6 +126,8 @@ cd omega-engine
 ```bash
 # Download the wheel (aria2c: 16-split fetch for >1MB, M23)
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
+# Or use curl if aria2c is not available:
+# curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a0/the_omega_engine-1.6.0a0-py3-none-any.whl
 pip install the_omega_engine-1.6.0a0-py3-none-any.whl
 
 omega list-entities          # See the sovereign council

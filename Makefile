@@ -452,18 +452,6 @@ sprint-plan-llm:
 	@echo "$(YELLOW)Generating llms-full.txt for current sprint...$(NC)"
 	@mkdir -p docs/sprints/current
 	@echo "# Sprint Plan: Doc Sanity & Un-overengineering (2026-07-30)" > docs/sprints/current/llms-full.txt
-	@cat docs/archive/sprints/EXECUTION_PLAN_20260725.md >> docs/sprints/current/llms-full.txt
-	@for f in docs/archive/sprints/2026-07-25-guard-and-distill/02-p0-tickets/*.md; do \
-		[ -f "$$f" ] || continue; \
-		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
-		cat $$f >> docs/sprints/current/llms-full.txt; \
-	done
-	@for f in docs/archive/sprints/2026-07-25-guard-and-distill/03-p1-tickets/*.md; do \
-		[ -f "$$f" ] || continue; \
-		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
-		cat $$f >> docs/sprints/current/llms-full.txt; \
-	done
-	@cat docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md >> docs/sprints/current/llms-full.txt
 	@echo "$(GREEN)Generated docs/sprints/current/llms-full.txt ($$(wc -c < docs/sprints/current/llms-full.txt) bytes)$(NC)"
 
 # Generate llms.txt (index only) for current sprint
@@ -474,7 +462,6 @@ sprint-plan-llms-txt:
 	@echo "- Sprint Goal: Sanitize docs (UO-4), then un-overengineer (UO-6)" >> docs/sprints/current/llms.txt
 	@echo "- Controlling Plan: data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md" >> docs/sprints/current/llms.txt
 	@echo "- Active Sprint: data/coordination/ACTIVE_SPRINT.json" >> docs/sprints/current/llms.txt
-	@echo "- Research: docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md" >> docs/sprints/current/llms.txt
 	@echo "- Full Plan: docs/sprints/current/llms-full.txt" >> docs/sprints/current/llms.txt
 	@echo "$(GREEN)Generated docs/sprints/current/llms.txt$(NC)"
 
@@ -1068,12 +1055,12 @@ gate-secrets:
 	$(PYTHON) scripts/check_secret_history.py || FAIL=1; \
 	PEM_R='-----BEGIN[ A-Z]*PRIVATE KEY-----'; \
 	PEM_FILES=$$(git log -G "$$PEM_R" --branches --tags --name-only --format= | sort -u); \
-	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/reference/api/tools.md$$' -e '^$$' | wc -l); \
+	PEM_BAD=$$(echo "$$PEM_FILES" | grep -v -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/reference/api/tools.md$$' -e '^$$' | wc -l); \
 	PEM_N=$$(echo "$$PEM_FILES" | grep -c .); \
 	if [ "$$PEM_BAD" -eq 0 ]; then \
 		echo "  git log -G PEM -> $$PEM_N file(s), all baselined template FPs (P0-5 fix 2026-08-28 x3 + 2026-10-07 docs/reference/api/tools.md detector-doc template — `detect_api_keys` doc names the PEM pattern in prose, no key material; regex self-avoiding so gate source never self-matches)"; \
 	else \
-		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/archive/specs/vault-overhaul-20260818/R_VAULT_SCHEMA_V2.md$$' -e '^docs/archive/coordination-2026-07/PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md$$' -e '^docs/research/R_VAULT_SCHEMA_V2.md$$'; FAIL=1; \
+		echo "  git log -G PEM -> OFFENDING FILES:"; echo "$$PEM_FILES" | grep -v -e '^docs/research/R_VAULT_SCHEMA_V2.md$$' -e '^docs/reference/api/tools.md$$'; FAIL=1; \
 	fi; \
 	if command -v gitleaks >/dev/null 2>&1; then \
 		echo '=== gitleaks durable refs (--branches --tags) ==='; \
