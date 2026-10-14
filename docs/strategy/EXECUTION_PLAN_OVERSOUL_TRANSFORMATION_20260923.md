@@ -172,7 +172,7 @@ Bridge the physical air-gap between Node 0 and Node 1. Remediate Node 1's local 
   4. **OpenCode Cache Purge**: Restart OpenCode client on Node 1 to flush phantom tool cache (`oracle_list_pillar_keepers`).
   5. **NFS Activation**: Start `nfs-kernel-server` on Node 1 exporting `/mnt/node-drive/exchange`.
 * **Stage 4 Verification Gate**:
-  - Node 0 can SSH into Node 1 via `ssh arcana-novai@100.64.0.2`.
+  - Node 0 can SSH into Node 1 via `ssh user@100.64.0.2`.
   - Node 0 successfully mounts Node 1's NFS export at `/mnt/node-drive/exchange-n1`.
   - `omega_federation_status` reports `n1` has tags `["tag:node1"]` only.
 

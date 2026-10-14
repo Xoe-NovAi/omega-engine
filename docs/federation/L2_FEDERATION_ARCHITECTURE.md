@@ -150,7 +150,7 @@ The federation utilizes the **Model Context Protocol (MCP)** Streamable-HTTP spe
 ### 4.2. Zero-Credential Tailscale SSH (Port 22)
 - Tailscale intercepts port 22 on the `tailscale0` virtual interface.
 - Traditional passwords, PEM keys, and host key verification prompts are bypassed in favor of mutual cryptographic WireGuard node authentication.
-- Access is restricted to `xnai` and `arcana-novai` with least-privilege non-root policies.
+- Access is restricted to authorized operators with least-privilege non-root policies.
 
 ### 4.3. Distributed NFSv4.2 Storage (Port 2049)
 - **Zero Port 111 Exposure**: Modern NFSv4 operates purely over TCP 2049. Legacy `rpcbind` and `mountd` are bypassed.

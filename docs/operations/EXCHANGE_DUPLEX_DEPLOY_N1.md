@@ -172,7 +172,7 @@ dependencies:
 
 ```bash
 # 0a. locate the checkout — the one containing scripts/omega_exchange_server.py's repo
-find /home/xnai -maxdepth 5 -type d -name .git 2>/dev/null | sed 's|/.git$||'
+find <USER_HOME> -maxdepth 5 -type d -name .git 2>/dev/null | sed 's|/.git$||'
 
 # 0b. pick the venv that actually satisfies the imports (authoritative, not guesswork)
 for v in <USER_HOME>/Documents/Projects/omega-engine-alpha/.venv \

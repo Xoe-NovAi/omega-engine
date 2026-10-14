@@ -72,6 +72,9 @@
 set -euo pipefail
 
 ALLOWLIST_FILE="${ALLOWLIST_FILE:-docs/strategy/PUBLIC_ALLOWLIST.txt}"
+if [[ ! -f "$ALLOWLIST_FILE" && -f "PUBLIC_ALLOWLIST.txt" ]]; then
+    ALLOWLIST_FILE="PUBLIC_ALLOWLIST.txt"
+fi
 CONFIRM=0
 SUMMARY_ONLY=0
 STRICT=0

@@ -264,7 +264,7 @@ while ! tailscale ping n1 -c 1 -timeout 5s 2>/dev/null; do
 done
 
 # 1. Service status
-tailscale ssh xnai@n1 "systemctl is-active mcp-server nfs-kernel-server ssh"
+tailscale ssh user@n1 "systemctl is-active mcp-server nfs-kernel-server ssh"
 
 # 2. WireGuard ping
 tailscale ping n1
@@ -292,7 +292,7 @@ curl -s -X POST http://n1.example.invalid:8016/mcp \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"FED-VERIFIED-20260921"}}}'
 
 # n1 → n0 (via SSH)
-tailscale ssh xnai@n1 'curl -s -X POST http://n0.example.invalid:8016/mcp \
+tailscale ssh user@n1 'curl -s -X POST http://n0.example.invalid:8016/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '"'"'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"n1-verify","version":"1.0"}}}'"'"''
@@ -301,7 +301,7 @@ tailscale ssh xnai@n1 'curl -s -X POST http://n0.example.invalid:8016/mcp \
 ### P2-3: Node 1 `allowed_hosts` Explicit Entry (Proactive Fix)
 ```bash
 # On Node 1, update mcp-server allowed_hosts
-tailscale ssh xnai@n1 << 'EOF'
+tailscale ssh user@n1 << 'EOF'
 # Find the server file
 find ~ -name "server.py" -path "*/mcp*" 2>/dev/null | head -1
 # Then edit allowed_hosts to add explicit n0 entries (see Antigravity Q5)
@@ -314,8 +314,8 @@ EOF
 touch /mnt/node-drive/.federation_verify && rm /mnt/node-drive/.federation_verify
 
 # SSH both directions
-tailscale ssh xnai@n1 "echo 'n1->n0 SSH OK'"
-tailscale ssh arcana-novai@n0 "echo 'n0->n1 SSH OK'"
+tailscale ssh user@n1 "echo 'n1->n0 SSH OK'"
+tailscale ssh user@n0 "echo 'n0->n1 SSH OK'"
 
 # Write verification response
 mkdir -p /mnt/node-drive/exchange/n0-to-n1

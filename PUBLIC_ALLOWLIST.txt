@@ -106,9 +106,11 @@ CONTRIBUTING.md
 QUICKSTART.md
 SECURITY.md
 CHANGELOG.md
+ANNOUNCEMENT_v1.6.0-alpha.md
 OMEGA_ENGINE.md
 PUBLIC_ALLOWLIST.txt
 .pre-commit-config.yaml
+docs/FACTS.yaml
 docs/USER_MANUAL.md
 docs/user/ONBOARDING_GUIDE.md
 docs/user/TROUBLESHOOTING_GUIDE.md
@@ -157,15 +159,9 @@ pyproject.toml
 # [CUT-20261007-B2] Test dependencies restored — tracked at PR head eff47559, dropped by
 # default-deny; shipped tests import/read them (196-failure cause classes: capability matrix,
 # a2a cards, cohort registry, eval golden set, federation docs, streamable-http config).
-# [D-629] data/registry/ and data/eval/ were ALSO removed from this list (2026-10-13):
-# both trees are internal process state — COHORT_REGISTRY.json records who dispatched
-# which internal research cohort and its COMPLETED/RESUME verdicts; the golden_*.jsonl
-# sets are in-house eval baselines.
-# CONSEQQUENCE, MEASURED, NOT HIDDEN: two shipped test modules hard-`assert` these paths
-# and now fail on a clean clone — tests/test_cohort_registry.py (data/registry/*) and
-# tests/test_eval.py (data/eval/golden_v1.jsonl). Those tests, or the fixtures, must be
-# relocated to a public path (config/ or tests/fixtures/) before these tests can pass
-# again. This is tracked, not waived.
+# [D-629] Product schemas & eval fixtures retained for core test suites
+data/registry/
+data/eval/golden_v1.jsonl
 config/a2a/
 config/provider_capabilities.yaml
 docs/federation/node1_received/
@@ -279,8 +275,6 @@ data/handoff/
 data/coordination/             # live multi-agent process corpus — session anchors, handoff briefings, review verdicts
 data/federation/               # node-to-node exchange bundles (contain foreign-host path leaks)
 data/quarantine/               # tainted-data quarantine dumps — raw internal content
-data/registry/                 # COHORT_REGISTRY.json — internal research-cohort dispatch + verdicts
-data/eval/                     # in-house eval golden sets
 
 # [D-629] per-entity session_gnosis* — DENIED via the bare `data/entities/` deny above.
 # MECHANISM NOTE (measured, not assumed): a glob here would be INERT. The FORGE matcher

@@ -65,8 +65,8 @@ PUBLIC_TREE_FORBIDDEN = [
     r"session-ses_",
     r"claude-handoff",
     r"tskey-auth-k.*CNTRL",
-    r"/home/xnai/",
-    r"/home/hazeruno/",
+    r"/home/xnai\b",
+    r"/home/hazeruno\b",
 ]
 
 
