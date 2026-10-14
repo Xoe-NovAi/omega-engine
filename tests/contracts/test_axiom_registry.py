@@ -32,8 +32,14 @@ MISSING_DIR = Path("config/wads/__nonexistent_axiom_wad__")
 #
 # Skip rather than delete: on this host, and on any deployment that installs the
 # ANAi WAD, the contract still has teeth.
+#
+# D-629: guard on the REQUIRED FILE (axioms.yaml), not bare directory existence.
+# A stale untracked `plugins/__pycache__/` residue can re-create the directory
+# on a public clone, which un-skipped these contracts and made them fail
+# hunting a file that ships in no public artifact. Existence of the file the
+# registry actually reads is the honest predicate.
 requires_anai_wad = pytest.mark.skipif(
-    not WAD_DIR.is_dir(),
+    not (WAD_DIR / "axioms.yaml").is_file(),
     reason="ANAi WAD is host-side only and is not shipped publicly (D-628)",
 )
 

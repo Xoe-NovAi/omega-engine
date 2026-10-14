@@ -438,14 +438,20 @@ DOC_FRONTMATTER_SCHEMA := schemas/llm_doc_frontmatter.json
 # Validate all LLM-friendly docs in a sprint directory
 doc-llm-validate:
 	@echo "$(YELLOW)Validating LLM-friendly documentation...$(NC)"
-	@$(PYTHON) scripts/validate_llm_docs.py \
-		--frontmatter-schema $(DOC_FRONTMATTER_SCHEMA) \
-		--token-budget $(DOC_TOKEN_BUDGETS) \
-		--answer-first-check \
-		--code-block-check \
-		--dependency-graph-check \
-		docs/sprints/current/
-	@echo "$(GREEN)LLM doc validation complete$(NC)"
+	@mkdir -p docs/sprints/current
+	@if [ -z "$$(ls -A docs/sprints/current/ 2>/dev/null)" ]; then \
+		echo "$(YELLOW)SKIP: docs/sprints/current is empty on this tree - no LLM docs to validate$(NC)"; \
+		echo "  (this is NOT a pass; it means the subject set is empty)"; \
+	else \
+		$(PYTHON) scripts/validate_llm_docs.py \
+			--frontmatter-schema $(DOC_FRONTMATTER_SCHEMA) \
+			--token-budget $(DOC_TOKEN_BUDGETS) \
+			--answer-first-check \
+			--code-block-check \
+			--dependency-graph-check \
+			docs/sprints/current/; \
+	fi
+	@echo "$(GREEN)LLM doc validation step complete$(NC)"
 
 # Generate llms-full.txt for current sprint (concatenated for LLM consumption)
 sprint-plan-llm:

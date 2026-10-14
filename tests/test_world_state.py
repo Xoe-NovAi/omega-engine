@@ -16,7 +16,10 @@ async def test_first_breath_world_query():
     # Use the actual arcana_novai WAD path
     wads_dir = Path("config/wads")
     # D-628: arcana_novai is host-side only and absent from the public cut.
-    if not (wads_dir / "arcana_novai").is_dir():
+    # D-629: guard on the manifest the loader actually reads, not the bare
+    # directory — stale untracked `plugins/__pycache__/` residue can re-create
+    # the directory on a public clone and falsely un-skip this test.
+    if not (wads_dir / "arcana_novai" / "manifest.yaml").is_file():
         pytest.skip("arcana_novai WAD is host-side only (D-628 public cut)")
     loader = WADLoader(registry, wads_dir=wads_dir)
     

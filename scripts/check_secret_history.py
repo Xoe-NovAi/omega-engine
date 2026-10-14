@@ -36,12 +36,24 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 BASELINE_PATH = REPO_ROOT / ".secret-history-baseline.toml"
 
 # name -> regex. Each regex is anchored to a provider's credential shape.
+#
+# MANDATE (load-bearing): these patterns are joined with "|" and handed to
+# `git log -p -G`, which compiles with POSIX extended regex. POSIX ERE has NO
+# non-capturing group — `(?:...)` makes git fail with "fatal: invalid regex",
+# which _git turns into ToolchainCollapse and the gate exits 2 forever without
+# ever scanning. Use plain capturing groups. group(0) is the whole match either
+# way, so semantics are identical; only the group's numbering differs, and no
+# code below reads group(1).
 PATTERNS: dict[str, re.Pattern[str]] = {
     "firecrawl": re.compile(r"fc-[A-Za-z0-9_-]{16,}"),
     "google_api_key": re.compile(r"AIzaSy[A-Za-z0-9_-]{20,}"),
     "tavily": re.compile(r"tvly-[A-Za-z0-9]{10,}"),
     "jwt": re.compile(r"eyJhbGci[A-Za-z0-9_.-]{30,}"),
     "gocspx": re.compile(r"GOCSPX-[A-Za-z0-9_-]{10,}"),
+    # D-629: a real Tailscale auth key shipped through this gate precisely
+    # because no pattern named Tailscale. Absence of a pattern is not evidence
+    # of absence of a secret.
+    "tailscale": re.compile(r"tskey-(auth|client|api)-[A-Za-z0-9_-]{10,}"),
 }
 
 HASH_PREFIX_LEN = 16

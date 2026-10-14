@@ -202,6 +202,8 @@ def test_generated_registry_carries_a_loud_banner():
     """A stale answer that LOOKS authoritative is the defect. The artifact must
     say so at the top, not in a footnote."""
     f = REPO / "data" / "coordination" / "EXPERT_SESSION_REGISTRY.md"
+    if not f.exists():
+        pytest.skip("EXPERT_SESSION_REGISTRY.md scrubbed from public tree (D-629)")
     head = f.read_text()[:1400]
     assert "DO NOT PAGE PEER EIS IDs FROM THIS FILE" in head
     assert "who_is" in head, "the banner must point at the replacement"
