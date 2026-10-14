@@ -1251,3 +1251,24 @@ copied forward into it). Verify every command before running.
   pattern added, vocabulary fixed, fabricated file quarantined and never shipped.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ REVOCATION ⬡ 2026-10-13 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-10-13 (second capture)
+
+- Anchor rewritten: six stale sections corrected (Internal ref, B1/B2 resolved
+  state, verification moved ca08f662→c83a4818, uncommitted-fix list retired,
+  refs table, post-compaction order).
+- AGY's c83a4818 reviewed claim-by-claim and verified: temple-grade 53/53 run
+  by me, baseline recomputed by me, allowlist survival proven by sync dry run.
+- Scrub regression (17 tests) caught, root-caused, fixed; skip-guard ruling
+  applied per Antigravity Option C; remaining conflict documented, not hidden.
+- makali.md rewritten to technical voice per Architect scope ruling
+  (esoteric framing belongs to arcana_novai, not the shipping IWAD).
+- entities.yaml churn investigated precisely: order-only, zero semantic,
+  reverted to keep the launch diff reviewable.
+- Standing lessons re-confirmed: verify against the remote, scope every
+  verification claim, never fabricate, quarantine beats deletion for audit
+  trails, a keep always beats a cut in the allowlist precedence chain.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP-2 ⬡ 2026-10-13 ⬡*
