@@ -1237,3 +1237,17 @@ copied forward into it). Verify every command before running.
 6. Attach real transcripts to Sonnet, then re-ask for a final check.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-CAPTURE ⬡ ca08f662/53633d68 ⬡ 2026-10-13 ⬡*
+
+---
+
+## ⬡ REVOCATION RECORD — 2026-10-13
+
+- Architect revoked the leaked Tailscale auth key in the admin console.
+- New credential at `~/Desktop/API-keys.md` (present on disk, contents NOT read,
+  never to be committed or quoted anywhere).
+- Baseline marks old key hash `revoked`; gate now fails closed on reappearance.
+- Device/audit-log sweep recommended, unconfirmed.
+- Gate now green by honest means: 34 real tokens ↔ 34 real hashes, tskey-
+  pattern added, vocabulary fixed, fabricated file quarantined and never shipped.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ REVOCATION ⬡ 2026-10-13 ⬡*
