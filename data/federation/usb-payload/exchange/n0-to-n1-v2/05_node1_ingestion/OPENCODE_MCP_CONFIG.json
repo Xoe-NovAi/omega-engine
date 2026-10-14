@@ -1,9 +1,0 @@
-{
-  "mcp": {
-    "omega-hub": {
-      "type": "remote",
-      "url": "https://n0.example.invalid:8016/mcp",
-      "enabled": true
-    }
-  }
-}

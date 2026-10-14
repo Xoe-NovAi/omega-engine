@@ -1,9 +1,0 @@
-# SPDX-License-Identifier: Apache-2.0
-wad:
-  name: "pwad_override"
-  version: "1.0.0"
-  type: "pwad"
-  entities: []
-  adapters: {}
-  hierarchy: "hierarchy.yaml"
-  dependencies: ["iwad_base"]
