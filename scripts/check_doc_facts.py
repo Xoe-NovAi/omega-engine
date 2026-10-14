@@ -57,6 +57,10 @@ FORBIDDEN_PHRASES = [
     "never called unless local",
     "REUSE.*Green",
     "arcana_novai.*(complete|ships)",
+    "enforced by CI",
+    "full anyio compliance",
+    "no empty except",
+    "lossless compaction",
 ]
 
 # Public tree forbidden patterns (should never appear in tracked files)

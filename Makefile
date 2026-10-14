@@ -646,9 +646,10 @@ session-registry:
 # =============================================================================
 
 # Check M1: AnyIO compliance - no asyncio imports in src/omega/
+# (sole carve-out: tty_agent.py, which needs asyncio signal handlers)
 check-m1-anyio:
 	@echo "$(YELLOW)Checking M1 (AnyIO compliance)...$(NC)"
-	@! rg -n 'import asyncio|from asyncio' src/omega/ --type py --glob '!*test*' --glob '!*governance*' --glob '!*tty_agent*' 2>/dev/null || (echo "$(RED)FAIL: asyncio imports found in src/omega/$(NC)" && false)
+	@! rg -n 'import asyncio|from asyncio' src/omega/ --type py --glob '!*test*' --glob '!*tty_agent*' 2>/dev/null || (echo "$(RED)FAIL: asyncio imports found in src/omega/$(NC)" && false)
 	@echo "$(GREEN)M1 passed: No asyncio imports in core$(NC)"
 
 # Check M1 companion (audit r2 §1): any module driven by anyio.run() must NOT

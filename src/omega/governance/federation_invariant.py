@@ -93,8 +93,6 @@ async def verify_local_only_embeddings() -> dict[str, Any]:
 
 def main() -> int:
     """CLI entry for cron/systemd validation."""
-    import asyncio  # noqa: PLC0415 — CLI entry
-
     async def _run() -> None:
         egress = await verify_zero_inference_egress()
         emb = await verify_local_only_embeddings()
@@ -103,7 +101,7 @@ def main() -> int:
             print(f"  {ep}: {r['status']} (HTTP {r['http_code']})")
         print(f"local_only_embeddings: {'PASS' if emb['pass'] else 'FAIL'} ({emb.get('primary')})")
 
-    asyncio.run(_run())
+    anyio.run(_run())
     return 0
 
 

@@ -89,9 +89,7 @@ async def distill_federation_events() -> int:
 
 def main() -> int:
     """Run distillation synchronously (for cron/systemd)."""
-    import asyncio  # noqa: PLC0415 — CLI entry, not src/omega core
-
-    result = asyncio.run(distill_federation_events())
+    result = anyio.run(distill_federation_events())
     print(f"Distilled {result} federation event(s) to proposed_lessons.yaml")
     return 0
 
