@@ -5,6 +5,52 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a1] - 2026-10-15
+
+Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),
+comprising post-tag defect fixes, public-tree hardening, and the distribution-name
+finalization. `v1.6.0a0` remains immutable at `355cbf1a` for audit.
+
+### Fixed
+- **tty_agent M1 conversion (D-630)** — `src/omega/agents/tty_agent.py` converted from raw
+  `asyncio` to AnyIO. The M1 exemption (`[M1 EXEMPTION — DOCUMENTED 2026-08-28]`) is
+  **rescinded as based on an inaccurate rationale**: `anyio.open_signal_receiver()` on the
+  asyncio backend calls `loop.add_signal_handler()` directly, so the signal mechanism is
+  identical. The M1 glob carve-out is deleted from `Makefile:check-m1-anyio`, which now scans
+  `src/omega/` uniformly. See `docs/decisions/ADR-008-tty-agent-m1-conversion.md`.
+- **`VT_SETMODE` / `VT_GETMODE` ABI** — `VTManager` packed `struct.pack("h", mode)` (2 bytes)
+  where the kernel's `struct vt_mode` is 8 bytes, so `vt_ioctl.c` copied the full struct from a
+  short buffer and populated `relsig`/`acqsig` from uninitialized adjacent memory. Now marshals
+  the full 8-byte layout. VT switch handshake remains incomplete (documented defect).
+- **Shutdown semantics** — unshielded `finally: await agent.shutdown()` replaced by
+  `CancelScope(shield=True)`, so a late cancellation cannot exit with the VT still in
+  `VT_PROCESS` mode owned by a dead pid.
+- **Wheel cold-start configs** — `config/provider_capabilities.yaml` and
+  `config/embedding_strategy.yaml` now ship in `src/omega/config_data/`; `capability_matrix.py`
+  converted to the `CONFIG_DIR` resolver. The published `v1.6.0a0` wheel crashed on `omega talk`.
+- **Distribution naming** — the package is `the-omega-engine`; the wheel is
+  `the_omega_engine-1.6.0a1-py3-none-any.whl` (a different distribution from `omega`).
+
+### Changed
+- **Release workflow** — prerelease detection now uses `packaging.version.is_prerelease` instead
+  of a `*-alpha*` shell glob, which did not match canonical PEP 440 tags and published alphas as
+  full stable "latest" releases.
+- **G11 clean-environment verification** — smoke command changed from `omega list-entities`
+  (which only instantiates `EntityRegistry` and prints a table, never loading the startup configs)
+  to `omega talk`, exercising the same cold-start path as the README Quick Start.
+
+### Added
+- `tests/test_tty_agent_anyio.py` — 21 tests covering task-group shutdown, signal handling,
+  shielded cleanup, the `vt_mode` ABI, and M1/M23 regression.
+- `scripts/verify_artifact_clean_env.py` — env-assignment prefixes in the smoke command are now
+  stripped *before* interpreter-path resolution, so a prefixed command resolves the verified venv
+  binary rather than whatever `omega` is on PATH.
+
+### Notes
+- Live `/dev/ttyN` execution of the converted agent is **UNVERIFIED** — no controlling terminal
+  was reachable in the verifying environment. The M1 compliance claim is fully verified; the VT
+  runtime claim is not.
+
 ## [v1.6.1] - 2026-09-07
 
 ### Archangel Architecture — Agent-Level Hardware Awareness
