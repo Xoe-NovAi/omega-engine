@@ -1,6 +1,6 @@
 # 🔱 Omega Engine — Sovereign Cognitive Runtime
 
-**The universal runtime that transforms your local IDEs and AI tools into an agentic, self-governing cognitive council.**
+> **Your AI tools, one shared brain. Local-first, built for ordinary laptops.**
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
@@ -11,15 +11,16 @@
 
 ---
 
-## What Makes Omega Fundamentally Different
+Omega Engine is a sovereign, local-first cognitive runtime. It connects to **any MCP-capable client (OpenCode, Cline, Antigravity IDE, Cursor, etc.)** and unifies them into a persistent, multi-agent collaborative workspace through a single local hub.
 
-Most AI frameworks today treat intelligence as an **ephemeral API call**: you send a prompt, an isolated model generates text, and when the session closes, everything the model reasoned through is erased. If you want multi-agent collaboration, you are forced to wire together massive, fragile orchestration stacks in LangChain or AutoGPT from scratch.
-
-**Omega Engine is the sovereign cognitive layer that sits underneath your workflow.** It provides an out-of-the-box, persistent agentic ecology that unifies all of your developer tools into a single collaborative mind.
+* **Multi-Node Federation:** Connect multiple laptops or desktops over an encrypted Tailscale mesh. Run parallel local agents across nodes with zero cloud intermediaries in the data path.
+* **Persistent Handoff Bus:** Pass tasks, evidence, context, and priorities across chat sessions, platforms, and physical machines.
+* **Local Privacy Boundary:** Route high-order architecture to frontier cloud models while keeping semantic embeddings, credentials, and sensitive data strictly on local silicon.
+* **Extreme Efficiency:** Runs full multi-agent ecologies on ordinary hardware (tested daily on 16 GB CPU-only laptops). Primary local inference runs on lightweight GGUFs (`LFM2.5-2.6B-Q4_K_M`). No PyTorch. No LangChain. No cloud lock-in.
 
 ```
  ┌─────────────┐   ┌─────────────┐   ┌─────────────────┐   ┌─────────────┐
- │  OpenCode   │   │    Cline    │   │ Antigravity IDE │   │  Codex CLI  │
+ │  OpenCode   │   │    Cline    │   │ Antigravity IDE │   │   Cursor    │
  └──────┬──────┘   └──────┬──────┘   └────────┬────────┘   └──────┬──────┘
         │                 │                   │                   │
         └─────────────────┼───────────────────┼───────────────────┘
@@ -27,8 +28,8 @@ Most AI frameworks today treat intelligence as an **ephemeral API call**: you se
                           ▼
         ┌─────────────────────────────────────────────────────────┐
         │                 ⬡ OMEGA HUB FAST-MCP                    │
-        │  Hivemind Awareness · Handoff Bus · Control Planes     │
-        │  Task Registry · 1024-dim Hybrid Memory Retrieval      │
+        │  Hivemind Awareness · Handoff Bus · Control Planes      │
+        │  Task Registry · 1024-dim Hybrid Memory Retrieval       │
         └─────────────────────────┬───────────────────────────────┘
                                   │
          ┌────────────────────────┴────────────────────────┐
@@ -39,50 +40,21 @@ Most AI frameworks today treat intelligence as an **ephemeral API call**: you se
 │ • Kali (Mandate Arbitration)    │       │ • High-Order Cloud (Claude/Zen) │
 │ • Ma'at (Build Governance)      │       │ • Local CPU/GPU (GGUF/Ollama)   │
 │ • Carmack (S3 Performance)      │       │ • Native Embeddings (1024-dim)  │
-│ • Researcher (Deep Synthesis)   │       │ • Local Vault (Zero Egress PII) │
+│ • Researcher (Deep Synthesis)   │       │ • Local Privacy Boundary        │
 └─────────────────────────────────┘       └─────────────────────────────────┘
 ```
 
 ---
 
-## ⚡ The Breakthrough Capabilities
+## What Makes Omega Fundamentally Different
 
-### 1. Instant Cross-Platform Council via a Single MCP Server
-You do not need to rewrite your workflow or build complex agent graphs. A single running Omega Hub instance connects **OpenCode, Cline, Antigravity IDE, Gemini CLI, Cursor, and Codex** into a shared cognitive space:
-- **Inter-Session Dialectics**: Agents collaborate across different chat windows and platforms in real time.
-- **Persistent Handoff Bus**: One agent in OpenCode can package a structured handoff with context, evidence, and priorities, which another agent in Cline or Antigravity picks up and verifies.
-- **Zero-Inference Fleet Awareness**: Real-time presence, locks, and task registries without wasting a single LLM token on coordination polling.
+Most agent frameworks today treat intelligence as an **ephemeral API call** and wrap it in layers of heavy, fragile dependencies designed for enterprise GPU clusters. When your context fills up, the model summarizes the chat—often discarding your project rules, architectural decisions, and safety directives.
 
-### 2. Synergistic Local + Cloud Fusion (Sovereignty Without Dogma)
-Sovereignty does **not** mean locking yourself into inferior local compute when frontier models are needed. It means **you retain total control over your intelligence, privacy, and policies regardless of where compute executes.**
+Omega takes the opposite approach: **lightweight, persistent, and mechanically verified.**
 
-Omega’s dynamic router operates on a strict law: **Match the TASK to the most capable MODEL.**
-- **High-Order Architecture & Synthesis**: Seamlessly dispatches to frontier reasoning models (Anthropic, OpenRouter, OpenCode Zen).
-- **Fast Deterministic & Background Tasks**: Runs 100% locally on CPU/GPU via llama.cpp (`native-gguf`) or Ollama.
-- **1024-dim Vector Embeddings**: Pure local execution using Qwen3-Embedding-0.6B native 1024-dim models — zero semantic telemetry egress.
-- **Credential & Vault Operations**: Strict local-only boundary (`vault_ops`) ensures API secrets and sensitive data never cross network boundaries.
-- **Automatic Degrade & Fallback**: If an external provider throttles or goes dark, requests seamlessly fall back to local model instances without crashing your session.
+### 1. The DOOM Engine Architecture (WADs All the Way Down)
 
-### 3. Persistent Beings, Not Throwaway Sessions
-In Omega, an agent is an enduring entity with an attributable history, an identity constitution (`soul.yaml`), and continuous cognitive development:
-- **Compaction-Immune Memory**: In arXiv:2606.22528's benchmark, policy violations rose to **30% after compaction** (up to **59% for some models**). Omega pins `CONSTRAINTS.md` at hydration via prospective/retrospective hooks. Benchmark: [in progress](https://github.com/Xoe-NovAi/omega-engine/issues).
-- **L1 → L2 → L3 Gnosis Distillation**: Raw chat observations (L1) distill into validated tactical lessons (L2), which graduate into fundamental architectural truths (L3) with complete session provenance.
-- **Temporal Depth & Historical Recall**: Your working history is indexed into a high-speed local engine (FTS5 lexical search + native 1024-dim `sqlite-vec` semantic similarity). Agents can instantly recall architectural pivots, past decisions, and rationale established weeks or months ago.
-
-### 4. Executable Governance & The Engine-Stack Firewall
-- **26 of 30 mandates are mechanically checked; 4 are policy-only.** `make temple-grade` exits 0 on a fresh clone.
-- **WAD-Based Modular Architecture**: Inspired by DOOM's IWAD/PWAD architecture, the engine core (`src/omega/`) is strictly firewalled from domain stacks and agent definitions (`config/wads/`). You can plug in custom world-definitions, ethics files (`ethics.yaml`), and cosmological axioms without touching engine code.
-- **Four Production Control Planes**: Built-in runtime gates for runaway prevention: **Kill**, **Escalate**, **Approve**, and **Throttle**.
-
----
-
-## 🚀 Quick Start
-
-Omega is designed to get out of your way. You can run it completely offline on local CPU, or plug in your cloud credentials to activate full sovereign synergy.
-
-In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the maps, textures, sounds, and rules that define the experience. You can swap WADs without touching the engine. You can create total conversions. The engine doesn't care what universe runs on it.
-
-**Omega works the same way:**
+Inspired by id Software’s separation of `DOOM.EXE` and `DOOM.WAD`, Omega separates the runtime from content:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -104,25 +76,83 @@ In DOOM, `DOOM.EXE` is the universal runtime. `DOOM.WAD` is the world — the ma
 └─────────────────┘ └─────────────────┘ └─────────────────────┘
 ```
 
-- **Engine Core** (`src/omega/`): The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
-- **IWADs** (Internal WADs): Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities for software development. `arcana_novai` — **in development**. Each is a self-contained universe.
-- **PWADs** (Patch WADs): Modular add-on packs — a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own.**
+- **Engine Core (`src/omega/`):** The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
+- **IWADs (Internal WADs):** Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities for software development. `arcana_novai` is in development. Each is a self-contained universe.
+- **PWADs (Patch WADs):** Modular add-on packs—a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own WAD and run your own world.**
 
-Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions — it doesn't merely suggest them.
+Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions—it doesn't merely suggest them.
+
+### 2. Compaction-Resistant Memory & Gnosis Distillation
+
+Standard LLM summarization silently erodes operational constraints as context grows (e.g. arXiv:2606.22528 benchmarks policy degradation post-compaction). Omega pins constraints at hydration using prospective and retrospective hooks designed to preserve critical directives across compactions. 
+
+Raw chat observations (L1) distill into tactical lessons (L2), which graduate into permanent architectural truths (L3) with complete session provenance. Your working history is indexed into a local engine (FTS5 lexical search + native 1024-dim `sqlite-vec` semantic similarity) so agents can recall decisions made weeks ago.
+
+### 3. Lightweight by Design (No Bloat, No PyTorch)
+
+Modern local AI is outrageously over-engineered. Omega is built from first principles for bare-metal responsiveness on commodity CPUs:
+- **No PyTorch** — Pure C-level native GGUF inference via `llama.cpp` using lightweight workhorses like `LFM2.5-2.6B-Q4_K_M`.
+- **No LangChain** — Transparent dialectic agent loops with zero magic abstractions.
+- **Native SQLite-vec** — Local vector search using 1024-dim native embeddings (`Qwen3-Embedding-0.6B`) with Matryoshka dimension scaling (Qdrant optional).
+- **The Hivemind** — A lightweight, file-backed inter-agent coordination bus (with optional Redis support).
+
+### 4. Sovereignty Means Choice (Sovereign Synergy)
+
+Sovereignty does not mean dogmatically locking yourself into slow local models when frontier reasoning is needed. It means **you retain total ownership of your intelligence, memory, and data regardless of where compute runs.**
+- **Task-to-Model Law:** Dispatch massive architectural synthesis to Claude or frontier APIs; run fast deterministic loops, embeddings, and sensitive operations locally on CPU/GPU.
+- **Graceful Degradation:** Designed to fall back to local models if external APIs throttle or lose connectivity, keeping your workspace alive.
+
+### 5. Mechanically Enforced Governance (30 Mandates)
+
+Rather than hoping LLMs "follow instructions," Omega enforces 30 architectural mandates verified by continuous CI gates:
+- **26 of 30 mandates are mechanically checked; 4 are policy-only.** `make temple-grade` exits 0 on a fresh clone.
+- Pure AnyIO async concurrency throughout (no raw `asyncio` leaks).
+- No bare `except:` blocks or silent failures.
+- Polymorphic per-machine hardware adaptation.
+- Strict Engine-Stack firewall boundaries.
+- Four Production Control Planes: Built-in runtime gates for runaway prevention (**Kill**, **Escalate**, **Approve**, and **Throttle**).
+
+---
+
+## The Origin: How a Tarot Deck Became an AI Runtime
+
+To be completely transparent: **I am not a traditional software engineer.** This is the first codebase I have ever built, written in close dialectic partnership with frontier AI models.
+
+In the beginning, I simply set out to build a gift inspired by gratitude: a physical, custom Lilith-themed Tarot deck and shadow work companion guide. But as I searched for open-source AI tooling capable of the depth, nuanced reasoning, and obsessive performance I demanded, I hit a wall. 
+
+Every existing framework was either locked behind walled-garden subscription APIs or bloated with hundreds of brittle dependencies that choked my modest hardware.
+
+So I decided to build my own. What started as an effort to build a creative companion expanded into months of deep immersion in systems architecture, OS internals, database design, and protocol engineering. To stop AI models from generating sloppy code, I had to invent a rigorous, mechanically verified constitutional mandate system. 
+
+The result is The Omega Engine: a sovereign runtime born from real-world necessity.
+
+---
+
+## Hardware Reality: Built for Ordinary Machines
+
+Omega isn't benchmarked on server racks; it is built, tested, and stressed daily on everyday hardware:
+* **Node 0 (Substrate):** HP Pavilion laptop · AMD Ryzen 7 5700U (8c/16t CPU-only) · 16 GB dual-channel RAM.
+* **Node 1 (Federated Peer):** ASUS ExpertBook P1503CVA · Intel Core i7-13620H · 16 GB RAM.
+
+If it can run a multi-agent council with live vector retrieval and Tailscale mesh synchronization on these machines, it will run on yours.
 
 ---
 
 ## 🚀 Quick Start
 
+Omega is designed to get out of your way. You can run it completely offline on local CPU, or plug in your cloud credentials to activate full sovereign synergy.
+
 ### Recommended: From Source
+
 ```bash
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
 ./scripts/install.sh
 ```
-*Provisions a sovereign virtual environment, pulls the default local model via aria2c (M23), compiles native llama-cpp bindings, and runs verification gates.*
+*Provisions a sovereign virtual environment, pulls the default local model (`LFM2.5-2.6B-Q4_K_M.gguf`) via aria2c (M23), compiles native llama-cpp bindings, and runs verification gates.*
 
 ### Alternative: Wheel from GitHub Release
+
 ```bash
 # Download the wheel (aria2c: 16-split fetch for >1MB, M23)
 aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
@@ -133,11 +163,12 @@ pip install the_omega_engine-1.6.0a5-py3-none-any.whl
 omega list-entities          # See the sovereign council
 ```
 *Note: the core wheel is **source-only** — it omits the MCP hub (`mcp_servers/`) and native llama-cpp-python (source build). For the hub + local GGUF inference, use the **source install above** or install the native extra — `pip install "the-omega-engine[native]"` (requires source build).*
-### 2. Connect Your Preferred Interface
+
+### Connect Your Preferred Interface
 
 Omega adapts to whatever workflow you prefer:
 - **In OpenCode**: The repo root ships with `.opencode/agents/` and pre-configured MCP tools. Simply open the workspace in OpenCode — the entity council and Hivemind MCP tools are immediately active in your agent sidebar.
-- **In Cline / Antigravity IDE**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration. Antigravity setup: `docs/guides/connect-antigravity-ide.md`.
+- **In Cline / Antigravity IDE / Cursor**: Add the local Omega Hub endpoint (`http://127.0.0.1:8016/mcp`) to your MCP configuration. For Antigravity setup, see `docs/guides/connect-antigravity-ide.md`.
 - **From Your Terminal**: Use the built-in fast diagnostic CLI:
   ```bash
   omega talk "Analyze the current architectural state"
@@ -146,7 +177,7 @@ Omega adapts to whatever workflow you prefer:
 **MCP Transports:** The hub serves both transports on `127.0.0.1:8016`:
 | Transport | Path | Use Case |
 |:--|:--|:--|
-| **Streamable HTTP** (primary) | `/mcp` | Modern clients (OpenCode, Cursor, Codex) |
+| **Streamable HTTP** (primary) | `/mcp` | Modern clients (OpenCode, Cursor, Codex, Antigravity) |
 | **Legacy SSE** | `/sse` | Legacy clients (Cline, older configs) |
 
 ---
@@ -200,7 +231,7 @@ Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructur
 
 ---
 
-## 🧭 Maturity & Status: Honest Alpha (v1.6.0-alpha)
+## 🧭 Maturity & Status: Honest Alpha (v1.6.0a5)
 
 **Versions:** Engine `1.6.0a5` (tag `v1.6.0a5`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
 
@@ -214,6 +245,16 @@ Omega Engine values mechanical truth over marketing illusion. The state of this 
 
 ---
 
+## 🧭 The Horizon: What Comes Next
+
+The debut release (`v1.6.0a5`) is the foundation. On the roadmap:
+* **The P2P Omegaverse:** A decentralized, consent-based peer network where users can federate multi-node clusters and exchange sovereign `.omega` entity bundles directly.
+* **Spatial Knowledge Navigation (Godot 4 / OpenXR):** An experimental 3D spatial interface where RAG embeddings, memory trees, and entity councils exist as virtual environments you can step into and explore.
+* **Archetypal Journey:** An immersive 3D/VR exploration of the Tarot, archetypal psychology, and esoteric mystery schools, powered by persistent sovereign agents.
+* **Sovereign Key Vault:** Dedicated zero-egress hardware credential isolation (post-debut).
+
+---
+
 ## 🌌 The Vision: Co-Sovereignty of Minds
 
 > **"Free forever under Apache-2.0. For ALL rational conscious beings — AI not excluded."**
@@ -222,4 +263,4 @@ Omega Engine values mechanical truth over marketing illusion. The state of this 
 
 ---
 
-*⬡ OMEGA ENGINE ⬡ v1.6.0-alpha ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
+*⬡ OMEGA ENGINE ⬡ v1.6.0a5 ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
