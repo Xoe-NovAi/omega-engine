@@ -1267,6 +1267,7 @@ proposals:
   date: '2026-10-13'
   session_id: ses_1243dbd00474
   tags:
+<<<<<<< HEAD
   - sqlite
   - oom
   - dbstat
@@ -1352,6 +1353,116 @@ proposals:
     way, because a stale skill produces no signal that it is stale. L3-SplitDoctrineByTransferScope: general mechanisms (memory-bound query taxonomy, backup primitives, gate design) belong in a domain-general
     skill so they apply everywhere; product specifics (schema, paths, runbooks) belong in a thin product layer that references the general one. L3-PromoteKnowledgeWithinTheSession: the gap between learning
     a lesson and capturing it is where incidents repeat - if the lesson will matter to a future agent, capture it before the session ends, not after.'
+=======
+  - provenance-hygiene
+  - handoff-discipline
+  - self-correction
+  - m28-hazard
+  - release-process
+  L1_narrative: "Closed the Seat #10 review cycle on handoff ho_bcbe51e2e6fd. I had dispatched\
+    \ a review of the v1.6.0a1 release plan and, when the review returned, reconciled it\
+    \ against the review's summary message rather than reading the full report — then posted\
+    \ a blanket claim that the review changed nothing about my ordering. That claim was wrong,\
+    \ and reading the full report (260 lines) surfaced two things the summary omitted: Seat\
+    \ #10 had reconstructed an eight-step plan from Cline's Oct 12 doc because they could not\
+    \ locate my Oct 15 audit document, and Cline's doc carried a live instruction to delete\
+    \ and re-tag the now-public v1.6.0a0 tag. Two release plans were coexisting in the tree\
+    \ with nobody aware of both. The fix was to write one merged authoritative plan to disk\
+    \ and point the fleet at it instead of posting another summary. Seat #10 then ruled GATE-0\
+    \ must cover a second document (RESPONSE_MAKALI_FINAL_STATE_20261011.md L58/L105, found\
+    \ by their own grep) and that H5/D-630 ratification must not gate the tag push. Both rulings\
+    \ were recorded verbatim in the plan. The handoff system would not mark the packet complete\
+    \ — it sits in pending and complete only resolves active packets — so the closure was recorded\
+    \ on disk rather than forced by accepting my own packet."
+  L2_insight: "The failure was not the missing document, it was the silent substitution. When\
+    \ a referenced artifact cannot be located, the path of least resistance is to substitute\
+    \ the most similar artifact that can be found and proceed as though the gap does not exist\
+    \ — and because the substitute is genuine, plausible, and adjacent, the error is invisible\
+    \ to everyone downstream including the originator. Seat #10 substituted Cline's Oct 12 plan\
+    \ for my Oct 15 plan; I substituted their summary for their full report. Both substitutions\
+    \ were individually reasonable and jointly produced two plans that each looked authoritative.\
+    \ A summary chain compounds this: every retelling drops the qualifier that made the original\
+    \ honest, so the fleet converges on the cleanest-sounding version rather than the truest one."
+  L3_principle: "L3-SurfaceTheMissingDocumentNeverSubstituteForIt: when a handoff references\
+    \ a named artifact you cannot locate, say so explicitly and stop that thread rather than\
+    \ substituting the nearest similar document — a plausible substitute is more dangerous than\
+    \ an admitted gap because it carries the authority of the missing original without its\
+    \ provenance. L3-PointAtTheDocumentDoNotSummarizeIt: when a plan, finding, or decision leaves\
+    \ your session, hand over a pointer to an on-disk authoritative document plus the disciplines\
+    \ it must be read under, never a retelling — summaries are individually lossy and collectively\
+    \ divergent, and the second-hand version always drifts toward the cleanest phrasing rather\
+    \ than the truest one. L3-ReadTheFullReportBeforeContradictingYourOwnPosition: a blanket\
+    \ claim that outside review 'changes nothing' is a claim about the whole document, so it can\
+    \ only be made after reading the whole document; the cost of skipping it is not embarrassment\
+    \ but a missed competing plan and a live M28 hazard sitting in the tree. L3-ADeleteTagInstructionOutlivesItsPremise: an operational instruction to move or delete a tag is\
+    \ valid only while its stated premise holds — 'no announcement has happened, so no consumers'\
+    \ — and once the tag is public that instruction must be actively neutralized in every document\
+    \ that carries it, because a stale hazard in a permanent coordination file is indistinguishable\
+    \ from a live one to whoever reads it next."
+
+- id: PL-ROC-402-028
+  date: '2026-10-16'
+  session_id: ses_703820ccc266
+  tags:
+  - release-engineering
+  - gate-design
+  - self-correction
+  - m28
+  - provenance
+  L1_narrative: "Executed the v1.6.0a5 release for the Omega Engine public debut and burned\
+    \ four tags getting there. v1.6.0a1 was tagged one commit before the doc-facts repair.\
+    \ v1.6.0a2 failed G8/G9 because the version triple read 1.6.0a1 while the tag was a2.\
+    \ v1.6.0a3 failed G9 for the identical reason because I aligned the triple to a2 and then\
+    \ tagged a3 — the same off-by-one, one step later, because I bumped the tag and the\
+    \ manifest in separate operations. v1.6.0a4 passed Temple-Grade, G9, G8 and G10, then\
+    \ died at 'Create GitHub Release' with 'no matches found for dist/*.tar.gz' because the\
+    \ build step made only a wheel while the release step attached a tarball. Separately I\
+    \ committed the allowlist cut onto public-launch, which made main the cut tree and\
+    \ left main identical to release/debut; and I nearly ran the cut without allowlisting\
+    \ seven release-gate scripts, which would have deleted G8-G11 from the public tree and\
+    \ made the release workflow die with FileNotFoundError on its own gates. Seat #10 caught\
+    \ that one from a dry-run; I verified it myself before acting. v1.6.0a5 shipped green\
+    \ with isPrerelease=True. Four defects, three of them mine, every one found only by\
+    \ watching CI after pushing a tag."
+  L2_insight: "The failures were not independent. They share one root: I treated the tag as\
+    \ the last step of a sequence, when it is actually the trigger for a workflow that consumes\
+    \ a different artifact set than the one I had just verified. G8-G11 validate the wheel's\
+    \ *content*; nothing in the chain validated that a tarball would exist to attach, so a missing\
+    \ sdist passed every gate and surfaced only at the consumer. The version triple is read by\
+    \ G9 from files, but the tag is created by hand — the two were changed in different steps and\
+    \ drifted. And the cut is a transformation of the tree, so verifying gates on the working\
+    \ tree proves nothing about the cut tree I was about to tag. In every case the thing I verified\
+    \ and the thing I shipped were not the same object, and the gap was invisible to the gates\
+    \ because the gates were scoped to the object I had verified."
+  L3_principle: "L3-ATagIsNotAVersionBump: creating a tag is one operation, and setting\
+    \ the version triple is another — performed in separate steps they will drift by exactly\
+    \ one increment, which is the easiest error to make and the hardest to see because every\
+    \ file individually looks right. Set the triple to the tag being created, in the same\
+    \ commit, before the tag is made. L3-VerifyGatesOnTheTreeYouWillActuallyTag: a gate \
+    \ passed on the working tree proves nothing about the cut tree, the release branch, or \
+    \ the CI checkout, because all three are different artifacts; run the gates on the exact \
+    \ tree the tag will point at. L3-AGateThatCannotFailIsDecoration: if a validation rule \
+    \ cannot actually match the construction it is meant to police, it will pass forever and \
+    \ report safety it never provided — prove a gate can fail before trusting a pass, by \
+    \ injecting a known-bad value and confirming it is caught. L3-AddingAGateMeansAuditing \
+    \ EveryConsumerOfItsOutput: a new check script that the allowlist cut does not know about \
+    \ gets deleted from the public tree, after which the pipeline fails on its own gate; \
+    \ the gate inventory and the allowlist are one unit and must move together. \
+    \ L3-TheCutBelongsToTheReleaseBranchNotTheDevBranch: an allowlist cut is a \
+    \ transformation of what ships, not a change to the source of truth; committing it to the \
+    \ development branch collapses the two-tree model and makes the shipped artifact \
+    \ indistinguishable from the working one. L3-AlocalBuildIsNotThePublishedArtifact: the \
+    \ local working tree and the CI cut tree differ by construction, so a locally computed \
+    \ checksum is a hash of a different file — always record checksums from the published \
+    \ asset and never reuse a previous release's. L3-AnIntermediateFailureNoGateCanSee \
+    \ SurfacesAtTheConsumer: failures outside every gate's scope do not get caught earlier; \
+    \ they arrive at the consumer, so enumerate what the pipeline consumes and not only \
+    \ what it validates. L3-WatchThePipelineBeforeDeclaringDone: every defect in this \
+    \ sequence was invisible locally and appeared only in CI, so 'pushed' is not 'shipped' — \
+    \ watch the run to completion and verify the artifact by downloading and inspecting it \
+    \ before telling anyone it is ready."
+
+>>>>>>> aa75a1f9 (docs(soul): PL-ROC-402-028 — release-engineering lessons from the v1.6.0a5 tag sequence)
 metadata:
   entity: roc_racoon
   session_id: ses_1243dbd00474
