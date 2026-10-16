@@ -5,6 +5,61 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a5] - 2026-10-16
+
+Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),
+comprising post-tag defect fixes, public-tree hardening, and the distribution-name
+finalization. `v1.6.0a0` remains immutable at `355cbf1a` for audit.
+
+### Fixed
+- **tty_agent M1 conversion (D-630)** — `src/omega/agents/tty_agent.py` converted from raw
+  `asyncio` to AnyIO. The M1 exemption (`[M1 EXEMPTION — DOCUMENTED 2026-08-28]`) is
+  **rescinded as based on an inaccurate rationale**: `anyio.open_signal_receiver()` on the
+  asyncio backend calls `loop.add_signal_handler()` directly, so the signal mechanism is
+  identical. The M1 glob carve-out is deleted from `Makefile:check-m1-anyio`, which now scans
+  `src/omega/` uniformly. See `docs/decisions/ADR-008-tty-agent-m1-conversion.md`.
+- **`VT_SETMODE` / `VT_GETMODE` ABI** — `VTManager` packed `struct.pack("h", mode)` (2 bytes)
+  where the kernel's `struct vt_mode` is 8 bytes, so `vt_ioctl.c` copied the full struct from a
+  short buffer and populated `relsig`/`acqsig` from uninitialized adjacent memory. Now marshals
+  the full 8-byte layout. VT switch handshake remains incomplete (documented defect).
+- **Shutdown semantics** — unshielded `finally: await agent.shutdown()` replaced by
+  `CancelScope(shield=True)`, so a late cancellation cannot exit with the VT still in
+  `VT_PROCESS` mode owned by a dead pid.
+- **Wheel cold-start configs** — `config/provider_capabilities.yaml` and
+  `config/embedding_strategy.yaml` now ship in `src/omega/config_data/`; `capability_matrix.py`
+  converted to the `CONFIG_DIR` resolver. The published `v1.6.0a0` wheel crashed on `omega talk`.
+- **Distribution naming** — the package is `the-omega-engine`; the wheel is
+  `the_omega_engine-1.6.0a1-py3-none-any.whl` (a different distribution from `omega`).
+
+### Changed
+- **Release workflow** — prerelease detection now uses `packaging.version.is_prerelease` instead
+  of a `*-alpha*` shell glob, which did not match canonical PEP 440 tags and published alphas as
+  full stable "latest" releases.
+- **G11 clean-environment verification** — smoke command changed from `omega list-entities`
+  (which only instantiates `EntityRegistry` and prints a table, never loading the startup configs)
+  to `omega talk`, exercising the same cold-start path as the README Quick Start.
+
+### Added
+- `tests/test_tty_agent_anyio.py` — 21 tests covering task-group shutdown, signal handling,
+  shielded cleanup, the `vt_mode` ABI, and M1/M23 regression.
+- `scripts/verify_artifact_clean_env.py` — env-assignment prefixes in the smoke command are now
+  stripped *before* interpreter-path resolution, so a prefixed command resolves the verified venv
+  binary rather than whatever `omega` is on PATH.
+- `REUSE.toml` — `data/eval/*.jsonl` annotation. `data/eval/golden_v1.jsonl` (JSON Lines has no
+  comment syntax, so it cannot carry an inline SPDX header) was the last file blocking
+  `reuse lint`; the tree is now compliant 1041/1041.
+
+### Fixed (release process)
+- Version triple aligned to the tag. `v1.6.0a2` was tagged while `pyproject.toml`, the
+  `CHANGELOG.md` heading, `docs/FACTS.yaml`, `README.md` and the announcement still read
+  `1.6.0a1`, so G8/G9 failed closed on the `v1.6.0a2` release run. The tag, the manifest, and
+  the docs must be bumped together — a tag alone is not a version bump.
+
+### Notes
+- Live `/dev/ttyN` execution of the converted agent is **UNVERIFIED** — no controlling terminal
+  was reachable in the verifying environment. The M1 compliance claim is fully verified; the VT
+  runtime claim is not.
+
 ## [v1.6.1] - 2026-09-07
 
 ### Archangel Architecture — Agent-Level Hardware Awareness
@@ -194,3 +249,30 @@ This is the first public release of the Omega Engine under Apache 2.0.
 ### Fixed
 - **MCP Paths**: Canonicalized `mcp/` references to `mcp_servers/` across the codebase.
 - **Entity Registry**: Implemented Lazy Deletion with Grace Period (0.5s) per id Software heritage.
+
+### Release-process defects found while tagging (recorded, not hidden)
+- **v1.6.0a2's release run failed closed at G8/G9.** It was tagged while the version
+  triple still read `1.6.0a1`. No release object was created.
+- **v1.6.0a3's release run failed closed at G9 for the identical reason** — it was
+  tagged with the triple aligned to `1.6.0a2`. The error was repeated one tag later
+  because the tag and the manifest were bumped in separate steps. **The version triple
+  must be set to the tag being created, in the same commit, before the tag is made.**
+- **The Allowlist Check runs on tags** (`allowlist-check.yml:22`, `tags: ["v*.*.*"]`) and
+  requires the tagged tree to satisfy `PUBLIC_ALLOWLIST.txt`. Tags created on the uncut
+  `main`/`release/debut` tree fail with 186 tracked files outside the allowlist. The
+  public release is the **allowlist-cut** tree produced by
+  `scripts/apply_public_allowlist.sh --confirm`; the tag must point at that cut commit,
+  not at the development tree.
+
+### Release-process defect (third in sequence, all recorded)
+- **v1.6.0a4's release run got through every content gate** — Temple-Grade ✓,
+  G9 ✓, G8 ✓, G10 ✓ — and then died at `Create GitHub Release` with
+  `no matches found for dist/*.tar.gz`. The build step ran
+  `python -m build --wheel`, but the release step attaches `dist/*.whl dist/*.tar.gz`.
+  A missing sdist is not a content problem, so no gate could see it; the failure
+  only surfaced at the `gh release create` call, after all the verification had
+  already passed. The build step now builds both artifacts.
+- Also: the allowlist cut had to be preceded by enumerating seven release-gate
+  scripts in `PUBLIC_ALLOWLIST.txt`. Without those entries the cut removes the
+  release gates from the public tree and the workflow fails with `FileNotFoundError`.
+  The allowlist and the gate inventory must move together.
