@@ -42,6 +42,28 @@ scripts/dispatch_guard.py            # M33/M34 pre-dispatch verification
 scripts/hivemind_post.py             # Hivemind post helper
 scripts/infra_inventory.py           # S1 inventory
 scripts/soul_promote.py              # soul promotion
+# ── Release gates (D-628 debut cut, 2026-10-16) ──────────────────────────
+# These are MANDATE gates and public-release gates, not internal tooling.
+# Several are invoked by .github/workflows/release.yml itself:
+#   G8  check_release_changelog.py     (release.yml:72)
+#   G9  check_version_consistency.py   (release.yml:65)
+#   G10 check_wheel_contents.py        (release.yml:88)
+#   G11 verify_artifact_clean_env.py   (release.yml:128)
+# check_workflow_trigger_coverage.py backs `make check-workflow-triggers`,
+# which is a direct dependency of `make temple-grade` (release.yml:55).
+# check_doc_facts.py backs `make check-doc-facts`.
+# check_config_paths.py backs the G20 config-path sweep.
+# Without these entries the allowlist cut removes the release gates FROM THE
+# PUBLIC TREE, and the release workflow then dies with FileNotFoundError on
+# the very gates it is supposed to run. They were added to the repo after
+# this allowlist was written and never enumerated here.
+scripts/check_workflow_trigger_coverage.py  # make check-workflow-triggers (temple-grade dep)
+scripts/check_doc_facts.py                  # make check-doc-facts
+scripts/check_version_consistency.py        # release.yml G9
+scripts/check_release_changelog.py          # release.yml G8
+scripts/check_wheel_contents.py             # release.yml G10
+scripts/verify_artifact_clean_env.py        # release.yml G11
+scripts/check_config_paths.py               # G20 config-path sweep
 
 # [D-624] Non-Python assets that shipped GATES open unconditionally. The Makefile
 # passes these paths directly (Makefile:316-317), so their absence is a hard
