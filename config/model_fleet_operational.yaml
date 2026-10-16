@@ -135,7 +135,11 @@ tier_0_local_sovereign_details:
       - id: "nomic-embed-text:v1.5"
         role: "embedding"
         context: 8192
-        use_case: "Local embeddings (768-dim)"
+        # 2026-10-16 (Architect ruling): nomic-embed-text is natively 768-D —
+        # that width is accurate for THIS provider and is kept. What changed is
+        # the implication: it is NOT the engine standard. Canonical is
+        # Qwen3-Embedding-0.6B at 1024 native (D-1024-DIM-NATIVE-20260926).
+        use_case: "Local embeddings (768-dim native, NON-CANONICAL)"
     health_check: "/api/tags"
     timeout: 30
     max_concurrent: 2

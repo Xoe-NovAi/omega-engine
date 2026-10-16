@@ -31,7 +31,16 @@ hub:
   mcp_path: "/mcp"
   sse_path: "/sse"
 
-default_local_model: "Qwen3-1.7B-Q6_K"
+default_local_model: "LFM2.5-2.6B-Q4_K_M"
+# Decision chain (2026-09-01, Grokster per Architect directive):
+#   config/providers.yaml v2.0.0 — "Default model is now LFM2.5-2.6B
+#     (1.67GB Q4_K_M). It replaces the previous Qwen3-1.7B default."
+#   config/model_fleet_operational.yaml v2.0.0 — LFM2.5-2.6B-Q4_K_M.gguf is
+#     "primary agentic_local" (port 1234); Qwen3-1.7B is extraction fallback.
+#   scripts/install.sh — pulls LFM2.5-2.6B-Q4_K_M.gguf (script is truth).
+# The 2026-09-02 dialectic row favoring Qwen3 ("script is truth") is superseded:
+# the script it cited now pulls LFM. Qwen3-1.7B remains supported via
+# OMEGA_NATIVE_GGUF_MODEL=Qwen3-1.7B-Q6_K.gguf.
 
 embedding:
   model: "Qwen3-Embedding-0.6B"

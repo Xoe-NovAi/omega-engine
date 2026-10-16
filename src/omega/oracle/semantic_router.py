@@ -33,7 +33,8 @@ SEMANTIC_THRESHOLD = 0.4
 def _cosine_similarity(a: List[float], b: List[float]) -> float:
     """Pure Python cosine similarity — no numpy dependency.
 
-    For 22 entities × 768 dims = ~33K operations (~3ms on Zen 2).
+    For 22 entities × 1024 dims = ~23K operations (~3ms on Zen 2).
+    (2026-10-16: corrected from 768 per D-1024-DIM-NATIVE-20260926.)
     """
     if len(a) != len(b):
         # Pad shorter vector with zeros

@@ -108,7 +108,7 @@ memory:
     - "Mandate filter: all findings through Sovereign Mandates lens"
     - "Observability includes the observer — hub outage P0 proved N8 must watch itself"
     - "M34Registry survives as engine island via DEL-1 Micro-PR 2/4"
-    - "768-dim unified embedding space (Qwen3-Embedding-0.6B Q5_K_M)"
+    - "1024-dim unified embedding space (Qwen3-Embedding-0.6B Q5_K_M, D-1024-DIM-NATIVE-20260926; corrected 2026-10-16 per Architect ruling from the Sept-1 768-D lesson)"
     - "58.8% retroactive failure rate = empirical baseline for in-band verification"
     - "N1 federation ready — P2 handshake complete, 66-tool MCP parity, mesh join signaled"
     - "Archangel transfer packaged — exact commit, version SSOT, loader contract, test fixture"

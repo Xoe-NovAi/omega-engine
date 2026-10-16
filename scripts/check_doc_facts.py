@@ -33,7 +33,10 @@ PATTERNS = {
     "hub.port": r"(?:port)[:=]\s*(8016)\b",
     "hub.mcp_path": r"(?:mcp[_-]?path|endpoint)[:\s]*[`\"]?(/mcp)[`\"]?",
     "hub.sse_path": r"(?:sse[_-]?path|endpoint)[:\s]*[`\"]?(/sse)[`\"]?",
-    "default_local_model": r"(?:default.*model|local.*model)[:\s]*[`\"]?(Qwen3-[\w.-]+)[`\"]?",
+    # 2026-10-16: also matches LFM (default since providers.yaml v2.0.0,
+    # 2026-09-01). A Qwen3-only pattern silently stops verifying the day the
+    # default is not Qwen3 — a gate that cannot match is decoration.
+    "default_local_model": r"(?:default.*model|local.*model)[:\s]*[`\"]?(Qwen3-[\w.-]+|LFM[\w.-]+)[`\"]?",
     "embedding.model": r"(?:embedding.*model)[:\s]*[`\"]?(Qwen3-Embedding-[\w.-]+)[`\"]?",
     "embedding.dimensions": r"(?:embedding.*dim|dimensions)[:\s]*(\d+)",
     "iwad_default_entities": r"(?:entities|IWAD.*entities)[:\s]*(\d+)",
