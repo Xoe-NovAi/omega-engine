@@ -12,29 +12,58 @@ Usage:
     python -m src.omega.agents.tty_agent --entity researcher --tty /dev/tty3
     python -m src.omega.agents.tty_agent --entity roc_racoon --tty /dev/tty4
 
-[M1 EXEMPTION — DOCUMENTED 2026-08-28]
-This file is glob-exempted from the M1 AnyIO mandate in the Makefile
-(check-m1-anyio target uses --glob '!*tty_agent*').
+[M1 AnyIO Absolute] — COMPLIANT. This module is anyio-native and imports no
+raw ``asyncio``: ``anyio.run()`` / ``anyio.create_task_group()`` /
+``anyio.open_signal_receiver()`` / ``anyio.CancelScope``. It is therefore
+covered by the unmodified ``Makefile:check-m1-anyio`` gate.
 
-Why: tty_agent runs on Linux Virtual Consoles (TTY) which require POSIX-only
-APIs. The asyncio signal handlers (asyncio.add_signal_handler) work natively
-on TTYs because the event loop is bound to the controlling terminal; this
-cannot be replicated with anyio's thread-based approach without losing TTY
-semantics (line discipline, job control, ^C delivery).
+History (D-630). This file carried the only M1 glob exemption in the tree
+(header dated 2026-08-28, ``--glob '!*tty_agent*'`` in the Makefile). That
+header claimed anyio offered only a "thread-based approach" which "cannot be
+replicated ... without losing TTY semantics (line discipline, job control,
+^C delivery)", and that the asyncio signal handlers "work natively on TTYs
+because the event loop is bound to the controlling terminal". Every clause
+of that claim was false:
 
-What this means: do NOT add anyio.to_thread.run_sync() to this file. The
-asyncio loop here is the correct primitive. The exemption is permanent and
-was grandfathered in 2026-08 by Architect decision.
+* ``anyio.run()`` defaults to ``backend="asyncio"`` and constructs an
+  ``asyncio.Runner`` — a real asyncio loop in the calling thread. The
+  thread machinery (``to_thread.run_sync`` / ``BlockingPortal``) is opt-in
+  and unused here.
+* ``anyio.open_signal_receiver()`` on the asyncio backend delegates to
+  ``loop.add_signal_handler()`` — the *identical* mechanism this file
+  already used.
+* The "event loop is bound to the controlling terminal" premise does not
+  exist. CPython's ``loop.add_signal_handler()`` uses
+  ``signal.set_wakeup_fd()`` on an internal socketpair plus
+  ``signal.signal()``. It touches no terminal fd, no controlling terminal,
+  no line discipline and no job control. ``^C`` and ``kill`` are delivered
+  by the kernel identically on a VT, a PTY and a pipe, which is why the
+  anyio receiver and the raw loop call are interchangeable.
+* The "TTY semantics" the header defended were not implemented by this file
+  at all: no ``SIGUSR1``/``SIGUSR2`` VT switch handler existed, and
+  ``vt_mode.relsig``/``acqsig`` were never set.
 
-[M8 EXEMPTION] This agent uses fcntl/ioctl for TTY ioctls (TIOCSWINSZ) which
-are POSIX syscalls. No external telemetry is emitted; the file descriptor is
-local to the process.
+The exemption was rescinded as based on an inaccurate rationale; the file
+was converted; the Makefile carve-out was deleted. See
+``docs/decisions/ADR-008-...``.
+
+Second correction worth keeping visible: the pre-conversion shutdown shape
+was *less* safe than the anyio one, not more. ``finally: await
+agent.shutdown()`` was unshielded, and ``TTYAgent.shutdown()`` awaited
+Hivemind deregistration *between* the VT ioctls — so a cancellation landing
+there skipped ``VT_UNLOCKSWITCH`` / ``VT_SETMODE`` / ``close(fd)`` and left
+the kernel holding ``/dev/ttyN`` in ``VT_PROCESS`` mode for a process that
+had already exited.
+
+[M8 EXEMPTION] This agent uses ``fcntl``/``ioctl`` for POSIX TTY syscalls
+(VT_GETMODE, VT_SETMODE, VT_GETSTATE, VT_LOCKSWITCH, VT_ACTIVATE,
+VT_WAITACTIVE, VT_DISALLOCATE — see ``linux/vt.h``). No external telemetry
+is emitted; the file descriptor is local to the process.
 """
 
 from __future__ import annotations
 
 import argparse
-import asyncio
 import fcntl
 import json
 import logging
@@ -46,6 +75,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+
+import anyio
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -81,6 +112,33 @@ VT_AUTO = 0
 VT_PROCESS = 1
 VT_ACKACQ = 2
 
+# [D-630] struct vt_mode ABI — include/uapi/linux/vt.h:
+#
+#     struct vt_mode {
+#         __u8  mode;    /* VT_AUTO / VT_PROCESS / VT_ACKACQ */
+#         __u8  waitv;   /* if set, hang on writes if not active */
+#         __s16 relsig;  /* signal to raise on release req */
+#         __s16 acqsig;  /* signal to raise on acquisition */
+#         __s16 frsig;   /* unused (set to 0) */
+#     };                 /* 8 bytes on ILP32 and LP64 */
+#
+# ioctl_vt(2) documents the same layout, and drivers/tty/vt/vt_ioctl.c copies
+# the FULL struct for both VT_GETMODE and VT_SETMODE. The previous code packed
+# only ``struct.pack("h", mode)`` — 2 bytes — so VT_GETMODE read 6 bytes past
+# the end of the buffer and VT_SETMODE wrote uninitialised adjacent heap into
+# ``relsig``/``acqsig``. Native order/alignment is correct here: the kernel
+# struct has no padding and __s16 is a native short.
+VT_MODE_STRUCT = "BBhhh"
+VT_MODE_SIZE = struct.calcsize(VT_MODE_STRUCT)
+assert VT_MODE_SIZE == 8, f"struct vt_mode must be 8 bytes, got {VT_MODE_SIZE}"
+
+# [D-630] relsig/acqsig are DELIBERATELY 0 — see VTManager.acquire_process_mode.
+# This is a deterministic, documented choice, not an oversight.
+_VT_WAITV = 0
+_VT_RELSIG = 0
+_VT_ACQSIG = 0
+_VT_FRSIG = 0
+
 
 # ============================================================================
 # VT MANAGER
@@ -113,22 +171,43 @@ class VTManager:
             self.fd = None
 
     def get_mode(self) -> Optional[int]:
-        """Get current VT mode."""
+        """Get current VT mode (VT_AUTO / VT_PROCESS / VT_ACKACQ), or None."""
+        raw = self.get_mode_struct()
+        return None if raw is None else raw[0]
+
+    def get_mode_struct(self) -> Optional[bytes]:
+        """Read the full 8-byte ``struct vt_mode`` the kernel holds.
+
+        [D-630] ABI fix. ``VT_GETMODE`` copies ``sizeof(struct vt_mode)`` == 8
+        bytes into ``argp``; the previous 2-byte buffer under-read by 6.
+        """
         if self.fd is None:
             return None
         try:
-            buf = bytearray(2)
+            buf = bytearray(VT_MODE_SIZE)
             fcntl.ioctl(self.fd, VT_GETMODE, buf)
-            return struct.unpack("h", buf)[0]
+            return bytes(buf)
         except OSError:
             return None
 
-    def set_mode(self, mode: int) -> bool:
-        """Set VT mode (VT_AUTO, VT_PROCESS, VT_ACKACQ)."""
+    def set_mode(
+        self,
+        mode: int,
+        *,
+        waitv: int = _VT_WAITV,
+        relsig: int = _VT_RELSIG,
+        acqsig: int = _VT_ACQSIG,
+        frsig: int = _VT_FRSIG,
+    ) -> bool:
+        """Set mode of active vt.
+
+        [D-630] ABI fix. ``argp`` must be a full 8-byte ``struct vt_mode``;
+        ``VT_SETMODE`` copies the whole struct from user space.
+        """
         if self.fd is None:
             return False
         try:
-            buf = struct.pack("h", mode)
+            buf = struct.pack(VT_MODE_STRUCT, mode, waitv, relsig, acqsig, frsig)
             fcntl.ioctl(self.fd, VT_SETMODE, buf)
             return True
         except OSError as e:
@@ -136,9 +215,38 @@ class VTManager:
             return False
 
     def acquire_process_mode(self) -> bool:
-        """Acquire VT_PROCESS mode — we own this VT."""
-        # Save original mode first
-        self._original_mode = struct.pack("h", self.get_mode() or VT_AUTO)
+        """Acquire VT_PROCESS mode — we own this VT.
+
+        [D-630] `relsig`/`acqsig` are left at 0, and that is a KNOWN DEFECT
+        rather than a correctness claim:
+
+        * On a release request the kernel calls
+          ``kill_pid(vc->vt_pid, vc->vt_mode.relsig, 1)`` and, if it succeeds,
+          sets ``vt_newvt`` and returns *without switching*, waiting for the
+          process to complete the handshake with ``VT_RELDISP``
+          (drivers/tty/vt/vt_ioctl.c, ``change_console()``).
+        * With ``relsig == 0`` the ``kill_pid`` is the POSIX signal-0
+          existence check. It succeeds, so the kernel parks the switch and
+          the VT does not change until the process calls ``VT_RELDISP`` —
+          which this agent never does. Combined with ``lock_switch`` the
+          switch is blocked either way, so effective behaviour is unchanged
+          from the pre-D-630 code.
+        * The conventional values for a complete implementation are
+          ``relsig = acqsig = SIGUSR1`` — this is exactly what the Xorg
+          server sets in ``hw/xfree86/os-support/linux/lnx_init.c``
+          (``signal(SIGUSR1, xf86VTRequest); VT.mode = VT_PROCESS;
+          VT.relsig = SIGUSR1; VT.acqsig = SIGUSR1;``). Adopting them
+          REQUIRES a real handler that answers with ``VT_RELDISP``, or the
+          default SIGUSR1 action (terminate) kills the agent on the first
+          VT switch — a regression this change deliberately does not
+          introduce. Tracked as a follow-up outside the M1 conversion scope.
+        """
+        # Save original mode first — the full struct, so waitv/relsig/acqsig
+        # are restored verbatim rather than guessed.
+        original = self.get_mode_struct()
+        if original is None:
+            original = struct.pack(VT_MODE_STRUCT, VT_AUTO, _VT_WAITV, 0, 0, 0)
+        self._original_mode = original
         return self.set_mode(VT_PROCESS)
 
     def release_process_mode(self) -> bool:
@@ -224,11 +332,17 @@ class TTYAgent:
         self.start_time: Optional[datetime] = None
         self._layout: Optional[Layout] = None
         self._live: Optional[Live] = None
-        self._heartbeat_task: Optional[asyncio.Task] = None
         self._reader: Optional[SovereignReader] = None
 
     async def startup(self) -> bool:
-        """Initialize VT and agent."""
+        """Initialize VT and agent.
+
+        The heartbeat loop is NOT started here. It is a child of the task
+        group built by ``main()``, so that it is cancelled and *joined* with
+        the dashboard rather than being cancelled by hand. This keeps the
+        class honest: there is no stored task handle to leak, and nothing can
+        outlive the task group.
+        """
         print(f"🚀 Starting {self.config.entity_name} on {self.config.tty_path}")
 
         # 1. Open VT
@@ -266,26 +380,26 @@ class TTYAgent:
         # 6. Register with Hivemind
         await self._register_hivemind()
 
-        # 7. Start heartbeat
-        self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
-
         self.running = True
         self.start_time = datetime.now(timezone.utc)
         print(f"✅ {self.config.entity_name} ready on {self.config.tty_path}")
         return True
 
     async def shutdown(self):
-        """Clean shutdown."""
+        """Clean shutdown.
+
+        Called from ``main()`` inside ``anyio.CancelScope(shield=True)``. The
+        shield is load-bearing: every step after the Hivemind deregistration
+        has a kernel-visible consequence, and a cancellation that landed
+        mid-shutdown would leave ``/dev/ttyN`` in ``VT_PROCESS`` mode owned by
+        an exiting process (the kernel only ``reset_vc()``s on the next switch
+        attempt). Nothing here may be cancelled, and no exception is swallowed.
+        """
         print(f"🛑 Shutting down {self.config.entity_name}...")
         self.running = False
 
-        # Stop heartbeat
-        if self._heartbeat_task:
-            self._heartbeat_task.cancel()
-            try:
-                await self._heartbeat_task
-            except asyncio.CancelledError:
-                pass
+        # The heartbeat task has already been cancelled and joined by the task
+        # group before this method is entered.
 
         # Deregister from Hivemind
         await self._deregister_hivemind()
@@ -332,9 +446,17 @@ class TTYAgent:
             reg_file.unlink()
 
     async def _heartbeat_loop(self):
-        """Periodic heartbeat to Hivemind."""
+        """Periodic heartbeat to Hivemind.
+
+        A task-group child, spawned by ``main()``. It is stopped by *level*
+        cancellation from the group's cancel scope rather than by an explicit
+        ``task.cancel()``; the cancellation is intentionally NOT caught, so it
+        propagates out of the coroutine and the task group can join cleanly.
+        Swallowing it here is what makes asyncio's edge cancellation hang (the
+        ``while self.running`` loop would keep running with no way to stop it).
+        """
         while self.running:
-            await asyncio.sleep(30)  # Every 30 seconds
+            await anyio.sleep(30)  # Every 30 seconds
             if not self.running:
                 break
 
@@ -388,7 +510,14 @@ class TTYAgent:
         return layout
 
     async def run_dashboard(self, refresh_rate: float = 2.0):
-        """Run live dashboard on TTY."""
+        """Run live dashboard on TTY.
+
+        Cancellation from the group's cancel scope is what exits the loop.
+        ``rich.live.Live`` is a *synchronous* context manager, so its
+        ``__exit__`` (restore the terminal) still runs while the cancellation
+        unwinds the ``with`` block — the screen is restored before
+        ``agent.shutdown()`` releases the VT.
+        """
         if not self.console:
             return
 
@@ -399,14 +528,19 @@ class TTYAgent:
         ) as live:
             self._live = live
             while self.running:
-                await asyncio.sleep(refresh_rate)
+                await anyio.sleep(refresh_rate)
                 if not self.running:
                     break
                 self._layout = self.render_dashboard()
                 live.update(self._layout)
 
     async def run(self):
-        """Main run loop — override in subclass."""
+        """Main run loop — override in subclass.
+
+        Spawned as a task-group child by ``main()`` alongside
+        ``_heartbeat_loop``. Overrides only need to return (or raise) for the
+        task group to move on.
+        """
         await self.run_dashboard()
 
 
@@ -691,6 +825,59 @@ def create_agent(entity: str, tty_path: str, data_dir: Path) -> TTYAgent:
 
 
 # ============================================================================
+# SIGNAL HANDLING (D-630, anyio-native)
+# ============================================================================
+
+# [M23] No bare ``except: pass``. Windows has no native signal support:
+# asyncio's ProactorEventLoop does not implement loop signal handlers at all
+# (CPython asyncio/events.py:595 raises NotImplementedError from
+# add_signal_handler), and anyio's asyncio backend calls that method directly.
+# The pre-conversion code caught that NotImplementedError and carried on, which
+# is the M23 soft-failure that has now been removed. Where a receiver cannot be
+# installed we say so and simply do not install one — genuine errors propagate.
+_WINDOWS = sys.platform == "win32"
+
+
+async def signal_watch(scope: anyio.CancelScope, startup_done: anyio.Event) -> None:
+    """Deliver SIGINT/SIGTERM to the application as structured cancellation.
+
+    This is the canonical anyio pattern
+    (https://anyio.readthedocs.io/en/stable/signals.html). On the asyncio
+    backend ``anyio.open_signal_receiver`` is a *synchronous* context manager
+    wrapping ``loop.add_signal_handler`` — the same mechanism the file used
+    before D-630, so nothing about TTY signal delivery changes.
+
+    Ordering notes that are load-bearing:
+
+    * ``scope.cancel()`` must be called from INSIDE the task group.
+      ``anyio.create_task_group().__aexit__`` waits for its children, it does
+      not cancel them; cancelling an already-joined scope hangs forever
+      (``docs/adr/ADR-003`` §8, "cancelling an already-joined scope hangs").
+    * A signal that arrives while ``startup()`` is still running is *queued*
+      by the receiver and only acted on once ``startup_done`` is set. Without
+      this the cancellation would reach the host task mid-startup and the VT
+      would be left half-acquired — a regression against the pre-D-630 code,
+      whose loop handler only set an ``asyncio.Event`` and so never
+      interrupted startup.
+    * No ``except`` on the iterator: anyio's own tests assert that
+      ``open_signal_receiver`` does not suppress cancellation
+      (``tests/test_signals.py::test_task_group_cancellation_open``). Let the
+      cancellation raise out of this coroutine; the task group absorbs it.
+    * On exiting the ``with`` block, ``remove_signal_handler`` restores
+      ``default_int_handler`` for SIGINT, NOT the Runner's handler — so a
+      second ^C during shutdown raises ``KeyboardInterrupt``. That is
+      deliberate: it is the operator's escape hatch, and it is exactly why
+      ``agent.shutdown()`` runs shielded.
+    """
+    with anyio.open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signals:
+        async for _signum in signals:
+            await startup_done.wait()
+            print("\n🛑 Signal received, shutting down...")
+            scope.cancel()
+            return
+
+
+# ============================================================================
 # CLI ENTRY POINT
 # ============================================================================
 
@@ -729,38 +916,78 @@ async def main():
     agent = create_agent(args.entity, args.tty, data_dir)
     agent.config.lock_switch = not args.no_lock
 
-    # Setup signal handlers
-    loop = asyncio.get_running_loop()
-    shutdown_event = asyncio.Event()
+    started = False
+    startup_done = anyio.Event()
 
-    def signal_handler():
-        print("\n🛑 Signal received, shutting down...")
-        shutdown_event.set()
+    # [D-630] One task group, because ``create_task_group().__aexit__`` WAITS for
+    # its children rather than cancelling them (docs/adr/ADR-003 §1: a
+    # ``while True:`` child started with ``start_soon`` blocks the join forever).
+    # Everything that can be stopped by the signal lives in this one group.
+    async with anyio.create_task_group() as tg:
+        # The receiver is installed first, so a signal arriving during VT
+        # acquisition is queued rather than lost — matching the pre-D-630 code,
+        # which installed its loop handlers before startup for the same reason.
+        if not _WINDOWS:
+            tg.start_soon(signal_watch, tg.cancel_scope, startup_done)
 
-    for sig in (signal.SIGTERM, signal.SIGINT):
-        try:
-            loop.add_signal_handler(sig, signal_handler)
-        except NotImplementedError:
-            pass  # Windows
+        # Startup — SHIELDED, and the shield is load-bearing. Level cancellation
+        # from the group's scope would otherwise hit the host task mid-startup
+        # and die between ``VT_SETMODE(VT_PROCESS)`` and ``close(fd)``.
+        with anyio.CancelScope(shield=True):
+            started = await agent.startup()
+        startup_done.set()
 
-    # Startup
-    if not await agent.startup():
+        if not started:
+            # The receiver is parked on ``open_signal_receiver``; a task group
+            # waits for its children, so the scope must be cancelled or the
+            # join blocks forever. anyio's ``__anext__`` checkpoint turns this
+            # into a clean cancellation (the 4.x fix for "open_signal_receiver
+            # hanging if the cancel scope was cancelled before it could run").
+            tg.cancel_scope.cancel()
+        else:
+            # ``run_until_stopped`` clears ``running`` and cancels the scope when
+            # the body returns, so the heartbeat sibling and the parked signal
+            # receiver both stop. Without this, a subclass whose ``run()``
+            # returns normally would leave the group joining two children that
+            # never end — ``create_task_group().__aexit__`` waits for its
+            # children, it does not cancel them (``docs/adr/ADR-003`` §1).
+            tg.start_soon(run_until_stopped, agent, tg.cancel_scope)
+            tg.start_soon(agent._heartbeat_loop)
+
+    if not started:
+        # Matches the pre-D-630 behaviour: a failed startup returned 1 without
+        # running shutdown().
         return 1
 
-    # Run until shutdown
-    try:
-        run_task = asyncio.create_task(agent.run())
-        await shutdown_event.wait()
-        run_task.cancel()
-        try:
-            await run_task
-        except asyncio.CancelledError:
-            pass
-    finally:
+    # [D-630] Shielded, non-negotiable. Without the shield a cancellation
+    # landing inside agent.shutdown() skips the VT ioctls below and leaves the
+    # kernel holding the VT in VT_PROCESS mode for this (now dead) process.
+    with anyio.CancelScope(shield=True):
         await agent.shutdown()
 
     return 0
 
 
+async def run_until_stopped(agent: TTYAgent, scope: anyio.CancelScope) -> None:
+    """Run the agent body; when it returns, stop everything the group started.
+
+    Two things must stop when ``agent.run()`` returns on its own:
+
+    * the heartbeat sibling, whose ``while self.running`` guard is only cleared
+      by ``shutdown()`` — and ``shutdown()`` cannot run until the group exits;
+    * the parked signal receiver, which would otherwise hold the task group's
+      join open forever (``create_task_group().__aexit__`` waits for children,
+      it does not cancel them — ``docs/adr/ADR-003`` §1).
+
+    Cancelling the scope does both, and is safe on the signal-driven path too,
+    where the scope is already cancelled and the task group absorbs it.
+    """
+    try:
+        await agent.run()
+    finally:
+        agent.running = False
+        scope.cancel()
+
+
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main()))
+    sys.exit(anyio.run(main))
