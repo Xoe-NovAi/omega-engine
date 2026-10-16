@@ -290,7 +290,7 @@ Current status:
 - no `make 3d-rebuild` target;
 - no cross-node retrieval comparison.
 
-The canonical model decision is Qwen3-Embedding-0.6B at 768 dimensions. An ONNX artifact is available, but exact artifact/revision, tokenizer, pooling, normalization, instruction handling, CPU footprint, and retrieval quality must be verified.
+The canonical model decision is Qwen3-Embedding-0.6B at 1024 dimensions native (D-1024-DIM-NATIVE-20260926, Architect veto — superseding the Sept-1 768-D decision this briefing originally recorded). An ONNX artifact is available, but exact artifact/revision, tokenizer, pooling, normalization, instruction handling, CPU footprint, and retrieval quality must be verified.
 
 ### 5.6 Inference, Gnosis, and OpenCode
 
