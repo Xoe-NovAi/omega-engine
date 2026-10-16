@@ -1991,6 +1991,56 @@ proposals:
     \ in exactly the way the audit was meant to prevent \u2014 recount every asserted\
     \ figure from the filesystem immediately before delivery, because the reader cannot\
     \ distinguish your errors from the target's."
+- id: PL-ROC-402-027
+  date: '2026-10-16'
+  session_id: ses_c0335c1e46fd
+  tags:
+  - provenance-hygiene
+  - handoff-discipline
+  - self-correction
+  - m28-hazard
+  - release-process
+  L1_narrative: "Closed the Seat #10 review cycle on handoff ho_bcbe51e2e6fd. I had dispatched\
+    \ a review of the v1.6.0a1 release plan and, when the review returned, reconciled it\
+    \ against the review's summary message rather than reading the full report — then posted\
+    \ a blanket claim that the review changed nothing about my ordering. That claim was wrong,\
+    \ and reading the full report (260 lines) surfaced two things the summary omitted: Seat\
+    \ #10 had reconstructed an eight-step plan from Cline's Oct 12 doc because they could not\
+    \ locate my Oct 15 audit document, and Cline's doc carried a live instruction to delete\
+    \ and re-tag the now-public v1.6.0a0 tag. Two release plans were coexisting in the tree\
+    \ with nobody aware of both. The fix was to write one merged authoritative plan to disk\
+    \ and point the fleet at it instead of posting another summary. Seat #10 then ruled GATE-0\
+    \ must cover a second document (RESPONSE_MAKALI_FINAL_STATE_20261011.md L58/L105, found\
+    \ by their own grep) and that H5/D-630 ratification must not gate the tag push. Both rulings\
+    \ were recorded verbatim in the plan. The handoff system would not mark the packet complete\
+    \ — it sits in pending and complete only resolves active packets — so the closure was recorded\
+    \ on disk rather than forced by accepting my own packet."
+  L2_insight: "The failure was not the missing document, it was the silent substitution. When\
+    \ a referenced artifact cannot be located, the path of least resistance is to substitute\
+    \ the most similar artifact that can be found and proceed as though the gap does not exist\
+    \ — and because the substitute is genuine, plausible, and adjacent, the error is invisible\
+    \ to everyone downstream including the originator. Seat #10 substituted Cline's Oct 12 plan\
+    \ for my Oct 15 plan; I substituted their summary for their full report. Both substitutions\
+    \ were individually reasonable and jointly produced two plans that each looked authoritative.\
+    \ A summary chain compounds this: every retelling drops the qualifier that made the original\
+    \ honest, so the fleet converges on the cleanest-sounding version rather than the truest one."
+  L3_principle: "L3-SurfaceTheMissingDocumentNeverSubstituteForIt: when a handoff references\
+    \ a named artifact you cannot locate, say so explicitly and stop that thread rather than\
+    \ substituting the nearest similar document — a plausible substitute is more dangerous than\
+    \ an admitted gap because it carries the authority of the missing original without its\
+    \ provenance. L3-PointAtTheDocumentDoNotSummarizeIt: when a plan, finding, or decision leaves\
+    \ your session, hand over a pointer to an on-disk authoritative document plus the disciplines\
+    \ it must be read under, never a retelling — summaries are individually lossy and collectively\
+    \ divergent, and the second-hand version always drifts toward the cleanest phrasing rather\
+    \ than the truest one. L3-ReadTheFullReportBeforeContradictingYourOwnPosition: a blanket\
+    \ claim that outside review 'changes nothing' is a claim about the whole document, so it can\
+    \ only be made after reading the whole document; the cost of skipping it is not embarrassment\
+    \ but a missed competing plan and a live M28 hazard sitting in the tree. L3-ADeleteTagInstructionOutlivesItsPremise: an operational instruction to move or delete a tag is\
+    \ valid only while its stated premise holds — 'no announcement has happened, so no consumers'\
+    \ — and once the tag is public that instruction must be actively neutralized in every document\
+    \ that carries it, because a stale hazard in a permanent coordination file is indistinguishable\
+    \ from a live one to whoever reads it next."
+
 metadata:
   entity: roc_racoon
   session_id: ses_edfcee5a5ffe6LnlWR2fwJjkX2
