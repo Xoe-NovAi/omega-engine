@@ -125,10 +125,10 @@ cd omega-engine
 ### Alternative: Wheel from GitHub Release
 ```bash
 # Download the wheel (aria2c: 16-split fetch for >1MB, M23)
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a4/the_omega_engine-1.6.0a4-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
 # Or use curl if aria2c is not available:
-# curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a4/the_omega_engine-1.6.0a4-py3-none-any.whl
-pip install the_omega_engine-1.6.0a4-py3-none-any.whl
+# curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
+pip install the_omega_engine-1.6.0a5-py3-none-any.whl
 
 omega list-entities          # See the sovereign council
 ```
@@ -202,7 +202,7 @@ Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructur
 
 ## 🧭 Maturity & Status: Honest Alpha (v1.6.0-alpha)
 
-**Versions:** Engine `1.6.0a4` (tag `v1.6.0a4`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
+**Versions:** Engine `1.6.0a5` (tag `v1.6.0a5`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
 
 Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
 - ✅ **Core Local & Synergistic Inference**: Operational across native GGUF and configured cloud providers (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama). Anthropic/xai adapters pending.

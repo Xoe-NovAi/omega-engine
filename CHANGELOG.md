@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
-## [v1.6.0a4] - 2026-10-16
+## [v1.6.0a5] - 2026-10-16
 
 Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),
 comprising post-tag defect fixes, public-tree hardening, and the distribution-name
@@ -263,3 +263,16 @@ This is the first public release of the Omega Engine under Apache 2.0.
   public release is the **allowlist-cut** tree produced by
   `scripts/apply_public_allowlist.sh --confirm`; the tag must point at that cut commit,
   not at the development tree.
+
+### Release-process defect (third in sequence, all recorded)
+- **v1.6.0a4's release run got through every content gate** — Temple-Grade ✓,
+  G9 ✓, G8 ✓, G10 ✓ — and then died at `Create GitHub Release` with
+  `no matches found for dist/*.tar.gz`. The build step ran
+  `python -m build --wheel`, but the release step attaches `dist/*.whl dist/*.tar.gz`.
+  A missing sdist is not a content problem, so no gate could see it; the failure
+  only surfaced at the `gh release create` call, after all the verification had
+  already passed. The build step now builds both artifacts.
+- Also: the allowlist cut had to be preceded by enumerating seven release-gate
+  scripts in `PUBLIC_ALLOWLIST.txt`. Without those entries the cut removes the
+  release gates from the public tree and the workflow fails with `FileNotFoundError`.
+  The allowlist and the gate inventory must move together.

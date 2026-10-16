@@ -1,8 +1,8 @@
 # 🎉 Omega Engine v1.6.0-alpha — Public Debut
 
 **Release Date:** 2026-10-13  
-**Tag:** `v1.6.0a4` (peels to `ef9b9c81`)  
-**Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0a4.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a4)
+**Tag:** `v1.6.0a5` (peels to `ef9b9c81`)  
+**Artifacts:** [Source tarball](https://github.com/Xoe-NovAi/omega-engine/archive/refs/tags/v1.6.0a5.tar.gz) · [Wheel](https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a5)
 
 ---
 
@@ -65,8 +65,8 @@ cd omega-engine
 
 # Alternative: wheel install (core runtime only — no MCP hub, no native GGUF).
 # For the hub + local inference, use the source install above.
-curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a4/the_omega_engine-1.6.0a4-py3-none-any.whl
-pip install the_omega_engine-1.6.0a4-py3-none-any.whl
+curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
+pip install the_omega_engine-1.6.0a5-py3-none-any.whl
 
 omega list-entities          # See the sovereign council
 ```
@@ -104,7 +104,7 @@ omega list-entities          # See the sovereign council
 
 ## 🔗 Links
 
-- **Release:** https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a4
+- **Release:** https://github.com/Xoe-NovAi/omega-engine/releases/tag/v1.6.0a5
 - **Docs:** https://github.com/Xoe-NovAi/omega-engine/tree/main/docs
 - **Issues:** https://github.com/Xoe-NovAi/omega-engine/issues
 

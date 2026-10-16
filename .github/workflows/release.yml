@@ -78,10 +78,15 @@ jobs:
         run: |
           rm -rf build dist src/*.egg-info
 
-      - name: Build wheel
+      - name: Build wheel and sdist
         run: |
           python -m pip install --upgrade build
-          python -m build --wheel
+          # Build BOTH artifacts. This step previously ran `--wheel` only, while
+          # the release step below attaches `dist/*.whl dist/*.tar.gz`; with no
+          # sdist present, the glob had no matches and `gh release create` died
+          # with "no matches found for dist/*.tar.gz" after every content gate
+          # had already passed. `python -m build` with no flags builds both.
+          python -m build --sdist --wheel
 
       - name: G10 — Wheel content gate
         run: |
