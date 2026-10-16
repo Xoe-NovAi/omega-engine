@@ -1,0 +1,71 @@
+{
+  "phi4-mini 3.8B Q4_K_M t8": {
+    "profile": "performance",
+    "arms": {
+      "A: LLM ALONE (embedder idle @12-15)": {
+        "tps": 14.17,
+        "sd": 0.13,
+        "mem_avail_mb": 6053,
+        "embed_lat_ms": null
+      },
+      "B: LLM + EMBED ON E-CORES (12-15)": {
+        "tps": 12.47,
+        "sd": 0.13,
+        "mem_avail_mb": 6052,
+        "embed_lat_ms": 69.73
+      },
+      "C: LLM + EMBED ON P-CORES (0-11)": {
+        "tps": 12.47,
+        "sd": 0.15,
+        "mem_avail_mb": 5976,
+        "embed_lat_ms": 58.45
+      }
+    }
+  },
+  "qwen2.5-coder:7B Q4_K_M t8": {
+    "profile": "performance",
+    "arms": {
+      "A: LLM ALONE (embedder idle @12-15)": {
+        "tps": 8.22,
+        "sd": 0.02,
+        "mem_avail_mb": 5814,
+        "embed_lat_ms": null
+      },
+      "B: LLM + EMBED ON E-CORES (12-15)": {
+        "tps": 7.18,
+        "sd": 0.1,
+        "mem_avail_mb": 4696,
+        "embed_lat_ms": 66.97
+      },
+      "C: LLM + EMBED ON P-CORES (0-11)": {
+        "tps": 7.08,
+        "sd": 0.09,
+        "mem_avail_mb": 4681,
+        "embed_lat_ms": 59.15
+      }
+    }
+  },
+  "LFM2.5-2.6B Q4_K_M t8": {
+    "profile": "performance",
+    "arms": {
+      "A: LLM ALONE (embedder idle @12-15)": {
+        "tps": 20.97,
+        "sd": 0.2,
+        "mem_avail_mb": 4421,
+        "embed_lat_ms": null
+      },
+      "B: LLM + EMBED ON E-CORES (12-15)": {
+        "tps": 18.27,
+        "sd": 0.25,
+        "mem_avail_mb": 7555,
+        "embed_lat_ms": 64.58
+      },
+      "C: LLM + EMBED ON P-CORES (0-11)": {
+        "tps": 18.24,
+        "sd": 0.32,
+        "mem_avail_mb": 7550,
+        "embed_lat_ms": 55.56
+      }
+    }
+  }
+}

@@ -12,7 +12,10 @@ CPU burn on hybrid CPUs (i7-13620H P-core/E-core). Uses spin_duration_us=1000
 """
 
 import os
+import time
+import threading
 import logging
+from collections import deque
 from pathlib import Path
 from typing import List, Optional, Literal
 
@@ -240,6 +243,56 @@ app = FastAPI(title="Qwen3-Embedding-0.6B ONNX Server", version="0.1.0")
 model: Optional[Qwen3EmbeddingONNX] = None
 
 
+# ─── Server-side rate limiter (duty-cycle guard) ─────────────────────
+# Measured 2026-10-14/16 (docs/BENCHMARKS.md): concurrent embedding load taxes
+# LLM generation ~-23% saturated, ~-5% at 25% duty. Placement and embedder
+# thread count are both irrelevant; call RATE is the only lever. This token
+# bucket enforces it server-side so no client can accidentally saturate the bus.
+#   EMBED_MAX_RPS=0 (default): unlimited — preserves historical behavior.
+#   EMBED_MAX_RPS=N (N>0)    : at most N /embed calls started per second,
+#                              sliding 1 s window; excess gets HTTP 429.
+# Thread-safe across uvicorn/anyio worker threads. Fails OPEN (unlimited) on
+# any misconfiguration — a limiter must never take down embeddings.
+def _max_rps() -> float:
+    try:
+        v = float(os.getenv("EMBED_MAX_RPS", "0") or 0)
+        return v if v > 0 else 0.0
+    except (TypeError, ValueError):
+        logging.warning("EMBED_MAX_RPS=%r unparseable; rate limit disabled",
+                        os.getenv("EMBED_MAX_RPS"))
+        return 0.0
+
+
+_rate_lock = threading.Lock()
+_rate_hits: deque = deque()          # monotonic timestamps of admitted calls
+_rate_reject_logged_at = 0.0
+
+
+def _admit() -> tuple[bool, float]:
+    """Return (admitted, retry_after_s). Always admits when disabled."""
+    limit = _max_rps()
+    if limit <= 0:
+        return True, 0.0
+    now = time.monotonic()
+    with _rate_lock:
+        while _rate_hits and _rate_hits[0] <= now - 1.0:
+            _rate_hits.popleft()
+        if len(_rate_hits) < limit:
+            _rate_hits.append(now)
+            return True, 0.0
+        retry = max(0.0, _rate_hits[0] + 1.0 - now)
+        return False, retry
+
+
+def _note_rejection() -> None:
+    global _rate_reject_logged_at
+    now = time.monotonic()
+    if now - _rate_reject_logged_at >= 60.0:
+        _rate_reject_logged_at = now
+        logging.warning("rate limit active: rejecting excess /embed calls "
+                        "(EMBED_MAX_RPS=%s)", os.getenv("EMBED_MAX_RPS"))
+
+
 @app.on_event("startup")
 async def startup():
     global model
@@ -266,7 +319,13 @@ async def health():
 async def embed(req: EmbedRequest):
     if model is None or model.session is None:
         raise HTTPException(503, "Model not loaded")
-    
+    admitted, retry_after = _admit()
+    if not admitted:
+        _note_rejection()
+        raise HTTPException(
+            status_code=429, detail="embedding rate limit exceeded",
+            headers={"Retry-After": f"{retry_after:.2f}"})
+
     try:
         embeddings = model.embed(
             req.inputs,

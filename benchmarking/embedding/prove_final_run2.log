@@ -1,0 +1,30 @@
+/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/prove_final.py:61: SyntaxWarning: "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
+  out = subprocess.run(["pgrep", "-af", "embed.*server.*\.py"],
+[17:11:17] FINAL PROOF — L1 mask + L2 per-thread allowed + L3 executed, self-pin neutralized, continuous hammer
+[17:11:17] ===== ARM E: TEST COPY born under 12-15 =====
+[17:11:26]   pid=63217
+[17:11:31]   L2 allowed: 17 threads, union=[12, 13, 14, 15], threads with ANY cpu outside 12-15: 0
+[17:11:33]   L3 sample 1: executing on [12, 13, 14, 15] (17 threads)
+[17:11:35]   L3 sample 2: executing on [12, 13, 14, 15] (20 threads)
+[17:11:37]   L3 sample 3: executing on [12, 13, 14, 15] (19 threads)
+[17:11:39]   L3 sample 4: executing on [12, 13, 14, 15] (19 threads)
+[17:11:41]   L3 sample 5: executing on [12, 13, 14, 15] (19 threads)
+[17:11:43]   L3 sample 6: executing on [12, 13, 14, 15] (19 threads)
+[17:12:16]   LLM decode under load: [15.97, 15.85, 15.84, 15.97, 15.88] t/s
+[17:12:16]   hammer: 1106 ok / 0 err, mean 45.7 ms, dims=1024
+[17:12:16] ===== ARM C: TEST COPY born under 0-11 =====
+[17:12:24]   pid=63733
+[17:12:29]   L2 allowed: 25 threads, union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], threads with ANY cpu outside 0-11: 0
+[17:12:31]   L3 sample 1: executing on [1, 2, 3, 4, 5, 6, 7, 9, 10, 11] (25 threads)
+[17:12:33]   L3 sample 2: executing on [1, 2, 3, 4, 5, 6, 7, 9, 10, 11] (28 threads)
+[17:12:35]   L3 sample 3: executing on [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (28 threads)
+[17:12:37]   L3 sample 4: executing on [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (28 threads)
+[17:12:39]   L3 sample 5: executing on [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (28 threads)
+[17:12:41]   L3 sample 6: executing on [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (28 threads)
+[17:13:17]   LLM decode under load: [13.56, 13.67, 13.52, 13.63, 13.53] t/s
+[17:13:17]   hammer: 1614 ok / 0 err, mean 32.8 ms, dims=1024
+[17:13:25] restored PRODUCTION embedder pid=64250 (original script, born 12-15)
+[17:13:25] 
+[17:13:25] PASS CRITERIA + RESULTS:
+[17:13:25]   ARM E: L2 [12, 13, 14, 15] L3 [12, 13, 14, 15] -> PASS (LLM 15.9 t/s, 1106 embeds)
+[17:13:25]   ARM C: L2 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] L3 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] -> PASS (LLM 13.58 t/s, 1614 embeds)

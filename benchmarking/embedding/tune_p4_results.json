@@ -1,0 +1,158 @@
+{
+  "A_prefill": [
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 6,
+      "prompt_tok": 1005,
+      "prefill_tps_mean": 12688.0,
+      "prefill_tps_sd": 453.8,
+      "prefill_s_mean": 0.079,
+      "load_s_max": 0.0,
+      "mem_available_mb": 8163,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 8,
+      "prompt_tok": 1005,
+      "prefill_tps_mean": 13361.6,
+      "prefill_tps_sd": 175.6,
+      "prefill_s_mean": 0.075,
+      "load_s_max": 0.0,
+      "mem_available_mb": 8162,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 10,
+      "prompt_tok": 1005,
+      "prefill_tps_mean": 13505.8,
+      "prefill_tps_sd": 212.8,
+      "prefill_s_mean": 0.075,
+      "load_s_max": 0.0,
+      "mem_available_mb": 8146,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 12,
+      "prompt_tok": 1005,
+      "prefill_tps_mean": 14312.1,
+      "prefill_tps_sd": 186.8,
+      "prefill_s_mean": 0.07,
+      "load_s_max": 0.01,
+      "mem_available_mb": 8153,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 6,
+      "prompt_tok": 996,
+      "prefill_tps_mean": 6978.3,
+      "prefill_tps_sd": 55.2,
+      "prefill_s_mean": 0.143,
+      "load_s_max": 0.0,
+      "mem_available_mb": 5013,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 8,
+      "prompt_tok": 996,
+      "prefill_tps_mean": 6983.9,
+      "prefill_tps_sd": 9.3,
+      "prefill_s_mean": 0.143,
+      "load_s_max": 0.01,
+      "mem_available_mb": 5027,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 10,
+      "prompt_tok": 996,
+      "prefill_tps_mean": 7265.8,
+      "prefill_tps_sd": 57.9,
+      "prefill_s_mean": 0.137,
+      "load_s_max": 0.01,
+      "mem_available_mb": 5047,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 12,
+      "prompt_tok": 996,
+      "prefill_tps_mean": 6872.7,
+      "prefill_tps_sd": 426.5,
+      "prefill_s_mean": 0.145,
+      "load_s_max": 0.01,
+      "mem_available_mb": 5034,
+      "profile": "performance"
+    }
+  ],
+  "B_power": [
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 10,
+      "tps_mean": 20.15,
+      "tps_sd": 0.07,
+      "mem_available_mb": 8307,
+      "profile": "performance",
+      "tag": "LFM2.5-2.6B"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 10,
+      "tps_mean": 7.89,
+      "tps_sd": 0.02,
+      "mem_available_mb": 5512,
+      "profile": "performance",
+      "tag": "qwen2.5-coder:7B"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 10,
+      "tps_mean": 18.18,
+      "tps_sd": 1.66,
+      "mem_available_mb": 7733,
+      "profile": "balanced",
+      "tag": "LFM2.5-2.6B"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 10,
+      "tps_mean": 7.62,
+      "tps_sd": 0.07,
+      "mem_available_mb": 4455,
+      "profile": "balanced",
+      "tag": "qwen2.5-coder:7B"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "num_thread": 10,
+      "tps_mean": 19.48,
+      "tps_sd": 0.14,
+      "mem_available_mb": 7518,
+      "profile": "performance",
+      "tag": "LFM2.5-2.6B"
+    },
+    {
+      "model": "bench-qwen25c7b-t8",
+      "num_thread": 10,
+      "tps_mean": 7.47,
+      "tps_sd": 0.11,
+      "mem_available_mb": 4242,
+      "profile": "performance",
+      "tag": "qwen2.5-coder:7B"
+    }
+  ],
+  "_meta": {
+    "date": "2026-10-14",
+    "threads": [
+      6,
+      8,
+      10,
+      12
+    ],
+    "prompt_tokens_estimate": 784
+  }
+}

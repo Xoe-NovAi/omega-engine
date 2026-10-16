@@ -1,0 +1,77 @@
+gen pid=2952  emb pid=10463
+
+==================================================================
+A: LLM ALONE (embedder idle @12-15)
+==================================================================
+gen   aff: 0-11
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 20.46 t/s  load=0.0s
+{
+  "label": "A: LLM ALONE (embedder idle @12-15)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "12-15",
+  "embed_mask_requested": "12-15",
+  "warmup": {
+    "tokens": 96,
+    "wall_s": 4.776,
+    "eval_tps": 20.46,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.07
+  },
+  "runs": [
+    {
+      "tokens": 96,
+      "wall_s": 4.87,
+      "eval_tps": 20.01,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.066
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.93,
+      "eval_tps": 19.82,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.078
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.908,
+      "eval_tps": 19.87,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.07
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.91,
+      "eval_tps": 19.85,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.067
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.904,
+      "eval_tps": 19.89,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.069
+    }
+  ],
+  "eval_tps_mean": 19.89,
+  "eval_tps_min": 19.82,
+  "eval_tps_max": 20.01,
+  "eval_tps_stdev": 0.07,
+  "embed_calls": 0,
+  "embed_err": 0,
+  "embed_dims_observed": null,
+  "embed_latency_ms_mean": null,
+  "embed_latency_ms_min": null
+}
+
+==================================================================
+B: LLM + EMBED ON E-CORES (12-15)
+==================================================================
+gen   aff: 0-11
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 20.1 t/s  load=0.0s
+FATAL: B: LLM + EMBED ON E-CORES (12-15): embedder returned 1-d, expected 1024.

@@ -1,0 +1,18 @@
+power profile: performance
+
+=== PHASE3 LFM2.5-2.6B context sweep at t=10  memavail 9697 MB
+  ctx=2048   20.29 t/s  sd 0.02  ttft 0.07s
+  ctx=4096   20.24 t/s  sd 0.03  ttft 0.069s
+  ctx=8192   20.10 t/s  sd 0.04  ttft 0.07s
+
+=== PHASE3 phi4-mini 3.8B context sweep at t=10  memavail 7964 MB
+  ctx=2048   13.67 t/s  sd 0.15  ttft 0.073s
+  ctx=4096   13.82 t/s  sd 0.04  ttft 0.074s
+  ctx=8192   13.74 t/s  sd 0.03  ttft 0.074s
+
+=== PHASE3 qwen2.5-coder:7B context sweep at t=10  memavail 6768 MB
+  ctx=2048    7.89 t/s  sd 0.03  ttft 0.129s
+  ctx=4096    7.86 t/s  sd 0.03  ttft 0.13s
+  ctx=8192    7.89 t/s  sd 0.03  ttft 0.13s
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/tune_results.json

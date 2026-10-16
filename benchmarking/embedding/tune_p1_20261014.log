@@ -1,0 +1,42 @@
+power profile: performance
+
+=== PHASE1 LFM2.5-2.6B (isolated)  memavail 7711 MB
+  t=4    19.65 t/s  sd 0.09  wall 3.33s
+  t=5    20.46 t/s  sd 0.14  wall 3.2s
+  t=6    20.60 t/s  sd 0.03  wall 3.17s
+  t=8    20.49 t/s  sd 0.03  wall 3.19s
+  t=10   20.95 t/s  sd 0.01  wall 3.12s
+  t=12   20.89 t/s  sd 0.37  wall 3.13s
+
+=== PHASE1 phi4-mini 3.8B (isolated)  memavail 7483 MB
+  t=4    13.52 t/s  sd 0.15  wall 4.82s
+  t=5    13.67 t/s  sd 0.07  wall 4.76s
+  t=6    14.10 t/s  sd 0.03  wall 4.62s
+  t=8    13.95 t/s  sd 0.03  wall 4.67s
+  t=10   14.24 t/s  sd 0.03  wall 4.58s
+  t=12   14.21 t/s  sd 0.06  wall 4.59s
+
+=== PHASE1 qwen2.5-coder:7B (isolated)  memavail 6241 MB
+  t=4     7.59 t/s  sd 0.03  wall 8.57s
+  t=5     7.75 t/s  sd 0.05  wall 8.4s
+  t=6     8.03 t/s  sd 0.03  wall 8.1s
+  t=8     7.93 t/s  sd 0.04  wall 8.21s
+  t=10    8.09 t/s  sd 0.03  wall 8.05s
+  t=12    8.05 t/s  sd 0.06  wall 8.09s
+
+PHASE1 BEST: {
+  "bench-tlfm25-t6-latest-8": {
+    "num_thread": 10,
+    "tps": 20.95
+  },
+  "bench-phi4mini-t8": {
+    "num_thread": 10,
+    "tps": 14.24
+  },
+  "bench-qwen25c7b-t8": {
+    "num_thread": 10,
+    "tps": 8.09
+  }
+}
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/tune_results.json

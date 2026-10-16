@@ -1,0 +1,25 @@
+power profile: performance
+
+==================================================================
+EMBEDDER THREADS = 1
+==================================================================
+
+[restore] restarting production embedder: 4 threads @ 12-15
+Traceback (most recent call last):
+  File "/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs.py", line 183, in main
+    pid = start_embedder(threads)
+  File "/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs.py", line 88, in start_embedder
+    raise RuntimeError(f"embedder failed to start at {threads} threads")
+RuntimeError: embedder failed to start at 1 threads
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs.py", line 215, in <module>
+    main()
+    ~~~~^^
+  File "/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs.py", line 204, in main
+    p = start_embedder(4)
+  File "/home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs.py", line 88, in start_embedder
+    raise RuntimeError(f"embedder failed to start at {threads} threads")
+RuntimeError: embedder failed to start at 4 threads

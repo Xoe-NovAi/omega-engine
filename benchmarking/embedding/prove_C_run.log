@@ -1,0 +1,28 @@
+[16:02:28] PROPER C ARM — birth-mask placement, proven from /proc
+[16:02:28] ===== ARM E: embedder BORN under 12-15 =====
+[16:02:36]   pid=43896, main-thread read-back: 12-15
+[16:02:43]   sample 1: embed threads on [12, 13, 14, 15] (17 threads)
+[16:02:45]   sample 2: embed threads on [12, 13, 14, 15] (18 threads)
+[16:02:47]   sample 3: embed threads on [12, 13, 14, 15] (19 threads)
+[16:02:49]   sample 4: embed threads on [12, 13, 14, 15] (18 threads)
+[16:02:51]   sample 5: embed threads on [12, 13, 14, 15] (18 threads)
+[16:02:53]   sample 6: embed threads on [12, 13, 14, 15] (17 threads)
+[16:03:22]   LLM decode under load: [15.77, 15.78, 15.8, 16.88, 20.9] t/s
+[16:03:22]   hammer: 1096 ok / 0 err, mean 36.5 ms, dims=1024
+[16:03:22]   UNION: [12, 13, 14, 15]
+[16:03:22] ===== ARM C: embedder BORN under 0-11 =====
+[16:03:30]   pid=44226, main-thread read-back: 12-15
+[16:03:37]   sample 1: embed threads on [1, 2, 6, 11, 12, 13, 14, 15] (17 threads)
+[16:03:39]   sample 2: embed threads on [1, 2, 6, 11, 12, 13, 14, 15] (18 threads)
+[16:03:41]   sample 3: embed threads on [1, 2, 4, 6, 8, 12, 13, 14, 15] (18 threads)
+[16:03:43]   sample 4: embed threads on [1, 2, 4, 6, 12, 13, 14, 15] (17 threads)
+[16:03:45]   sample 5: embed threads on [1, 2, 4, 6, 12, 13, 14, 15] (17 threads)
+[16:03:47]   sample 6: embed threads on [1, 2, 4, 6, 12, 13, 14, 15] (17 threads)
+[16:04:16]   LLM decode under load: [15.83, 15.83, 15.77, 16.86, 20.74] t/s
+[16:04:16]   hammer: 1090 ok / 0 err, mean 36.7 ms, dims=1024
+[16:04:16]   UNION: [1, 2, 4, 6, 8, 11, 12, 13, 14, 15]
+[16:04:24] restored production embedder pid=44556 born under 12-15
+[16:04:24] 
+[16:04:24] PASS CRITERIA + RESULTS:
+[16:04:24]   ARM E: need union ⊆ E-cores, none on 0-11 | got [12, 13, 14, 15] -> PASS (LLM 17.03 t/s)
+[16:04:24]   ARM C: need union ⊆ P-cores (>=8 distinct), none on 12+ | got [1, 2, 4, 6, 8, 11, 12, 13, 14, 15] -> FAIL (LLM 17.01 t/s)

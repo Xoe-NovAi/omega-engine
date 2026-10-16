@@ -1,0 +1,156 @@
+{
+  "1": [
+    {
+      "duty": 0.0,
+      "tps_mean": 20.33,
+      "tps_min": 20.15,
+      "tps_sd": 0.14,
+      "embed_calls": 0,
+      "embed_err": 0,
+      "embed_lat_ms": null,
+      "embed_duty_actual_pct": 0.0,
+      "delta_pct": 0.0
+    },
+    {
+      "duty": 1.0,
+      "tps_mean": 15.83,
+      "tps_min": 15.76,
+      "tps_sd": 0.05,
+      "delta_pct": -22.1,
+      "embed_calls": 775,
+      "embed_err": 0,
+      "embed_lat_ms": 54.05,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 8000
+    },
+    {
+      "duty": 0.5,
+      "tps_mean": 18.18,
+      "tps_min": 17.9,
+      "tps_sd": 0.22,
+      "delta_pct": -10.6,
+      "embed_calls": 338,
+      "embed_err": 0,
+      "embed_lat_ms": 55.06,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 7764
+    },
+    {
+      "duty": 0.25,
+      "tps_mean": 19.08,
+      "tps_min": 18.99,
+      "tps_sd": 0.07,
+      "delta_pct": -6.1,
+      "embed_calls": 167,
+      "embed_err": 0,
+      "embed_lat_ms": 53.47,
+      "embed_duty_actual_pct": 99.7,
+      "mem_available_mb": 7771
+    }
+  ],
+  "2": [
+    {
+      "duty": 0.0,
+      "tps_mean": 20.51,
+      "tps_min": 20.37,
+      "tps_sd": 0.12,
+      "embed_calls": 0,
+      "embed_err": 0,
+      "embed_lat_ms": null,
+      "embed_duty_actual_pct": 0.0,
+      "delta_pct": 0.0
+    },
+    {
+      "duty": 1.0,
+      "tps_mean": 15.81,
+      "tps_min": 15.65,
+      "tps_sd": 0.12,
+      "delta_pct": -22.9,
+      "embed_calls": 799,
+      "embed_err": 0,
+      "embed_lat_ms": 52.62,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 7747
+    },
+    {
+      "duty": 0.5,
+      "tps_mean": 17.75,
+      "tps_min": 17.67,
+      "tps_sd": 0.05,
+      "delta_pct": -13.5,
+      "embed_calls": 336,
+      "embed_err": 0,
+      "embed_lat_ms": 56.34,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 7750
+    },
+    {
+      "duty": 0.25,
+      "tps_mean": 19.34,
+      "tps_min": 18.99,
+      "tps_sd": 0.17,
+      "delta_pct": -5.7,
+      "embed_calls": 165,
+      "embed_err": 0,
+      "embed_lat_ms": 53.75,
+      "embed_duty_actual_pct": 99.7,
+      "mem_available_mb": 7742
+    }
+  ],
+  "4": [
+    {
+      "duty": 0.0,
+      "tps_mean": 20.45,
+      "tps_min": 19.97,
+      "tps_sd": 0.3,
+      "embed_calls": 0,
+      "embed_err": 0,
+      "embed_lat_ms": null,
+      "embed_duty_actual_pct": 0.0,
+      "delta_pct": 0.0
+    },
+    {
+      "duty": 1.0,
+      "tps_mean": 15.73,
+      "tps_min": 15.56,
+      "tps_sd": 0.16,
+      "delta_pct": -23.1,
+      "embed_calls": 784,
+      "embed_err": 0,
+      "embed_lat_ms": 53.8,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 7710
+    },
+    {
+      "duty": 0.5,
+      "tps_mean": 17.85,
+      "tps_min": 17.79,
+      "tps_sd": 0.05,
+      "delta_pct": -12.7,
+      "embed_calls": 360,
+      "embed_err": 0,
+      "embed_lat_ms": 52.33,
+      "embed_duty_actual_pct": 99.9,
+      "mem_available_mb": 7716
+    },
+    {
+      "duty": 0.25,
+      "tps_mean": 18.81,
+      "tps_min": 18.7,
+      "tps_sd": 0.07,
+      "delta_pct": -8.0,
+      "embed_calls": 157,
+      "embed_err": 0,
+      "embed_lat_ms": 57.35,
+      "embed_duty_actual_pct": 99.7,
+      "mem_available_mb": 7718
+    }
+  ],
+  "_meta": {
+    "profile": "performance",
+    "generator": "LFM2.5-2.6B Q4_K_M t8",
+    "runs": 5,
+    "tokens": 96,
+    "date": "2026-10-14"
+  }
+}

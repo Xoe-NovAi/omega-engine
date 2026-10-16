@@ -1,0 +1,30 @@
+power profile at sweep start: performance
+
+######################################################################
+# phi4-mini 3.8B Q4_K_M t8
+######################################################################
+  [settle] phi4-mini 3.8B Q4_K_M t8: MemAvailable 6062 MB OK
+  arm                                    t/s    delta  MemAvail
+  A: LLM ALONE (embedder idle @12-15   14.17     0.0%  6053 MB
+  B: LLM + EMBED ON E-CORES (12-15)    12.47   -12.0%  6052 MB
+  C: LLM + EMBED ON P-CORES (0-11)     12.47   -12.0%  5976 MB
+
+######################################################################
+# qwen2.5-coder:7B Q4_K_M t8
+######################################################################
+  [settle] qwen2.5-coder:7B Q4_K_M t8: MemAvailable 5816 MB OK
+  arm                                    t/s    delta  MemAvail
+  A: LLM ALONE (embedder idle @12-15    8.22     0.0%  5814 MB
+  B: LLM + EMBED ON E-CORES (12-15)     7.18   -12.7%  4696 MB
+  C: LLM + EMBED ON P-CORES (0-11)      7.08   -13.9%  4681 MB
+
+######################################################################
+# LFM2.5-2.6B Q4_K_M t8
+######################################################################
+  [settle] LFM2.5-2.6B Q4_K_M t8: MemAvailable 4421 MB OK
+  arm                                    t/s    delta  MemAvail
+  A: LLM ALONE (embedder idle @12-15   20.97     0.0%  4421 MB
+  B: LLM + EMBED ON E-CORES (12-15)    18.27   -12.9%  7555 MB
+  C: LLM + EMBED ON P-CORES (0-11)     18.24   -13.0%  7550 MB
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/sweep_summary_20261014.json   (profile performance)

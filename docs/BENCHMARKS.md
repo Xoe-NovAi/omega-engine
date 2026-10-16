@@ -418,3 +418,442 @@ and generation to P-cores** (`AllowedCPUs=0-11` fixed by systemd). The fix:
 — a *margin*, not a tax, against the unisolated collapse (−78%). Under `performance`
 governor (§F) the hammer's own power draw made Krikri loaded dip 6.6→5.8 t/s, so
 the E-core design should be left on `powersave` on the E-cores.
+---
+
+## 2026-10-14 — Embedding placement at NATIVE 1024-d (supersedes the 768-d numbers)
+
+Harness: `benchmarking/embedding/emb_bench_onnx.py` · results:
+`benchmarking/embedding/emb_bench_onnx_results.json` · log:
+`run_onnx_v3_20261014.log`. Host: i7-13620H (6P+4E/16T, `avx2`+`avx_vnni`, **no
+AVX-512 / no FP8**), 16GB single-channel DDR5-5200, CPU-only. Generator: Ollama
+`:11434` pinned `0-11`, tag `bench-tlfm25-t6-latest-8` (**num_thread 8**). Embedder:
+`scripts/embedding_server.py` (ONNX INT8, 613.5MB) on `:8090`, `TRUNCATE_DIM=1024`,
+`num_thread 4`, `allow_spinning=0`, retargetable at runtime because it runs as `xnai`.
+n=5 × 96 tokens, temp 0, warm model. Affinity **asserted per arm**, not assumed.
+
+> **Thread-count caveat:** the measured peak for this model family is **t=6**
+> (21.2 t/s, 2026-10-07). These rows are **t=8** at the operator's request. Do not
+> compare them to the t=6 rows above without stating the tag.
+
+### Headline: LLM decode under embedding load
+
+| Arm | Embedder placement | LLM decode (mean) | Δ vs alone | sd | Embed calls | Embed latency (under load) |
+|-----|--------------------|-------------------|-----------|----|-------------|----------------------------|
+| **A** | idle @12-15 | **20.47 t/s** | — | 0.02 | 0 | — |
+| **B** | **E-cores `12-15`** | **18.37 t/s** | **−10.3%** | 0.07 | 272 | 69.61 ms |
+| **C** | **P-cores `0-11`** | **17.86 t/s** | **−12.8%** | 0.23 | 296 | 62.49 ms |
+
+**E-core isolation is worth +2.9%** (18.37 vs 17.86). Real and reproducible
+(sd ≤0.23 across n=5), but **small**.
+
+### Isolated embed latency (no LLM running, n=30, post-warm)
+
+| Mask | Mean | Min | p50 |
+|---|---|---|---|
+| E-cores `12-15` | **38.39 ms** | 36.81 | 38.37 |
+| P-cores `0-11` | **30.32 ms** | 28.71 | 29.99 |
+
+1024-d verified at runtime: `dimensions: 1024`, `truncate_dim: 1024`, L2 norm 1.0.
+
+### ⚠️ Two corrections to prior documentation
+
+1. **The 89.24 ms E-core figure does not reproduce.** Measured **38.39 ms** at
+   1024-d — 2.3× better. The 2026-09-24 table
+   (`docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md` §4.1) was Matryoshka
+   **768-d** with unspecified input length, so it is not like-for-like. The
+   E-core *penalty* also shrinks: 1.27× here (38.39 vs 30.32) vs the 2.24×
+   (89.24 vs 39.87) that report claims. **Use 38 ms; do not quote 89 ms as current.**
+2. **The "−78% collapse" did not reproduce in this configuration.** P-core
+   contention cost **−12.8%**, not −78%. The documented −78% (§D above) describes a
+   *specific misconfiguration*: the **primary** Ollama auto-loading
+   `qwen3-embedding` with ~10 runner threads squatting `0-11`. Here the embedder is a
+   separate 4-thread process with spinning disabled. **The architectural lesson
+   (isolate, don't share) holds — but −78% is not the general cost of co-locating
+   embeddings. Do not quote it as the headline.**
+
+### Harness reliability notes (two silent-failure modes, both now fixed)
+
+- **EPERM affinity no-op.** The Ollama processes run as user `ollama`; `taskset`
+  returns `EPERM` and the harness cannot retarget them. v1 discarded this via
+  `capture_output=True` and produced a **fake P-core arm** (mask read back `12-15`
+  while labelled `0-11`). `emb_bench.py` / `emb_bench_results.json` are retained
+  **only** as the record of that failure — its arm C is invalid.
+- **Schema 422.** `EmbedRequest.inputs` is `List[str]`, response key is
+  `embeddings`. v1 sent `{"input": ...}` → all 572 hammer calls 422'd and both
+  load arms again measured *zero* load. Also note `embeddings` is
+  `List[List[float]]`: the dimension is `len(v[0])`, not `len(v)`.
+- `emb_bench_onnx.py` now **asserts** the affinity it actually got, **refuses to
+  record** an arm with zero successful embed calls, and **checks** the returned
+  vector length is 1024.
+
+### Model-precision note (this host)
+
+`/proc/cpuinfo` = `avx2 avx_vnni` only — **no AVX-512, no FP8**. `onnx-community/
+Qwen3-Embedding-0.6B-ONNX` publishes **no FP8 variant** (fp32, fp16, int8, uint8,
+q4, q4f16, bnb4, quantized). An FP8 export would be dequantized at load and run
+**slower** than the INT8+VNNI path. Also: `model_fp16.onnx` (0.6MB) is an
+**external-data split** graph and is unusable without `model_fp16.onnx_data`
+(1199.9MB); INT8 is self-contained. `model_q4f16.onnx` (567.5MB) is the only
+published variant *smaller* than INT8.
+
+---
+
+## 2026-10-14 — Controlled sweep: 3 generators × 3 placements (SUPERSEDES the single-model 1024-d table)
+
+Harness: `benchmarking/embedding/sweep.py` (driver) +
+`benchmarking/embedding/emb_bench_onnx.py` (arms). Summary:
+`benchmarking/embedding/sweep_summary_20261014.json`. Logs `sweep_*.log`.
+
+**Conditions pinned for the whole sweep** (this is what the earlier single-model
+run got wrong):
+- Power profile **`performance`** for every arm (asserted at start; the driver
+  warns and still runs if not).
+- **Every resident model unloaded between generators**, waiting for
+  `MemAvailable ≥ 3000 MB`. MemAvailable is recorded per arm.
+- Generator tags carry an **explicit `num_thread 8`** — necessary because
+  `/etc/systemd/system/ollama.service.d/override.conf` does **not** set
+  `OLLAMA_NUM_THREADS` (see caveat below), so unpinned models inherit Ollama's
+  default and the arms stop being comparable.
+- n=5 × 96 tokens, temp 0, warm model. Embedder = ONNX INT8 1024-d on `:8090`,
+  4 threads, spinning disabled.
+
+### Results
+
+| Generator | A: alone | B: embed on E `12-15` | C: embed on P `0-11` | ΔB | ΔC | **B vs C** |
+|---|---|---|---|---|---|---|
+| **phi4-mini** 3.8B Q4_K_M | 14.17 (sd 0.13) | 12.47 (sd 0.13) | 12.47 (sd 0.15) | −12.0% | −12.0% | **0.0%** |
+| **qwen2.5-coder:7B** Q4_K_M | 8.22 (sd 0.02) | 7.18 (sd 0.10) | 7.08 (sd 0.09) | −12.7% | −13.9% | **+1.4%** |
+| **LFM2.5-2.6B** Q4_K_M | 20.97 (sd 0.20) | 18.27 (sd 0.25) | 18.24 (sd 0.32) | −12.9% | −13.0% | **+0.2%** |
+
+Embed latency under concurrent LLM load (mean, n≈270–440 calls/arm):
+
+| Generator | on E `12-15` | on P `0-11` | E-core penalty |
+|---|---|---|---|
+| phi4-mini | 69.73 ms | **58.45 ms** | +19.3% |
+| qwen2.5-coder:7B | 66.97 ms | **59.15 ms** | +13.2% |
+| LFM2.5-2.6B | 64.58 ms | **55.56 ms** | +16.2% |
+
+### ⚠️ Finding: E-core isolation buys no measurable LLM throughput
+
+The load tax is a consistent **−12% to −13% regardless of model size** — the
+cost is bandwidth-driven and roughly model-independent. But **placing the
+embedder on E-cores instead of P-cores recovers 0.0% / +1.4% / +0.2%**, i.e.
+**at or below the ~1 sd run-to-run noise**, while **costing 13–19% on embed
+latency**. On this host the isolation argument in
+`docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md` §4.3 and
+`docs/BENCHMARKS.md` §D is **not supported by measurement** when the embedder
+is a separate 4-thread process with spinning disabled.
+
+What *is* supported: a **separate low-thread-count embedder** is much better
+than the documented −78% failure (primary Ollama auto-loading the embedder with
+~10 runner threads onto `0-11`). The mitigation is process separation and thread
+count, **not** core placement.
+
+### Two configuration defects found
+
+- **`OLLAMA_NUM_THREADS` is not in the override.** `override.conf` sets
+  `AllowedCPUs=0-11`, `MAX_LOADED_MODELS=1`, `KV_CACHE_TYPE=q8_0`,
+  `CONTEXT_LENGTH=8192`, `FLASH_ATTENTION=1`, `NUM_PARALLEL=1` — but **no
+  `OLLAMA_NUM_THREADS`**, contradicting `docs/HARDWARE.md`. Unpinned models
+  therefore run at Ollama's default, not the documented 8.
+- **`WEBUI_SECRET_KEY` is stored in plaintext** in that same override file.
+
+### Discarded runs (do not cite)
+
+- **phi4-mini run #1** — zRAM-thrashed by the preceding 7B run. Arms at 7.40 t/s
+  against a clean 13.4–14.4 baseline, and arm C reported **+65.3%**, i.e.
+  embedding load appearing to *speed up* the LLM. Physically impossible →
+  invalid.
+- **7B run under `balanced`** — arms B/C collapsed to ~3.6–3.8 t/s at
+  `MemAvailable` ≈ 3 GB. The apparent "−50.8% / −54.0% tax" was **swap/memory
+  thrash, not core contention**. Under clean `performance` conditions the same
+  model shows **−12.7% / −13.9%**.
+- **phi4-mini run #2** — power profile switched `balanced → performance` mid-run,
+  so arm A straddled the switch. B-vs-C (+4.6%) was valid; all deltas were not.
+- The single-model LFM 1024-d table earlier in this file is a **`balanced`**
+  run and is not comparable to these `performance` rows.
+
+### ONNX model-precision health (this host)
+
+`/proc/cpuinfo` = `avx2 avx_vnni` — **no AVX-512, no FP8**. The
+`onnx-community/Qwen3-Embedding-0.6B-ONNX` repo publishes **no FP8 variant**.
+
+| Variant | Size | Downloaded | Loads in ORT | Drivable by `embedding_server.py` |
+|---|---|---|---|---|
+| `model_int8.onnx` | 613,527,539 | ✅ byte-exact | ✅ 1.5 s | ✅ **HEALTHY** — dim 1024, L2 1.0000, finite |
+| `model_fp16.onnx` + `.onnx_data` | 583,522 + 1,199,927,296 | ✅ byte-exact | ✅ 2.0 s | ❌ dtype mismatch |
+| `model_q4f16.onnx` | 567,458,583 | ✅ byte-exact | ✅ | ❌ dtype mismatch |
+
+The fp16/q4f16 failures are **not** corruption: their graphs declare
+`tensor(float16)` activations while `scripts/embedding_server.py` feeds fp32.
+`ONNX_MODEL_NAME` is hardcoded to `model_int8.onnx` (line 60), so the server was
+never wired for them. Driving them needs dtype-aware feeding. Given no native
+fp16 compute on this CPU, INT8+VNNI remains the correct choice regardless.
+
+Dedicated isolated embed latency (nothing else loaded, n=30): **38.39 ms** on
+E-cores, **30.32 ms** on P-cores.
+
+---
+
+## 2026-10-14 — What actually drives the embedding tax: thread count vs duty cycle
+
+Harness: `benchmarking/embedding/embed_knobs.py` · results:
+`benchmarking/embedding/embed_knobs_results.json` · log `knobs_v2_20261014.log`.
+`performance` profile, `MemAvailable` ≥ 9.5 GB in every cell. Generator fixed at
+`bench-tlfm25-t6-latest-8` (num_thread 8). Embedder restarted per row, pinned
+E-cores `12-15` (placement shown irrelevant). n=5 × 96 tokens.
+
+| Embedder threads | baseline | 100% duty (~790 calls) | 50% duty (~350 calls) | 25% duty (~162 calls) |
+|---|---|---|---|---|
+| **1** | 20.33 t/s | 15.83 (**−22.1%**) | 18.18 (**−10.6%**) | 19.08 (**−6.1%**) |
+| **2** | 20.51 t/s | 15.81 (**−22.9%**) | 17.75 (**−13.5%**) | 19.34 (**−5.7%**) |
+| **4** | 20.45 t/s | 15.73 (**−23.1%**) | 17.85 (**−12.7%**) | 18.81 (**−8.0%**) |
+
+### Conclusions
+
+1. **Embedder thread count does essentially nothing.** At saturation the tax is
+   −22.1% / −22.9% / −23.1% for 1 / 2 / 4 threads — a 1.0 pp spread against
+   baseline sd of 0.12–0.30 t/s. The obvious tuning knob is a dead end.
+2. **Call rate is the whole story.** The tax scales with embed call rate:
+   ~790 calls → −22 to −23%, ~350 → −11 to −13.5%, ~162 → −5.7 to −8.0%.
+3. **This reconciles the earlier sweep.** The 1024-d sweep above reported
+   −12.9% at "4 threads, continuous". Its hammer slept 50 ms *between* calls,
+   i.e. ~55 ms work + 50 ms sleep ≈ **~50% duty** — not saturation. The −12.9%
+   matches this table's 50%-duty row (−12.7% at 4 threads) almost exactly, which
+   cross-validates both harnesses. **True saturated tax is ~−23%, not ~−13%.**
+4. **Practical recommendation: rate-limit embeddings, don't shrink them.**
+   Dropping to ~160 calls/window costs only −6% LLM throughput while still
+   serving several embeddings per second — ample for a memory-palace write
+   path. Combined with §sweep above: placement and thread count are both
+   irrelevant; **duty cycle is the only lever that moves the number.**
+
+> ⚠️ Ignore the `embed_duty_actual_pct` field in the JSON — its denominator omits
+> the hammer ramp and warm-up generation, so it reports ~100% for every row. Use
+> `embed_calls` and `embed_lat_ms` to derive real duty.
+
+### Harness bug worth recording
+
+`embed_knobs.py` v1 called `POST /health`, but the endpoint is **GET**, so
+`start_embedder` timed out and raised `RuntimeError` while the server was healthy
+— and the `finally` restore *also* reported failure even though it had actually
+succeeded. Read `/health` with GET.
+
+---
+
+## 2026-10-14 — ⭐ DEFINITIVE: what actually makes this box tick
+
+Harnesses `benchmarking/embedding/tune.py` (phases 1–3) and `tune_p5.py`
+(phases A–C). All cells: `performance` profile asserted, resident models unloaded
+between blocks with `MemAvailable ≥ 3000 MB`, warm-up discarded, `num_thread` /
+`num_ctx` overridden per request. n=4–5 × 64–96 tokens.
+
+### 1. Generator thread curve — "t=6 peak" does NOT reproduce
+
+Isolated, decode t/s:
+
+| Generator | t=4 | t=5 | t=6 | t=8 | t=10 | t=12 |
+|---|---|---|---|---|---|---|
+| LFM2.5-2.6B | 19.65 | 20.46 | 20.60 | 20.49 | **20.95** | 20.89 |
+| phi4-mini 3.8B | 13.52 | 13.67 | 14.10 | 13.95 | **14.24** | 14.21 |
+| qwen2.5-coder:7B | 7.59 | 7.75 | 8.03 | 7.93 | **8.09** | 8.05 |
+
+It is a **broad plateau from t=5 to t=12**, best at **t=10** on all three
+(+1.7% / +0.7% / +0.7% over t=6). The 2026-10-07 claim that decode *falls* beyond
+t=6 does not reproduce under this methodology; the old `t=6` tags leave ~1–2% on
+the table. Adopt **`num_thread 10`**.
+
+### 2. ⭐ Prefill (cache-defeated) — the finding that changes model choice
+
+Every sweep above measures *decode*. Real agent turns are prefill-dominated.
+**Every prefill request carried a unique nonce** — the first attempt reused an
+identical prompt and Ollama's prefix cache served it, yielding a fictional
+~13,000 tok/s. Real numbers, 1017-token prompt:
+
+| Generator | t=6 | t=8 | t=10 | t=12 | Tokens | Time |
+|---|---|---|---|---|---|---|
+| **LFM2.5-2.6B** | 88.6 | 87.0 | 85.8 | **90.4** tok/s | 1017 | **11.3–11.8 s** |
+| **qwen2.5-coder:7B** | 1371 | 1425 | 1399 | **1598 tok/s** | 1019 | **0.64–0.75 s** |
+
+**The 7B prefills ~16× faster than the 2.6B LFM** despite being 2.6× *slower* at
+decode. LFM's `lfm2` architecture has pathological prefill. Prefill is also
+essentially **flat in `num_thread`** for LFM (85.8–90.4 across t=6–12), so extra
+threads cannot rescue it.
+
+**Model choice for agentic use:** `qwen2.5-coder:7B` for long system prompts /
+history (0.7 s vs 11.5 s per ~1000-token prefill). LFM only wins on pure decode
+throughput with short prompts.
+
+### 3. Embedding interaction — more generator threads absorb the load
+
+LFM tax at 25% embed duty: **−7.8% (t=4) → −4.7% (t=12)**. The two knobs
+interact; higher `num_thread` gives headroom for the embedder.
+
+### 4. Power profile has NO effect on decode (order-balanced A/B)
+
+Interleaved perf/bal × 3 (drift cancels), `num_thread 10`:
+
+| | performance | balanced |
+|---|---|---|
+| LFM2.5-2.6B | 19.79 / 19.77 / 19.90 → **19.82** | 19.98 / 19.89 / 20.03 → **19.97** |
+| qwen2.5-coder:7B | 7.76 / 7.65 / 7.80 → **7.74** | 7.72 / 7.81 / 7.88 → **7.80** |
+
+Difference ≈ ±0.8%, with balanced marginally *higher*. The earlier
+sequential-block reading of "balanced ~10% slower" was **entirely run-order
+drift** — sequential blocks are invalid for A/B; interleave them. **`balanced` is
+a fine default and thermally preferable.**
+
+### 5. No thermal throttling
+
+90 s sustained decode, sampling `x86_pkg_temp`:
+
+| Model | first | last | peak temp |
+|---|---|---|---|
+| LFM2.5-2.6B | 20.96 t/s @ 73 °C | 20.93 t/s @ 76 °C | 81 °C |
+| qwen2.5-coder:7B | 8.10 t/s @ 76 °C | 8.10 t/s @ 78 °C | 88 °C |
+
+Throughput flat, peak 88 °C vs Tj max 100 °C. The residual drift seen elsewhere is
+**not** thermal and remains unexplained (suspect page-cache/memory layout).
+
+### 6. Context length is irrelevant to throughput
+
+2048 / 4096 / 8192 → LFM 20.29/20.24/20.10, phi4 13.67/13.82/13.74,
+7B 7.89/7.86/7.89. ≤0.9% spread. It is a **memory** knob only.
+
+### ⭐ Recommended configuration (Node 1, 16 GB single-channel, CPU-only)
+
+| Setting | Value | Evidence |
+|---|---|---|
+| `num_thread` (generator) | **10** | §1 — best on all 3 models |
+| `num_thread` (prefill-heavy) | **12** for 7B | §2 — 1598 tok/s |
+| `num_ctx` | 4096–8192 | §6 — no throughput cost, memory only |
+| KV cache | `q8_0` | ~0.5 GB freed, no regression (2026-09-08) |
+| `MAX_LOADED_MODELS` | 1 | verified; MAX=2 thrashes |
+| `AllowedCPUs` | `0-11` | **never** `0,2,4,6,8,10` (−96% convoy) |
+| Embedder threads | 4 (any value works) | knobs test — no effect |
+| Embedder placement | irrelevant | 0.0% / +1.4% / +0.2% |
+| **Embedder duty cycle** | **≤25%** | **the only lever: −23% → −5%** |
+| Power profile | `balanced` (or `performance`) | §4 — no difference |
+| **MemAvailable floor** | **≥ 3000 MB** | the single biggest real risk |
+
+**The binding constraint is memory, not compute.** Every invalid run this week
+traced to `MemAvailable` dropping toward 3 GB. Dual-channel RAM remains the only
+change that would materially move these numbers.
+
+---
+
+## 2026-10-16 — ⭐ CORRECTION: placement DOES matter — the sweep's C arm never placed anything
+
+Harnesses: `benchmarking/embedding/prove_placement.py`,
+`prove_C_proper.py`, `prove_final.py` (+ `embed_server_nopin.py`, a test copy
+with the import-time self-pin neutralized; production file untouched). Logs
+`prove_placement.log`, `prove_C_proper.log` (`prove_C_run.log`),
+`prove_final.log` (`prove_final_run3.log`).
+
+### What was wrong
+
+The 2026-10-14 sweep reported E-core isolation recovering only
+0.0% / +1.4% / +0.2% — "placement irrelevant". **That conclusion is VOID.**
+Three stacked methodology failures, found in order:
+
+1. **The retarget never took.** The Ollama embedder runs as user `ollama`;
+   `taskset` returned EPERM, swallowed by `capture_output=True`. The "P-core"
+   arm measured the E-core configuration twice.
+2. **`taskset -p <tgid>` moves only the main thread.** `sched_setaffinity` on a
+   thread-group id affects the single thread with that TID. The ONNX intra-op
+   pool, born under 12-15, kept its birth masks. Read-backs (`taskset -pc`)
+   show only the main thread, so the "verification" was blind to this.
+3. **The embedder defeats birth masks itself.** `scripts/embedding_server.py`
+   calls `configure_cpu_affinity()` at import, re-pinning main to 12-15 no
+   matter what mask it was born under. (Read on day one, then forgotten when
+   designing the fix.)
+
+Per-thread `Cpus_allowed_list` (`/proc/<pid>/task/<tid>/status`) plus
+per-thread `last_executed_cpu` sampling is the minimum proof. Mask read-back
+alone proves nothing.
+
+### Proven-placement result (L1 mask + L2 allowed + L3 executed, all PASS)
+
+Test copy, self-pin neutralized, continuous hammer, LFM `num_thread 8`:
+
+| Arm | L2: every thread allowed | L3: executed union | LLM t/s | Embeds | Embed lat |
+|---|---|---|---|---|---|
+| **E** (born 12-15) | {12,13,14,15}, 0 off-mask | {12,13,14,15} | **16.60** | 1075 | 43.1 ms |
+| **C** (born 0-11) | {0..11}, 0 off-mask | {0..11} all 12 CPUs | **14.18** | 1727 | 29.8 ms |
+
+**Sharing P-cores costs an additional −14.6% versus E-core isolation**
+(14.18 vs 16.60), with placement proven at all three levels. The operator's
+skepticism is vindicated in substance: the C arm as originally run never
+existed, so "0–3%" measured an artifact, not physics.
+
+### Entanglement caveat (read before quoting −14.6%)
+
+The hammer is latency-driven (no pacing), and P-cores serve embeds faster
+(29.8 vs 43.1 ms), so the C arm completed **1727 embeds vs 1075** — 60% more
+load. Placement and rate effects are entangled in this design; the knobs test
+already showed tax scales with call rate. A rate-matched rerun (paced hammer,
+equal embeds/window in both arms) is needed for the pure placement number.
+Direction is unambiguous; magnitude is not yet isolated.
+
+### What survives from the 2026-10-14 work
+
+- **E-arm numbers stand** (proven clean: born 12-15, union exactly {12..15}).
+- **Duty-cycle finding stands** (measured within single-placement designs).
+- **Embedder thread-count irrelevance stands** (same design).
+- **Generator thread curve, prefill gap, power-profile null, thermal null,
+  context null** — all measured on the generator side, unaffected.
+- **B-vs-C "placement irrelevant" is retracted in full**, as is the
+  "§4.3 verdict not supported" banner added to the research report on 2026-10-14
+  (corrected below).
+
+---
+
+## 2026-10-16 — Rate-matched placement: the −14.6% dissolves (mostly rate artifact)
+
+Harness `benchmarking/embedding/rate_match.py` · results
+`rate_match_results.json` · log `rate_match_run.log`. Test copy (self-pin
+neutralized), birth masks, **L2 verified zero off-mask threads on all 16
+starts**, L3 spot-checked per cell, paced hammer at identical rates, order
+interleaved E/C within each rate, `performance`, settled memory.
+
+LLM decode t/s (LFM t=10, phi4 t=10, n=5 × 96 tok):
+
+| Model | rate | E (proven 12-15) | C (proven 0-11) | gap | embed counts |
+|---|---|---|---|---|---|
+| LFM | idle | 20.90 | 20.77 | −0.6% | 0 / 0 |
+| LFM | 8/s | 18.76 (353) | 18.68 (356) | **−0.4%** | matched |
+| LFM | 16/s | 17.17 (703) | 16.46 (761) | −4.1% | +8% in C |
+| LFM | sat | 17.22 (931) | 16.66 (1122) | −3.3% | +20% in C |
+| phi4 | idle | 13.74 | 14.27 | **+3.9%** | 0 / 0 |
+| phi4 | 8/s | 12.73 (432) | 12.72 (433) | **−0.1%** | matched |
+| phi4 | 16/s | 11.77 (819) | 11.47 (871) | −2.5% | +6% in C |
+| phi4 | sat | 11.72 (1069) | 11.54 (1278) | −1.5% | +20% in C |
+
+### Reading
+
+1. **At perfectly matched embed volumes (@8/s cells: 353/356 and 432/433),
+   the placement gap is −0.4% and −0.1%: zero.** The −14.6% from the
+   proven-placement run was ~entirely a rate artifact (1727 vs 1075 embeds)
+   under a latency-driven hammer — P-cores serve each embed faster, so an
+   unpaced hammer does more of them, and the extra load (not the placement)
+   did most of the damage.
+2. **The idle cells measure the noise floor, not placement.** With ZERO embed
+   load, E vs C reads −0.6% and **+3.9%**. Nothing differs between those cells
+   except a full process restart between them — so **cross-restart drift is
+   ~±4%**, and any loaded gap inside ±4% is indistinguishable from it.
+3. **Best estimate of pure placement effect at equal load: ~0%, bounded above
+   by ~2–3%.** The physically coherent story: one shared single-channel bus
+   (~35 GB/s) is the bottleneck, and bus contention is identical whichever
+   cores do the embedding math. Core choice moves *embed latency* (P-cores
+   10–30% faster per call, consistently) but not LLM throughput.
+4. **Status of every prior claim:**
+   - Sweep "0–3%, placement irrelevant": right magnitude, **void method**
+     (C arm never placed). Re-established here on solid method.
+   - prove_final "−14.6%": **retracted as a placement number** — rate artifact.
+     Kept as proof that unpaced hammer comparisons lie.
+   - Duty-cycle finding (−23% sat → −5% at 25%): stands, and is now the
+     *entire* story. Rate is the only lever; placement is not one.
+5. **Harness bug fixed at source:** `run_cell` derived `arm` as
+   `label.split()[0]`, which yields the model tag — every summary matched
+   nothing and printed empty tables while the JSON held all 16 cells. Arm is
+   now parsed from the `arm-<E|C>` suffix; the shipped JSON had its arm field
+   repaired by loop order (verified 8 cells/model).

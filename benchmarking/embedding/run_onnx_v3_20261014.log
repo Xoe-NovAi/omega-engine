@@ -1,0 +1,206 @@
+gen pid=2952  emb pid=10463
+
+==================================================================
+A: LLM ALONE (embedder idle @12-15)
+==================================================================
+gen   aff: 0-11
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 19.67 t/s  load=0.0s
+{
+  "label": "A: LLM ALONE (embedder idle @12-15)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "12-15",
+  "embed_mask_requested": "12-15",
+  "warmup": {
+    "tokens": 96,
+    "wall_s": 4.97,
+    "eval_tps": 19.67,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.072
+  },
+  "runs": [
+    {
+      "tokens": 96,
+      "wall_s": 4.765,
+      "eval_tps": 20.49,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.071
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.756,
+      "eval_tps": 20.49,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.065
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.765,
+      "eval_tps": 20.46,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.066
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.765,
+      "eval_tps": 20.47,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.067
+    },
+    {
+      "tokens": 96,
+      "wall_s": 4.772,
+      "eval_tps": 20.43,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.066
+    }
+  ],
+  "eval_tps_mean": 20.47,
+  "eval_tps_min": 20.43,
+  "eval_tps_max": 20.49,
+  "eval_tps_stdev": 0.02,
+  "embed_calls": 0,
+  "embed_err": 0,
+  "embed_dims_observed": null,
+  "embed_latency_ms_mean": null,
+  "embed_latency_ms_min": null
+}
+
+==================================================================
+B: LLM + EMBED ON E-CORES (12-15)
+==================================================================
+gen   aff: 0-11
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 20.65 t/s  load=0.0s
+{
+  "label": "B: LLM + EMBED ON E-CORES (12-15)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "12-15",
+  "embed_mask_requested": "12-15",
+  "warmup": {
+    "tokens": 96,
+    "wall_s": 4.724,
+    "eval_tps": 20.65,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.067
+  },
+  "runs": [
+    {
+      "tokens": 96,
+      "wall_s": 5.283,
+      "eval_tps": 18.47,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.081
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.293,
+      "eval_tps": 18.42,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.073
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.303,
+      "eval_tps": 18.37,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.068
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.323,
+      "eval_tps": 18.31,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.07
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.332,
+      "eval_tps": 18.27,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.07
+    }
+  ],
+  "eval_tps_mean": 18.37,
+  "eval_tps_min": 18.27,
+  "eval_tps_max": 18.47,
+  "eval_tps_stdev": 0.07,
+  "embed_calls": 272,
+  "embed_err": 0,
+  "embed_dims_observed": 1024,
+  "embed_latency_ms_mean": 69.61,
+  "embed_latency_ms_min": 35.65
+}
+
+==================================================================
+C: LLM + EMBED ON P-CORES (0-11)
+==================================================================
+gen   aff: 0-11
+  [affinity OK] embedder -> 0-11
+embed aff: 0-11
+warm-up   : 20.43 t/s  load=0.0s
+{
+  "label": "C: LLM + EMBED ON P-CORES (0-11)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "0-11",
+  "embed_mask_requested": "0-11",
+  "warmup": {
+    "tokens": 96,
+    "wall_s": 4.774,
+    "eval_tps": 20.43,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.068
+  },
+  "runs": [
+    {
+      "tokens": 96,
+      "wall_s": 5.488,
+      "eval_tps": 17.77,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.08
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.499,
+      "eval_tps": 17.74,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.079
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.495,
+      "eval_tps": 17.73,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.075
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.496,
+      "eval_tps": 17.74,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.077
+    },
+    {
+      "tokens": 96,
+      "wall_s": 5.319,
+      "eval_tps": 18.31,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.069
+    }
+  ],
+  "eval_tps_mean": 17.86,
+  "eval_tps_min": 17.73,
+  "eval_tps_max": 18.31,
+  "eval_tps_stdev": 0.23,
+  "embed_calls": 296,
+  "embed_err": 0,
+  "embed_dims_observed": 1024,
+  "embed_latency_ms_mean": 62.49,
+  "embed_latency_ms_min": 28.61
+}
+  [affinity OK] embedder -> 12-15
+[restored embedder affinity to 12-15]
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/emb_bench_onnx_results.json

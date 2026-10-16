@@ -1,0 +1,36 @@
+
+=== A PREFILL (cache-defeated) LFM2.5-2.6B  memavail 4267 MB
+  t=6       88.6 tok/s  sd    0.6  1017 tok in 11.479s
+  t=8       87.0 tok/s  sd    1.2  1017 tok in 11.687s
+  t=10      85.8 tok/s  sd    0.4  1017 tok in 11.848s
+  t=12      90.4 tok/s  sd    0.3  1017 tok in 11.25s
+
+=== A PREFILL (cache-defeated) qwen2.5-coder:7B  memavail 6630 MB
+  t=6     1371.0 tok/s  sd   70.6  1019 tok in 0.745s
+  t=8     1425.3 tok/s  sd   60.2  1019 tok in 0.716s
+  t=10    1398.9 tok/s  sd   98.1  1019 tok in 0.732s
+  t=12    1597.7 tok/s  sd  132.4  1019 tok in 0.642s
+
+=== B INTERLEAVED power A/B (order-balanced)
+  performance  LFM2.5-2.6B         19.79 t/s sd 0.04  mem 6820 MB
+  performance  qwen2.5-coder:7B     7.76 t/s sd 0.02  mem 3786 MB
+  balanced     LFM2.5-2.6B         19.98 t/s sd 0.03  mem 6823 MB
+  balanced     qwen2.5-coder:7B     7.72 t/s sd 0.04  mem 3778 MB
+  performance  LFM2.5-2.6B         19.77 t/s sd 0.03  mem 6784 MB
+  performance  qwen2.5-coder:7B     7.65 t/s sd 0.07  mem 3762 MB
+  balanced     LFM2.5-2.6B         19.89 t/s sd 0.06  mem 7244 MB
+  balanced     qwen2.5-coder:7B     7.81 t/s sd 0.01  mem 4481 MB
+  performance  LFM2.5-2.6B         19.90 t/s sd 0.03  mem 7501 MB
+  performance  qwen2.5-coder:7B     7.80 t/s sd 0.04  mem 4503 MB
+  balanced     LFM2.5-2.6B         20.03 t/s sd 0.04  mem 7505 MB
+  balanced     qwen2.5-coder:7B     7.88 t/s sd 0.00  mem 4512 MB
+  performance  LFM2.5-2.6B         19.94 t/s sd 0.28  mem 7236 MB
+  performance  qwen2.5-coder:7B     8.10 t/s sd 0.27  mem 4458 MB
+
+=== C SUSTAINED + THERMAL  memavail 4447 MB
+  sustained: first 20.96 t/s @ 73.0C, last 20.93 t/s @ 76.0C, peak 81.0C
+  sustained: first 8.1 t/s @ 76.0C, last 8.1 t/s @ 78.0C, peak 88.0C
+
+[restore] power profile = performance
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/tune_p5_results.json
+[finally] power profile = performance

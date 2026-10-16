@@ -116,6 +116,35 @@ To determine if running the ONNX model on E-cores degrades active LLM generation
 - Ollama generation while ONNX server continuously pounded E-cores (`12-15`): **11.76 t/s** (Maintains 84% throughput during 100% saturation)
 - Ollama generation while ONNX server pounded P-cores (`0-11`): **11.46 t/s**
 
+> ### ⚠️ SUPERSEDED IN PART — 2026-10-14 re-measurement
+>
+> The §4.1 latencies below are **Matryoshka 768-d** with unspecified input length.
+> Re-measured at **native 1024-d** (`docs/BENCHMARKS.md`, 2026-10-14):
+>
+> | Mask | This report (768-d) | 2026-10-14 (1024-d, isolated, n=30) |
+> |---|---|---|
+> | E-cores `12-15` | 89.24 ms | **38.39 ms** |
+> | P-cores `0-11` | 39.87 ms (4 thr) | **30.32 ms** |
+> | E-core penalty | 2.24× | **1.27×** |
+>
+> **Do not quote 89 ms as current.** The §4.2 concurrency conclusion still holds
+> directionally (E-core isolation ≥ P-core sharing), but the measured spread is far
+> smaller: **−10.3% isolated vs −12.8% shared**, i.e. **+2.9%** attributable to
+> isolation — *not* the −78% figure in `docs/BENCHMARKS.md` §D, which describes the
+> primary-Ollama-embedder misconfiguration rather than co-location in general.
+>
+> **⚠️ CORRECTION 2026-10-16: the "not supported" claim above is itself
+> retracted.** It rested on a sweep whose P-core arm never placed anything
+> (`taskset` EPERM on the `ollama`-owned process; then main-thread-only
+> retargeting; then the embedder's own import-time self-pin — see
+> `docs/BENCHMARKS.md` 2026-10-16 entry). With placement proven at mask,
+> per-thread-allowed, and executed levels, sharing P-cores costs an additional
+> **−14.6%** versus E-core isolation (LLM 14.18 vs 16.60 t/s, LFM t=8,
+> proven unions {0..11} vs {12..15}). **§4.3's verdict stands**: isolate
+> embeddings to E-cores. Rate-vs-placement entanglement caveat applies (C arm
+> served 60% more embeds under a latency-driven hammer); a rate-matched rerun
+> is still wanted for the pure number.
+
 ### 4.3 Engineering Verdict
 **Isolating ONNX embeddings to E-cores (`12-15`) is the optimal configuration.**
 - An 89ms embedding latency is negligible in interactive agent loops (human perception threshold is ~100ms; agent turn latency is ~2–5s).

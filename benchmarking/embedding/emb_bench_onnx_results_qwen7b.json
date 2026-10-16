@@ -1,0 +1,191 @@
+[
+  {
+    "gen_model": "bench-qwen25c7b-t8",
+    "gen_label": "qwen2.5-coder:7B Q4_K_M t8",
+    "label": "A: LLM ALONE (embedder idle @12-15)",
+    "gen_affinity": "0-11",
+    "emb_affinity": "12-15",
+    "embed_mask_requested": "12-15",
+    "mem_available_mb": 5814,
+    "zram_used_mb": null,
+    "warmup": {
+      "tokens": 64,
+      "wall_s": 15.211,
+      "eval_tps": 8.17,
+      "load_s": 6.13,
+      "prompt_eval_s": 1.24
+    },
+    "runs": [
+      {
+        "tokens": 64,
+        "wall_s": 7.913,
+        "eval_tps": 8.23,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.127
+      },
+      {
+        "tokens": 64,
+        "wall_s": 7.896,
+        "eval_tps": 8.24,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.125
+      },
+      {
+        "tokens": 64,
+        "wall_s": 7.897,
+        "eval_tps": 8.24,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.123
+      },
+      {
+        "tokens": 64,
+        "wall_s": 7.918,
+        "eval_tps": 8.22,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.122
+      },
+      {
+        "tokens": 64,
+        "wall_s": 7.956,
+        "eval_tps": 8.18,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.123
+      }
+    ],
+    "eval_tps_mean": 8.22,
+    "eval_tps_min": 8.18,
+    "eval_tps_max": 8.24,
+    "eval_tps_stdev": 0.02,
+    "embed_calls": 0,
+    "embed_err": 0,
+    "embed_dims_observed": null,
+    "embed_latency_ms_mean": null,
+    "embed_latency_ms_min": null
+  },
+  {
+    "gen_model": "bench-qwen25c7b-t8",
+    "gen_label": "qwen2.5-coder:7B Q4_K_M t8",
+    "label": "B: LLM + EMBED ON E-CORES (12-15)",
+    "gen_affinity": "0-11",
+    "emb_affinity": "12-15",
+    "embed_mask_requested": "12-15",
+    "mem_available_mb": 4696,
+    "zram_used_mb": null,
+    "warmup": {
+      "tokens": 64,
+      "wall_s": 7.969,
+      "eval_tps": 8.17,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.124
+    },
+    "runs": [
+      {
+        "tokens": 64,
+        "wall_s": 9.169,
+        "eval_tps": 7.09,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.139
+      },
+      {
+        "tokens": 64,
+        "wall_s": 9.259,
+        "eval_tps": 7.03,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.146
+      },
+      {
+        "tokens": 64,
+        "wall_s": 8.913,
+        "eval_tps": 7.3,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.135
+      },
+      {
+        "tokens": 64,
+        "wall_s": 8.991,
+        "eval_tps": 7.24,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.14
+      },
+      {
+        "tokens": 64,
+        "wall_s": 8.991,
+        "eval_tps": 7.24,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.141
+      }
+    ],
+    "eval_tps_mean": 7.18,
+    "eval_tps_min": 7.03,
+    "eval_tps_max": 7.3,
+    "eval_tps_stdev": 0.1,
+    "embed_calls": 439,
+    "embed_err": 0,
+    "embed_dims_observed": 1024,
+    "embed_latency_ms_mean": 66.97,
+    "embed_latency_ms_min": 33.59
+  },
+  {
+    "gen_model": "bench-qwen25c7b-t8",
+    "gen_label": "qwen2.5-coder:7B Q4_K_M t8",
+    "label": "C: LLM + EMBED ON P-CORES (0-11)",
+    "gen_affinity": "0-11",
+    "emb_affinity": "0-11",
+    "embed_mask_requested": "0-11",
+    "mem_available_mb": 4681,
+    "zram_used_mb": null,
+    "warmup": {
+      "tokens": 64,
+      "wall_s": 7.951,
+      "eval_tps": 8.18,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.123
+    },
+    "runs": [
+      {
+        "tokens": 64,
+        "wall_s": 9.237,
+        "eval_tps": 7.04,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.138
+      },
+      {
+        "tokens": 64,
+        "wall_s": 9.328,
+        "eval_tps": 6.97,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.143
+      },
+      {
+        "tokens": 64,
+        "wall_s": 9.286,
+        "eval_tps": 7.01,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.146
+      },
+      {
+        "tokens": 64,
+        "wall_s": 9.042,
+        "eval_tps": 7.2,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.144
+      },
+      {
+        "tokens": 64,
+        "wall_s": 9.061,
+        "eval_tps": 7.18,
+        "load_s": 0.0,
+        "prompt_eval_s": 0.138
+      }
+    ],
+    "eval_tps_mean": 7.08,
+    "eval_tps_min": 6.97,
+    "eval_tps_max": 7.2,
+    "eval_tps_stdev": 0.09,
+    "embed_calls": 476,
+    "embed_err": 0,
+    "embed_dims_observed": 1024,
+    "embed_latency_ms_mean": 59.15,
+    "embed_latency_ms_min": 24.58
+  }
+]

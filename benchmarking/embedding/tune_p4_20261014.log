@@ -1,0 +1,28 @@
+profile now: performance
+
+=== A PREFILL LFM2.5-2.6B  memavail 5115 MB
+  t=6   12688.0 tok/s  sd 453.8  1005 tok in 0.079s
+  t=8   13361.6 tok/s  sd 175.6  1005 tok in 0.075s
+  t=10  13505.8 tok/s  sd 212.8  1005 tok in 0.075s
+  t=12  14312.1 tok/s  sd 186.8  1005 tok in 0.07s
+
+=== A PREFILL qwen2.5-coder:7B  memavail 8159 MB
+  t=6    6978.3 tok/s  sd 55.2  996 tok in 0.143s
+  t=8    6983.9 tok/s  sd 9.3  996 tok in 0.143s
+  t=10   7265.8 tok/s  sd 57.9  996 tok in 0.137s
+  t=12   6872.7 tok/s  sd 426.5  996 tok in 0.145s
+
+=== B POWER profile=performance  memavail 5027 MB
+  LFM2.5-2.6B         20.15 t/s  sd 0.07
+  qwen2.5-coder:7B     7.89 t/s  sd 0.02
+
+=== B POWER profile=balanced  memavail 5494 MB
+  LFM2.5-2.6B         18.18 t/s  sd 1.66
+  qwen2.5-coder:7B     7.62 t/s  sd 0.07
+
+=== B POWER profile=performance  memavail 4471 MB
+  LFM2.5-2.6B         19.48 t/s  sd 0.14
+  qwen2.5-coder:7B     7.47 t/s  sd 0.11
+
+[restore] power profile = performance
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/tune_p4_results.json

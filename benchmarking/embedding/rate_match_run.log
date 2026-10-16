@@ -1,0 +1,43 @@
+[17:36:14] ##### LFM2.5-2.6B (num_thread 10) #####
+[17:36:29]   settled, MemAvailable 7468 MB
+[17:36:37]   ARM E pid=76675: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:37:16]   [LFM2.5-2.6B arm-E @ 0] LLM 20.9 t/s (sd 0.01) | embeds 0 (~0/s) @ None ms | L3 [12, 13, 14, 15] | mem 7471 MB
+[17:37:24]   ARM C pid=77201: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:38:00]   [LFM2.5-2.6B arm-C @ 0] LLM 20.77 t/s (sd 0.24) | embeds 0 (~0/s) @ None ms | L3 [0, 2, 4, 6, 8, 10] | mem 7468 MB
+[17:38:08]   ARM E pid=77657: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:38:53]   [LFM2.5-2.6B arm-E @ 8] LLM 18.76 t/s (sd 0.03) | embeds 353 (~17/s) @ 57.8 ms | L3 [12, 13, 14, 15] | mem 7485 MB
+[17:39:01]   ARM C pid=78236: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:39:46]   [LFM2.5-2.6B arm-C @ 8] LLM 18.68 t/s (sd 0.01) | embeds 356 (~19/s) @ 52.3 ms | L3 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] | mem 7475 MB
+[17:39:54]   ARM E pid=78809: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:40:41]   [LFM2.5-2.6B arm-E @ 16] LLM 17.17 t/s (sd 0.03) | embeds 703 (~18/s) @ 57.0 ms | L3 [12, 13, 14, 15] | mem 7466 MB
+[17:40:49]   ARM C pid=79480: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:41:38]   [LFM2.5-2.6B arm-C @ 16] LLM 16.46 t/s (sd 0.25) | embeds 761 (~19/s) @ 52.1 ms | L3 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] | mem 7238 MB
+[17:41:46]   ARM E pid=80097: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:42:33]   [LFM2.5-2.6B arm-E @ sat] LLM 17.22 t/s (sd 0.06) | embeds 931 (~20/s) @ 50.5 ms | L3 [12, 13, 14, 15] | mem 7456 MB
+[17:42:41]   ARM C pid=80677: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:43:29]   [LFM2.5-2.6B arm-C @ sat] LLM 16.66 t/s (sd 0.33) | embeds 1122 (~23/s) @ 42.9 ms | L3 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] | mem 7483 MB
+[17:43:29] ##### phi4-mini 3.8B (num_thread 10) #####
+[17:43:44]   settled, MemAvailable 7471 MB
+[17:43:52]   ARM E pid=81433: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:44:42]   [phi4-mini 3.8B arm-E @ 0] LLM 13.74 t/s (sd 0.01) | embeds 0 (~0/s) @ None ms | L3 [12, 13, 14, 15] | mem 6239 MB
+[17:44:50]   ARM C pid=82058: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:45:35]   [phi4-mini 3.8B arm-C @ 0] LLM 14.27 t/s (sd 0.02) | embeds 0 (~0/s) @ None ms | L3 [0, 1, 2, 4, 6, 8, 10] | mem 6223 MB
+[17:45:43]   ARM E pid=82600: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:46:37]   [phi4-mini 3.8B arm-E @ 8] LLM 12.73 t/s (sd 0.14) | embeds 432 (~16/s) @ 64.1 ms | L3 [12, 13, 14, 15] | mem 6010 MB
+[17:46:45]   ARM C pid=83303: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:47:39]   [phi4-mini 3.8B arm-C @ 8] LLM 12.72 t/s (sd 0.01) | embeds 433 (~18/s) @ 56.9 ms | L3 [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11] | mem 6007 MB
+[17:47:47]   ARM E pid=83968: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:48:45]   [phi4-mini 3.8B arm-E @ 16] LLM 11.77 t/s (sd 0.02) | embeds 819 (~16/s) @ 61.7 ms | L3 [12, 13, 14, 15] | mem 5998 MB
+[17:48:53]   ARM C pid=84720: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:49:52]   [phi4-mini 3.8B arm-C @ 16] LLM 11.47 t/s (sd 0.06) | embeds 871 (~17/s) @ 57.4 ms | L3 [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11] | mem 5987 MB
+[17:50:00]   ARM E pid=85418: 13 threads, L2 union=[12, 13, 14, 15], off-mask=0
+[17:50:58]   [phi4-mini 3.8B arm-E @ sat] LLM 11.72 t/s (sd 0.01) | embeds 1069 (~19/s) @ 53.9 ms | L3 [12, 13, 14, 15] | mem 5983 MB
+[17:51:06]   ARM C pid=86114: 13 threads, L2 union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], off-mask=0
+[17:52:04]   [phi4-mini 3.8B arm-C @ sat] LLM 11.54 t/s (sd 0.15) | embeds 1278 (~22/s) @ 45.8 ms | L3 [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11] | mem 5729 MB
+[17:52:12] restored PRODUCTION embedder pid=86836 (original script, born 12-15)
+[17:52:12] 
+===== RATE-MATCHED SUMMARY (LLM t/s) =====
+[17:52:12] --- LFM2.5-2.6B ---
+[17:52:12] --- phi4-mini 3.8B ---
+[17:52:12] 
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/rate_match_results.json

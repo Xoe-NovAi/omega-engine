@@ -1,0 +1,222 @@
+gen model : bench-phi4mini-t8
+gen pid=2952  emb pid=10463
+
+==================================================================
+A: LLM ALONE (embedder idle @12-15)
+==================================================================
+gen   aff: 0-11
+mem       : MemAvailable 5715 MB, zRAM used None MB
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 14.13 t/s  load=0.0s
+{
+  "gen_model": "bench-phi4mini-t8",
+  "gen_label": "phi4-mini Q4_K_M t8",
+  "label": "A: LLM ALONE (embedder idle @12-15)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "12-15",
+  "embed_mask_requested": "12-15",
+  "mem_available_mb": 5715,
+  "zram_used_mb": null,
+  "warmup": {
+    "tokens": 86,
+    "wall_s": 6.194,
+    "eval_tps": 14.13,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.091
+  },
+  "runs": [
+    {
+      "tokens": 86,
+      "wall_s": 6.288,
+      "eval_tps": 13.85,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.071
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.333,
+      "eval_tps": 13.75,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.071
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.34,
+      "eval_tps": 13.74,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.073
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.339,
+      "eval_tps": 13.75,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.073
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.346,
+      "eval_tps": 13.73,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.073
+    }
+  ],
+  "eval_tps_mean": 13.76,
+  "eval_tps_min": 13.73,
+  "eval_tps_max": 13.85,
+  "eval_tps_stdev": 0.04,
+  "embed_calls": 0,
+  "embed_err": 0,
+  "embed_dims_observed": null,
+  "embed_latency_ms_mean": null,
+  "embed_latency_ms_min": null
+}
+
+==================================================================
+B: LLM + EMBED ON E-CORES (12-15)
+==================================================================
+gen   aff: 0-11
+mem       : MemAvailable 5849 MB, zRAM used None MB
+  [affinity OK] embedder -> 12-15
+embed aff: 12-15
+warm-up   : 14.04 t/s  load=0.0s
+{
+  "gen_model": "bench-phi4mini-t8",
+  "gen_label": "phi4-mini Q4_K_M t8",
+  "label": "B: LLM + EMBED ON E-CORES (12-15)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "12-15",
+  "embed_mask_requested": "12-15",
+  "mem_available_mb": 5849,
+  "zram_used_mb": null,
+  "warmup": {
+    "tokens": 86,
+    "wall_s": 6.207,
+    "eval_tps": 14.04,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.073
+  },
+  "runs": [
+    {
+      "tokens": 86,
+      "wall_s": 6.85,
+      "eval_tps": 12.71,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.075
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.861,
+      "eval_tps": 12.7,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.079
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.893,
+      "eval_tps": 12.64,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.079
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.911,
+      "eval_tps": 12.6,
+      "load_s": 0.01,
+      "prompt_eval_s": 0.076
+    },
+    {
+      "tokens": 86,
+      "wall_s": 6.974,
+      "eval_tps": 12.5,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.086
+    }
+  ],
+  "eval_tps_mean": 12.63,
+  "eval_tps_min": 12.5,
+  "eval_tps_max": 12.71,
+  "eval_tps_stdev": 0.08,
+  "embed_calls": 345,
+  "embed_err": 0,
+  "embed_dims_observed": 1024,
+  "embed_latency_ms_mean": 67.29,
+  "embed_latency_ms_min": 33.2
+}
+
+==================================================================
+C: LLM + EMBED ON P-CORES (0-11)
+==================================================================
+gen   aff: 0-11
+mem       : MemAvailable 5844 MB, zRAM used None MB
+  [affinity OK] embedder -> 0-11
+embed aff: 0-11
+warm-up   : 13.62 t/s  load=0.0s
+{
+  "gen_model": "bench-phi4mini-t8",
+  "gen_label": "phi4-mini Q4_K_M t8",
+  "label": "C: LLM + EMBED ON P-CORES (0-11)",
+  "gen_affinity": "0-11",
+  "emb_affinity": "0-11",
+  "embed_mask_requested": "0-11",
+  "mem_available_mb": 5844,
+  "zram_used_mb": null,
+  "warmup": {
+    "tokens": 86,
+    "wall_s": 6.395,
+    "eval_tps": 13.62,
+    "load_s": 0.0,
+    "prompt_eval_s": 0.073
+  },
+  "runs": [
+    {
+      "tokens": 86,
+      "wall_s": 7.181,
+      "eval_tps": 12.12,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.079
+    },
+    {
+      "tokens": 86,
+      "wall_s": 7.207,
+      "eval_tps": 12.1,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.088
+    },
+    {
+      "tokens": 86,
+      "wall_s": 7.271,
+      "eval_tps": 11.97,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.079
+    },
+    {
+      "tokens": 86,
+      "wall_s": 7.274,
+      "eval_tps": 11.98,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.086
+    },
+    {
+      "tokens": 86,
+      "wall_s": 7.141,
+      "eval_tps": 12.21,
+      "load_s": 0.0,
+      "prompt_eval_s": 0.088
+    }
+  ],
+  "eval_tps_mean": 12.08,
+  "eval_tps_min": 11.97,
+  "eval_tps_max": 12.21,
+  "eval_tps_stdev": 0.09,
+  "embed_calls": 384,
+  "embed_err": 0,
+  "embed_dims_observed": 1024,
+  "embed_latency_ms_mean": 59.64,
+  "embed_latency_ms_min": 24.48
+}
+  [affinity OK] embedder -> 12-15
+[restored embedder affinity to 12-15]
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/emb_bench_onnx_results_phi4.json

@@ -1,0 +1,42 @@
+power profile: performance
+
+=== PHASE2 LFM2.5-2.6B (embed duty 25%)  memavail 5090 MB
+  t=4    18.11 t/s  sd 0.12  embeds 152 @ 40.31 ms
+  t=5    19.06 t/s  sd 0.11  embeds 134 @ 43.2 ms
+  t=6    19.20 t/s  sd 0.06  embeds 125 @ 46.13 ms
+  t=8    19.13 t/s  sd 0.03  embeds 116 @ 49.79 ms
+  t=10   19.89 t/s  sd 0.05  embeds 112 @ 50.27 ms
+  t=12   19.91 t/s  sd 0.06  embeds 96 @ 58.72 ms
+
+=== PHASE2 phi4-mini 3.8B (embed duty 25%)  memavail 7863 MB
+  t=4    12.45 t/s  sd 0.11  embeds 197 @ 42.41 ms
+  t=5    12.98 t/s  sd 0.02  embeds 175 @ 46.42 ms
+  t=6    13.09 t/s  sd 0.06  embeds 160 @ 50.3 ms
+  t=8    13.00 t/s  sd 0.05  embeds 143 @ 56.38 ms
+  t=10   13.52 t/s  sd 0.03  embeds 147 @ 53.65 ms
+  t=12   13.52 t/s  sd 0.05  embeds 124 @ 63.63 ms
+
+=== PHASE2 qwen2.5-coder:7B (embed duty 25%)  memavail 6852 MB
+  t=4     7.10 t/s  sd 0.03  embeds 332 @ 42.77 ms
+  t=5     7.33 t/s  sd 0.08  embeds 290 @ 47.57 ms
+  t=6     7.53 t/s  sd 0.04  embeds 262 @ 51.46 ms
+  t=8     8.02 t/s  sd 0.00  embeds 264 @ 48.48 ms
+  t=10    8.07 t/s  sd 0.01  embeds 255 @ 49.58 ms
+  t=12    8.12 t/s  sd 0.02  embeds 236 @ 53.38 ms
+
+PHASE2 BEST: {
+  "bench-tlfm25-t6-latest-8": {
+    "num_thread": 12,
+    "tps": 19.91
+  },
+  "bench-phi4mini-t8": {
+    "num_thread": 10,
+    "tps": 13.52
+  },
+  "bench-qwen25c7b-t8": {
+    "num_thread": 12,
+    "tps": 8.12
+  }
+}
+
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/tune_results.json

@@ -110,7 +110,17 @@ Pinning `AllowedCPUs=0,2,4,6,8,10` + `OLLAMA_NUM_THREADS=6` caused a **catastrop
 
 ### ⚡ E-Core Embedding Offload (Hardware Coexistence)
 - **Standalone ONNX Server**: `scripts/embedding_server.py` runs INT8 Qwen3-Embedding-0.6B (**native 1024-d** since 2026-10-02 per P5.1b; the Matryoshka 768-d truncation this report originally used is superseded) on the **4 Gracemont E-cores ONLY (logical CPUs 12-15)** with 4 intra-op threads and spin-wait disabled (`allow_spinning=0`).
-- **Benchmarked latency**: **89.24 ms** per query embedding on E-cores; zero contention with P-cores.
+- **Benchmarked latency (2026-10-14 re-measurement, native 1024-d)**: **38.39 ms** isolated on E-cores (n=30), 30.32 ms on P-cores. The older 89.24 ms figure was Matryoshka 768-d with unspecified input length — do not quote it.
+- **What the 2026-10-14/16 campaign established** (`docs/BENCHMARKS.md`):
+  core placement moves LLM throughput ~0% at matched load; embedder thread
+  count (1/2/4) is irrelevant; **embed duty cycle is the only lever**
+  (−23% saturated → −5% at 25% duty). Enforce via `EMBED_MAX_RPS` (see below).
+- **Placement-verification caveats (measured, do not regress):**
+  `taskset -p <tgid>` moves only the main thread and its read-back shows only
+  that thread; the server re-pins itself to E-cores at import
+  (`configure_cpu_affinity`), defeating birth masks. Prove placement per-thread
+  via `/proc/<pid>/task/<tid>/status` (`Cpus_allowed_list`) + `last_executed_cpu`
+  sampling. Harness: `benchmarking/embedding/rate_match.py`.
 - **Service Unit**: `scripts/omega-embedding-server.service` (`~/.config/systemd/user/omega-embedding-server.service`).
 - **Full Architecture Report**: See `docs/research/RAPTOR_LAKE_HARDWARE_RESEARCH_REPORT.md`.
 
@@ -135,9 +145,16 @@ Pinning `AllowedCPUs=0,2,4,6,8,10` + `OLLAMA_NUM_THREADS=6` caused a **catastrop
 Measured 2026-09-08 (warm 3-prompt, phi4-mini): **13.4 t/s** with KV q8_0 + flash-attn (baseline 13.3 t/s at f16 KV) — no throughput regression, ~0.5GB RAM freed.
 
 ### Advanced Ollama tuning (research-backed)
+> ⚠️ 2026-10-16: `/etc/systemd/system/ollama.service.d/override.conf` does
+> **not** set `OLLAMA_NUM_THREADS` (verified on disk), contradicting the
+> "Current" column below. Unpinned models inherit Ollama's default, not 8.
+> Benchmark tags therefore pin it explicitly (`PARAMETER num_thread 10` —
+> 2026-10-14 sweep: t=10 best on all three models, plateau t=5–12; the old
+> t=6 rule does not reproduce). Fix the override or keep pinning per tag.
+
 | Parameter | Current | Research Optimal | Notes |
 |-----------|---------|------------------|-------|
-| `OLLAMA_NUM_THREADS` | 8 | 8 | P-core count + HT elasticity; sweep-verified peak |
+| `OLLAMA_NUM_THREADS` | 8 (override: **absent** — see note) | 10 | t=10 best on 2.6B/3.8B/7B (2026-10-14); plateau t=5–12 |
 | `OLLAMA_CONTEXT_LENGTH` | 8192 | 8192 | Caps 128k default; per-request `num_ctx` works |
 | `OLLAMA_KV_CACHE_TYPE` | q8_0 | q8_0 (now) → q4_k (future) | q8_0: ~50% KV RAM, near-lossless; q4_k: ~75%, <0.1 ppl Δ (awaits upstream) |
 | `OLLAMA_FLASH_ATTENTION` | 1 | 1 | Forces flash-attn on; avoids silent fallback |

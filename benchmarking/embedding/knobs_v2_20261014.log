@@ -1,0 +1,32 @@
+power profile: performance
+
+==================================================================
+EMBEDDER THREADS = 1
+==================================================================
+  embedder pid=59772 aff=pid 59772's current affinity list: 12-15
+  A idle (baseline)       20.33 t/s (sd 0.14)  memavail 9702 MB
+  duty 100%   15.83 t/s   -22.1%  embed  775 calls @ 54.05 ms  (actual duty 99.9%)
+  duty  50%   18.18 t/s   -10.6%  embed  338 calls @ 55.06 ms  (actual duty 99.9%)
+  duty  25%   19.08 t/s    -6.1%  embed  167 calls @ 53.47 ms  (actual duty 99.7%)
+
+==================================================================
+EMBEDDER THREADS = 2
+==================================================================
+  embedder pid=61180 aff=pid 61180's current affinity list: 12-15
+  A idle (baseline)       20.51 t/s (sd 0.12)  memavail 9502 MB
+  duty 100%   15.81 t/s   -22.9%  embed  799 calls @ 52.62 ms  (actual duty 99.9%)
+  duty  50%   17.75 t/s   -13.5%  embed  336 calls @ 56.34 ms  (actual duty 99.9%)
+  duty  25%   19.34 t/s    -5.7%  embed  165 calls @ 53.75 ms  (actual duty 99.7%)
+
+==================================================================
+EMBEDDER THREADS = 4
+==================================================================
+  embedder pid=62652 aff=pid 62652's current affinity list: 12-15
+  A idle (baseline)       20.45 t/s (sd 0.3)  memavail 9504 MB
+  duty 100%   15.73 t/s   -23.1%  embed  784 calls @ 53.8 ms  (actual duty 99.9%)
+  duty  50%   17.85 t/s   -12.7%  embed  360 calls @ 52.33 ms  (actual duty 99.9%)
+  duty  25%   18.81 t/s    -8.0%  embed  157 calls @ 57.35 ms  (actual duty 99.7%)
+
+[restore] restarting production embedder: 4 threads @ 12-15
+[restore] pid=64066 aff=pid 64066's current affinity list: 12-15
+wrote /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/embed_knobs_results.json

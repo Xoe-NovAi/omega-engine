@@ -1,0 +1,34 @@
+[15:58:34] PROVE PLACEMENT — mask vs execution, measured from /proc
+[15:58:34] onnx embedder (:8090) pid=41439, mask=12-15
+[15:58:34] generator (:11434)   pid=4318, mask=0-11 (READ-ONLY, never touched)
+[15:58:34] embedder health: {'status': 'healthy', 'model_loaded': True, 'dimensions': 1024, 'truncate_dim': 1024}
+[15:58:34] ===== ARM E: embedder mask -> 12-15 =====
+[15:58:34]   set_mask arm-E: asked '12-15', taskset rc=0, stderr='', read-back='12-15'
+[15:58:40]   sample 1: embed threads on CPUs [12, 13, 14, 15] (17 threads alive)
+[15:58:42]   sample 2: embed threads on CPUs [12, 13, 14, 15] (17 threads alive)
+[15:58:44]   sample 3: embed threads on CPUs [12, 13, 14, 15] (17 threads alive)
+[15:58:46]   sample 4: embed threads on CPUs [12, 13, 14, 15] (17 threads alive)
+[15:58:48]   sample 5: embed threads on CPUs [12, 13, 14, 15] (17 threads alive)
+[15:58:57]   LLM decode under load: 15.82 t/s
+[15:58:57]   generator threads on CPUs [1, 2, 3, 4, 6, 7, 8, 9, 10] (17 threads alive)
+[15:59:10]   hammer: 1254 ok / 0 err, mean 28.7 ms, dims=1024, last_err=None
+[15:59:10]   UNION over 5 samples: P-cores [] | E-cores [12, 13, 14, 15]
+[15:59:10] ===== ARM C: embedder mask -> 0-11 =====
+[15:59:10]   set_mask arm-C: asked '0-11', taskset rc=0, stderr='', read-back='0-11'
+[15:59:16]   sample 1: embed threads on CPUs [8, 12, 13, 14, 15] (17 threads alive)
+[15:59:18]   sample 2: embed threads on CPUs [4, 12, 13, 14, 15] (17 threads alive)
+[15:59:20]   sample 3: embed threads on CPUs [4, 12, 13, 14, 15] (17 threads alive)
+[15:59:22]   sample 4: embed threads on CPUs [9, 12, 13, 14, 15] (17 threads alive)
+[15:59:24]   sample 5: embed threads on CPUs [6, 12, 13, 14, 15] (17 threads alive)
+[15:59:31]   LLM decode under load: 15.31 t/s
+[15:59:31]   generator threads on CPUs [0, 1, 2, 3, 4, 7, 8, 9, 10, 11] (17 threads alive)
+[15:59:46]   hammer: 1548 ok / 0 err, mean 23.3 ms, dims=1024, last_err=None
+[15:59:46]   UNION over 5 samples: P-cores [4, 6, 8, 9] | E-cores [12, 13, 14, 15]
+[15:59:46]   set_mask restore: asked '12-15', taskset rc=0, stderr='', read-back='12-15'
+[15:59:46] restored embedder to 12-15
+[15:59:46] 
+[15:59:46] PASS CRITERIA + RESULTS (no interpretation needed):
+[15:59:46]   ARM E: expected P={} E={12..15} | got P=[] E=[12, 13, 14, 15] -> PASS
+[15:59:46]   ARM C: need >=8 distinct P-core CPUs and >=80% of union on P side | got P=[4, 6, 8, 9] E=[12, 13, 14, 15] (frac=0.50) -> FAIL
+[15:59:46]   LLM t/s: E-arm 15.82 vs C-arm 15.31
+[15:59:46]   full log: /home/xnai/Documents/Projects/omega-engine-alpha/benchmarking/embedding/prove_placement.log

@@ -1,0 +1,1113 @@
+{
+  "cells": [
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 0,
+      "tps_runs": [
+        20.89,
+        20.88,
+        20.9,
+        20.92,
+        20.91
+      ],
+      "tps_mean": 20.9,
+      "tps_sd": 0.01,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          14,
+          15
+        ],
+        [
+          12,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 0,
+      "embed_err": 0,
+      "embed_lat_mean": null,
+      "embed_lat_min": null,
+      "embed_dims": null,
+      "mem_available_mb": 7471,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 0,
+      "tps_runs": [
+        20.91,
+        20.9,
+        20.9,
+        20.87,
+        20.29
+      ],
+      "tps_mean": 20.77,
+      "tps_sd": 0.24,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          2,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          2,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          2,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "embeds": 0,
+      "embed_err": 0,
+      "embed_lat_mean": null,
+      "embed_lat_min": null,
+      "embed_dims": null,
+      "mem_available_mb": 7468,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 8,
+      "tps_runs": [
+        18.77,
+        18.69,
+        18.78,
+        18.77,
+        18.77
+      ],
+      "tps_mean": 18.76,
+      "tps_sd": 0.03,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 353,
+      "embed_err": 0,
+      "embed_lat_mean": 57.8,
+      "embed_lat_min": 27.7,
+      "embed_dims": 1024,
+      "mem_available_mb": 7485,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 8,
+      "tps_runs": [
+        18.68,
+        18.7,
+        18.7,
+        18.66,
+        18.68
+      ],
+      "tps_mean": 18.68,
+      "tps_sd": 0.01,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "embeds": 356,
+      "embed_err": 0,
+      "embed_lat_mean": 52.3,
+      "embed_lat_min": 19.7,
+      "embed_dims": 1024,
+      "mem_available_mb": 7475,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 16,
+      "tps_runs": [
+        17.16,
+        17.17,
+        17.13,
+        17.21,
+        17.16
+      ],
+      "tps_mean": 17.17,
+      "tps_sd": 0.03,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 703,
+      "embed_err": 0,
+      "embed_lat_mean": 57.0,
+      "embed_lat_min": 27.5,
+      "embed_dims": 1024,
+      "mem_available_mb": 7466,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 16,
+      "tps_runs": [
+        16.11,
+        16.9,
+        16.37,
+        16.47,
+        16.44
+      ],
+      "tps_mean": 16.46,
+      "tps_sd": 0.25,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "embeds": 761,
+      "embed_err": 0,
+      "embed_lat_mean": 52.1,
+      "embed_lat_min": 19.8,
+      "embed_dims": 1024,
+      "mem_available_mb": 7238,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "E",
+      "rate": "sat",
+      "tps_runs": [
+        17.25,
+        17.24,
+        17.18,
+        17.12,
+        17.3
+      ],
+      "tps_mean": 17.22,
+      "tps_sd": 0.06,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 931,
+      "embed_err": 0,
+      "embed_lat_mean": 50.5,
+      "embed_lat_min": 27.1,
+      "embed_dims": 1024,
+      "mem_available_mb": 7456,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-tlfm25-t6-latest-8",
+      "thread": 10,
+      "arm": "C",
+      "rate": "sat",
+      "tps_runs": [
+        17.25,
+        16.77,
+        16.49,
+        16.5,
+        16.28
+      ],
+      "tps_mean": 16.66,
+      "tps_sd": 0.33,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "embeds": 1122,
+      "embed_err": 0,
+      "embed_lat_mean": 42.9,
+      "embed_lat_min": 18.9,
+      "embed_dims": 1024,
+      "mem_available_mb": 7483,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 0,
+      "tps_runs": [
+        13.72,
+        13.74,
+        13.74,
+        13.73,
+        13.75
+      ],
+      "tps_mean": 13.74,
+      "tps_sd": 0.01,
+      "load_s_max": 0.0,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          14,
+          15
+        ],
+        [
+          12,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 0,
+      "embed_err": 0,
+      "embed_lat_mean": null,
+      "embed_lat_min": null,
+      "embed_dims": null,
+      "mem_available_mb": 6239,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 0,
+      "tps_runs": [
+        14.23,
+        14.26,
+        14.28,
+        14.27,
+        14.29
+      ],
+      "tps_mean": 14.27,
+      "tps_sd": 0.02,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          1,
+          2,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "embeds": 0,
+      "embed_err": 0,
+      "embed_lat_mean": null,
+      "embed_lat_min": null,
+      "embed_dims": null,
+      "mem_available_mb": 6223,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 8,
+      "tps_runs": [
+        12.46,
+        12.83,
+        12.75,
+        12.82,
+        12.78
+      ],
+      "tps_mean": 12.73,
+      "tps_sd": 0.14,
+      "load_s_max": 0.0,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 432,
+      "embed_err": 0,
+      "embed_lat_mean": 64.1,
+      "embed_lat_min": 27.7,
+      "embed_dims": 1024,
+      "mem_available_mb": 6010,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 8,
+      "tps_runs": [
+        12.71,
+        12.72,
+        12.71,
+        12.72,
+        12.73
+      ],
+      "tps_mean": 12.72,
+      "tps_sd": 0.01,
+      "load_s_max": 0.0,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11
+      ],
+      "embeds": 433,
+      "embed_err": 0,
+      "embed_lat_mean": 56.9,
+      "embed_lat_min": 19.9,
+      "embed_dims": 1024,
+      "mem_available_mb": 6007,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "E",
+      "rate": 16,
+      "tps_runs": [
+        11.79,
+        11.75,
+        11.75,
+        11.8,
+        11.77
+      ],
+      "tps_mean": 11.77,
+      "tps_sd": 0.02,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 819,
+      "embed_err": 0,
+      "embed_lat_mean": 61.7,
+      "embed_lat_min": 27.7,
+      "embed_dims": 1024,
+      "mem_available_mb": 5998,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "C",
+      "rate": 16,
+      "tps_runs": [
+        11.59,
+        11.42,
+        11.44,
+        11.45,
+        11.44
+      ],
+      "tps_mean": 11.47,
+      "tps_sd": 0.06,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "embeds": 871,
+      "embed_err": 0,
+      "embed_lat_mean": 57.4,
+      "embed_lat_min": 19.4,
+      "embed_dims": 1024,
+      "mem_available_mb": 5987,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "E",
+      "rate": "sat",
+      "tps_runs": [
+        11.73,
+        11.71,
+        11.74,
+        11.72,
+        11.72
+      ],
+      "tps_mean": 11.72,
+      "tps_sd": 0.01,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          12,
+          13,
+          14,
+          15
+        ]
+      ],
+      "l3_union_all": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "embeds": 1069,
+      "embed_err": 0,
+      "embed_lat_mean": 53.9,
+      "embed_lat_min": 27.2,
+      "embed_dims": 1024,
+      "mem_available_mb": 5983,
+      "profile": "performance"
+    },
+    {
+      "model": "bench-phi4mini-t8",
+      "thread": 10,
+      "arm": "C",
+      "rate": "sat",
+      "tps_runs": [
+        11.43,
+        11.59,
+        11.41,
+        11.47,
+        11.81
+      ],
+      "tps_mean": 11.54,
+      "tps_sd": 0.15,
+      "load_s_max": 0.01,
+      "l3_unions": [
+        [
+          0,
+          1,
+          2,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      ],
+      "l3_union_all": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "embeds": 1278,
+      "embed_err": 0,
+      "embed_lat_mean": 45.8,
+      "embed_lat_min": 19.1,
+      "embed_dims": 1024,
+      "mem_available_mb": 5729,
+      "profile": "performance"
+    }
+  ]
+}

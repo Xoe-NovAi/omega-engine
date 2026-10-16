@@ -1,0 +1,28 @@
+[17:24:34] FINAL PROOF — L1 mask + L2 per-thread allowed + L3 executed, self-pin neutralized, continuous hammer
+[17:24:34] ===== ARM E: TEST COPY born under 12-15 =====
+[17:24:42]   pid=69244
+[17:24:47]   L2 allowed: 17 threads, union=[12, 13, 14, 15], threads with ANY cpu outside 12-15: 0
+[17:24:49]   L3 sample 1: executing on [12, 13, 14, 15] (17 threads)
+[17:24:51]   L3 sample 2: executing on [12, 13, 14, 15] (18 threads)
+[17:24:53]   L3 sample 3: executing on [12, 13, 14, 15] (18 threads)
+[17:24:55]   L3 sample 4: executing on [12, 13, 14, 15] (17 threads)
+[17:24:57]   L3 sample 5: executing on [12, 13, 14, 15] (17 threads)
+[17:24:59]   L3 sample 6: executing on [12, 13, 14, 15] (17 threads)
+[17:25:29]   LLM decode under load: [16.42, 16.62, 16.56, 16.72, 16.7] t/s
+[17:25:29]   hammer: 1075 ok / 0 err, mean 43.1 ms, dims=1024
+[17:25:29] ===== ARM C: TEST COPY born under 0-11 =====
+[17:25:37]   pid=69763
+[17:25:42]   L2 allowed: 25 threads, union=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], threads with ANY cpu outside 0-11: 0
+[17:25:44]   L3 sample 1: executing on [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11] (25 threads)
+[17:25:46]   L3 sample 2: executing on [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (26 threads)
+[17:25:48]   L3 sample 3: executing on [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (26 threads)
+[17:25:50]   L3 sample 4: executing on [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (25 threads)
+[17:25:52]   L3 sample 5: executing on [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (25 threads)
+[17:25:54]   L3 sample 6: executing on [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (25 threads)
+[17:26:28]   LLM decode under load: [14.13, 14.13, 14.21, 14.21, 14.21] t/s
+[17:26:28]   hammer: 1727 ok / 0 err, mean 29.8 ms, dims=1024
+[17:26:36] restored PRODUCTION embedder pid=70450 (original script, born 12-15)
+[17:26:36] 
+[17:26:36] PASS CRITERIA + RESULTS:
+[17:26:36]   ARM E: L2 [12, 13, 14, 15] L3 [12, 13, 14, 15] -> PASS (LLM 16.6 t/s, 1075 embeds)
+[17:26:36]   ARM C: L2 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] L3 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] -> PASS (LLM 14.18 t/s, 1727 embeds)
