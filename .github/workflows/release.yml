@@ -97,7 +97,13 @@ jobs:
           # failed finalizing with 'already_exists'). Self-healing: remove any
           # stale release for this tag first. The tag itself is never touched.
           gh release delete "${{ github.ref_name }}" -y || true
-          if [[ "${{ github.ref_name }}" == *-alpha* || "${{ github.ref_name }}" == *-beta* || "${{ github.ref_name }}" == *-rc* ]]; then
+          # PEP 440 prerelease detection: a shell glob for '*-alpha*' does NOT match
+          # the canonical PEP 440 alpha tag (v1.6.0a0 / v1.6.0a1), which would publish
+          # an alpha as a full 'latest' release. packaging.version is authoritative.
+          if python -c "
+          import sys, packaging.version as pv
+          sys.exit(0 if pv.Version('${{ steps.version.outputs.version }}').is_prerelease else 1)
+          "; then
             PRERELEASE="--prerelease"
           else
             PRERELEASE=""
@@ -110,8 +116,16 @@ jobs:
             dist/*.whl dist/*.tar.gz
 
       - name: G11 — Clean-environment artifact verification
+        # Smoke command MUST exercise the full cold-start config surface.
+        # 'omega list-entities' only instantiates EntityRegistry and prints a
+        # table — it never loads capability_matrix.py, embedding_strategy.py,
+        # models.yaml, provider_capabilities.yaml or providers.yaml, which are
+        # exactly the startup configs that broke the previous release twice.
+        # G11 can therefore pass while the README flagship command crashes.
+        env:
+          OMEGA_PROVIDER: mock
         run: |
           .venv/bin/python scripts/verify_artifact_clean_env.py \
             --wheel dist/*.whl \
             --repo-root ${{ github.workspace }} \
-            --smoke-cmd "omega list-entities"
+            --smoke-cmd "omega talk \"hello\""

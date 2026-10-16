@@ -194,19 +194,31 @@ print("All packaged configs resolved via CONFIG_DIR")
 
         # Parse the smoke command using shlex to handle quotes properly
         smoke_parts = shlex.split(args.smoke_cmd)
-        # Replace 'omega' with the full path to the binary
-        if smoke_parts and smoke_parts[0] == "omega":
-            smoke_parts[0] = str(omega_bin)
-        elif smoke_parts and smoke_parts[0] == "python" and len(smoke_parts) >= 3 and smoke_parts[1] == "-m" and smoke_parts[2] == "omega":
-            # Handle 'python -m omega ...' form
-            smoke_parts = [str(omega_bin)] + smoke_parts[3:]
 
-        # Handle OMEGA_PROVIDER=mock prefix (env var assignment at start)
+        # Handle leading env assignments (e.g. 'OMEGA_PROVIDER=mock omega talk ...')
+        # BEFORE resolving the interpreter path. Order is load-bearing: if the prefix
+        # is stripped after the path replacement below, the 'omega' token has already
+        # been skipped and a bare 'omega' gets resolved via PATH in the clean
+        # environment instead of the verified venv binary — so the gate would be
+        # testing whatever omega happens to be on PATH, not this artifact.
         env_extra = {}
-        if smoke_parts and "=" in smoke_parts[0] and not smoke_parts[0].startswith("-"):
+        while smoke_parts and "=" in smoke_parts[0] and not smoke_parts[0].startswith("-"):
             k, v = smoke_parts[0].split("=", 1)
             env_extra[k] = v
             smoke_parts = smoke_parts[1:]
+
+        # Replace 'omega' with the full path to the binary
+        if smoke_parts and smoke_parts[0] == "omega":
+            smoke_parts[0] = str(omega_bin)
+        elif (
+            smoke_parts
+            and smoke_parts[0] == "python"
+            and len(smoke_parts) >= 3
+            and smoke_parts[1] == "-m"
+            and smoke_parts[2] == "omega"
+        ):
+            # Handle 'python -m omega ...' form
+            smoke_parts = [str(omega_bin)] + smoke_parts[3:]
 
         result = run_cmd(smoke_parts, work_dir, env=env_extra)
         if result.returncode != 0:
