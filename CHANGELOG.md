@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
-## [v1.6.0a1] - 2026-10-15
+## [v1.6.0a2] - 2026-10-16
 
 Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),
 comprising post-tag defect fixes, public-tree hardening, and the distribution-name
@@ -45,6 +45,15 @@ finalization. `v1.6.0a0` remains immutable at `355cbf1a` for audit.
 - `scripts/verify_artifact_clean_env.py` — env-assignment prefixes in the smoke command are now
   stripped *before* interpreter-path resolution, so a prefixed command resolves the verified venv
   binary rather than whatever `omega` is on PATH.
+- `REUSE.toml` — `data/eval/*.jsonl` annotation. `data/eval/golden_v1.jsonl` (JSON Lines has no
+  comment syntax, so it cannot carry an inline SPDX header) was the last file blocking
+  `reuse lint`; the tree is now compliant 1041/1041.
+
+### Fixed (release process)
+- Version triple aligned to the tag. `v1.6.0a2` was tagged while `pyproject.toml`, the
+  `CHANGELOG.md` heading, `docs/FACTS.yaml`, `README.md` and the announcement still read
+  `1.6.0a1`, so G8/G9 failed closed on the `v1.6.0a2` release run. The tag, the manifest, and
+  the docs must be bumped together — a tag alone is not a version bump.
 
 ### Notes
 - Live `/dev/ttyN` execution of the converted agent is **UNVERIFIED** — no controlling terminal

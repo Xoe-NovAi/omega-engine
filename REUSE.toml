@@ -335,3 +335,14 @@ SPDX-License-Identifier = "Apache-2.0"
 path = "docs/agents/archive/*.md.deprecated"
 SPDX-FileCopyrightText = "2026 Xoe-NovAi"
 SPDX-License-Identifier = "Apache-2.0"
+
+# ── Eval fixtures ─────────────────────────────────────────────────────────
+# data/eval/golden_v1.jsonl is the RAG golden-set fixture referenced by
+# docs/FACTS.yaml and the release notes. It is machine-generated content with
+# no per-line SPDX header possible (JSON Lines has no comment syntax), so the
+# licensing is declared here by glob. Without this entry it was the single file
+# standing between the tree and `reuse lint` exit 0 — i.e. the REUSE gate.
+[[annotations]]
+path = "data/eval/*.jsonl"
+SPDX-FileCopyrightText = "2026 Xoe-NovAi"
+SPDX-License-Identifier = "Apache-2.0"

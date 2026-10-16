@@ -12,10 +12,10 @@
 # actually-built artifact, never from a previous release.
 
 release:
-  tag: "v1.6.0a1"
-  commit: "ef9b9c81"
+  tag: "v1.6.0a2"
+  commit: "e926a784"
   date: "2026-10-16"
-  wheel_filename: "the_omega_engine-1.6.0a1-py3-none-any.whl"
+  wheel_filename: "the_omega_engine-1.6.0a2-py3-none-any.whl"
   # EC-78F7: sha256 of the v1.6.0a1 wheel as built by the release workflow.
   # PENDING — record from the published release asset, not from the v1.6.0a0
   # wheel this field previously held (e452d8ed…), which is a different artifact.
