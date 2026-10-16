@@ -46,6 +46,13 @@ PATTERNS = {
     "requirements.os": r"(Ubuntu\s+22\.04\+\s*,\s*Debian\s+12\+\s*,\s*Arch\s*,\s*Fedora)",
 }
 
+# Release-download URL form. Kept separate from PATTERNS because a FACTS key
+# maps to exactly one dict entry, and the URL spelling needs its own anchors.
+URL_PATTERNS = {
+    "release.tag": r"releases/download/(v?[\d.]+[a-z]?\d*)/",
+    "release.wheel_filename": r"releases/download/v?[\d.]+[a-z]?\d*/([\w.-]+\.whl)",
+}
+
 FORBIDDEN_PHRASES = [
     "100% constraint survival",
     "83%",
@@ -135,12 +142,27 @@ def check_facts(facts: Dict[str, Any]) -> Tuple[List[str], List[str]]:
 
             # Extract and compare values
             extracted = extract_values(content)
+            # The prose patterns above cannot match the README's canonical install
+            # path: "releases/download/<tag>/<wheel>" puts an "s" after "release"
+            # and a " (" after "wheel", so neither [:\s]-anchored pattern fires.
+            # These two cover the URL form. Without them, release.tag and
+            # release.wheel_filename are never extracted from the README at all,
+            # so the gate gives false assurance on the single most important
+            # public claim — which artifact to install.
+            for key, pattern in URL_PATTERNS.items():
+                m = re.search(pattern, content)
+                if m:
+                    extracted[key] = m.group(1)
             for key, extracted_val in extracted.items():
                 expected = get_nested(facts, key)
                 if expected is not None and str(expected) != extracted_val:
-                    # Allow some flexibility for version strings
-                    if key == "release.tag" and extracted_val in ("v1.6.0-alpha", "v1.6.0a0"):
-                        continue
+                    # No version whitelist here. One previously existed that skipped
+                    # comparison when release.tag was "v1.6.0-alpha" or "v1.6.0a0";
+                    # it was added when those were current, then went stale and
+                    # suppressed the very M29 check this gate exists to make for
+                    # exactly the values that had drifted. A whitelist that pins
+                    # specific version strings is a snapshot, not a rule — it decays
+                    # silently. Compare against FACTS.yaml unconditionally instead.
                     errors.append(
                         f"{filepath}: {key} = '{extracted_val}' but FACTS.yaml has '{expected}'"
                     )

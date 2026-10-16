@@ -2,15 +2,25 @@
 # SPDX-License-Identifier: Apache-2.0
 # ⬡ OMEGA ⬡ FACTS ⬡ Single Source of Truth for Public Docs
 # This file is the authoritative source for all numbers/claims in public docs.
-# Update via `make update-facts` (regenerates from live repo state).
-# DO NOT EDIT MANUALLY — changes will be overwritten.
+# NOTE 2026-10-16: the header below previously claimed "Update via `make update-facts`
+# (regenerates from live repo state). DO NOT EDIT MANUALLY". That is FALSE and was
+# misleading: no `make update-facts` target and no generator script exist in this
+# repo (verified: `make update-facts` -> "No rule to make target"; scripts/contains
+# only check_doc_facts.py, a VALIDATOR). FACTS.yaml is therefore a MANUALLY
+# MAINTAINED document. Editing it is the intended workflow — but it must then be
+# verified with `make check-doc-facts`, and any wheel SHA must come from an
+# actually-built artifact, never from a previous release.
 
 release:
-  tag: "v1.6.0a0"
-  commit: "355cbf1a"
-  date: "2026-10-13"
-  wheel_filename: "the_omega_engine-1.6.0a0-py3-none-any.whl"
-  wheel_sha256: "e452d8ed343c38f74c31d77c034759972fdfc909af640ecbae503b1dfb0128a9"
+  tag: "v1.6.0a1"
+  commit: "ef9b9c81"
+  date: "2026-10-16"
+  wheel_filename: "the_omega_engine-1.6.0a1-py3-none-any.whl"
+  # EC-78F7: sha256 of the v1.6.0a1 wheel as built by the release workflow.
+  # PENDING — record from the published release asset, not from the v1.6.0a0
+  # wheel this field previously held (e452d8ed…), which is a different artifact.
+  # Do NOT publish any announcement referencing this checksum until filled.
+  wheel_sha256: "PENDING-EC78F7-RECORD-FROM-RELEASE-ASSET"
 
 hub:
   host: "127.0.0.1"
