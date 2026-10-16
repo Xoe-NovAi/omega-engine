@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
-## [v1.6.0a2] - 2026-10-16
+## [v1.6.0a4] - 2026-10-16
 
 Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),
 comprising post-tag defect fixes, public-tree hardening, and the distribution-name
@@ -249,3 +249,17 @@ This is the first public release of the Omega Engine under Apache 2.0.
 ### Fixed
 - **MCP Paths**: Canonicalized `mcp/` references to `mcp_servers/` across the codebase.
 - **Entity Registry**: Implemented Lazy Deletion with Grace Period (0.5s) per id Software heritage.
+
+### Release-process defects found while tagging (recorded, not hidden)
+- **v1.6.0a2's release run failed closed at G8/G9.** It was tagged while the version
+  triple still read `1.6.0a1`. No release object was created.
+- **v1.6.0a3's release run failed closed at G9 for the identical reason** — it was
+  tagged with the triple aligned to `1.6.0a2`. The error was repeated one tag later
+  because the tag and the manifest were bumped in separate steps. **The version triple
+  must be set to the tag being created, in the same commit, before the tag is made.**
+- **The Allowlist Check runs on tags** (`allowlist-check.yml:22`, `tags: ["v*.*.*"]`) and
+  requires the tagged tree to satisfy `PUBLIC_ALLOWLIST.txt`. Tags created on the uncut
+  `main`/`release/debut` tree fail with 186 tracked files outside the allowlist. The
+  public release is the **allowlist-cut** tree produced by
+  `scripts/apply_public_allowlist.sh --confirm`; the tag must point at that cut commit,
+  not at the development tree.
