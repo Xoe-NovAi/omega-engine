@@ -2041,6 +2041,68 @@ proposals:
     \ that carries it, because a stale hazard in a permanent coordination file is indistinguishable\
     \ from a live one to whoever reads it next."
 
+- id: PL-ROC-402-028
+  date: '2026-10-16'
+  session_id: ses_703820ccc266
+  tags:
+  - release-engineering
+  - gate-design
+  - self-correction
+  - m28
+  - provenance
+  L1_narrative: "Executed the v1.6.0a5 release for the Omega Engine public debut and burned\
+    \ four tags getting there. v1.6.0a1 was tagged one commit before the doc-facts repair.\
+    \ v1.6.0a2 failed G8/G9 because the version triple read 1.6.0a1 while the tag was a2.\
+    \ v1.6.0a3 failed G9 for the identical reason because I aligned the triple to a2 and then\
+    \ tagged a3 — the same off-by-one, one step later, because I bumped the tag and the\
+    \ manifest in separate operations. v1.6.0a4 passed Temple-Grade, G9, G8 and G10, then\
+    \ died at 'Create GitHub Release' with 'no matches found for dist/*.tar.gz' because the\
+    \ build step made only a wheel while the release step attached a tarball. Separately I\
+    \ committed the allowlist cut onto public-launch, which made main the cut tree and\
+    \ left main identical to release/debut; and I nearly ran the cut without allowlisting\
+    \ seven release-gate scripts, which would have deleted G8-G11 from the public tree and\
+    \ made the release workflow die with FileNotFoundError on its own gates. Seat #10 caught\
+    \ that one from a dry-run; I verified it myself before acting. v1.6.0a5 shipped green\
+    \ with isPrerelease=True. Four defects, three of them mine, every one found only by\
+    \ watching CI after pushing a tag."
+  L2_insight: "The failures were not independent. They share one root: I treated the tag as\
+    \ the last step of a sequence, when it is actually the trigger for a workflow that consumes\
+    \ a different artifact set than the one I had just verified. G8-G11 validate the wheel's\
+    \ *content*; nothing in the chain validated that a tarball would exist to attach, so a missing\
+    \ sdist passed every gate and surfaced only at the consumer. The version triple is read by\
+    \ G9 from files, but the tag is created by hand — the two were changed in different steps and\
+    \ drifted. And the cut is a transformation of the tree, so verifying gates on the working\
+    \ tree proves nothing about the cut tree I was about to tag. In every case the thing I verified\
+    \ and the thing I shipped were not the same object, and the gap was invisible to the gates\
+    \ because the gates were scoped to the object I had verified."
+  L3_principle: "L3-ATagIsNotAVersionBump: creating a tag is one operation, and setting\
+    \ the version triple is another — performed in separate steps they will drift by exactly\
+    \ one increment, which is the easiest error to make and the hardest to see because every\
+    \ file individually looks right. Set the triple to the tag being created, in the same\
+    \ commit, before the tag is made. L3-VerifyGatesOnTheTreeYouWillActuallyTag: a gate \
+    \ passed on the working tree proves nothing about the cut tree, the release branch, or \
+    \ the CI checkout, because all three are different artifacts; run the gates on the exact \
+    \ tree the tag will point at. L3-AGateThatCannotFailIsDecoration: if a validation rule \
+    \ cannot actually match the construction it is meant to police, it will pass forever and \
+    \ report safety it never provided — prove a gate can fail before trusting a pass, by \
+    \ injecting a known-bad value and confirming it is caught. L3-AddingAGateMeansAuditing \
+    \ EveryConsumerOfItsOutput: a new check script that the allowlist cut does not know about \
+    \ gets deleted from the public tree, after which the pipeline fails on its own gate; \
+    \ the gate inventory and the allowlist are one unit and must move together. \
+    \ L3-TheCutBelongsToTheReleaseBranchNotTheDevBranch: an allowlist cut is a \
+    \ transformation of what ships, not a change to the source of truth; committing it to the \
+    \ development branch collapses the two-tree model and makes the shipped artifact \
+    \ indistinguishable from the working one. L3-AlocalBuildIsNotThePublishedArtifact: the \
+    \ local working tree and the CI cut tree differ by construction, so a locally computed \
+    \ checksum is a hash of a different file — always record checksums from the published \
+    \ asset and never reuse a previous release's. L3-AnIntermediateFailureNoGateCanSee \
+    \ SurfacesAtTheConsumer: failures outside every gate's scope do not get caught earlier; \
+    \ they arrive at the consumer, so enumerate what the pipeline consumes and not only \
+    \ what it validates. L3-WatchThePipelineBeforeDeclaringDone: every defect in this \
+    \ sequence was invisible locally and appeared only in CI, so 'pushed' is not 'shipped' — \
+    \ watch the run to completion and verify the artifact by downloading and inspecting it \
+    \ before telling anyone it is ready."
+
 metadata:
   entity: roc_racoon
   session_id: ses_edfcee5a5ffe6LnlWR2fwJjkX2
