@@ -29,6 +29,7 @@ OMEGA_CODEX.md
 # defence real for every clone instead of only on this host.
 docs/governance/CONSTRAINTS.md
 docs/corpus/CORPUS_INDEX.md          # Sovereign Ark corpus index documentation
+docs/operations/DUAL_REMOTE_RELEASE_RUNBOOK.md # Dual-remote release engineering runbook
 
 # [D-624] Scripts that shipped TESTS reference but which were never allowlisted.
 # tests/ is broadly ALLOW-listed while scripts/ is enumerated per-file, so the cut
