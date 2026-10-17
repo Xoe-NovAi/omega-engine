@@ -13,12 +13,12 @@
 
 release:
   tag: "v1.6.0a6"
-  commit: "88969ce1"
+  commit: "a0025928"
   date: "2026-10-17"
   wheel_filename: "the_omega_engine-1.6.0a6-py3-none-any.whl"
-  # sha256 of the PUBLISHED v1.6.0a6 wheel asset (to be recorded post-release
-  # from the GitHub Release asset, per D-628 / PL-ROC-402-028).
-  wheel_sha256: "PENDING-POST-RELEASE-RECORD-FROM-RELEASE-ASSET"
+  # sha256 of the PUBLISHED v1.6.0a6 wheel asset (downloaded from the GitHub
+  # Release and verified byte-for-byte, per D-628 / PL-ROC-402-028).
+  wheel_sha256: "4fe6af0e9159786a5e6a9fc1fe982f8f2d9ccdd053b625650cd8ceac00ef8629"
 
 hub:
   host: "127.0.0.1"
