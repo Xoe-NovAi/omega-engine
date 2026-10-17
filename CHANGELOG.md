@@ -5,6 +5,40 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a6] - 2026-10-17
+
+Second post-cut release of the allowlist debut. Adds the Sovereign Ark corpus
+embedding library, updates the default local model and canonical embedding
+dimensions, overhauls the README with grounded hardware reality, and hardens
+release engineering.
+
+### Added
+- **Sovereign Ark Corpus Embedding Library (`src/omega/corpus/`)** — 6-module
+  knowledge preservation library implementing chunking, vector embedding, SQLite
+  vec0 native 1024-dimension vector storage, FTS5 lexical indexing, and Reciprocal
+  Rank Fusion (RRF) hybrid search. Includes `scripts/corpus_index.py` CLI with
+  systemd cgroup v2 resource pinning (`AllowedCPUs`, `MemoryMax=4G`) and comprehensive
+  contract tests (`tests/test_corpus.py`, 23 tests, 100% AnyIO compliant).
+- **Public Allowlist Expansion** — Added corpus library modules, tests, CLI script,
+  and documentation (`docs/corpus/CORPUS_INDEX.md`) to `PUBLIC_ALLOWLIST.txt`.
+
+### Fixed
+- **Default Local Model SSOT Convergence** — Aligned `docs/FACTS.yaml` and
+  `scripts/check_doc_facts.py` to `LFM2.5-2.6B-Q4_K_M` (matching `providers.yaml` v2.0.0
+  and `scripts/install.sh`).
+- **Canonical 1024-Dim Vector Enforcement (D-1024-DIM-NATIVE-20260926)** — Purged stale
+  768-dim claims from fleet operational configs, semantic router arithmetic comments,
+  and entity briefings; verified native 1024-dim schema in sqlite-vec tables.
+- **FTS5 Lexical Search** — Replaced naive term ANDing with injection-safe quoted OR
+  query compilation to ensure keyword search matches reliably in hybrid retrieval.
+- **llama.cpp Thread Affinity** — Configured `n_threads_batch` explicitly and pinned
+  physical cores via cgroup cpuset to avoid SMT hyperthread sibling contention.
+
+### Changed
+- **README Overhaul** — Cleaned launch surface introduction, added honest hardware
+  specifications, clarified MCP transport matrix (Streamable HTTP vs SSE), and
+  elevated the Sovereign Ark knowledge preservation horizon.
+
 ## [v1.6.0a5] - 2026-10-16
 
 Post-cut release of the allowlist debut. 61 commits since `v1.6.0a0` (`355cbf1a`),

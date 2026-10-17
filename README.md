@@ -155,10 +155,10 @@ cd omega-engine
 
 ```bash
 # Download the wheel (aria2c: 16-split fetch for >1MB, M23)
-aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
+aria2c -x16 -s16 -c https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a6/the_omega_engine-1.6.0a6-py3-none-any.whl
 # Or use curl if aria2c is not available:
-# curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a5/the_omega_engine-1.6.0a5-py3-none-any.whl
-pip install the_omega_engine-1.6.0a5-py3-none-any.whl
+# curl -LO https://github.com/Xoe-NovAi/omega-engine/releases/download/v1.6.0a6/the_omega_engine-1.6.0a6-py3-none-any.whl
+pip install the_omega_engine-1.6.0a6-py3-none-any.whl
 
 omega list-entities          # See the sovereign council
 ```
@@ -231,9 +231,9 @@ Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructur
 
 ---
 
-## 🧭 Maturity & Status: Honest Alpha (v1.6.0a5)
+## 🧭 Maturity & Status: Honest Alpha (v1.6.0a6)
 
-**Versions:** Engine `1.6.0a5` (tag `v1.6.0a5`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
+**Versions:** Engine `1.6.0a6` (tag `v1.6.0a6`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
 
 Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
 - ✅ **Core Local & Synergistic Inference**: Operational across native GGUF and configured cloud providers (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama). Anthropic/xai adapters pending.
@@ -247,7 +247,7 @@ Omega Engine values mechanical truth over marketing illusion. The state of this 
 
 ## 🧭 The Horizon: What Comes Next
 
-The debut release (`v1.6.0a5`) is the foundation. On the roadmap:
+The debut release (`v1.6.0a6`) is the foundation. On the roadmap:
 * **The P2P Omegaverse:** A decentralized, consent-based peer network where users can federate multi-node clusters and exchange sovereign `.omega` entity bundles directly.
 * **Spatial Knowledge Navigation (Godot 4 / OpenXR):** An experimental 3D spatial interface where RAG embeddings, memory trees, and entity councils exist as virtual environments you can step into and explore.
 * **Archetypal Journey:** An immersive 3D/VR exploration of the Tarot, archetypal psychology, and esoteric mystery schools, powered by persistent sovereign agents.
@@ -263,4 +263,4 @@ The debut release (`v1.6.0a5`) is the foundation. On the roadmap:
 
 ---
 
-*⬡ OMEGA ENGINE ⬡ v1.6.0a5 ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
+*⬡ OMEGA ENGINE ⬡ v1.6.0a6 ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*

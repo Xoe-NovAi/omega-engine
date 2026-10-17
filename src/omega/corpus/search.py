@@ -57,7 +57,8 @@ class CorpusSearch:
         # Lexical arm
         try:
             lex_rows = await anyio.to_thread.run_sync(self.store.fts, query, top_k * 3)
-        except Exception:
+        except (sqlite3.OperationalError, sqlite3.DatabaseError) as exc:
+            logger.warning("FTS search failed for query %r: %s", query, exc)
             lex_rows = []
 
         # Semantic arm (canonical 1024)
@@ -69,7 +70,8 @@ class CorpusSearch:
                 sem_rows = await anyio.to_thread.run_sync(self.store.knn, qvec, top_k * 3)
                 for r in sem_rows:
                     dist_by_id[r["id"]] = r["distance"]
-            except Exception:
+            except (RuntimeError, sqlite3.Error, OSError) as exc:
+                logger.warning("Semantic search failed for query %r: %s", query, exc)
                 sem_rows = []
 
         fused = await anyio.to_thread.run_sync(self.store.rrf_fuse, sem_rows, lex_rows, top_k)

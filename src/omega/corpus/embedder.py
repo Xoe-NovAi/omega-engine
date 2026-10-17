@@ -79,8 +79,8 @@ def physical_cores(default: int = 4) -> int:
                 # cores-per-socket is already physical; don't divide again.
                 return max(1, physical)
             return max(1, physical)
-    except Exception:
-        pass
+    except (subprocess.SubprocessError, ValueError, IndexError, OSError) as exc:
+        logger.debug("Failed to detect physical cores via lscpu: %s", exc)
     return max(1, min(logical // 2 if logical > 2 else logical, default * 2))
 
 
@@ -104,7 +104,8 @@ def physical_core_ids() -> List[int]:
         for path in _glob.glob("/sys/devices/system/cpu/cpu[0-9]*/topology/thread_siblings_list"):
             try:
                 raw = open(path).read().strip()
-            except OSError:
+            except OSError as err:
+                logger.debug("Cannot read thread_siblings_list at %s: %s", path, err)
                 continue
             # Expand forms like "0-1", "0,8", "0-1,4-5"
             members: List[int] = []
@@ -116,16 +117,19 @@ def physical_core_ids() -> List[int]:
                     a, _, b = part.partition("-")
                     try:
                         members.extend(range(int(a), int(b) + 1))
-                    except ValueError:
+                    except ValueError as err:
+                        logger.debug("Failed parsing cpu range %s: %s", part, err)
                         continue
                 else:
                     try:
                         members.append(int(part))
-                    except ValueError:
+                    except ValueError as err:
+                        logger.debug("Failed parsing cpu part %s: %s", part, err)
                         continue
             if members:
                 groups.add(tuple(sorted(members)))
-    except Exception:
+    except (OSError, RuntimeError) as exc:
+        logger.debug("Failed traversing thread_siblings_list: %s", exc)
         groups = set()
 
     if not groups:
@@ -148,8 +152,8 @@ def _cgroup_cpuset_path() -> Optional[Path]:
                 if line.startswith('0::'):
                     path = line.strip().split('::')[-1].strip()
                     return Path('/sys/fs/cgroup') / path / 'cpuset.cpus.effective'
-    except Exception:
-        pass
+    except (OSError, IndexError) as exc:
+        logger.debug("Failed checking cgroup cpuset path: %s", exc)
     return None
 
 
@@ -168,8 +172,8 @@ def _apply_cgroup_cpuset(cpus: List[int]) -> bool:
                         # Verify
                         effective = (Path('/sys/fs/cgroup') / line.strip().split('::')[-1].strip() / 'cpuset.cpus.effective').read_text().strip()
                         return True
-    except Exception:
-        pass
+    except (OSError, IndexError) as exc:
+        logger.debug("Failed applying cgroup cpuset: %s", exc)
     return False
 
 
@@ -291,7 +295,8 @@ class CorpusEmbedder(Qwen3GGUFEmbeddingProvider):
 
         try:
             return len(_os.listdir("/proc/self/task"))
-        except Exception:
+        except OSError as exc:
+            logger.debug("Cannot list /proc/self/task: %s", exc)
             return -1
 
     def _assert_ready(self) -> None:
