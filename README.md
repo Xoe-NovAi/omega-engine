@@ -11,7 +11,7 @@
 
 ---
 
-Omega Engine is a sovereign, local-first cognitive runtime. It connects to **any MCP-capable client (OpenCode, Cline, Antigravity IDE, Cursor, etc.)** and unifies them into a persistent, multi-agent collaborative workspace through a single local hub.
+Omega Engine is a sovereign, local-first cognitive runtime. It connects to **any MCP-capable client (OpenCode, Cline, Antigravity IDE, VSCode, Cursor, etc.)** and unifies them into a persistent, multi-agent collaborative workspace through a single local hub.
 
 * **Multi-Node Federation:** Connect multiple laptops or desktops over an encrypted Tailscale mesh. Run parallel local agents across nodes with zero cloud intermediaries in the data path.
 * **Persistent Handoff Bus:** Pass tasks, evidence, context, and priorities across chat sessions, platforms, and physical machines.
