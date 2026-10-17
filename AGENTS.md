@@ -26,7 +26,7 @@ You are operating in the **Omega Engine**, a sovereign local-first AI runtime.
 |------|-------|
 | **The Law (READ FIRST)** | `SOVEREIGN_MANDATES.md` (v3.11.0, 30 mandates; D-609) |
 | **The Law, condensed** | `MANDATES_CONDENSED.md` (Tier-0 injection) |
-| **Live Release** | `v1.6.0-alpha` (Release debut complete, Temple-Grade 53/53, G11 PASS) |
+| **Live Release** | `v1.6.0a6` (896 allowlisted files, Corpus Library active, G11 PASS) |
 | **Active SSOT** | `data/coordination/ACTIVE_SPRINT.json` & `HMC_COLLABORATION_HUB.md` |
 | **A2A Roster (10 Seats)** | `config/a2a/agent_cards/` (includes Seat #10 `antigravity.json`) |
 | **Core Endpoints** | FastMCP Hub on `:8016` (`/sse` + `/mcp`) · Exchange on `:8019` |
@@ -118,6 +118,8 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` and `do
 | M29 Remote Claim Integrity | "Works from here" ≠ "works from there"; remote claims require peer-vantage test |
 | G11 Clean Verification | `scripts/verify_artifact_clean_env.py` — isolated venv smoke gate |
 | FastMCP Hub Service | Port `:8016` daemon (`mcp_servers/omega_hub/server.py`) |
+| Dual-Remote Topology | `internal` (private forge SSOT) vs `origin` (public debut curated) |
+| Release Operations | `docs/operations/DUAL_REMOTE_RELEASE_RUNBOOK.md` + skill `repo-release-ops` |
 
 ## M33/M34 Dispatch Guard Anchors (Jem §1.2.1)
 
