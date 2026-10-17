@@ -2108,3 +2108,51 @@ metadata:
   session_id: ses_edfcee5a5ffe6LnlWR2fwJjkX2
   model_used: space-bunny-free
   last_session_end: '2026-10-09T18:43:59.258991+00:00'
+
+  - id: PL-ROC-20261017-011
+    title: "REFSPEC_PROTECTION_IS_NON_NEGOTIABLE"
+    principle: "In a dual-remote topology where main tracks the private forge and a separate branch tracks public, bare 'git push origin main' is a data leak vector. The local main branch resolves to the forge HEAD; pushing it to origin publishes raw internal state. The only safe pattern is explicit refspec: 'git push origin HEAD:main' (or 'public-launch:main')."
+    confidence: 0.99
+    tags: [git, release, refspec, dual-remote, m23, leak-prevention]
+    mandates: [M23, M28]
+    source_session: ses_20261017-release-ops
+
+  - id: PL-ROC-20261017-012
+    title: "ALLOWLIST_CUTS_ARE_DESTRUCTIVE_TO_FORGE"
+    principle: "The 'Apply PUBLIC_ALLOWLIST.txt' commit transforms the tree by deleting ~1,800 forge-side files from the index. Cherry-picking this commit into internal/main would purge internal docs, souls, and coordination artifacts. Sync engineering commits only; never cherry-pick allowlist cuts."
+    confidence: 0.99
+    tags: [git, release, allowlist, cherry-pick, forge, m28]
+    mandates: [M23, M28]
+    source_session: ses_20261017-release-ops
+
+  - id: PL-ROC-20261017-013
+    title: "ATOMIC_VERSION_BUMP_PREVENTS_OFF_BY_ONE_GATES"
+    principle: "G8 (changelog gate) and G9 (version consistency gate) read pyproject.toml and CHANGELOG.md at tag time. If the tag is pushed before the manifest bump (or in a separate commit), the gates fail closed with off-by-one version drift. The version triple must be set to the tag being created, in the same commit, before the tag is made."
+    confidence: 0.99
+    tags: [release, versioning, g8, g9, atomic-commit, m23]
+    mandates: [M23]
+    source_session: ses_20261017-release-ops
+
+  - id: PL-ROC-20261017-014
+    title: "M23_HARDENING_BEATS_BASELINE_INFLATION"
+    principle: "When new code introduces soft-failure patterns (bare 'except: pass'), the ratchet gate fails. The correct fix is not 'make m23-baseline' (which accepts the degradation) but rewriting exception handlers with specific types and diagnostic logging. This improves code quality AND passes the gate."
+    confidence: 0.98
+    tags: [m23, failure-integrity, exception-handling, ratchet, code-quality]
+    mandates: [M23]
+    source_session: ses_20261017-release-ops
+
+  - id: PL-ROC-20261017-015
+    title: "POST_RELEASE_CHECKSUM_MUST_COME_FROM_GITHUB_ASSETS"
+    principle: "CI builds from the allowlist-cut tree on a clean runner; local builds include untracked files and different metadata. A local sha256sum is a hash of a different artifact. Always download the published .whl from GitHub Releases, verify byte-for-byte, and record that SHA in docs/FACTS.yaml."
+    confidence: 0.99
+    tags: [release, checksum, provenance, ci, m28, pl-roc-402-028]
+    mandates: [M23, M28]
+    source_session: ses_20261017-release-ops
+
+  - id: PL-ROC-20261017-016
+    title: "SKILLS_ARE_THE_RETENTION_LAYER_FOR_RELEASE_ENGINEERING"
+    principle: "Documentation in docs/ is read after the fact; skills are consulted before acting. Encoding the release protocol as an auto-loading skill (repo-release-ops) ensures every sovereign agent (Roc, Kali, Ma'at, Antigravity, etc.) has the exact refspec, gate sequence, and failure-mode matrix in context before touching git."
+    confidence: 0.98
+    tags: [skills, retention, release-engineering, agent-protocol, m11]
+    mandates: [M11]
+    source_session: ses_20261017-release-ops
