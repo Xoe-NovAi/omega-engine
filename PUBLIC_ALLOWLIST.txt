@@ -28,6 +28,7 @@ OMEGA_CODEX.md
 # ship the governance. This is the artifact that makes P0-2's Governance Decay
 # defence real for every clone instead of only on this host.
 docs/governance/CONSTRAINTS.md
+docs/corpus/CORPUS_INDEX.md          # Sovereign Ark corpus index documentation
 
 # [D-624] Scripts that shipped TESTS reference but which were never allowlisted.
 # tests/ is broadly ALLOW-listed while scripts/ is enumerated per-file, so the cut
@@ -79,6 +80,7 @@ src/omega/
 
 # Tests that exercise the public contract
 tests/                        # talk / summon / soul / sqlite-vec / firewall import-path only
+tests/test_corpus.py                 # Sovereign Ark corpus library tests
 
 # Config (local-first chain)
 config/models.yaml
@@ -106,6 +108,7 @@ data/secrets-public.toml
 scripts/install.sh
 scripts/serve_native_gguf.sh
 scripts/benchmark_sqlite_vec.py
+scripts/corpus_index.py        # Sovereign Ark corpus indexer CLI
 scripts/setup_litestream.sh
 scripts/restore_litestream.sh
 scripts/verify_litestream.sh
