@@ -12,18 +12,13 @@
 # actually-built artifact, never from a previous release.
 
 release:
-  tag: "v1.6.0a5"
-  commit: "8390a43b"
-  date: "2026-10-16"
-  wheel_filename: "the_omega_engine-1.6.0a5-py3-none-any.whl"
-  # sha256 of the PUBLISHED v1.6.0a5 wheel asset (downloaded from the GitHub
-  # Release and verified byte-for-byte, not computed from a local build — CI
-  # builds from the allowlist-cut tree on release/debut, so a local wheel from
-  # the full working tree hashes differently and is a different artifact).
-  # The published wheel was verified to contain 0 internal files (docs/api,
-  # docs/adr, .opencode, .agents), 303 omega/ entries, all 5 config_data YAMLs
-  # and all 14 entity files.
-  wheel_sha256: "68e48724fe4121556038be647a73497f85f438fcbaeba8952e953c5f1b76255c"
+  tag: "v1.6.0a6"
+  commit: "88969ce1"
+  date: "2026-10-17"
+  wheel_filename: "the_omega_engine-1.6.0a6-py3-none-any.whl"
+  # sha256 of the PUBLISHED v1.6.0a6 wheel asset (to be recorded post-release
+  # from the GitHub Release asset, per D-628 / PL-ROC-402-028).
+  wheel_sha256: "PENDING-POST-RELEASE-RECORD-FROM-RELEASE-ASSET"
 
 hub:
   host: "127.0.0.1"

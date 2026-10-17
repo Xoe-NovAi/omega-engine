@@ -148,7 +148,7 @@ class CorpusIndexer:
     async def _index_file(self, src: CorpusSource, path: Path) -> None:
         try:
             raw = await anyio.to_thread.run_sync(_read_text, path)
-        except Exception as exc:  # unreadable file — skip, record
+        except (OSError, UnicodeDecodeError) as exc:  # unreadable file — skip, record
             self.report.files_failed += 1
             self.report.errors.append(f"{path}: read {exc}")
             return
@@ -189,7 +189,8 @@ class CorpusIndexer:
         """True if already indexed with identical content hash."""
         try:
             sha = await anyio.to_thread.run_sync(_sha256, path)
-        except Exception:
+        except OSError as exc:
+            logger.debug("Failed computing sha256 for %s: %s", path, exc)
             return False
         doc_id = f"{src.source_id}:{path}"
         already = await anyio.to_thread.run_sync(self.store.already_indexed, doc_id, sha)
