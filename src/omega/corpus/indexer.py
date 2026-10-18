@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import fnmatch
 import hashlib
+import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -31,6 +32,8 @@ import anyio
 from .chunker import chunk_document, extract_text, title_from_text
 from .sources import DEFAULT_SUFFIXES, CorpusSource, resolve_sources
 from .store import CANONICAL_DIM, CorpusStore
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

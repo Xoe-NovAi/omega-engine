@@ -162,6 +162,25 @@ Full text of these decisions: `.opencode/rules/00-craftsman-contract.md` and `do
 
 ---
 
+## 🔒 Forge-Internal Pointers (Do Not Resolve on Public Clones)
+
+The following paths are referenced in this document but are **excluded from `PUBLIC_ALLOWLIST.txt`** and will not exist on public clones (`origin/main`):
+
+| Path | Purpose | Forge Location |
+|------|---------|----------------|
+| `.agents/rules/antigravity-seat.md` | Seat #10 contract | `internal` only |
+| `data/coordination/ACTIVE_SPRINT.json` | Sprint SSOT | `internal` only |
+| `docs/decisions/` | Governance decisions | `internal` only |
+| `tests/jem/test_entity_lifecycle_adversarial.py` | Entity lifecycle tests | `internal` only |
+
+**For public agents**: These anchors are unavailable. Refer to the in-repo equivalents:
+- Seat #10 contract → `.opencode/rules/antigravity-seat.md` (if copied for public distro)
+- Sprint state → `HMC_COLLABORATION_HUB.md` (public mirror)
+- Decisions → `docs/operations/DUAL_REMOTE_RELEASE_RUNBOOK.md` + `PIVOT_LOG.md` (public subset)
+- Adversarial tests → Not distributed (internal QA only)
+
+---
+
 For full details, see `.opencode/rules/` and `.agents/rules/` (architecture rules + contracts)
 and `SOVEREIGN_MANDATES.md` (the 30 mandates). Everything else is pointers.
 

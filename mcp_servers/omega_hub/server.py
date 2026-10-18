@@ -159,7 +159,7 @@ from omega import __version__ as _ENGINE_VERSION
 
 mcp = FastMCP(
     "Omega Core Hub",
-    json_response=True,  # JSON-only responses for OpenCode/Cline compatibility
+    json_response=False,  # Allow flexible content negotiation (fixes 406 for clients without explicit Accept: application/json)
     transport_security=_transport_security,
 )
 

@@ -35,6 +35,7 @@ raises. It never falls back to feature hashing — a hashed corpus answers
 from __future__ import annotations
 
 import os
+from pathlib import Path
 import logging
 from typing import List, Optional
 
