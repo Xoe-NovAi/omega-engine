@@ -28,6 +28,7 @@ OMEGA_CODEX.md
 # ship the governance. This is the artifact that makes P0-2's Governance Decay
 # defence real for every clone instead of only on this host.
 docs/governance/CONSTRAINTS.md
+docs/omega_engine_banner.jpg          # README banner image
 docs/corpus/CORPUS_INDEX.md          # Sovereign Ark corpus index documentation
 docs/operations/DUAL_REMOTE_RELEASE_RUNBOOK.md # Dual-remote release engineering runbook
 

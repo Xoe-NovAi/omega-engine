@@ -1,5 +1,7 @@
 # 🔱 Omega Engine — Sovereign Cognitive Runtime
 
+![Omega Engine Banner](docs/omega_engine_banner.jpg)
+
 > **Your AI tools, one shared brain. Local-first, built for ordinary laptops.**
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
