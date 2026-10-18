@@ -14,11 +14,15 @@ having to calibrate two score scales that don't share units.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
+import sqlite3
 from typing import List, Optional
 
 import anyio
 
 from .store import CorpusStore
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

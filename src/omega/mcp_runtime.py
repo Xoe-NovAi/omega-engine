@@ -137,6 +137,12 @@ def run_mcp(
             return await protected_resource_handler.handle(request)
 
         # ── SSE transport (legacy — OpenCode, Cline) ──────────────────
+        # CRITICAL: SSE routes MUST be separate from BaseHTTPMiddleware stack.
+        # BaseHTTPMiddleware attempts to stream response bodies, but SSE connections
+        # are already streaming via raw ASGI (sse.connect_sse sends http.response.start
+        # directly). When handle_sse returns Response(), the middleware tries to send
+        # http.response.start a second time, causing AssertionError and severed streams.
+        # Solution: SSE routes are mounted WITHOUT middleware.
         sse = SseServerTransport(
             mcp.settings.message_path,
             security_settings=mcp.settings.transport_security,
@@ -154,7 +160,9 @@ def run_mcp(
                     mcp._mcp_server.create_initialization_options(),
                     stateless=True,
                 )
-            return Response()
+            # Response already sent via raw ASGI; return empty Response with correct media type
+            # to satisfy Starlette's type requirements without triggering middleware body streaming.
+            return Response(status_code=204, media_type="text/event-stream")
 
         sse_routes = [
             Route(mcp.settings.sse_path, endpoint=handle_sse, methods=["GET"]),
@@ -277,9 +285,32 @@ def run_mcp(
                     logger.warning(f"Shutdown callback failed: {e}")
 
         # ── Assemble final app ────────────────────────────────────────
+        # CRITICAL: SSE routes must NOT go through BaseHTTPMiddleware stack.
+        # Create a separate app for SSE routes without middleware.
+        sse_app = Starlette(
+            routes=sse_routes,
+            debug=mcp.settings.debug,
+            lifespan=lifespan,
+        )
+
+        # Main app with middleware for Streamable HTTP + compliance routes
+        main_routes = streamable_routes + compliance_routes
+        if custom_routes:
+            main_routes = custom_routes + main_routes
+
+        main_app = Starlette(
+            routes=main_routes,
+            middleware=middleware,
+            debug=mcp.settings.debug,
+            lifespan=lifespan,
+        )
+
+        # Combine: SSE routes at their paths, everything else at root
+        combined_routes = sse_routes + [Mount("/", app=main_app)]
+
         if modify_app:
             # Legacy support: modify_app expected a full Starlette app.
-            legacy_app = Starlette(routes=all_routes, middleware=middleware)
+            legacy_app = Starlette(routes=combined_routes, middleware=middleware)
             modify_app(legacy_app)
             return Starlette(
                 routes=(custom_routes or []) + [Mount("/", app=legacy_app)],
@@ -287,11 +318,8 @@ def run_mcp(
                 lifespan=lifespan,
             )
 
-        if custom_routes:
-            all_routes = custom_routes + all_routes
-
         return Starlette(
-            routes=all_routes,
+            routes=combined_routes,
             middleware=middleware,
             debug=mcp.settings.debug,
             lifespan=lifespan,
