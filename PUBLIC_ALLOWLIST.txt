@@ -29,6 +29,7 @@ OMEGA_CODEX.md
 # defence real for every clone instead of only on this host.
 docs/governance/CONSTRAINTS.md
 docs/omega_engine_banner.jpg          # README banner image
+.github/social-preview.jpg            # GitHub social share image
 docs/corpus/CORPUS_INDEX.md          # Sovereign Ark corpus index documentation
 docs/operations/DUAL_REMOTE_RELEASE_RUNBOOK.md # Dual-remote release engineering runbook
 
