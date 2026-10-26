@@ -112,7 +112,7 @@ dev = [
     "pytest-tldr",
     "pytest-randomly",
 ]
-all = ["omega[native,cli,dev,memory,vectors,youtube]"]
+all = ["the-omega-engine[native,cli,dev,memory,vectors,youtube]"]
 
 [project.scripts]
 omega = "omega.cli.oracle_cli:main"
@@ -124,7 +124,8 @@ Repository = "https://github.com/Xoe-NovAi/omega-engine"
 Issues = "https://github.com/Xoe-NovAi/omega-engine/issues"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = [".", "src"]
+include = ["mcp_servers*", "omega*"]
 
 [tool.setuptools.package-data]
 omega = [
