@@ -123,9 +123,90 @@ from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 # Transport security for LAN binding (0.0.0.0) — allows HP LAN IP + loopback + Tailscale mesh with all ports
 # FED-HANDOFF-ANTIGRAVITY-20260920: Machine renamed omega-hub → n0; n0 entries added to unblock
 # Node 1 MCP access (421 Misdirected Request). omega-hub entries retained for backward compat.
+#
+# ── 2026-10-26 (doom_guy): THE 421 WAS A PLACEHOLDER-ONLY ALLOWLIST ──────────
+# The list below allowed synthetic `*.example.invalid` names and stale IPs only.
+# Tailscale Serve fronts the hub (`https://n0.<tailnet>:8016 -> 127.0.0.1:8016`)
+# and PRESERVES the incoming Host header, so the backend saw the real MagicDNS
+# name, found it absent, and returned 421. N1 could not reach a single MCP tool,
+# which severed Lilith-N1 from the entire Hivemind WRITE path. The proof was
+# stark: `Host: n0.example.invalid` → 200 (placeholder ACCEPTED) while the real
+# hostname → 421 (reality REJECTED).
+#
+# HOSTNAME VALUES ARE ENV-DRIVEN, NEVER COMMITTED. The real tailnet suffix and
+# IP are supplied by a LOCAL (untracked) systemd drop-in — see
+# ~/.config/systemd/user/omega-hub.service.d/tailnet.conf:
+#     OMEGA_TAILNET_DOMAIN   the tailnet DNS suffix   (default: example.invalid)
+#     OMEGA_TAILNET_IP       this node's tailnet IPv4 (default: unset → skipped)
+#     OMEGA_HUB_EXTRA_HOSTS  comma-separated extras   (default: empty)
+# This mirrors hub_tools/federation.py:44, keeping one source of truth and
+# leaving the public tree showing `example.invalid` only.
+#
+# NOTE on MCP's matcher (mcp/server/transport_security.py): it does EXACT match
+# plus a `:*` PORT-suffix match. It is NOT glob matching — an entry `*.foo`
+# never matches `x.foo`. That is precisely why the placeholder list passed its
+# own smoke test yet rejected production: `n0.example.invalid` matched exactly,
+# `*.example.invalid` did nothing. The bare and `:*` forms of the real names must
+# therefore both be explicit, and the `*.<domain>` entries are decorative only.
+def _dedupe_ordered(items: List[str]) -> List[str]:
+    """Deduplicate while preserving first-seen order (the allowlist is ordered data)."""
+    seen: set[str] = set()
+    out: List[str] = []
+    for item in items:
+        if item not in seen:
+            seen.add(item)
+            out.append(item)
+    return out
+
+
+def _tailnet_allowlist(
+    domain: str, ip: str, extra_hosts: List[str]
+) -> tuple[List[str], List[str]]:
+    """Build (allowed_hosts, allowed_origins) entries for the tailnet.
+
+    Every name yields both the bare and `:*` host form. Every origin yields the
+    `http://<host>:*` form, because MCP validates Origin independently of Host:
+    a host that is allowed while its origin is not still fails (403) for
+    browser-origin clients. Origins are derived from the port-stripped base so
+    an extra host supplied as `host:*` does not become `http://host:*:*`.
+    """
+    hosts: List[str] = []
+    origins: List[str] = []
+
+    names: List[str] = []
+    if domain:
+        names = [f"n0.{domain}", f"omega-hub.{domain}", f"*.{domain}"]
+    names.extend(extra_hosts)
+
+    for name in names:
+        hosts.extend([name, f"{name}:*"])
+        base = name[:-2] if name.endswith(":*") else name
+        origins.append(f"http://{base}:*")
+
+    if ip:
+        hosts.extend([ip, f"{ip}:*"])
+        origins.append(f"http://{ip}:*")
+
+    return hosts, origins
+
+
+_TAILNET_HOSTS, _TAILNET_ORIGINS = _tailnet_allowlist(
+    domain=os.environ.get("OMEGA_TAILNET_DOMAIN", "example.invalid").strip(),
+    ip=os.environ.get("OMEGA_TAILNET_IP", "").strip(),
+    extra_hosts=[
+        entry.strip()
+        for entry in os.environ.get("OMEGA_HUB_EXTRA_HOSTS", "").split(",")
+        if entry.strip()
+    ],
+)
+
+# ADDITIVE ONLY: every pre-existing entry is preserved verbatim. The
+# env-derived tailnet entries are appended and the combined list is
+# deduplicated (order-preserving). Removing an entry here would be a
+# regression; deduplicating one is merely tidier.
 _transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
-    allowed_hosts=[
+    allowed_hosts=_dedupe_ordered([
         "192.168.1.100", "192.168.1.100:*",
         "127.0.0.1", "127.0.0.1:*",
         "localhost", "localhost:*",
@@ -138,8 +219,10 @@ _transport_security = TransportSecuritySettings(
         # omega-hub — legacy hostname (retained for backward compat with older clients)
         "omega-hub.example.invalid", "omega-hub.example.invalid:*",
         "*.example.invalid", "*.example.invalid:*",
-    ],
-    allowed_origins=[
+        # env-derived: real tailnet names + IP (never committed; see drop-in)
+        *_TAILNET_HOSTS,
+    ]),
+    allowed_origins=_dedupe_ordered([
         "http://192.168.1.100:*",
         "http://localhost:*",
         "http://127.0.0.1:*",
@@ -150,7 +233,9 @@ _transport_security = TransportSecuritySettings(
         # omega-hub origins (legacy)
         "http://omega-hub.example.invalid:*",
         "http://*.example.invalid:*",
-    ],
+        # env-derived: real tailnet origins (Origin is validated separately)
+        *_TAILNET_ORIGINS,
+    ]),
 )
 
 # SSOT for the version surfaced by /health and MCP serverInfo
