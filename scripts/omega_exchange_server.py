@@ -8,7 +8,7 @@
 #
 # WHY THIS EXISTS — the false-success bug (Carmack, verified by execution):
 #   The old origin returned a 48-byte ASCII body to some clients:
-#       $ curl -o /tmp/tail.zip http://100.123.51.67:8019/<artifact>
+#       $ curl -o /tmp/tail.zip http://100.64.0.1:8019/<artifact>
 #       /tmp/tail.zip: ASCII text, 48 bytes
 #   `curl -o` writes an error body to disk indistinguishably from a successful
 #   download. A receiver that skips manifest verification writes a 48-byte "zip",
@@ -19,7 +19,7 @@
 # IMPORTANT, AND NOT FIXABLE HERE:
 #   That 48-byte body is emitted by TAILSCALED's TLS terminator (Go net/http),
 #   not by this service. Proven by the journal line:
-#       http: TLS handshake error from 100.123.51.67:PORT:
+#       http: TLS handshake error from 100.64.0.1:PORT:
 #             client sent an HTTP request to an HTTPS server
 #   The plaintext request never reaches this origin, so NO origin change can
 #   suppress that specific response. What this service does is make it
@@ -126,10 +126,10 @@ def error_envelope(status: int, reason: str, detail: str, **extra: Any) -> JSONR
 # N1's manifest point clients at N0 -- a FALSE SUCCESS on the one channel whose
 # only defence is the manifest (doom_guy, 2026-10-01). Set both per node.
 NODE_NAME = os.environ.get("OMEGA_NODE_NAME", "n0")
-NODE_HOST = os.environ.get("OMEGA_NODE_HOST", "n0.tail51f14a.ts.net")
+NODE_HOST = os.environ.get("OMEGA_NODE_HOST", "n0.example.invalid")
 NODE_PORT = os.environ.get("OMEGA_EXCHANGE_PORT", "8019")
 SELF_URL_FORM = f"https://{NODE_HOST}:{NODE_PORT}/<path>"
-SELF_IP_URL_FORM = f"http://{os.environ.get(chr(39)+chr(39), '100.123.51.67')}:{NODE_PORT}/<path>"
+SELF_IP_URL_FORM = f"http://{os.environ.get(chr(39)+chr(39), '100.64.0.1')}:{NODE_PORT}/<path>"
 
 _manifest_cache: dict[str, Any] = {"key": None, "entries": []}
 # Bounded so a pathological directory cannot grow this without limit.

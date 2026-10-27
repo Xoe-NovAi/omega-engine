@@ -123,8 +123,8 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
   ```python
   # mcp_servers/omega_hub/server.py — env-driven TransportSecuritySettings
   # Real tailnet hostnames injected via systemd drop-in (untracked):
-  #   Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
-  #   Environment=OMEGA_TAILNET_IP=100.123.51.67
+  #   Environment=OMEGA_TAILNET_DOMAIN=example.invalid
+  #   Environment=OMEGA_TAILNET_IP=100.64.0.1
   # Public tree keeps `example.invalid` placeholders only.
   TransportSecuritySettings(
       enable_dns_rebinding_protection=True,
@@ -135,8 +135,8 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
   **Systemd drop-in** (`~/.config/systemd/user/omega-hub.service.d/tailnet.conf`):
   ```ini
   [Service]
-  Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
-  Environment=OMEGA_TAILNET_IP=100.123.51.67
+  Environment=OMEGA_TAILNET_DOMAIN=example.invalid
+  Environment=OMEGA_TAILNET_IP=100.64.0.1
   ```
   The public tree retains `example.invalid` placeholders; real tailnet names never enter tracked source.
 * **Required Client Headers**:
