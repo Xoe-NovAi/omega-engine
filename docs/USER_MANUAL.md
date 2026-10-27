@@ -1143,7 +1143,7 @@ tail -f /tmp/opencode/reclaim.log             # monitor
 The script refuses to mutate without a verified backup, and refuses to swap
 while any process holds the database open.
 
-**Full guide:** [how-to/opencode-db-maintenance.md](how-to/opencode-db-maintenance.md)
+**Full guide:** `how-to/opencode-db-maintenance.md` (not yet documented)
 — covers byte attribution, streaming backups, batched deletion, verification
 chains, and the failure modes to avoid.
 

@@ -450,7 +450,7 @@ This protocol is one half of a two-part coordination system. See also:
 | Protocol | Purpose | When to Use |
 |----------|---------|-------------|
 | **Subagent Dispatch** (this doc) | Launch specialized subagents via HandoffPacket | When you need a specialized agent to do work |
-| **[Hivemind Protocol](HIVEMIND_PROTOCOL.md)** | Live awareness + workspace coordination | When you need to know who's alive and who owns what |
+| **Hivemind Protocol** | Live awareness + workspace coordination | When you need to know who's alive and who owns what |
 
 **Complementary, not competing**: Hivemind = awareness, Subagent Dispatch = delegation.
 
