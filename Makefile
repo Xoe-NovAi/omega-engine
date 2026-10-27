@@ -69,7 +69,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: bootstrap check-lan-exposure help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
+.PHONY: bootstrap check-lan-exposure check-handoff-liveness help test test-all test-prepush test-clarity test-json test-summary test-watch test-watch-all test-pick test-pick-skim notify-test test-random test-flake-hunt test-cov test-debug test-clean clean codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report lint doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint temple-grade check-tracking-state check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity m23-baseline check-mandates heritage-vet heritage-map sote-index sote-digest sote-validate sote-week sote-pipeline sote-full help-sote check-broken-imports check-untracked-deps check-hub-health check-hub-imports soul-validate check-gnosis-continuity
 
 # ═══════════════════════════════════════════════════════════════════════════
 # bootstrap — Phase 2.1. The sanctioned way to produce a compliant .venv.
@@ -760,7 +760,7 @@ m23-baseline:
 
 # Run all mandate checks (CI gate). P0-1 fix 2026-08-28: compliance meter
 # is now part of the chain — a red meter can no longer hide behind green gates.
-check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants check-lan-exposure check-constraints
+check-mandates: check-m1-anyio check-asyncio-import check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-metaframe check-untracked-deps check-gnosis-continuity verify-mandate-claims check-mandate-compliance check-sahs check-policy-constants check-lan-exposure check-handoff-liveness check-constraints
 	@echo "$(GREEN)All mandate checks passed$(NC)"
 
 # M15 Sovereign Continuity gate: every entity session_gnosis.md must carry a
@@ -1312,3 +1312,10 @@ check-lan-exposure:
 	@$(PYTHON) scripts/test_lan_exposure_audit.py
 	@echo "$(YELLOW)Auditing host listeners against allowlist...$(NC)"
 	@$(PYTHON) scripts/lan_exposure_audit.py
+
+# Handoff plane liveness SLO: a plane with 0 pending + 0 active for >24h is
+# DEAD, not "all clear". This is the check that would have caught the 6-day
+# silence (2026-10-20 -> 2026-10-26) that went unnoticed.
+check-handoff-liveness:
+	@echo "$(YELLOW)Checking handoff plane liveness...$(NC)"
+	@$(PYTHON) scripts/check_handoff_liveness.py
