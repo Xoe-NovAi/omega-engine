@@ -98,6 +98,52 @@ def _same_seat(a: str | None, b: str | None) -> bool:
         return False
 
 
+def _entity_spellings(name: str) -> set[str]:
+    """Expand an entity name into all known spellings found in the store.
+
+    This is a QUERY-TIME expansion, not an alias. It does not change the
+    canonicalization table or violate D-614. It simply ensures that when an
+    agent queries the inbox, they get all packets addressed to any spelling
+    of their seat — including node-qualified variants that the canonicalizer
+    deliberately keeps distinct.
+
+    The expansion is derived from the LIVE store: it scans all packets and
+    collects every raw spelling that canonicalizes to the same base as `name`.
+    This is the same derivation the queue_canonical() function uses, but
+    applied at query time instead of at submit time.
+    """
+    if not name:
+        return set()
+    spellings = {name}
+    try:
+        from .handoff_alias import canonical_form, _NODE_SUFFIX_RE
+        canon = canonical_form(name)
+        # Strip node suffix to get the base
+        base = _NODE_SUFFIX_RE.sub("", canon)
+        handoff = Path(__file__).resolve().parent.parent.parent / "data" / "handoff"
+        if handoff.is_dir():
+            for queue in handoff.iterdir():
+                if not queue.is_dir():
+                    continue
+                for f in queue.glob("*.json"):
+                    try:
+                        pkt = json.loads(f.read_text())
+                    except (OSError, ValueError):
+                        continue
+                    for key in ("target_entity", "source_entity"):
+                        raw = pkt.get(key)
+                        if not isinstance(raw, str):
+                            continue
+                        raw_canon = canonical_form(raw)
+                        raw_base = _NODE_SUFFIX_RE.sub("", raw_canon)
+                        # Match if same base (after stripping node suffix)
+                        if raw_base == base or raw_canon == canon or raw == name:
+                            spellings.add(raw)
+    except Exception:
+        pass
+    return spellings
+
+
 #: Non-empty means the canonical filter degraded to exact equality. Read by
 #: `tests/test_handoff_stale_reachability.py` so the degradation cannot pass
 #: unnoticed — a silently-narrowed filter is the confident-false-negative
@@ -209,12 +255,23 @@ class FederationStore:
                 # the canonical table does not declare must still compare equal
                 # to itself, and canonical_entity_name is identity on the
                 # canonical name by construction.
-                if target_entity and not _same_seat(target_entity,
-                                                     env.get("target_entity")):
-                    continue
-                if source_entity and not _same_seat(source_entity,
-                                                     env.get("source_entity")):
-                    continue
+                # IDENTITY EXPANSION (query-time, not alias).
+                # _same_seat handles declared aliases. _entity_spellings
+                # additionally covers node-qualified variants that the
+                # canonicalizer deliberately keeps distinct (D-614), so an
+                # agent querying as `makali` also finds packets addressed to
+                # `makali_n0`. This is a QUERY expansion, not an alias —
+                # the canonicalization table is unchanged.
+                if target_entity:
+                    target_spellings = _entity_spellings(target_entity)
+                    env_target = env.get("target_entity")
+                    if env_target not in target_spellings and not _same_seat(target_entity, env_target):
+                        continue
+                if source_entity:
+                    source_spellings = _entity_spellings(source_entity)
+                    env_source = env.get("source_entity")
+                    if env_source not in source_spellings and not _same_seat(source_entity, env_source):
+                        continue
                 # P0-1: the cursor filter applies ONLY to packets that HAVE a
                 # seq. Legacy packets predate the cursor machinery and carry no
                 # seq; treating their missing seq as 0 made `seq <= cursor`
