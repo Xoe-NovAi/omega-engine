@@ -55,4 +55,7 @@ make check-m1-anyio
 
 # 6. Allowlist check (must report 0 files removed)
 bash scripts/apply_public_allowlist.sh
+
+# 7. Handoff plane liveness (SLO: no dead plane >24h)
+make check-handoff-liveness
 ```

@@ -119,21 +119,26 @@ Federation succeeds through **complementary asymmetry**, not redundant duplicati
 ### 3.1 Layer 1: Local Area Network Streamable HTTP (Phase 0 — Immediate)
 * **Transport**: Streamable HTTP (`POST /mcp`) over RFC 7231 JSON-RPC 2.0.
 * **Binding**: Node 0 binds `0.0.0.0:8016` via systemd override (`~/.config/systemd/user/omega-hub.service.d/override.conf`).
-* **DNS Rebinding Guard**: Starlette / FastMCP `TransportSecuritySettings` configured on Node 0:
+* **DNS Rebinding Guard**: Starlette / FastMCP `TransportSecuritySettings` configured on Node 0 with **env-driven allowlist** (no hardcoded hostnames in tracked source):
   ```python
+  # mcp_servers/omega_hub/server.py — env-driven TransportSecuritySettings
+  # Real tailnet hostnames injected via systemd drop-in (untracked):
+  #   Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
+  #   Environment=OMEGA_TAILNET_IP=100.123.51.67
+  # Public tree keeps `example.invalid` placeholders only.
   TransportSecuritySettings(
       enable_dns_rebinding_protection=True,
-      allowed_hosts=[
-          "192.168.1.100", "192.168.1.100:*",
-          "localhost", "127.0.0.1", "[::1]",
-      ],
-      allowed_origins=[
-          "http://192.168.1.100:*",
-          "http://localhost:*",
-          "http://127.0.0.1:*",
-      ],
+      allowed_hosts=_build_allowed_hosts(),  # derives from OMEGA_TAILNET_DOMAIN/IP
+      allowed_origins=_build_allowed_origins(),
   )
   ```
+  **Systemd drop-in** (`~/.config/systemd/user/omega-hub.service.d/tailnet.conf`):
+  ```ini
+  [Service]
+  Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
+  Environment=OMEGA_TAILNET_IP=100.123.51.67
+  ```
+  The public tree retains `example.invalid` placeholders; real tailnet names never enter tracked source.
 * **Required Client Headers**:
   * `Content-Type: application/json`
   * `Accept: application/json`

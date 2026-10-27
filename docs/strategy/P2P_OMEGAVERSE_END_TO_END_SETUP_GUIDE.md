@@ -158,26 +158,31 @@ systemctl --user restart omega-hub
 systemctl --user status omega-hub
 ```
 
-### 3.2 DNS Rebinding Protection (FastMCP)
+### 3.2 DNS Rebinding Protection (FastMCP) — Env-Driven Allowlist
 
 **File**: `mcp_servers/omega_hub/server.py` — `TransportSecuritySettings` configuration
 
 ```python
-from mcp.server.streamable_http import TransportSecuritySettings
-
+# mcp_servers/omega_hub/server.py — env-driven TransportSecuritySettings
+# Real tailnet hostnames injected via systemd drop-in (untracked):
+#   Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
+#   Environment=OMEGA_TAILNET_IP=100.123.51.67
+# Public tree keeps `example.invalid` placeholders only.
 transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
-    allowed_hosts=[
-        "192.168.1.100", "192.168.1.100:*",
-        "localhost", "127.0.0.1", "[::1]",
-    ],
-    allowed_origins=[
-        "http://192.168.1.100:*",
-        "http://localhost:*",
-        "http://127.0.0.1:*",
-    ],
+    allowed_hosts=_build_allowed_hosts(),  # derives from OMEGA_TAILNET_DOMAIN/IP
+    allowed_origins=_build_allowed_origins(),
 )
 ```
+
+**Systemd drop-in** (`~/.config/systemd/user/omega-hub.service.d/tailnet.conf`):
+```ini
+[Service]
+Environment=OMEGA_TAILNET_DOMAIN=tail51f14a.ts.net
+Environment=OMEGA_TAILNET_IP=100.123.51.67
+```
+
+The public tree retains `example.invalid` placeholders; real tailnet names never enter tracked source.
 
 **Wildcard port patterns (`host:*`)** are mandatory for `0.0.0.0` binding — this allows any source port from the allowed hosts.
 
