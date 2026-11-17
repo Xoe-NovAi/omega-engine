@@ -250,6 +250,8 @@ class TestWellInjectionAgainstRealCorpus(unittest.TestCase):
                       "Well block present but carries no record lines")
 
     def test_real_corpus_passes_the_verify_gate(self):
+        if not WELL_JSONL.is_file():
+            self.skipTest(f"no corpus at {WELL_JSONL}")
         proc = subprocess.run(
             ["python3", str(WELL_SCRIPT), "verify"],
             capture_output=True, text=True, timeout=60,
