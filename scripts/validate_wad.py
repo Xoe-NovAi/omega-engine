@@ -214,6 +214,68 @@ def validate_hierarchy(wad_path: Path) -> List[str]:
     return errors
 
 
+
+def validate_souls(wad_path: Path) -> List[str]:
+    errors = []
+    for soul_file in wad_path.rglob("soul.yaml"):
+        try:
+            if soul_file.stat().st_size > MAX_YAML_SIZE:
+                errors.append(f"{soul_file.relative_to(wad_path)}: too large")
+                continue
+            data = yaml.safe_load(soul_file.read_text())
+        except yaml.YAMLError as e:
+            errors.append(f"{soul_file.relative_to(wad_path)}: parse error: {e}")
+            continue
+        if data is None:
+            continue
+        # soul.yaml should have identity or entity section
+        if "identity" in data:
+            ident = data["identity"]
+        elif "entity" in data:
+            ident = data["entity"]
+        else:
+            errors.append(f"{soul_file.relative_to(wad_path)}: missing 'identity' or 'entity' section")
+            continue
+        if not isinstance(ident, dict):
+            errors.append(f"{soul_file.relative_to(wad_path)}: 'identity' is not a dict")
+            continue
+        if "keeper" not in ident and "id" not in ident and "name" not in ident:
+            errors.append(f"{soul_file.relative_to(wad_path)}: identity/entity missing 'keeper', 'id', or 'name'")
+        # axioms should be a list if present
+        if "axioms" in data and not isinstance(data["axioms"], list):
+            errors.append(f"{soul_file.relative_to(wad_path)}: 'axioms' is not a list")
+        # directives should be a list if present
+        if "directives" in data and not isinstance(data["directives"], list):
+            errors.append(f"{soul_file.relative_to(wad_path)}: 'directives' is not a list")
+        # voice should be a dict if present
+        if "voice" in data and not isinstance(data["voice"], dict):
+            errors.append(f"{soul_file.relative_to(wad_path)}: 'voice' is not a dict")
+    return errors
+
+
+def validate_card_assignments(wad_path: Path) -> List[str]:
+    errors = []
+    for card_file in wad_path.rglob("card_assignment*.yaml"):
+        try:
+            data = yaml.safe_load(card_file.read_text())
+        except yaml.YAMLError as e:
+            errors.append(f"{card_file.relative_to(wad_path)}: parse error: {e}")
+            continue
+        if data is None:
+            continue
+        if "card" not in data:
+            errors.append(f"{card_file.relative_to(wad_path)}: missing 'card' section")
+            continue
+        card = data["card"]
+        if not isinstance(card, dict):
+            errors.append(f"{card_file.relative_to(wad_path)}: 'card' is not a dict")
+            continue
+        for field in ["arcana", "key", "title", "keeper"]:
+            if field not in card:
+                errors.append(f"{card_file.relative_to(wad_path)}: card missing '{field}'")
+    return errors
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python scripts/validate_wad.py <wad_dir>")
@@ -232,6 +294,8 @@ def main():
     all_errors.extend(validate_entities(wad_path))
     all_errors.extend(validate_voices(wad_path))
     all_errors.extend(validate_hierarchy(wad_path))
+    all_errors.extend(validate_souls(wad_path))
+    all_errors.extend(validate_card_assignments(wad_path))
 
     if all_errors:
         print(f"FAIL: {len(all_errors)} error(s) found:")
