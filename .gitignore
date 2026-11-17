@@ -423,3 +423,7 @@ data/coordination/sessions/
 # template, and the real values must never ship (D-612 closed that leak).
 config/lan_exposure_allowlist.local.yaml
 stable-diffusion.cpp/
+
+# Runtime-scaffolded entity workspace (M28: no auto-commit)
+data/entities/*/soul.yaml
+data/entities/*/knowledge/INDEX.yaml
