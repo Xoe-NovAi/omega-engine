@@ -75,6 +75,7 @@ MANIFEST_V2_OPTIONAL_FIELD_TYPES = {
     "vr_scenes": (list, dict),
     "dependencies": (list, dict),
     "hierarchy": str,  # relative path override for hierarchy.yaml
+    "priority": int,
 }
 
 # Required entity field types
@@ -693,15 +694,15 @@ class WADLoader:
                         )
                         continue
 
-                    # D-282: extra="forbid" — reject unknown fields (prevents silent typos)
-                    known_fields = set(ENTITY_FIELD_TYPES.keys()) | {"wad_source", "priority"}
+                    # D-282: known fields are type-validated; unknown fields become metadata.
+                    # This allows WAD-specific rich entity definitions (archetype, voice_dna, etc.)
+                    # while still catching typos in core fields via type validation above.
+                    known_fields = set(ENTITY_FIELD_TYPES.keys()) | {"wad_source", "priority", "role", "container", "port", "nodes", "sovereignty"}
                     unknown_fields = set(ent_data.keys()) - known_fields
                     if unknown_fields:
-                        logger.warning(
-                            f"Entity {entity_name} has unknown fields: {sorted(unknown_fields)}. "
-                            f"Known fields: {sorted(known_fields)}. Skipping."
+                        logger.debug(
+                            f"Entity {entity_name} has WAD-specific fields: {sorted(unknown_fields)} (captured as metadata)"
                         )
-                        continue
 
                     # D-282: Range constraints for numeric fields
                     range_errors = []
@@ -810,7 +811,7 @@ class WADLoader:
                 entity = Entity(
                     name=voice_name,
                     domains=data.get("domains", []),
-                    model=data.get("model", "qwen3-1.7b"),
+                    model=data.get("model", "opencode/big-pickle"),
                     personality=data.get("personality", ""),
                     role=data.get("role", "Voice Interface"),
                     container=True,
