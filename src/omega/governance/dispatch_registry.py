@@ -8,14 +8,17 @@
 # M2 Firewall: No WAD entity names in engine core.
 
 import threading
+import logging
 import yaml
+
+logger = logging.getLogger(__name__)
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 from omega.governance.config_resolver import WADS_DIR
 
 
-_cache = {"mtime": 0.0, "data": None}
+_cache = {"key": None, "mtime": 0.0, "data": None}
 _lock = threading.Lock()
 
 
@@ -41,15 +44,28 @@ def load_dispatch_yaml(iwad: Optional[str] = None, root: Optional[Path] = None) 
     base = root or WADS_DIR
     path = base / iwad / "entities" / "dispatch.yaml"
 
+    # Fallback: if PWAD has no dispatch.yaml, use IWAD's
     if not path.exists():
-        raise FileNotFoundError(f"No dispatch config found at {path}")
+        from omega.governance.config_resolver import get_active_iwad
+        # Try _omega_default as fallback IWAD
+        fallback_iwad = "_omega_default"
+        if iwad != fallback_iwad:
+            fallback_path = base / fallback_iwad / "entities" / "dispatch.yaml"
+            if fallback_path.exists():
+                logger.debug(f"No dispatch.yaml for WAD '{iwad}', falling back to '{fallback_iwad}'")
+                path = fallback_path
+                iwad = fallback_iwad
+            else:
+                raise FileNotFoundError(f"No dispatch config found at {path}")
 
     mtime = path.stat().st_mtime
+    cache_key = (iwad, mtime)
 
     with _lock:
-        if _cache["mtime"] != mtime:
+        if _cache["key"] != cache_key:
             with open(path, encoding="utf-8") as f:
                 _cache["data"] = yaml.safe_load(f) or {}
+            _cache["key"] = cache_key
             _cache["mtime"] = mtime
 
     return _cache["data"]

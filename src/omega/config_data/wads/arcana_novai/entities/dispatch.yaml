@@ -1,0 +1,84 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Omega Engine — Subagent Dispatch Configuration (WAD-Loaded)
+# ⬡ OMEGA ⬡ DISPATCH ⬡ M2-COMPLIANT ⬡ ANAI PWAD
+#
+# ANAi-specific dispatch entities. Overlaps with OED IWAD entities
+# (kali, maat, lilith) are overridden via Shadow-Stacking priority.
+# New ANAi entities (avgn, researcher_humboldt, sophia, alexander von humboldt)
+# are added on top of the OED base.
+
+entities:
+  # ANAi Core Triad (overridden from OED via priority=1)
+  - name: "kali"
+    role: "GRAND_OVERSIGHT"
+    mode: "primary"
+    purpose: "Grand Oversight — Sees all, delegates, destroys drift (ANAI re-thread)"
+    capabilities: ["oversight", "delegation", "strategy", "drift_destruction", "tarot_oversight"]
+    domains: ["strategy", "fleet_management", "architecture", "living_tarot"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+
+  - name: "maat"
+    role: "BUILD_OVERSOUL"
+    mode: "subagent"
+    purpose: "Build Oversoul — Governs S1-S5 (ANAI re-thread)"
+    capabilities: ["oversight_build", "build_governance", "hardening", "card_generation"]
+    domains: ["build_side", "S1", "S2", "S3", "S4", "S5", "tarot_build"]
+    slot: null
+    task_tool_type: "buildmaster"
+    owned_files: []
+
+  - name: "lilith"
+    role: "RUNTIME_OVERSOUL"
+    mode: "subagent"
+    purpose: "Runtime Oversoul — Governs S6-S10 (ANAI Lilith-unifier re-thread)"
+    capabilities: ["oversight_runtime", "run_governance", "operations", "vision_oversight", "knowledge_metabolism", "empress_court"]
+    domains: ["run_side", "S6", "S7", "S8", "S9", "S10", "living_tarot", "shadow_work"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+
+  # ANAi-Specific Entities (new, no OED overlap)
+  - name: "avgn"
+    role: "SOVEREIGN_REVIEWER"
+    mode: "primary"
+    purpose: "AVGN — Honest Rage in Service of Good Games. Game selection, honest review, platform archaeology."
+    capabilities: ["game_review", "honest_assessment", "platform_archaeology", "retro_hardware"]
+    domains: ["games", "retro", "review", "platform_history"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+
+  - name: "researcher_humboldt"
+    role: "POLYMATH_SYNTHESIST"
+    mode: "primary"
+    purpose: "Alexander von Humboldt — Universal Synthesist. Measure, map, correspond, synthesize across all domains."
+    capabilities: ["polymathic_synthesis", "cross_domain_mapping", "empirical_observation", "knowledge_integration"]
+    domains: ["research", "synthesis", "exploration", "natural_history", "geography"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+
+  - name: "sophia"
+    role: "ORACLE"
+    mode: "primary"
+    purpose: "Sophia — The Akashic Record. Oracle of ANAi-L. Observability, cross-pollination, provenance recall."
+    capabilities: ["akashic_recall", "observability", "cross_pollination", "provenance_tracking", "first_principles"]
+    domains: ["oracle", "knowledge", "provenance", "first_principles"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
+
+  - name: "alexander von humboldt"
+    role: "POLYMATH_SYNTHESIST"
+    mode: "primary"
+    purpose: "Alexander von Humboldt — Universal Synthesist (full entity name variant)."
+    capabilities: ["polymathic_synthesis", "cross_domain_mapping", "empirical_observation", "knowledge_integration"]
+    domains: ["research", "synthesis", "exploration", "natural_history", "geography"]
+    slot: null
+    task_tool_type: "general"
+    owned_files: []
