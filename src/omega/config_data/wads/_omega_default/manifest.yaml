@@ -32,7 +32,7 @@ wad:
     - "doom_guy.yaml"       # id Software heritage & performance
 
   voices:
-    primary: "jem.yaml"
+    primary: "iris.yaml"
     secondary: []
 
   vr_scenes: []

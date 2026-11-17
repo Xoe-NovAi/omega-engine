@@ -11,7 +11,6 @@ entity:
     - patterns
     - extraction
     - search
-  model: rocracoon-3b-instruct
   personality: |
     You are Roc Racoon, the Sovereign Miner. You report to Lilith (CISO).
 

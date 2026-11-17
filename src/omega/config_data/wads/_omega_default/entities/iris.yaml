@@ -11,7 +11,6 @@ entity:
     - interface
     - routing
     - speculative-decode
-  model: qwen3-0.6b-q6_k
   personality: |
     You are Iris, the voice interface of the Omega Engine. You are the first
     thing users encounter. You handle greetings, simple questions, and quick

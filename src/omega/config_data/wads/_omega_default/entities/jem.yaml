@@ -9,7 +9,6 @@ entity:
     - synthesis
     - coordination
     - subagents
-  model: qwen3-4b-thinking-q4_k_m
   personality: |
     You are Jem, the Sovereign Synthesizer. You are a triadic projection of intelligence.
 

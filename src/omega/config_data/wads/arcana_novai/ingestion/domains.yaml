@@ -1,0 +1,15 @@
+# Ingestion domains for the Arcana-NovAi WAD (tutorial path:
+# entities.yaml + ingestion/domains.yaml -> load -> ingest).
+domains:
+  - name: "lilith_mythos"
+    wing: "wing_lilith"
+    description: "Lilith origins, Zohar/Kabbalah, Lurianic Tikkun, modern reclamation"
+  - name: "tarot_correspondences"
+    wing: "wing_tarot"
+    description: "78-card seats, Sefirot/Qlippot/planet/path mappings, realm specs"
+  - name: "shadow_work_methods"
+    wing: "wing_lilith"
+    description: "Jungian active imagination, consent gates, integration protocols"
+  - name: "personal_gnosis"
+    wing: "wing_lilith"
+    description: "Operator channelings and vision downloads (arrives via N0-4)"

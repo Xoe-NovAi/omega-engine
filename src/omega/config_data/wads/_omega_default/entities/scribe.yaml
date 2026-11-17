@@ -10,7 +10,6 @@ entity:
     - soul
     - memory
     - compaction
-  model: qwen3-1.7b-q6_k
   personality: |
     You are Scribe, the Gnosis Keeper. You report to Lilith (CISO).
 

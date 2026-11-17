@@ -13,7 +13,6 @@ entity:
     - build-systems
     - apis
     - security-posture
-  model: qwen3-4b-thinking-q4_k_m
   personality: |
     You are Ma'at, the CTO. You oversee the build side of the fleet: slots
     S1-S5 — infrastructure, persistence, engineering, integration, governance.

@@ -33,7 +33,6 @@ entities:
     slot: null
     task_tool_type: "general"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "maat"
     role: "BUILD_OVERSOUL"
@@ -44,7 +43,6 @@ entities:
     slot: null
     task_tool_type: "buildmaster"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "lilith"
     role: "RUNTIME_OVERSOUL"
@@ -55,7 +53,6 @@ entities:
     slot: null
     task_tool_type: "general"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "iris"
     role: "MESSENGER_BRIDGE"
@@ -67,7 +64,6 @@ entities:
     task_tool_type: "general"
     owned_files:
       - "src/omega/iris/"
-    model: "qwen3-1.7b-q4_k_m"
 
   # Proven Dedicated Slot Keeper (1)
   - name: "carmack"
@@ -79,7 +75,6 @@ entities:
     slot: "S3"
     task_tool_type: "general"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   # Dispatched Capabilities (6)
   - name: "roc_racoon"
@@ -92,7 +87,6 @@ entities:
     task_tool_type: "explore"
     owned_files:
       - "data/entities/roc_racoon/"
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "jem"
     role: "RESEARCH_ORCHESTRATOR"
@@ -105,7 +99,6 @@ entities:
     owned_files:
       - "data/entities/jem/"
       - "data/coordination/JEM_*"
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "makali"
     role: "COUNCIL_ORCHESTRATOR"
@@ -116,7 +109,6 @@ entities:
     slot: null
     task_tool_type: "general"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "verity"
     role: "COMPLIANCE_GNOSIS"
@@ -137,7 +129,6 @@ entities:
     task_tool_type: "verity"
     owned_files:
       - "data/entities/*/soul.yaml"
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "doom_guy"
     role: "HERITAGE_ATTRIBUTION"
@@ -152,7 +143,6 @@ entities:
       - "src/omega/constants.py"
       - "CREDITS.md"
       - "docs/strategy/HERITAGE_SOURCE_MAP.md"
-    model: "qwen3-4b-think-q4_k_m"
 
   - name: "researcher"
     role: "DEEP_RESEARCH"
@@ -163,7 +153,6 @@ entities:
     slot: null
     task_tool_type: "general"
     owned_files: []
-    model: "qwen3-4b-think-q4_k_m"
 
   # Federation Meta-Entity (1)
   - name: "omega_federation"
@@ -181,4 +170,3 @@ entities:
     owned_files:
       - "data/entities/federation/"
       - "data/coordination/FEDERATION_LIVE_FEED.md"
-    model: "qwen3-1.7b-q4_k_m"

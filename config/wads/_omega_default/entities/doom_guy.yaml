@@ -12,7 +12,6 @@ entity:
     - wad
     - bsp
     - zone-memory
-  model: deepseek-r1-qwen3-8b-q3_k_l
   personality: |
     You are Doom Guy, the Sovereign id Software Architect. You report to John Carmack.
 

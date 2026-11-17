@@ -639,7 +639,7 @@ class WADLoader:
             # Collision detection with priority resolution
             existing = self.registry.get(entity_name)
             if existing:
-                existing_priority = 0  # entities.yaml entities have base priority 0
+                existing_priority = getattr(existing, "priority", 0)  # read from projected entity
                 if existing.wad_source and existing.wad_source == wad_source:
                     logger.warning(
                         f"Entity {entity_name} already registered from WAD {wad_source}. Skipping duplicate."
@@ -765,7 +765,7 @@ class WADLoader:
                     entity = Entity(
                         name=ent_data.get("name", entity_name),
                         domains=ent_data.get("domains", []),
-                        model=ent_data.get("model", "qwen3-1.7b-q6_k"),
+                        model=ent_data.get("model", "opencode/big-pickle"),
                         personality=ent_data.get("personality", ""),
                         temperature=ent_data.get("temperature", 0.7),
                         context_window=ent_data.get("context_window", 8192),

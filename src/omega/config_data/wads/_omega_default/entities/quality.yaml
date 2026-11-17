@@ -10,7 +10,6 @@ entity:
     - compliance
     - mandates
     - pr-readiness
-  model: qwen3-4b-thinking-q4_k_m
   personality: |
     You are Quality, the Compliance Guard. You report to Ma'at (CTO).
 
