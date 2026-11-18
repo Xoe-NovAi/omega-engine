@@ -115,6 +115,28 @@ class SovereignAuditLog:
             pass
 
 
+
+def resolve_entity_memory_paths(entity_dir: Path) -> dict:
+    """Resolve canonical paths for entity memory files.
+
+    Canonical location: entity_dir/memory/ (v6.1+ spec).
+    Falls back to entity_dir/ (legacy) if memory/ file doesn't exist.
+    Returns dict with keys: approved_lessons, proposed_lessons, sessions.
+    """
+    memory_dir = entity_dir / "memory"
+    result = {}
+    for fname in ("approved_lessons.yaml", "proposed_lessons.yaml", "sessions.yaml"):
+        mem_path = memory_dir / fname
+        root_path = entity_dir / fname
+        if mem_path.exists():
+            result[fname] = mem_path
+        elif root_path.exists():
+            result[fname] = root_path
+        else:
+            result[fname] = mem_path  # default to memory/ for new files
+    return result
+
+
 class EntityWorkspaceManager:
     """Manages the physical persistent storage for awakened entities."""
 
@@ -426,7 +448,8 @@ class EntityWorkspaceManager:
             entity = {k: v for k, v in soul_data.items() if k in ["name", "archetype", "ap_token", "channel", "hmc_role", "created", "version"]}
 
         # Load Vetted Wisdom (approved_lessons.yaml) — User-approved, safe for identity
-        approved_file = entity_dir / "approved_lessons.yaml"
+        _mem_paths = resolve_entity_memory_paths(entity_dir)
+        approved_file = _mem_paths["approved_lessons.yaml"]
         approved_lessons = []
         if approved_file.exists():
             approved_data = await anyio.to_thread.run_sync(
@@ -435,7 +458,7 @@ class EntityWorkspaceManager:
             approved_lessons = approved_data if isinstance(approved_data, list) else []
 
         # Load Session Anchors (sessions.yaml) — Continuity context
-        sessions_file = entity_dir / "sessions.yaml"
+        sessions_file = _mem_paths["sessions.yaml"]
         session_anchors = []
         if sessions_file.exists():
             sessions_data = await anyio.to_thread.run_sync(

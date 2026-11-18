@@ -14,6 +14,7 @@ and integrates approved lessons from proposed_lessons.yaml to close the distilla
 import yaml
 import logging
 from pathlib import Path
+from omega.oracle.entity_workspace import resolve_entity_memory_paths
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,12 @@ def extract_soul_context(soul: dict, max_items: int = 3) -> str:
                 if rule:
                     lines.append(f"- {rule[:150]}")
 
+    # Path 3: axioms (ANAI schema — lilith, maat, kali, avgn, sophia)
+    if not lines:
+        for axiom in (soul.get("axioms") or [])[:max_items]:
+            if isinstance(axiom, dict) and "text" in axiom:
+                lines.append(f"- {axiom['text'][:150]}")
+
     # Path 3: identity values + strengths (minimal fallback)
     if not lines:
         identity = soul.get("identity") or {}
@@ -65,21 +72,21 @@ def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
     entity_dir = data_dir / "entities" / entity_name.lower()
     context_lines = []
 
-    # 1. Check proposed_lessons.yaml for recently approved distillations
-    pl_path = entity_dir / "proposed_lessons.yaml"
-    if pl_path.exists():
+    # Taint-Gate: Only approved_lessons.yaml (vetted) is injected.
+    # proposed_lessons.yaml is NEVER read for identity context.
+    _mem_paths = resolve_entity_memory_paths(entity_dir)
+    approved_path = _mem_paths["approved_lessons.yaml"]
+    if approved_path.exists():
         try:
-            pl_data = yaml.safe_load(pl_path.read_text(encoding="utf-8")) or {}
-            proposals = (
-                pl_data.get("proposals", [])
-                if isinstance(pl_data, dict)
-                else (pl_data if isinstance(pl_data, list) else [])
-            )
-            for p in proposals:
-                if isinstance(p, dict) and p.get("status") == "approved" and p.get("L3"):
-                    context_lines.append(f"- {p['L3']}")
+            approved_data = yaml.safe_load(approved_path.read_text(encoding="utf-8")) or []
+            if isinstance(approved_data, list):
+                for lesson in approved_data[:3]:
+                    if isinstance(lesson, str):
+                        context_lines.append(f"- {lesson}")
+                    elif isinstance(lesson, dict) and lesson.get("L3"):
+                        context_lines.append(f"- {lesson['L3']}")
         except (OSError, yaml.YAMLError) as e:
-            logger.warning("Failed to read proposed_lessons.yaml for '%s': %s", entity_name, e)
+            logger.warning("Failed to read approved_lessons.yaml for '%s': %s", entity_name, e)
 
     # 2. Extract from primary soul.yaml
     soul_path = entity_dir / "soul.yaml"

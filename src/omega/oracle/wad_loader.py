@@ -779,6 +779,18 @@ class WADLoader:
                         wad_source=wad_source,
                         priority=priority,
                     )
+                    # WAD-to-runtime soul seeding: copy WAD soul.yaml to runtime if not exists
+                    wad_soul = Path(path).parent / "soul.yaml"
+                    if wad_soul.exists():
+                        import shutil as _shutil
+                        from omega.oracle.entity_workspace import _get_entities_data_dir
+                        runtime_dir = _get_entities_data_dir() / entity.name.lower().replace(" ", "_").replace("'", "")
+                        runtime_soul = runtime_dir / "soul.yaml"
+                        if not runtime_soul.exists():
+                            runtime_dir.mkdir(parents=True, exist_ok=True)
+                            _shutil.copy2(wad_soul, runtime_soul)
+                            logger.info(f"Seeded soul.yaml from WAD for {entity.name}")
+
                     await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
             except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
