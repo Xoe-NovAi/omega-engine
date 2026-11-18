@@ -156,3 +156,42 @@ This deepened plan documents every verified defect and establishes an ordered, t
 ## 5. Immediate Next Move
 
 Execute **Phase 1.5 (Correctness & Hygiene Hotfixes)** first — specifically fixing the IWAD/PWAD priority inversion (`1.5.1`), `dispatch_registry.py` cleanup (`1.5.2`), dual-tree sync test (`1.5.3`), and `DEFAULT_ENTITY_MODEL` SSOT (`1.5.4`) — so that ANAi actually overrides OED at runtime before we move into Phase 2 Soul unification.
+
+---
+
+## 6. Tracking & Decision Log Integration
+
+### Tracking systems used (official repo)
+
+| Tracker | Location | Purpose | WAD-compatible? |
+|---------|----------|---------|-----------------|
+| WAD Enhancement Plan | `docs/WAD_ENHANCEMENT_PLAN.md` | WAD enhancement phases, items, tests, success criteria | Yes (WAD-agnostic structure) |
+| V2 Migration Plan | `docs/OPENCODE_V2_MIGRATION_PLAN.md` | OpenCode 2.* migration (13 sections) | Yes |
+| V2 Migration Review | `docs/V2_MIGRATION_REVIEW.md` | Review guide for Node 0 | Yes |
+| Sprint SSOT | `data/coordination/ACTIVE_SPRINT.json` | Current sprint status | Yes (WAD-independent) |
+| Sprint pointer | `docs/sprints/current/README.md` | Points to active sprint | Yes |
+| Public facts | `docs/FACTS.yaml` | Authoritative numbers/claims | Yes |
+| Decisions (ADRs) | `docs/decisions/` | Architecture decision records | Yes |
+| Agent landing | `AGENTS.md` | Agent orientation, mandates, rules | Yes |
+
+### Decision log format
+
+Decisions are tracked in two places:
+1. **ADRs** (`docs/decisions/ADR-*.md`) — formal architecture decisions with context, decision, consequences
+2. **WAD Enhancement Plan** (this document) — WAD-specific decisions with phase, item, effort, status
+
+### WAD-specific tracking conventions
+
+- **Phase naming:** Phase 1 (P0), Phase 1.5 (P0 hotfix), Phase 2 (P1), Phase 3 (P2), Phase 4 (P3)
+- **Item numbering:** `<phase>.<item>` (e.g., 1.5.1, 2.3)
+- **Status markers:** ✅ Complete, ⚠️ Pending, 🔄 In Progress
+- **Commit references:** Each completed item references its commit SHA
+- **Test coverage:** Each phase lists new tests needed and existing tests to update
+
+### Compatibility with various PWADs
+
+The tracking system is WAD-agnostic:
+- `validate_wad.py` validates any WAD directory (OED, ANAi, or custom)
+- `dispatch_registry.py` fallback works for any PWAD without dispatch.yaml
+- Soul validation handles both `identity:` (ANAi) and `entity:` (OED) schemas
+- The WAD_ENHANCEMENT_PLAN tracks WAD-level items, not WAD-specific content
