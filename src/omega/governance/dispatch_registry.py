@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 from omega.governance.config_resolver import WADS_DIR
+DEFAULT_IWAD = "_omega_default"
 
 
 _cache = {"key": None, "mtime": 0.0, "data": None}
@@ -44,11 +45,10 @@ def load_dispatch_yaml(iwad: Optional[str] = None, root: Optional[Path] = None) 
     base = root or WADS_DIR
     path = base / iwad / "entities" / "dispatch.yaml"
 
-    # Fallback: if PWAD has no dispatch.yaml, use IWAD's
+    # Fallback: if PWAD has no dispatch.yaml, use DEFAULT_IWAD
     if not path.exists():
         from omega.governance.config_resolver import get_active_iwad
-        # Try _omega_default as fallback IWAD
-        fallback_iwad = "_omega_default"
+        fallback_iwad = DEFAULT_IWAD
         if iwad != fallback_iwad:
             fallback_path = base / fallback_iwad / "entities" / "dispatch.yaml"
             if fallback_path.exists():

@@ -43,7 +43,7 @@ from .entity_workspace import EntityWorkspaceManager
 from .resource_guard import ResourceGuard
 from .context_builder import ContextBuilder
 from .capability_registry import CapabilityRegistry
-from .entity_registry import EntityRegistry
+from .entity_registry import EntityRegistry, DEFAULT_ENTITY_MODEL
 from .handoff import HandoffState, format_handoff_prompt
 from omega.observability import get_engine
 from omega.oracle.model_gateway import ModelGateway
@@ -650,7 +650,7 @@ class Orchestrator:
         try:
             entity_registry = EntityRegistry()
             entity = entity_registry.get(entity_name)
-            entity_model = entity.model if entity else "qwen3-1.7b-q6_k"
+            entity_model = entity.model if entity else DEFAULT_ENTITY_MODEL
             logger.info(f"Entity '{entity_name}' designated model: {entity_model}")
         except OmegaError:
             raise
@@ -659,7 +659,7 @@ class Orchestrator:
                 f"Failed to load entity model for '{entity_name}': {e}. Using default.",
                 exc_info=True,
             )
-            entity_model = "qwen3-1.7b-q6_k"
+            entity_model = DEFAULT_ENTITY_MODEL
 
         # Combine the soul prompt with the task prompt and dampening field
         full_prompt = (

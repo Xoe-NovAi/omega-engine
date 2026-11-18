@@ -143,6 +143,9 @@ _entity_yaml_cache: Dict[str, Any] = {}
 DEFAULT_IWAD = "_omega_default"
 
 
+DEFAULT_ENTITY_MODEL = "opencode/big-pickle"
+
+
 @dataclass
 class Entity:
     """A user-definable entity — a Node, custom persona, or free agent.
@@ -437,7 +440,7 @@ class EntityRegistry:
                 name=raw.get("name", key),
                 domains=raw.get("domains", []),
                 capabilities=raw.get("capabilities", []),
-                model=raw.get("model", "qwen3-1.7b-q6_k"),
+                model=raw.get("model", DEFAULT_ENTITY_MODEL),
                 personality=raw.get("personality", ""),
                 temperature=raw.get("temperature"),
                 context_window=raw.get("context_window"),
@@ -807,7 +810,8 @@ class EntityRegistry:
         """
         if not name or not name.strip():
             raise ValueError("Entity name must be non-empty")
-        return name.strip().lower()
+        # Canonicalize: strip apostrophes and normalize whitespace
+        return name.strip().lower().replace("'", "").replace(" ", "_")
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.

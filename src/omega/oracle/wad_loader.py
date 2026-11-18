@@ -357,7 +357,8 @@ class WADLoader:
                 wad_type = wad_meta["type"]
                 # IWADs get priority 100, PWADs get priority 0 (base override)
                 # plus any manifest-specified priority
-                priority = 100 if wad_type == "iwad" else 0
+                # IWAD = base (low), PWAD = override (high) — DOOM backward-scan
+                priority = 10 if wad_type == "iwad" else 100
                 priority += wad_meta.get("priority", 0)
 
                 logger.info(f"Loading WAD: {stack_name} (type={wad_type}, priority={priority})")

@@ -86,7 +86,7 @@ from .health_monitor import CircuitOpenError
 from .provider_registry import get_provider_registry
 
 from .gnosis_proxy import GnosisProxy
-from .entity_registry import EntityRegistry
+from .entity_registry import EntityRegistry, DEFAULT_ENTITY_MODEL
 from .entity_affinity import EntityAffinityResolver, AffinityResult
 from .budget_gate import BudgetGate
 from .provider_selector import ProviderSelector
@@ -898,7 +898,7 @@ class ModelGateway:
     @staticmethod
     def _system_default_model() -> str:
         """Return the system default model for unaffiliated queries."""
-        return "qwen3-1.7b"
+        return DEFAULT_ENTITY_MODEL
 
     # ── Model name resolution ──────────────────────────────────────────
     async def _resolve_ollama_model(self, model_name: str) -> str:

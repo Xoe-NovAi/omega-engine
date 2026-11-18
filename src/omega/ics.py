@@ -243,8 +243,7 @@ def _detect_model(entity: str, session_id: Optional[str] = None) -> str:
         3. **OpenCode session DB** — authoritative live model, scoped to
            ``session_id`` when provided (B1 fix: global-latest lookup
            returns WRONG models in multi-instance environments)
-        4. **Entity soul.yaml** ``inference.model`` — entity default
-        5. **"unknown"** — graceful fallback
+        4. **"unknown"** — graceful fallback
 
     Args:
         entity: The entity name (for entity-config lookup in priority 4)
@@ -272,21 +271,7 @@ def _detect_model(entity: str, session_id: Optional[str] = None) -> str:
     if db_model:
         return db_model
 
-    # Priority 4: Entity soul.yaml — M22 provenance: log fallback
-    import warnings
-    warnings.warn(
-        f"ICS model detection: DB lookup failed for entity '{entity}' "
-        f"(session_id={session_id}); falling back to soul.yaml. "
-        f"Header may show stale model. Set OPENCODE_MODEL or OMEGA_MODEL_OVERRIDE "
-        f"to pin explicitly.",
-        RuntimeWarning,
-        stacklevel=2,
-    )
-    soul_model = _read_entity_model(entity)
-    if soul_model:
-        return soul_model
-
-    # Priority 5: graceful fallback
+    # Priority 4: graceful fallback
     return "unknown"
 
 
