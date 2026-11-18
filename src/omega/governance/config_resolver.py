@@ -141,6 +141,25 @@ def get_active_iwad() -> str:
     return data.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
 
 
+def get_active_pwads() -> list[str]:
+    """Read active_pwads from config/omega.yaml at call time (lazy).
+
+    Nested key: omega.entity.active_pwads (default: []).
+    Returns a list of WAD directory names to load as PWADs.
+    """
+    try:
+        with _open_config_file("omega.yaml") as f:
+            data: dict[str, Any] = yaml.safe_load(f) or {}
+    except FileNotFoundError:
+        return []
+    pwads = data.get("omega", {}).get("entity", {}).get("active_pwads", [])
+    if isinstance(pwads, str):
+        pwads = [pwads]
+    if not isinstance(pwads, list):
+        return []
+    return [str(p) for p in pwads]
+
+
 def get_wad_path(wad_name: str) -> Path:
     """Resolve a WAD directory under WADS_DIR."""
     return _get_config_dir() / "wads" / wad_name

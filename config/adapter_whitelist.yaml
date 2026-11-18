@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Adapter Module Whitelist — Config-Driven (Phase 4.2)
+# WADs can only import adapter modules listed here.
+# Add new adapters by appending to this list (requires governance review).
+
+adapter_modules:
+  - "omega.memory.adapters"
+  - "omega.memory.adapters.mnemosyne_adapter"

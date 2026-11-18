@@ -46,12 +46,29 @@ MAX_YAML_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB — prevents loading huge YAML fil
 MAX_ENTITY_NAME_LENGTH = 128  # Entity name length cap
 MAX_DOMAINS_PER_ENTITY = 20  # Max domains per entity
 
-# Adapter module whitelist — only known-safe modules can be imported from WAD manifests.
-# [M2] Engine-Stack Firewall: WADs cannot import arbitrary engine internals.
-ADAPTER_MODULE_WHITELIST: Set[str] = {
-    "omega.memory.adapters",
-    "omega.memory.adapters.mnemosyne_adapter",
-}
+# Adapter module whitelist — loaded from config/adapter_whitelist.yaml (Phase 4.2).
+# Falls back to hardcoded defaults if config file is missing.
+def _load_adapter_whitelist() -> Set[str]:
+    """Load adapter module whitelist from config/adapter_whitelist.yaml."""
+    try:
+        from omega.governance.config_resolver import _get_config_dir
+        config_dir = _get_config_dir()
+        whitelist_path = config_dir / "adapter_whitelist.yaml"
+        if whitelist_path.exists():
+            with open(whitelist_path, encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+            modules = data.get("adapter_modules", [])
+            if isinstance(modules, list):
+                return set(str(m) for m in modules)
+    except (OSError, yaml.YAMLError, ImportError):
+        pass
+    # Hardcoded fallback
+    return {
+        "omega.memory.adapters",
+        "omega.memory.adapters.mnemosyne_adapter",
+    }
+
+ADAPTER_MODULE_WHITELIST: Set[str] = _load_adapter_whitelist()
 
 # Required/core manifest field types (WadManifest V1)
 MANIFEST_FIELD_TYPES = {
@@ -427,34 +444,74 @@ class WADLoader:
         return resolved
 
     async def load_all_wads(self) -> Dict[str, bool]:
-        """Discover and load all WADs in the wads directory.
+        """Discover and load WADs based on config/omega.yaml composition.
 
-        WADs are loaded in priority order:
-        1. IWADs (type: iwad) load first, with higher priority.
-        2. PWADs (type: pwad) load after their IWAD dependencies.
-        3. Dependencies are resolved via topological sort.
-        4. Circular dependencies raise OmegaError.
+        Phase 4.1 Multi-PWAD Composition:
+        - If ``omega.entity.active_pwads`` is configured, loads the IWAD
+          (``omega.entity.active_iwad``) + each listed PWAD in order.
+        - Otherwise falls back to auto-discovery of all WADs in the directory.
 
         Returns a map of stack_name -> success_status.
         """
         results: Dict[str, bool] = {}
 
         try:
-            discovered = await self._discover_wads()
-            if not discovered:
-                logger.info("No WADs discovered in wads directory.")
-                return results
+            from omega.governance.config_resolver import get_active_iwad, get_active_pwads
 
-            ordered_wads = await self._resolve_load_order(discovered)
+            active_iwad = get_active_iwad()
+            active_pwads = get_active_pwads()
 
-            for wad_meta in ordered_wads:
-                stack_name = wad_meta["name"]
-                wad_type = wad_meta["type"]
-                # IWADs get priority 100, PWADs get priority 0 (base override)
-                # plus any manifest-specified priority
-                # IWAD = base (low), PWAD = override (high) — DOOM backward-scan
-                priority = 10 if wad_type == "iwad" else 100
-                priority += wad_meta.get("priority", 0)
+            wads_to_load = []
+
+            if active_pwads:
+                wads_to_load.append((active_iwad, "iwad", 10))
+                for pwad_name in active_pwads:
+                    wads_to_load.append((pwad_name, "pwad", 100))
+                logger.info(
+                    f"Multi-PWAD composition: IWAD={active_iwad}, PWADs={active_pwads}"
+                )
+            else:
+                discovered = await self._discover_wads()
+                if not discovered:
+                    logger.info("No WADs discovered in wads directory.")
+                    return results
+                ordered_wads = await self._resolve_load_order(discovered)
+                for w in ordered_wads:
+                    wads_to_load.append((w["name"], w["type"], None))
+
+            for stack_name, wad_type, base_priority in wads_to_load:
+                if base_priority is None:
+                    try:
+                        manifest_path = self.wads_dir / stack_name / "manifest.yaml"
+                        if manifest_path.exists():
+                            with open(manifest_path, encoding="utf-8") as f:
+                                raw = yaml.safe_load(f) or {}
+                            manifest = raw.get("wad", raw) if isinstance(raw, dict) else {}
+                            wad_type = manifest.get("type", wad_type)
+                            manifest_prio = manifest.get("priority", 0)
+                            if not isinstance(manifest_prio, int) or isinstance(manifest_prio, bool):
+                                manifest_prio = 0
+                        else:
+                            manifest_prio = 0
+                    except (OSError, yaml.YAMLError):
+                        manifest_prio = 0
+                    bp = 10 if wad_type == "iwad" else 100
+                    priority = bp + manifest_prio
+                else:
+                    try:
+                        manifest_path = self.wads_dir / stack_name / "manifest.yaml"
+                        if manifest_path.exists():
+                            with open(manifest_path, encoding="utf-8") as f:
+                                raw = yaml.safe_load(f) or {}
+                            manifest = raw.get("wad", raw) if isinstance(raw, dict) else {}
+                            manifest_prio = manifest.get("priority", 0)
+                            if not isinstance(manifest_prio, int) or isinstance(manifest_prio, bool):
+                                manifest_prio = 0
+                        else:
+                            manifest_prio = 0
+                    except (OSError, yaml.YAMLError):
+                        manifest_prio = 0
+                    priority = base_priority + manifest_prio
 
                 logger.info(f"Loading WAD: {stack_name} (type={wad_type}, priority={priority})")
                 success, _ = await self.load_wad(stack_name, priority=priority)
@@ -462,12 +519,13 @@ class WADLoader:
 
         except OmegaError as e:
             logger.error(f"WAD auto-loading failed: {e}")
-            # Record failure for any WADs not yet loaded
-            for wad_meta in discovered:
-                if wad_meta["name"] not in results:
-                    results[wad_meta["name"]] = False
+            if "discovered" in locals():
+                for wad_meta in discovered:
+                    if wad_meta["name"] not in results:
+                        results[wad_meta["name"]] = False
 
         return results
+
 
     async def load_single_wad(self, stack_name: str, priority: int = 10) -> bool:
         """Load only a single named WAD.

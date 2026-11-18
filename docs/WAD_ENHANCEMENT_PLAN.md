@@ -132,14 +132,14 @@ This deepened plan documents every verified defect and establishes an ordered, t
 | `3.5` ✅ | **Runtime WAD Switch MCP/API Tool** | `src/omega/oracle/wad_loader.py` + `mcp_servers/omega_hub/` | Expose `wad_switch(stack_name)` built atop `unload_wad()` + `load_wad()` + `dispatch_registry` invalidation. |
 | `2.7` ✅ | **Entity field validation consolidation** | `src/omega/oracle/wad_loader.py` | Pydantic `WADEntitySchema` replaces ad-hoc type/range checks; strict typing (no silent coercion); extra fields → metadata. |
 
-### Phase 4: Advanced Composition & Extensibility (P3 — Future)
-
+### Phase 4: Advanced Composition & Extensibility (P3 — ✅ COMPLETE)
+> *Multi-PWAD loading, config-driven adapter whitelist, hot-reload, and entity affinity.*
 | # | Item | Target File(s) | Description |
 |---|------|----------------|-------------|
-| `4.1` | **Explicit Multi-PWAD Composition** | `config/omega.yaml`, `wad_loader.py` | Support `active_iwad: "_omega_default"` + `active_pwads: ["arcana_novai", ...]` instead of all-or-nothing `load_all_wads()`. |
-| `4.2` | **Config-Driven Adapter Whitelist** | `config/adapter_whitelist.yaml`, `wad_loader.py` | Replace hardcoded `ADAPTER_MODULE_WHITELIST` set so MemPalace or custom WAD adapters can be whitelisted cleanly via governance config. |
-| `4.3` | **WAD Hot-Reload & Diff Tool** | `wad_loader.py`, `scripts/wad_diff.py` | `anyio` file-watch reload for WAD dev; structural diff between two WAD directories. |
-| `4.4` | **Entity Affinity Activation (Backburner)** | `config/entity_model_affinity.yaml` | Activate when ready for provider-affinity routing; keep manual user selection primary until then. |
+| `4.1` ✅ | **Explicit Multi-PWAD Composition** | `config/omega.yaml`, `wad_loader.py` | Support `active_iwad: "_omega_default"` + `active_pwads: ["arcana_novai", ...]` instead of all-or-nothing `load_all_wads()`. |
+| `4.2` ✅ | **Config-Driven Adapter Whitelist** | `config/adapter_whitelist.yaml`, `wad_loader.py` | Replace hardcoded `ADAPTER_MODULE_WHITELIST` set so MemPalace or custom WAD adapters can be whitelisted cleanly via governance config. |
+| `4.3` ✅ | **WAD Hot-Reload & Diff Tool** | `wad_loader.py`, `scripts/wad_diff.py` | `anyio` file-watch reload for WAD dev; structural diff between two WAD directories. |
+| `4.4` ✅ | **Entity Affinity Activation (Backburner)** | `config/entity_model_affinity.yaml` | Activate when ready for provider-affinity routing; keep manual user selection primary until then. |
 
 ---
 

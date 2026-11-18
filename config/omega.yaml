@@ -9,6 +9,7 @@
 omega:
   entity:
     active_iwad: "_omega_default"
+    active_pwads: []  # Phase 4.1: list of PWAD names to compose (e.g. ["arcana_novai"])
   
   # Model updater configuration
   model_updater:
