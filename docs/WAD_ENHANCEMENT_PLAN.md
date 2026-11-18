@@ -159,6 +159,105 @@ Execute **Phase 1.5 (Correctness & Hygiene Hotfixes)** first — specifically fi
 
 ---
 
+---
+
+## 5.5 Deep Architectural Review: The Grand Picture
+
+### The WAD as Universal Content Container
+
+The WAD system should be the **single extension point** for all Omega Engine customization. Everything that differs between deployments should live in a WAD:
+
+```
+WAD = {
+  manifest.yaml        # Identity, version, requires_engine, type (iwad/pwad), priority
+  entities/            # Entity definitions (entity: envelope YAMLs)
+  entities/*/soul.yaml # Identity contracts (axioms, directives, voice)
+  entities/*/dispatch.yaml # Subagent dispatch config (roles, capabilities)
+  voices/              # Voice interface personas
+  hierarchy.yaml       # Rank/recursion hierarchy
+  world/               # VR world lumps (optional)
+  adapters/            # Memory adapter configs (optional)
+  ingestion/           # Domain ingestion configs (optional)
+  templates/           # Card/entity templates (optional)
+}
+```
+
+### The Soul as Living Identity
+
+```
+Soul Lifecycle:
+  WAD Source (seed) → Runtime Scaffold (first load) → Living Runtime (modified by entity)
+  ↓
+  proposed_lessons.yaml (agent-written, unvetted)
+  ↓ (human review via soul_promote.py)
+  approved_lessons.yaml (vetted wisdom)
+  ↓ (injected into soul context)
+  soul.yaml (identity, axioms, directives, voice)
+```
+
+### The Continuation System as Memory
+
+```
+Continuation Layers:
+  Layer 0: OpenCode session DB (ephemeral, session-scoped)
+  Layer 1: session_gnosis.md (per-entity, session-level)
+  Layer 2: SESSION_ANCHOR.md (node-level, coordination)
+  Layer 3: proposed_lessons.yaml (agent-written, unvetted)
+  Layer 4: approved_lessons.yaml (user-vetted)
+  Layer 5: soul.yaml (identity, permanent)
+```
+
+### The ICS as Runtime Awareness
+
+```
+ICS Model Detection Priority:
+  1. OMEGA_MODEL_OVERRIDE env var (explicit)
+  2. OPENCODE_MODEL env var (session-level)
+  3. OpenCode session DB (authoritative, session-scoped)
+  4. Entity registry model (from WAD entity YAML)
+  5. "unknown" (graceful fallback)
+```
+
+### The OpenCode Adapter as a Disposable Bridge
+
+```
+Omega Engine (WADs, MemPalace, Hivemind) ←→ Adapter ←→ Interface (OpenCode, CLI, etc.)
+```
+
+### Identified Gaps (7 total)
+
+1. **No WAD-to-WAD inheritance/composition** — PWADs can't selectively override; no multi-PWAD loading
+2. **No runtime WAD switching** — requires restart; `unload_wad()` exists but no API/MCP tool
+3. **Soul evolution aspirational, not operational** — L1→L2→L3 distillation never auto-triggered
+4. **No WAD validation in CI** — `validate_wad.py` exists but not in `make test`
+5. **Entity affinity config missing** — `entity_affinity.py` exists but `entity_model_affinity.yaml` absent
+6. **No WAD development guide** — `how-to-create-wad.md` is high-level only
+7. **OpenCode adapter not ported** — `soul_render.py` and `soul_agents_opencode.py` still in renegade
+
+### Efficiency Opportunities
+
+1. **Batch entity save:** `EntityRegistry.add()` calls `_save()` after every entity → N disk writes per WAD
+2. **Soul context caching:** `soul_utils.load_entity_soul_context()` reads from disk on every call
+3. **Entity name canonicalization:** Fixed in `_validate_name()` but `EntityWorkspaceManager.scaffold_workspace()` uses different normalization
+4. **WAD validation caching:** `validate_wad.py` re-parses all YAML on every run
+
+### The Plug-n-Play Vision
+
+To enable "modular, plug-n-play style architecture that will allow the Omega Engine to operate across all knowledge domains and use cases," the system needs:
+
+1. WAD as the single extension point — everything customizable lives in the WAD
+2. WAD inheritance — PWADs inherit from IWADs, override only what's different
+3. Runtime WAD switching — no restart required
+4. WAD validation — catch issues before load time
+5. WAD development tools — scaffold, lint, diff, render
+6. WAD marketplace — discover, install, update WADs
+7. WAD versioning — semantic versioning with upgrade paths
+8. WAD composition — load multiple PWADs simultaneously
+9. Adapter pattern — any interface can consume any WAD
+10. Continuation system — persistent memory across sessions, nodes, and WADs
+
+We've built the foundation (IWAD/PWAD loading, Shadow-Stacking, soul scaffolding, continuation files). The next phase should focus on **developer experience** (scaffold, lint, render, guide) to make WAD authoring accessible.
+
 ## 6. Tracking & Decision Log Integration
 
 ### Tracking systems used (official repo)
