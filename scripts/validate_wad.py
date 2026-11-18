@@ -276,6 +276,33 @@ def validate_card_assignments(wad_path: Path) -> List[str]:
     return errors
 
 
+
+def validate_world(wad_path: Path) -> List[str]:
+    errors = []
+    world_dir = wad_path / "world"
+    if not world_dir.exists():
+        return []
+    for lump_file in world_dir.rglob("*.yaml"):
+        try:
+            if lump_file.stat().st_size > MAX_YAML_SIZE:
+                errors.append(f"{lump_file.relative_to(wad_path)}: too large ({lump_file.stat().st_size} bytes)")
+                continue
+            data = yaml.safe_load(lump_file.read_text())
+        except yaml.YAMLError as e:
+            errors.append(f"{lump_file.relative_to(wad_path)}: parse error: {e}")
+            continue
+        if data is None:
+            continue
+        # Check path traversal
+        try:
+            resolved = lump_file.resolve()
+            if not str(resolved).startswith(str(wad_path.resolve())):
+                errors.append(f"{lump_file.relative_to(wad_path)}: path traversal detected")
+        except (OSError, RuntimeError):
+            pass
+    return errors
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python scripts/validate_wad.py <wad_dir>")
@@ -295,6 +322,7 @@ def main():
     all_errors.extend(validate_voices(wad_path))
     all_errors.extend(validate_hierarchy(wad_path))
     all_errors.extend(validate_souls(wad_path))
+    all_errors.extend(validate_world(wad_path))
     all_errors.extend(validate_card_assignments(wad_path))
 
     if all_errors:

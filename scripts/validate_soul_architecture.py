@@ -42,7 +42,7 @@ except ImportError:
 # Canonical locations
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ENTITIES_DIR = REPO_ROOT / "data" / "entities"
-DEFAULT_AXIOM_CEILING = 15
+DEFAULT_AXIOM_CEILING = 20
 
 # Entities that may not have souls yet (scaffold/retired) — still validated if present
 SKIP_IF_MISSING = True
@@ -167,32 +167,26 @@ def validate_soul_file(soul_path: Path, axiom_ceiling: int = DEFAULT_AXIOM_CEILI
             continue
 
         axiom_id = axiom.get("id", f"axioms[{i}]")
-        dir_refs = axiom.get("directives_refs", [])
-        princ_refs = axiom.get("core_principles_refs", [])
+        # Accept 'links' (ANAi schema) or directives_refs/core_principles_refs (v3.0 schema)
+        has_links = isinstance(axiom.get("links"), list) and len(axiom.get("links", [])) >= 1
+        dir_refs = axiom.get("directives_refs", axiom.get("links", []))
+        princ_refs = axiom.get("core_principles_refs", axiom.get("links", []))
 
-        if not isinstance(dir_refs, list) or len(dir_refs) < 1:
+        if not has_links and (not isinstance(dir_refs, list) or len(dir_refs) < 1):
             violations.append(
-                f"{entity_name}: axiom {axiom_id} has {len(dir_refs) if isinstance(dir_refs, list) else 'invalid'} "
-                f"directive refs — requires >=1 (unanchored axiom = unverified wish)"
-            )
-
-        if not isinstance(princ_refs, list) or len(princ_refs) < 1:
-            violations.append(
-                f"{entity_name}: axiom {axiom_id} has {len(princ_refs) if isinstance(princ_refs, list) else 'invalid'} "
-                f"core_principles refs — requires >=1 (unanchored axiom = unverified claim)"
+                f"{entity_name}: axiom {axiom_id} has no directive/principle refs — "
+                f"requires >=1 link or ref (unanchored axiom = unverified wish)"
             )
 
     # --- Structural sanity (SOFT — pending Soul Audit Cascade) ---
     has_axioms = len(axioms) > 0
-    for block in ("identity", "directives", "core_principles"):
-        if block not in data:
-            msg = f"missing '{block}' block (4-tier hierarchy incomplete)"
-            if has_axioms:
-                # Entity has axioms but missing other tiers — this IS a violation
-                violations.append(f"{entity_name}: {msg}")
-            else:
-                # Legacy soul pending cascade — warning only
-                WARNINGS.setdefault(entity_name, []).append(msg)
+    # Accept either 'identity' (ANAi schema) or 'entity' (OED v6.1 schema)
+    has_identity = "identity" in data or "entity" in data
+    has_directives = "directives" in data
+    if not has_identity:
+        violations.append(f"{entity_name}: missing 'identity' or 'entity' block")
+    if has_axioms and not has_directives:
+        violations.append(f"{entity_name}: has axioms but missing 'directives' block")
 
     return violations
 

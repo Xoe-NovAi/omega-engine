@@ -388,6 +388,51 @@ class WADLoader:
         success, _ = await self.load_wad(stack_name, priority=priority)
         return success
 
+    async def unload_wad(self, stack_name: str) -> bool:
+        """Unload a specific WAD and remove its entities from the registry.
+
+        Removes all entities whose wad_source matches stack_name,
+        resets hierarchy if it was from this WAD, and clears startup message.
+        Returns True on success.
+        """
+        try:
+            # Remove entities from this WAD
+            to_remove = []
+            for key, layers in self.registry._entities.items():
+                active = [l for l in layers if getattr(l, "wad_source", None) == stack_name]
+                if active:
+                    to_remove.append(key)
+
+            for key in to_remove:
+                # Remove only layers from this WAD, keep others
+                layers = self.registry._entities.get(key, [])
+                remaining = [l for l in layers if getattr(l, "wad_source", None) != stack_name]
+                if remaining:
+                    self.registry._entities[key] = remaining
+                    self.registry._entities[key].sort(key=lambda e: e.priority, reverse=True)
+                else:
+                    del self.registry._entities[key]
+                    if key in self.registry._wad_sources:
+                        self.registry._wad_sources[key] = [
+                            w for w in self.registry._wad_sources[key] if w != stack_name
+                        ]
+                        if not self.registry._wad_sources[key]:
+                            del self.registry._wad_sources[key]
+
+            # Clear startup message
+            if stack_name in self._startup_messages:
+                del self._startup_messages[stack_name]
+
+            # Reset hierarchy if it was from this WAD
+            if self.active_hierarchy_path and stack_name in str(self.active_hierarchy_path):
+                self.active_hierarchy_path = None
+
+            logger.info(f"Unloaded WAD: {stack_name} (removed {len(to_remove)} entity keys)")
+            return True
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to unload WAD {stack_name}: {e}")
+            return False
+
     def get_startup_message(self, stack_name: Optional[str] = None) -> Optional[str]:
         """Return the startup personality message for a given WAD stack.
 
