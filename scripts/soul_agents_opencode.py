@@ -36,15 +36,24 @@ render, and it silently diverges from the soul in the meantime.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-WAD_ENTITIES = REPO_ROOT / "wads" / "arcana_novai" / "entities"
+SRC_DIR = REPO_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from omega.governance.config_resolver import WADS_DIR  # noqa: E402
+
+DEFAULT_WAD = "arcana_novai"
+WAD_ENTITIES = WADS_DIR / DEFAULT_WAD / "entities"
 
 CONFIG_PATH = Path(os.path.expanduser("~/.config/opencode/opencode.json"))
 PROMPT_DIR = Path(os.path.expanduser("~/.config/opencode/prompts"))
@@ -63,32 +72,43 @@ MODE = "all"
 DELEGATE_TO = ["explore", "general"]
 
 
+def resolve_entities_dir(wad: Optional[str] = None, wads_dir: Optional[Path] = None) -> Path:
+    base = Path(wads_dir) if wads_dir is not None else WADS_DIR
+    return base / (wad or DEFAULT_WAD) / "entities"
+
+
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def render(entity_id: str) -> str:
+def render(entity_id: str, wad: Optional[str] = None, wads_dir: Optional[Path] = None) -> str:
     """Render via soul_render so there is exactly one renderer."""
-    res = subprocess.run(
-        [sys.executable, str(REPO_ROOT / "scripts" / "soul_render.py"), entity_id],
-        capture_output=True, text=True, check=True,
-    )
+    cmd = [sys.executable, str(REPO_ROOT / "scripts" / "soul_render.py"), entity_id]
+    if wad:
+        cmd.extend(["--wad", wad])
+    if wads_dir is not None:
+        cmd.extend(["--wads-dir", str(wads_dir)])
+    res = subprocess.run(cmd, capture_output=True, text=True, check=True)
     return res.stdout
 
 
-def description_for(entity_id: str) -> str:
+def description_for(
+    entity_id: str, wad: Optional[str] = None, wads_dir: Optional[Path] = None
+) -> str:
     """Build the required `description` from the soul — the source of truth."""
     import yaml
-    soul = yaml.safe_load((WAD_ENTITIES / entity_id / "soul.yaml").read_text(encoding="utf-8"))
-    desc_path = WAD_ENTITIES / entity_id / f"{entity_id}.yaml"
+
+    entities_dir = resolve_entities_dir(wad=wad, wads_dir=wads_dir)
+    soul = yaml.safe_load((entities_dir / entity_id / "soul.yaml").read_text(encoding="utf-8")) or {}
+    desc_path = entities_dir / entity_id / f"{entity_id}.yaml"
     domains: list[str] = []
     if desc_path.exists():
         d = yaml.safe_load(desc_path.read_text(encoding="utf-8")) or {}
         domains = (d.get("entity", {}) or {}).get("domains", []) or []
 
-    ident = soul.get("identity", {}) or {}
-    name = ident.get("keeper", entity_id)
-    epithet = ident.get("epithet", "")
+    ident = soul.get("identity") or soul.get("entity") or {}
+    name = ident.get("keeper") or ident.get("name") or ident.get("id") or entity_id
+    epithet = ident.get("epithet") or ident.get("archetype") or ""
     seat = (ident.get("seat") or "").strip()
 
     lead = f"{name}-N1"
@@ -103,7 +123,10 @@ def description_for(entity_id: str) -> str:
     return (lead + " " + use).strip()
 
 
-def install(*, dry_run: bool = False) -> int:
+def install(
+    *, dry_run: bool = False, wad: Optional[str] = None, wads_dir: Optional[Path] = None
+) -> int:
+    entities_dir = resolve_entities_dir(wad=wad, wads_dir=wads_dir)
     PROMPT_DIR.mkdir(parents=True, exist_ok=True)
     HASH_RECORD.parent.mkdir(parents=True, exist_ok=True)
 
@@ -122,12 +145,12 @@ def install(*, dry_run: bool = False) -> int:
     hashes: dict[str, str] = {}
 
     for eid in TARGETS:
-        soul_path = WAD_ENTITIES / eid / "soul.yaml"
+        soul_path = entities_dir / eid / "soul.yaml"
         if not soul_path.exists():
             print(f"  SKIP  {eid}: no soul.yaml")
             continue
 
-        prompt = render(eid)
+        prompt = render(eid, wad=wad, wads_dir=wads_dir)
         out = PROMPT_DIR / f"{eid}.md"
         hashes[eid] = sha256(soul_path)
 
@@ -139,7 +162,7 @@ def install(*, dry_run: bool = False) -> int:
         permissions = [{"action": "subagent", "resource": r, "effect": e} for r, e in task.items()]
         entry = {
             "mode": MODE,
-            "description": description_for(eid),
+            "description": description_for(eid, wad=wad, wads_dir=wads_dir),
             "system": "{file:" + str(out) + "}",
             "permissions": permissions,
         }
@@ -172,7 +195,7 @@ def install(*, dry_run: bool = False) -> int:
     if "*" not in build_task:
         build_task["*"] = "deny"
     if build_task:
-        live_souls = {p.parent.name for p in WAD_ENTITIES.glob("*/soul.yaml")}
+        live_souls = {p.parent.name for p in entities_dir.glob("*/soul.yaml")}
         dead = [k for k, v in build_task.items()
                 if v == "allow" and k not in live_souls
                 and k not in ("explore", "general", "lilith")]
@@ -183,7 +206,7 @@ def install(*, dry_run: bool = False) -> int:
     # The new souls must be delegable by build, or they exist but are unreachable.
     if build_task:
         for eid in TARGETS:
-            if (WAD_ENTITIES / eid / "soul.yaml").exists():
+            if (entities_dir / eid / "soul.yaml").exists():
                 build_task[eid] = "allow"
         # Re-sort broad-first, specific-last (last match wins).
         ordered = {"*": build_task.pop("*", "deny")}
@@ -217,8 +240,9 @@ def install(*, dry_run: bool = False) -> int:
     return 0
 
 
-def verify() -> int:
+def verify(*, wad: Optional[str] = None, wads_dir: Optional[Path] = None) -> int:
     """Drift gate. Non-zero exit means a soul changed without a re-render."""
+    entities_dir = resolve_entities_dir(wad=wad, wads_dir=wads_dir)
     if not HASH_RECORD.exists():
         print("FAIL  no hash record — run `make agent-souls` first")
         return 1
@@ -230,7 +254,7 @@ def verify() -> int:
     failures: list[str] = []
 
     for eid, rec_hash in sorted(recorded.items()):
-        soul_path = WAD_ENTITIES / eid / "soul.yaml"
+        soul_path = entities_dir / eid / "soul.yaml"
         if not soul_path.exists():
             failures.append(f"{eid}: soul.yaml deleted but agent still registered")
             continue
@@ -252,7 +276,7 @@ def verify() -> int:
         if not target.exists():
             failures.append(f"{eid}: prompt file missing: {target}")
             continue
-        expected = render(eid)
+        expected = render(eid, wad=wad, wads_dir=wads_dir)
         actual = target.read_text(encoding="utf-8")
         if actual != expected:
             failures.append(
@@ -279,12 +303,18 @@ def verify() -> int:
 
 
 def main(argv: list[str]) -> int:
-    if not argv or argv[0] not in ("install", "verify"):
-        print("usage: soul_agents_opencode.py install [--dry-run] | verify", file=sys.stderr)
-        return 2
-    if argv[0] == "verify":
-        return verify()
-    return install(dry_run="--dry-run" in argv)
+    parser = argparse.ArgumentParser(
+        description="OpenCode adapter: install rendered WAD souls as OpenCode V2 agents."
+    )
+    parser.add_argument("action", choices=["install", "verify"])
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without writing")
+    parser.add_argument("--wad", default=None, help=f"WAD name (default: {DEFAULT_WAD})")
+    parser.add_argument("--wads-dir", default=None, type=Path, help="Override WADS_DIR")
+    args = parser.parse_args(argv)
+
+    if args.action == "verify":
+        return verify(wad=args.wad, wads_dir=args.wads_dir)
+    return install(dry_run=args.dry_run, wad=args.wad, wads_dir=args.wads_dir)
 
 
 if __name__ == "__main__":

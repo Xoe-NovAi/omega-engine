@@ -47,7 +47,6 @@ def load_dispatch_yaml(iwad: Optional[str] = None, root: Optional[Path] = None) 
 
     # Fallback: if PWAD has no dispatch.yaml, use DEFAULT_IWAD
     if not path.exists():
-        from omega.governance.config_resolver import get_active_iwad
         fallback_iwad = DEFAULT_IWAD
         if iwad != fallback_iwad:
             fallback_path = base / fallback_iwad / "entities" / "dispatch.yaml"
@@ -108,8 +107,9 @@ def get_entity_by_role(
 
 
 def invalidate_cache() -> None:
-    """Force cache invalidation (for tests)."""
+    """Force cache invalidation (for tests and WAD switching)."""
     with _lock:
+        _cache["key"] = None
         _cache["mtime"] = 0.0
         _cache["data"] = None
 

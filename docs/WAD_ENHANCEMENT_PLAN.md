@@ -117,16 +117,20 @@ This deepened plan documents every verified defect and establishes an ordered, t
 | `2.6` ✅ | **Voice, Hierarchy & World Hardening** | `src/omega/oracle/wad_loader.py` | Validate voice YAML schema + file size + `model_recommendation`; add path-traversal + YAML structure checks for `hierarchy.yaml` and `world/` lumps; use `anyio.to_thread.run_sync` for YAML parsing; add `batch_add()` to `EntityRegistry` to avoid N disk writes per WAD load. |
 | `2.7` | **WAD Unloading & Clean Switching** | `src/omega/oracle/wad_loader.py`, `entity_registry.py` | Implement `unload_wad(stack_name)` (tombstone/remove WAD layers, reset active hierarchy & startup message, invalidate `dispatch_registry` cache) enabling clean `OED ↔ ANAi` switches. |
 
-### Phase 3: Disposable OpenCode Adapter & Developer Experience (P2)
+### Phase 3: Disposable OpenCode Adapter & Developer Experience (P2 — ✅ COMPLETE)
 > *Makes WAD authoring, rendering into OpenCode V2, and validation seamless.*
+
+> **Completed:** 2026-11-18. Commits: (this session).
+> **Items completed:** 3.1 (soul_render), 3.2 (adapter paths), 3.3 (docs), 3.4 (scaffold+lint), 3.5 (wad_switch MCP), 2.7 (WADEntitySchema).
 
 | # | Item | Target File(s) | Description |
 |---|------|----------------|-------------|
-| `3.1` | **Port & generalize `soul_render.py`** | `scripts/soul_render.py` (new in `omega-engine`) | Render from `config_resolver.WADS_DIR / <active_wad> / entities / <id> / soul.yaml` (supporting both ANAi `identity:` and OED `entity:` schemas); keep completely OpenCode-agnostic (M2 / D-LIL-006). |
-| `3.2` | **Fix `soul_agents_opencode.py` adapter paths** | `scripts/soul_agents_opencode.py` | Repoint `WAD_ENTITIES` from renegade `wads/...` to `config/wads/<active_wad>/entities` (supporting `--wad` CLI flag), preserving native V2 `{file:...}` system prompt indirection and sha256 drift gate. |
-| `3.3` | **WAD Authoring Guide & Manifest Schema SSOT** | `docs/guides/HOW_TO_CREATE_WAD.md`, `docs/WAD_MANIFEST_SCHEMA.md` | Single canonical reference for `manifest.yaml`, `entity:`, `soul.yaml`, `voices/`, `hierarchy.yaml`, `dispatch.yaml`, and PWAD override rules. |
-| `3.4` | **WAD Scaffold & Lint CLI** | `scripts/create_wad.py`, `scripts/lint_wad.py` | Scaffold compliant IWAD/PWAD skeletons; lint for missing voices, broken hierarchy refs, axiom ceilings, duplicate keys, and dual-tree drift. |
-| `3.5` | **Runtime WAD Switch MCP/API Tool** | `src/omega/oracle/wad_loader.py` + `mcp_servers/omega_hub/` | Expose `wad_switch(stack_name)` built atop `unload_wad()` + `load_wad()` + `dispatch_registry` invalidation. |
+| `3.1` ✅ | **Port & generalize `soul_render.py`** | `scripts/soul_render.py` (new in `omega-engine`) | Render from `config_resolver.WADS_DIR / <active_wad> / entities / <id> / soul.yaml` (supporting both ANAi `identity:` and OED `entity:` schemas); keep completely OpenCode-agnostic (M2 / D-LIL-006). |
+| `3.2` ✅ | **Fix `soul_agents_opencode.py` adapter paths** | `scripts/soul_agents_opencode.py` | Repoint `WAD_ENTITIES` from renegade `wads/...` to `config/wads/<active_wad>/entities` (supporting `--wad` CLI flag), preserving native V2 `{file:...}` system prompt indirection and sha256 drift gate. |
+| `3.3` ✅ | **WAD Authoring Guide & Manifest Schema SSOT** | `docs/guides/HOW_TO_CREATE_WAD.md`, `docs/WAD_MANIFEST_SCHEMA.md` | Single canonical reference for `manifest.yaml`, `entity:`, `soul.yaml`, `voices/`, `hierarchy.yaml`, `dispatch.yaml`, and PWAD override rules. |
+| `3.4` ✅ | **WAD Scaffold & Lint CLI** | `scripts/create_wad.py`, `scripts/lint_wad.py` | Scaffold compliant IWAD/PWAD skeletons; lint for missing voices, broken hierarchy refs, axiom ceilings, duplicate keys, and dual-tree drift. |
+| `3.5` ✅ | **Runtime WAD Switch MCP/API Tool** | `src/omega/oracle/wad_loader.py` + `mcp_servers/omega_hub/` | Expose `wad_switch(stack_name)` built atop `unload_wad()` + `load_wad()` + `dispatch_registry` invalidation. |
+| `2.7` ✅ | **Entity field validation consolidation** | `src/omega/oracle/wad_loader.py` | Pydantic `WADEntitySchema` replaces ad-hoc type/range checks; strict typing (no silent coercion); extra fields → metadata. |
 
 ### Phase 4: Advanced Composition & Extensibility (P3 — Future)
 

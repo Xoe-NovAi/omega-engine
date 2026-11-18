@@ -33,8 +33,9 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 import anyio
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-from .entity_registry import EntityRegistry, Entity
+from .entity_registry import DEFAULT_ENTITY_MODEL, EntityRegistry, Entity
 from .world_state import world_state, WorldLump
 from omega.errors import OmegaError
 from omega.governance.config_resolver import WADS_DIR
@@ -78,7 +79,7 @@ MANIFEST_V2_OPTIONAL_FIELD_TYPES = {
     "priority": int,
 }
 
-# Required entity field types
+# Required entity field types (kept for backward compatibility)
 ENTITY_FIELD_TYPES = {
     "name": str,
     "domains": list,
@@ -88,6 +89,94 @@ ENTITY_FIELD_TYPES = {
     "context_window": int,
     "slots": list,
 }
+
+# Core fields extracted directly into Entity; everything else goes to metadata.
+CORE_ENTITY_FIELDS: Set[str] = {
+    "name",
+    "domains",
+    "model",
+    "personality",
+    "temperature",
+    "context_window",
+    "slots",
+    "role",
+    "container",
+    "port",
+    "wad_source",
+    "priority",
+}
+
+
+class WADEntitySchema(BaseModel):
+    """Canonical schema for WAD entity YAML `entity:` blocks (2.7 consolidation).
+
+    Strict on core types (no silent str->float or bool->int coercion) while
+    allowing WAD-specific extra fields (archetype, element, sigil, etc.) to
+    pass through into Entity.metadata per D-282 / M2 Engine-Stack Firewall.
+    """
+
+    model_config = ConfigDict(extra="allow", strict=True)
+
+    name: Optional[str] = Field(default=None, max_length=MAX_ENTITY_NAME_LENGTH)
+    domains: List[Any] = Field(default_factory=list, max_length=MAX_DOMAINS_PER_ENTITY)
+    model: str = Field(default=DEFAULT_ENTITY_MODEL)
+    personality: str = Field(default="")
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0)
+    context_window: int = Field(default=8192, ge=1, le=131072)
+    slots: List[Any] = Field(default_factory=list)
+    role: Optional[str] = Field(default=None)
+    container: bool = Field(default=False)
+    port: Optional[int] = Field(default=None, ge=1, le=65535)
+    wad_source: Optional[str] = Field(default=None)
+    priority: Optional[int] = Field(default=None)
+    nodes: Optional[List[Any]] = Field(default=None)
+    sovereignty: Optional[Any] = Field(default=None)
+
+    @field_validator("temperature", mode="before")
+    @classmethod
+    def _validate_temperature_numeric(cls, v: Any) -> float:
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise ValueError(f"expected int or float, got {type(v).__name__}")
+        return float(v)
+
+    @field_validator("context_window", "port", "priority", mode="before")
+    @classmethod
+    def _validate_strict_int(cls, v: Any) -> Any:
+        if v is None:
+            return None
+        if isinstance(v, bool) or not isinstance(v, int):
+            raise ValueError(f"expected int, got {type(v).__name__}")
+        return v
+
+
+def validate_wad_entity(
+    ent_data: Dict[str, Any], default_name: str = ""
+) -> Tuple[WADEntitySchema, Dict[str, Any]]:
+    """Validate a raw `entity:` dict against WADEntitySchema.
+
+    Returns (validated_model, metadata_dict_for_extra_and_noncore_fields).
+    Raises ValueError on validation error.
+    """
+    if not isinstance(ent_data, dict):
+        raise ValueError(f"'entity' must be a mapping, got {type(ent_data).__name__}")
+    try:
+        validated = WADEntitySchema.model_validate(ent_data)
+    except ValidationError as exc:
+        raise ValueError(str(exc)) from exc
+
+    if not validated.name and default_name:
+        if len(default_name) > MAX_ENTITY_NAME_LENGTH:
+            raise ValueError(
+                f"Entity name too long ({len(default_name)} chars, max {MAX_ENTITY_NAME_LENGTH})"
+            )
+        validated.name = default_name
+
+    wad_metadata = {
+        k: v
+        for k, v in ent_data.items()
+        if k not in CORE_ENTITY_FIELDS and v is not None
+    }
+    return validated, wad_metadata
 
 
 def _get_engine_version_str() -> str:
@@ -167,6 +256,7 @@ class WADLoader:
         # OMEGA_WADS_DIR env override preserved; default from config_resolver (D-281 Phase II)
         self.wads_dir = wads_dir or Path(os.environ.get("OMEGA_WADS_DIR", str(WADS_DIR)))
         self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
+        self._loaded_wads: Dict[str, Dict[str, Any]] = {}  # stack_name -> metadata
         self.active_hierarchy_path: Optional[Path] = None
         self._adapter_registry = adapter_registry  # MemoryAdapterRegistry (optional)
 
@@ -175,6 +265,11 @@ class WADLoader:
                 self.wads_dir.mkdir(parents=True, exist_ok=True)
             except PermissionError:
                 logger.warning(f"WADs directory read-only: {self.wads_dir}")
+
+    @property
+    def loaded_wads(self) -> Dict[str, Dict[str, Any]]:
+        """Return a shallow copy of currently loaded WAD metadata."""
+        return dict(self._loaded_wads)
 
     async def _discover_wads(self) -> List[Dict[str, Any]]:
         """Discover all WAD directories and read their manifest metadata.
@@ -427,11 +522,115 @@ class WADLoader:
             if self.active_hierarchy_path and stack_name in str(self.active_hierarchy_path):
                 self.active_hierarchy_path = None
 
+            self._loaded_wads.pop(stack_name, None)
+
+            # Invalidate dispatch_registry cache so stale WAD dispatch is not served
+            try:
+                from omega.governance.dispatch_registry import invalidate_cache
+                invalidate_cache()
+            except ImportError:
+                pass
+
             logger.info(f"Unloaded WAD: {stack_name} (removed {len(to_remove)} entity keys)")
             return True
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to unload WAD {stack_name}: {e}")
             return False
+
+    async def wad_switch(
+        self,
+        stack_name: str,
+        *,
+        unload_existing_pwads: bool = True,
+        unload_all_others: bool = False,
+        priority: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """Switch active WAD at runtime without restarting the engine (Phase 3.5).
+
+        Validates the target WAD exists before unloading anything (fail-safe).
+        - If target is a PWAD and ``unload_existing_pwads`` is True, unloads
+          previously loaded PWADs while keeping the base IWAD intact.
+        - If ``unload_all_others`` is True (or target is an IWAD), unloads
+          conflicting WADs of the same/all types cleanly before loading target.
+        """
+        resolved_target = (self.wads_dir / stack_name).resolve()
+        if not str(resolved_target).startswith(str(self.wads_dir.resolve())):
+            return {
+                "success": False,
+                "switched_to": stack_name,
+                "error": f"Path traversal attempt detected: {stack_name}",
+                "unloaded": [],
+                "loaded_wads": list(self._loaded_wads.keys()),
+            }
+
+        manifest_path = resolved_target / "manifest.yaml"
+        if not await anyio.Path(manifest_path).exists():
+            return {
+                "success": False,
+                "switched_to": stack_name,
+                "error": f"WAD '{stack_name}' missing manifest.yaml at {manifest_path}",
+                "unloaded": [],
+                "loaded_wads": list(self._loaded_wads.keys()),
+            }
+
+        try:
+            async with await anyio.open_file(str(manifest_path), "r") as f:
+                raw_manifest = yaml.safe_load(await f.read()) or {}
+            manifest = raw_manifest.get("wad", raw_manifest)
+            if not isinstance(manifest, dict):
+                raise ValueError("Manifest root must be a mapping")
+        except (OSError, ValueError, yaml.YAMLError) as exc:
+            return {
+                "success": False,
+                "switched_to": stack_name,
+                "error": f"Invalid manifest for '{stack_name}': {exc}",
+                "unloaded": [],
+                "loaded_wads": list(self._loaded_wads.keys()),
+            }
+
+        wad_type = manifest.get("type", "pwad")
+        manifest_prio = manifest.get("priority", 0)
+        if not isinstance(manifest_prio, int) or isinstance(manifest_prio, bool):
+            manifest_prio = 0
+        effective_priority = (
+            priority if priority is not None else ((10 if wad_type == "iwad" else 100) + manifest_prio)
+        )
+
+        # Determine which loaded WADs to unload
+        to_unload: List[str] = []
+        for loaded_name, meta in list(self._loaded_wads.items()):
+            if loaded_name == stack_name:
+                to_unload.append(loaded_name)
+            elif unload_all_others:
+                to_unload.append(loaded_name)
+            elif wad_type == "pwad" and unload_existing_pwads and meta.get("type") == "pwad":
+                to_unload.append(loaded_name)
+            elif wad_type == "iwad" and meta.get("type") == "iwad":
+                to_unload.append(loaded_name)
+
+        unloaded: List[str] = []
+        for name in to_unload:
+            if await self.unload_wad(name):
+                unloaded.append(name)
+
+        try:
+            from omega.governance.dispatch_registry import invalidate_cache
+            invalidate_cache()
+        except ImportError:
+            pass
+
+        success, hierarchy_path = await self.load_wad(stack_name, priority=effective_priority)
+        return {
+            "success": success,
+            "switched_to": stack_name,
+            "wad_type": wad_type,
+            "priority": effective_priority,
+            "unloaded": unloaded,
+            "loaded_wads": list(self._loaded_wads.keys()),
+            "entity_count": len(self.registry.list()),
+            "startup_message": self.get_startup_message(stack_name),
+            "hierarchy_path": str(hierarchy_path) if hierarchy_path else None,
+        }
 
     def get_startup_message(self, stack_name: Optional[str] = None) -> Optional[str]:
         """Return the startup personality message for a given WAD stack.
@@ -547,7 +746,11 @@ class WADLoader:
             # 3. Resolve Hierarchy Path (if specified in manifest or exists in WAD root)
             hierarchy_path = None
             if "hierarchy" in manifest:
-                h_path = wad_path / manifest["hierarchy"]
+                h_path = (wad_path / manifest["hierarchy"]).resolve()
+                if not str(h_path).startswith(str(wad_path.resolve())):
+                    raise ValueError(
+                        f"WAD {stack_name} hierarchy path escapes WAD root: {manifest['hierarchy']}"
+                    )
                 if await anyio.Path(h_path).exists():
                     hierarchy_path = h_path
             else:
@@ -566,6 +769,14 @@ class WADLoader:
             # 5. Register Memory Adapter (if specified in manifest)
             if self._adapter_registry and "adapters" in manifest:
                 await self._register_adapters(manifest["adapters"], stack_name)
+
+            self._loaded_wads[stack_name] = {
+                "name": stack_name,
+                "type": manifest.get("type", "pwad"),
+                "version": manifest.get("version", "unknown"),
+                "priority": priority,
+                "hierarchy_path": str(hierarchy_path) if hierarchy_path else None,
+            }
 
             return True, hierarchy_path
 
@@ -720,107 +931,40 @@ class WADLoader:
                         logger.warning(f"Entity file {path.name} is empty. Skipping.")
                         continue
 
-                    # Create Entity object
+                    # Create Entity object via unified WADEntitySchema (2.7)
                     ent_data = data.get("entity", {})
 
                     if not ent_data:
                         logger.warning(f"Entity file {path.name} missing 'entity' key. Skipping.")
                         continue
 
-                    # S1.5a: Validate entity field types
-                    type_errors = []
-                    for field, expected_type in ENTITY_FIELD_TYPES.items():
-                        if field in ent_data and not isinstance(ent_data[field], expected_type):
-                            type_errors.append(
-                                f"'{field}' expected {expected_type}, got {type(ent_data[field]).__name__}"
-                            )
-                    if type_errors:
+                    try:
+                        validated, wad_metadata = validate_wad_entity(
+                            ent_data, default_name=entity_name
+                        )
+                    except ValueError as val_err:
                         logger.warning(
-                            f"Entity {entity_name} has invalid field types: {'; '.join(type_errors)}. Skipping."
+                            f"Entity {entity_name} failed schema validation: {val_err}. Skipping."
                         )
                         continue
 
-                    # D-282: known fields are type-validated; unknown fields become metadata.
-                    # This allows WAD-specific rich entity definitions (archetype, voice_dna, etc.)
-                    # while still catching typos in core fields via type validation above.
-                    known_fields = set(ENTITY_FIELD_TYPES.keys()) | {"wad_source", "priority", "role", "container", "port", "nodes", "sovereignty"}
-                    unknown_fields = set(ent_data.keys()) - known_fields
-                    if unknown_fields:
+                    if wad_metadata:
                         logger.debug(
-                            f"Entity {entity_name} has WAD-specific fields: {sorted(unknown_fields)} (captured as metadata)"
+                            f"Entity {entity_name} has WAD-specific fields: {sorted(wad_metadata.keys())} (captured as metadata)"
                         )
-
-                    # D-282: Range constraints for numeric fields
-                    range_errors = []
-                    if "temperature" in ent_data:
-                        temp = ent_data["temperature"]
-                        if not (0.0 <= temp <= 2.0):
-                            range_errors.append(f"temperature={temp} out of range [0.0, 2.0]")
-                    if "context_window" in ent_data:
-                        ctx = ent_data["context_window"]
-                        if not (1 <= ctx <= 131072):
-                            range_errors.append(f"context_window={ctx} out of range [1, 131072]")
-                    if "port" in ent_data and ent_data["port"] is not None:
-                        port = ent_data["port"]
-                        if not (1 <= port <= 65535):
-                            range_errors.append(f"port={port} out of range [1, 65535]")
-                    if range_errors:
-                        logger.warning(
-                            f"Entity {entity_name} has range violations: {'; '.join(range_errors)}. Skipping."
-                        )
-                        continue
-
-                    # S1.5a: Validate entity name length
-                    entity_name_raw = ent_data.get("name", entity_name)
-                    if len(entity_name_raw) > MAX_ENTITY_NAME_LENGTH:
-                        logger.warning(
-                            f"Entity name too long ({len(entity_name_raw)} chars): {entity_name_raw[:50]}... Skipping."
-                        )
-                        continue
-
-                    # S1.5a: Validate domains count
-                    domains = ent_data.get("domains", [])
-                    if len(domains) > MAX_DOMAINS_PER_ENTITY:
-                        logger.warning(
-                            f"Entity {entity_name} has too many domains ({len(domains)}). Skipping."
-                        )
-                        continue
-
-                    # Collect WAD-specific metadata (everything not in engine core)
-                    # [M2] Engine-Stack Firewall: engine sees slots + opaque metadata.
-                    # WAD defines: element, chakra, planet, sigil, glyph, pantheon, etc.
-                    core_entity_fields = {
-                        "name",
-                        "domains",
-                        "model",
-                        "personality",
-                        "temperature",
-                        "context_window",
-                        "slots",
-                        "role",
-                        "container",
-                        "port",
-                        "wad_source",
-                        "priority",
-                    }
-                    wad_metadata = {
-                        k: v
-                        for k, v in ent_data.items()
-                        if k not in core_entity_fields and v is not None
-                    }
 
                     entity = Entity(
-                        name=ent_data.get("name", entity_name),
-                        domains=ent_data.get("domains", []),
-                        model=ent_data.get("model", "opencode/big-pickle"),
-                        personality=ent_data.get("personality", ""),
-                        temperature=ent_data.get("temperature", 0.7),
-                        context_window=ent_data.get("context_window", 8192),
-                        slots=ent_data.get("slots", []),
+                        name=validated.name or entity_name,
+                        domains=validated.domains,
+                        model=validated.model,
+                        personality=validated.personality,
+                        temperature=validated.temperature,
+                        context_window=validated.context_window,
+                        slots=validated.slots,
                         metadata=wad_metadata,
-                        role=ent_data.get("role"),
-                        container=ent_data.get("container", False),
-                        port=ent_data.get("port"),
+                        role=validated.role,
+                        container=validated.container,
+                        port=validated.port,
                         wad_source=wad_source,
                         priority=priority,
                     )

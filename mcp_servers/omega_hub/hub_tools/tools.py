@@ -3489,3 +3489,72 @@ async def session_search_semantic_build(force: bool = False) -> str:
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Build failed: {e}"})
+
+
+@m9_safe("wad_switch")
+@mcp.tool()
+async def wad_switch(
+    stack_name: Optional[str] = None,
+    action: str = "switch",
+    unload_existing_pwads: bool = True,
+    unload_all_others: bool = False,
+) -> str:
+    """Runtime WAD switching and inspection (Phase 3.5).
+
+    Actions:
+        switch: Switch active WAD to ``stack_name`` (requires stack_name).
+        list:   Discover available WADs and report currently loaded WADs.
+        unload: Unload ``stack_name`` from the live EntityRegistry (requires stack_name).
+    """
+    _require_service()
+
+    valid_actions = {"switch", "list", "unload"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {sorted(valid_actions)}"})
+
+    oracle_svc = await oracle
+    loader = getattr(oracle_svc, "wad_loader", None)
+    if loader is None:
+        return json.dumps({"error": "Oracle WADLoader is not initialized"})
+
+    if action == "list":
+        discovered = await loader._discover_wads()
+        return json.dumps(
+            {
+                "loaded_wads": loader.loaded_wads,
+                "available_wads": [
+                    {
+                        "name": w["name"],
+                        "type": w["type"],
+                        "version": w["version"],
+                        "priority": w["priority"],
+                    }
+                    for w in discovered
+                ],
+                "entity_count": len(oracle_svc.registry.list()),
+            },
+            indent=2,
+            default=str,
+        )
+
+    if not stack_name or not stack_name.strip():
+        return json.dumps({"error": f"action='{action}' requires stack_name"})
+
+    if action == "unload":
+        ok = await loader.unload_wad(stack_name)
+        return json.dumps(
+            {
+                "success": ok,
+                "unloaded": stack_name if ok else None,
+                "loaded_wads": list(loader.loaded_wads.keys()),
+                "entity_count": len(oracle_svc.registry.list()),
+            },
+            indent=2,
+        )
+
+    result = await loader.wad_switch(
+        stack_name,
+        unload_existing_pwads=unload_existing_pwads,
+        unload_all_others=unload_all_others,
+    )
+    return json.dumps(result, indent=2, default=str)

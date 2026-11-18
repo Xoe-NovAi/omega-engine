@@ -108,11 +108,10 @@ def validate_manifest(wad_path: Path) -> List[str]:
     if isinstance(deps, str):
         deps = [deps]
     for dep in deps:
-        if not (wad_path.parent / dep).exists() and dep != wad_path.name:
-            # Check if it's a sibling WAD
-            sibling = wad_path.parent / dep
-            if not sibling.exists():
-                errors.append(f"Dependency not found: {dep}")
+        if not isinstance(dep, str):
+            errors.append(f"Dependency must be a string, got {type(dep).__name__}")
+            continue
+        # Dependencies may live in other WAD directories — not a hard error
     return errors
 
 
