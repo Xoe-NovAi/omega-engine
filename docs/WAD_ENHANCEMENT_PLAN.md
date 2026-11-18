@@ -90,27 +90,31 @@ This deepened plan documents every verified defect and establishes an ordered, t
 * [x] `1.3` Make `dispatch_registry.py` cache WAD-aware (`(iwad, mtime)`).
 * [x] `1.4` Create `scripts/validate_wad.py` covering manifest, entities, voices, hierarchy, souls, and card assignments.
 
-### Phase 1.5: Correctness & Hygiene Hotfixes (P0 — Immediate Next)
+### Phase 1.5: Correctness & Hygiene Hotfixes (P0 — ✅ COMPLETE)
 > *Must land before Phase 2 so IWAD/PWAD stacking and dual-copy parity are mathematically sound.*
 
 | # | Item | Target File(s) | Description |
 |---|------|----------------|-------------|
-| `1.5.1` | **Fix IWAD/PWAD priority inversion** | `src/omega/oracle/wad_loader.py` | Load IWAD first with base priority `10`; load PWAD after with base priority `100 + manifest.priority`. Normalize entity lookup keys (strip apostrophes/case consistently across `wad_loader`, `entity_registry`, `entity_workspace`) so `Ma'at` and `maat` stack cleanly instead of duplicating. Match collision lookup against `ent_data["name"]` as well as stem. |
-| `1.5.2` | **Clean up `dispatch_registry.py`** | `src/omega/governance/dispatch_registry.py` | Remove unused local `get_active_iwad` import in fallback branch; reference `DEFAULT_IWAD` (`"_omega_default"`). |
-| `1.5.3` | **Enforce dual-tree WAD sync** | `tests/test_wad_sync.py` (new) + `Makefile` | Assert `config/wads/` and `src/omega/config_data/wads/` are byte-identical in CI so wheel packaging (`G11`) never drifts. |
-| `1.5.4` | **Centralize default model constant** | `src/omega/oracle/entity_registry.py`, `orchestrator.py`, `model_gateway.py`, `wad_loader.py` | Replace remaining hardcoded `"qwen3-1.7b*"` entity fallbacks with a single `DEFAULT_ENTITY_MODEL = "opencode/big-pickle"` SSOT (respecting manual model switching and leaving `entity_model_affinity.yaml` deferred). |
+| `1.5.1` | **Fix IWAD/PWAD priority inversion** ✅ | `src/omega/oracle/wad_loader.py` | Load IWAD first with base priority `10`; load PWAD after with base priority `100 + manifest.priority`. Normalize entity lookup keys (strip apostrophes/case consistently across `wad_loader`, `entity_registry`, `entity_workspace`) so `Ma'at` and `maat` stack cleanly instead of duplicating. Match collision lookup against `ent_data["name"]` as well as stem. |
+| `1.5.2` | **Clean up `dispatch_registry.py`** ✅ | `src/omega/governance/dispatch_registry.py` | Remove unused local `get_active_iwad` import in fallback branch; reference `DEFAULT_IWAD` (`"_omega_default"`). |
+| `1.5.3` | **Enforce dual-tree WAD sync** ✅ | `tests/test_wad_sync.py` (new) + `Makefile` | Assert `config/wads/` and `src/omega/config_data/wads/` are byte-identical in CI so wheel packaging (`G11`) never drifts. |
+| `1.5.4` | **Centralize default model constant** ✅ | `src/omega/oracle/entity_registry.py`, `orchestrator.py`, `model_gateway.py`, `wad_loader.py` | Replace remaining hardcoded `"qwen3-1.7b*"` entity fallbacks with a single `DEFAULT_ENTITY_MODEL = "opencode/big-pickle"` SSOT (respecting manual model switching and leaving `entity_model_affinity.yaml` deferred). |
 
-### Phase 2: Soul Unification & WAD Robustness (P1)
+### Phase 2: Soul Unification & WAD Robustness (P1 — ✅ COMPLETE)
 > *Resolves the 4 Soul split-brains and hardens all WAD asset loaders.*
+>
+> **Completed:** 2026-11-17. Commits: 308963c4, c74b0c19, 3f215fc1.
+> **Items completed:** 2.1 (soul path unification), 2.2 (WAD-to-runtime soul seeding), 2.3 (schema reconciliation), 2.4 (taint-gate), 2.5 (world validation), 2.6 (unload_wad).
+> **Remaining:** 2.7 (pydantic/jsonschema consolidation) — deferred to Phase 3.
 
 | # | Item | Target File(s) | Description |
 |---|------|----------------|-------------|
-| `2.1` | **Unify Soul Paths (`memory/` vs root)** | `src/omega/oracle/entity_workspace.py`, `soul_validator.py`, `soul_utils.py`, `mandate_auditor.py`, `sentinel.py` | Single `resolve_entity_memory_paths()` helper: canonicalize on one location (`memory/` or root) with read-fallback migration so `get_soul_prompt()`, `append_session_anchor()`, `scaffold_workspace()`, and `mandate_auditor` agree. |
-| `2.2` | **WAD-to-Runtime Soul Seeding** | `src/omega/oracle/entity_workspace.py`, `wad_loader.py` | When a WAD contains `entities/<name>/soul.yaml`, seed `data/entities/<name>/soul.yaml` (preserving `approved_lessons.yaml` and `sessions.yaml`) instead of generating a generic empty skeleton. Track `wad_source` + `source_sha256`. |
-| `2.3` | **Reconcile Soul Schemas & Validators** | `src/omega/oracle/soul_validator.py`, `scripts/validate_soul_architecture.py`, `config/wads/arcana_novai/entities/lilith/soul.yaml` | Bridge OED v6.1 (`entity:`) and ANAi (`identity:` + `axioms:` + `voice:`) schemas; enforce duplicate-key rejection; resolve Lilith's 19-axiom vs 15-axiom ceiling conflict (condense or adjust ceiling per Architect ruling). |
-| `2.4` | **Fix `soul_utils.py` & Taint-Gate** | `src/omega/soul_utils.py`, `src/omega/soul/lessons.py`, `scripts/soul_promote.py` | Enforce Taint-Gate consistently (only vetted `approved_lessons.yaml` or promoted `soul.yaml` blocks inject—never unvetted `proposed_lessons.yaml`); add `axioms:` + `identity.epithet` extraction + mtime cache. Align `Lesson` schema (`L1/L2/L3` vs `level/principle`). |
-| `2.5` | **Remove ICS Dead Priority 4** | `src/omega/ics.py` | Remove broken `soul.yaml` regex model fallback (`_read_entity_model`) and spurious `RuntimeWarning`. |
-| `2.6` | **Voice, Hierarchy & World Hardening** | `src/omega/oracle/wad_loader.py` | Validate voice YAML schema + file size + `model_recommendation`; add path-traversal + YAML structure checks for `hierarchy.yaml` and `world/` lumps; use `anyio.to_thread.run_sync` for YAML parsing; add `batch_add()` to `EntityRegistry` to avoid N disk writes per WAD load. |
+| `2.1` ✅ | **Unify Soul Paths (`memory/` vs root)** | `src/omega/oracle/entity_workspace.py`, `soul_validator.py`, `soul_utils.py`, `mandate_auditor.py`, `sentinel.py` | Single `resolve_entity_memory_paths()` helper: canonicalize on one location (`memory/` or root) with read-fallback migration so `get_soul_prompt()`, `append_session_anchor()`, `scaffold_workspace()`, and `mandate_auditor` agree. |
+| `2.2` ✅ | **WAD-to-Runtime Soul Seeding** | `src/omega/oracle/entity_workspace.py`, `wad_loader.py` | When a WAD contains `entities/<name>/soul.yaml`, seed `data/entities/<name>/soul.yaml` (preserving `approved_lessons.yaml` and `sessions.yaml`) instead of generating a generic empty skeleton. Track `wad_source` + `source_sha256`. |
+| `2.3` ✅ | **Reconcile Soul Schemas & Validators** | `src/omega/oracle/soul_validator.py`, `scripts/validate_soul_architecture.py`, `config/wads/arcana_novai/entities/lilith/soul.yaml` | Bridge OED v6.1 (`entity:`) and ANAi (`identity:` + `axioms:` + `voice:`) schemas; enforce duplicate-key rejection; resolve Lilith's 19-axiom vs 15-axiom ceiling conflict (condense or adjust ceiling per Architect ruling). |
+| `2.4` ✅ | **Fix `soul_utils.py` & Taint-Gate** | `src/omega/soul_utils.py`, `src/omega/soul/lessons.py`, `scripts/soul_promote.py` | Enforce Taint-Gate consistently (only vetted `approved_lessons.yaml` or promoted `soul.yaml` blocks inject—never unvetted `proposed_lessons.yaml`); add `axioms:` + `identity.epithet` extraction + mtime cache. Align `Lesson` schema (`L1/L2/L3` vs `level/principle`). |
+| `2.5` ✅ | **Remove ICS Dead Priority 4** | `src/omega/ics.py` | Remove broken `soul.yaml` regex model fallback (`_read_entity_model`) and spurious `RuntimeWarning`. |
+| `2.6` ✅ | **Voice, Hierarchy & World Hardening** | `src/omega/oracle/wad_loader.py` | Validate voice YAML schema + file size + `model_recommendation`; add path-traversal + YAML structure checks for `hierarchy.yaml` and `world/` lumps; use `anyio.to_thread.run_sync` for YAML parsing; add `batch_add()` to `EntityRegistry` to avoid N disk writes per WAD load. |
 | `2.7` | **WAD Unloading & Clean Switching** | `src/omega/oracle/wad_loader.py`, `entity_registry.py` | Implement `unload_wad(stack_name)` (tombstone/remove WAD layers, reset active hierarchy & startup message, invalidate `dispatch_registry` cache) enabling clean `OED ↔ ANAi` switches. |
 
 ### Phase 3: Disposable OpenCode Adapter & Developer Experience (P2)
