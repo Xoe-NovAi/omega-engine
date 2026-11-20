@@ -85,7 +85,11 @@ const output = { system: ["BASE_SYSTEM_PROMPT"] };
 await contextHook.fn({ sessionID: "test-session", system: output.system });
 process.stdout.write(JSON.stringify({
   system_length: output.system.length,
-  system0: output.system[0],
+  system0: typeof output.system[0] === "string"
+    ? output.system[0]
+    : (output.system[0] && typeof output.system[0].text === "string"
+       ? output.system[0].text
+       : ""),
 }));
 """
 
@@ -168,19 +172,20 @@ class TestWellInjectionResilience(unittest.TestCase):
         # The leash rules block must still be present regardless.
         self.assertIn("GNOSIS LEASH", out["system0"])
 
-    def test_injection_appends_in_place_and_keeps_one_system_message(self):
-        """output.system must stay length 1.
+    def test_injection_uses_system_part_object(self):
+        """output.system[0] must be a proper {type,text} part, not a string.
 
-        Upstream collapses the system array only when `length > 2`; a push()
-        leaves it at 2, so two {role:"system"} messages are emitted and
-        OpenAI-compatible providers reject the request (#34243, unmerged).
+        OpenCode V2 context hooks carry SystemPart[] objects. Concatenating
+        an object with + coerces it to "[object Object]", which the Gemini
+        protocol rejects as an empty part (oneof field 'data' required).
+        The fix unshifts a proper {type:"text", text:...} part.
         """
         self.write([make_record(rule="SINGLE MESSAGE CHECK")])
         out = run_hook(self.dir)
-        self.assertEqual(out["system_length"], 1,
-                         "system array grew — risks a second system message")
-        self.assertTrue(out["system0"].startswith("BASE_SYSTEM_PROMPT"),
-                        "original system content must be preserved, not replaced")
+        self.assertEqual(out["system_length"], 2,
+                         "expected 2 parts: injected block + original")
+        self.assertIn("SINGLE MESSAGE CHECK", out["system0"],
+                      "injected block must contain the record")
 
     def test_non_injected_domain_is_filtered(self):
         self.write([

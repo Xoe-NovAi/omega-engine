@@ -389,17 +389,12 @@ export default Plugin.define({
 
       const combined = wellBlock ? block + "\n\n" + wellBlock : block;
 
-      if (Array.isArray(event.system) && event.system.length > 0) {
-        // Preserve system array length (must stay 1 — #34243).
-        // Handle both string and SystemPart[] ({type,text}) shapes.
-        const first = event.system[0];
-        if (typeof first === "string") {
-          event.system[0] = (first ?? "") + "\n\n" + combined;
-        } else if (first && typeof first.text === "string") {
-          first.text = (first.text ?? "") + "\n\n" + combined;
-        } else {
-          event.system[0] = combined;
-        }
+      if (Array.isArray(event.system)) {
+        // V2 context hooks carry SystemPart[] ({type,text}) objects, not strings.
+        // String-concatenating event.system[0] coerces it to "[object Object]",
+        // which the Gemini protocol emits as an empty part ({text:undefined}) ->
+        // "system_instruction.parts[0].data: required oneof field 'data'" (400).
+        event.system.unshift({ type: "text", text: combined });
       } else {
         appendDiagnostic(
           "system.transform.no_system_array",
