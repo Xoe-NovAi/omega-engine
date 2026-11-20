@@ -262,6 +262,22 @@ To enable "modular, plug-n-play style architecture that will allow the Omega Eng
 
 We've built the foundation (IWAD/PWAD loading, Shadow-Stacking, soul scaffolding, continuation files). The next phase should focus on **developer experience** (scaffold, lint, render, guide) to make WAD authoring accessible.
 
+
+---
+
+## ⚠️ PENDING: Gemini 4 Hydrogen Migration Investigation
+
+> **Status:** DEFERRED (note added 2026-11-19)
+> **Source:** Session `ses_e14999b02ffeCH3EOl1sEez8VU` — context hook fix applied and verified.
+> **Remaining items to investigate if further 400s are encountered:**
+>
+> 1. **Rejected parameters:** Gemini 4 Hydrogen rejects `temperature`, `top_p`, `top_k`, `thinking_budget`/`thinking_level: MINIMAL`, and explicit caching. Default thinking is `HIGH`.
+> 2. **These are different errors** from the oneof `data` field issue (already fixed via `unshift({type:"text", text:combined})`).
+> 3. **Provider-specific sanitization:** The antigravity-auth sanitizer at `request.js:230` checks key existence only, so it passed the malformed part through. May need deeper sanitization for Gemini 4.
+> 4. **Action:** If Gemini 4 returns 400s on any request, check which parameters are being sent and strip the rejected ones before they reach the protocol builder.
+>
+> **Do not block WAD work on this.** Investigate only when Gemini 4 400s actually recur.
+
 ## 6. Tracking & Decision Log Integration
 
 ### Tracking systems used (official repo)
