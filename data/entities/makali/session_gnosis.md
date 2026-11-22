@@ -1411,3 +1411,23 @@ See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Inve
 4. Gemini 4 migration deferred
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-22 (Tier 3 — WAD Versioning & Upgrade Paths)
+
+### Item completed
+
+**WAD versioning & upgrade paths (Phase 4.5):** Added `WADVersion` class (semantic version parsing/comparison with pre-release support). Version tracking in `_loaded_wads` metadata. `check_version_update()` compares loaded vs new version. `wad_upgrade()` unloads current, loads new, preserves runtime souls (approved_lessons.yaml never overwritten). Soul seeding now version-aware (mtime check). `wad_upgrade` MCP tool added to Omega Hub.
+
+### Remaining Tier 3 items
+- WAD marketplace / registry — high effort, very high impact
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
+
+### Post-compaction order
+1. Read SESSION_ANCHOR.md
+2. Read WAD_ENHANCEMENT_PLAN.md
+3. Continue with WAD marketplace / registry
+4. Gemini 4 migration deferred
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
