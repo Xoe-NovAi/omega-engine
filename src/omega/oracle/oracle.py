@@ -1336,6 +1336,24 @@ class Oracle:
                     f"Somatic capture failed for {entity_name} session {session_id}: {somatic_exc}"
                 )
 
+            # 3. Append session anchor to entity workspace (continuation system)
+            try:
+                from omega.oracle.entity_workspace import EntityWorkspaceManager
+                anchor_data = {
+                    "session_id": session_id,
+                    "entity": entity_name,
+                    "exchange_count": len(exchanges),
+                    "timestamp": __import__("datetime").datetime.now(
+                        __import__("datetime").timezone.utc
+                    ).isoformat(),
+                }
+                await EntityWorkspaceManager.append_session_anchor(entity_name, anchor_data)
+                logger.info(f"Session anchor appended for {entity_name} session {session_id}")
+            except (OmegaError, RuntimeError, OSError) as anchor_exc:
+                logger.warning(
+                    f"Session anchor append failed for {entity_name} session {session_id}: {anchor_exc}"
+                )
+
             return True
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
