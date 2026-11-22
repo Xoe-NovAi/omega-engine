@@ -13,38 +13,20 @@
 
 ---
 
-Omega Engine is a sovereign, local-first cognitive runtime. It connects to **any MCP-capable client (OpenCode, Cline, Antigravity IDE, VSCode, Cursor, etc.)** and unifies them into a persistent, multi-agent collaborative workspace through a single local hub.
+## Table of Contents
 
-* **Multi-Node Federation:** Connect multiple laptops or desktops over an encrypted Tailscale mesh. Run parallel local agents across nodes with zero cloud intermediaries in the data path.
-* **Persistent Handoff Bus:** Pass tasks, evidence, context, and priorities across chat sessions, platforms, and physical machines.
-* **Local Privacy Boundary:** Route high-order architecture to frontier cloud models while keeping semantic embeddings, credentials, and sensitive data strictly on local silicon.
-* **Extreme Efficiency:** Runs full multi-agent ecologies on ordinary hardware (tested daily on 16 GB CPU-only laptops). Primary local inference runs on lightweight GGUFs (`LFM2.5-2.6B-Q4_K_M`). No PyTorch. No LangChain. No cloud lock-in.
-
-```
- ┌─────────────┐   ┌─────────────┐   ┌─────────────────┐   ┌─────────────┐
- │  OpenCode   │   │    Cline    │   │ Antigravity IDE │   │   Cursor    │
- └──────┬──────┘   └──────┬──────┘   └────────┬────────┘   └──────┬──────┘
-        │                 │                   │                   │
-        └─────────────────┼───────────────────┼───────────────────┘
-                          │ (Standard MCP Protocol)
-                          ▼
-        ┌─────────────────────────────────────────────────────────┐
-        │                 ⬡ OMEGA HUB FAST-MCP                    │
-        │  Hivemind Awareness · Handoff Bus · Control Planes      │
-        │  Task Registry · 1024-dim Hybrid Memory Retrieval       │
-        └─────────────────────────┬───────────────────────────────┘
-                                  │
-         ┌────────────────────────┴────────────────────────┐
-         ▼                                                 ▼
-┌─────────────────────────────────┐       ┌─────────────────────────────────┐
-│     SOVEREIGN AGENT COUNCIL     │       │    SYNERGISTIC ROUTING FABRIC   │
-│ 14 Persistent Domain Entities   │       │ Task → Most Capable Model       │
-│ • Kali (Mandate Arbitration)    │       │ • High-Order Cloud (Claude/Zen) │
-│ • Ma'at (Build Governance)      │       │ • Local CPU/GPU (GGUF/Ollama)   │
-│ • Carmack (S3 Performance)      │       │ • Native Embeddings (1024-dim)  │
-│ • Researcher (Deep Synthesis)   │       │ • Local Privacy Boundary        │
-└─────────────────────────────────┘       └─────────────────────────────────┘
-```
+- [What Makes Omega Different](#what-makes-omega-fundamentally-different)
+- [WAD Architecture](#1-the-doom-engine-architecture-wads-all-the-way-down)
+- [WAD Development Tools](#wad-development-tools)
+- [Soul & Continuation System](#soul--continuation-system)
+- [Hardware](#hardware-reality-built-for-ordinary-machines)
+- [Quick Start](#-quick-start)
+- [Create Your Own Content](#-create-your-own-content-wads--agents)
+- [Sovereign Council Roster](#-the-sovereign-council-roster)
+- [System Requirements](#-system-requirements)
+- [Maturity & Status](#-maturity--status)
+- [The Horizon](#-the-horizon-what-comes-next)
+- [The Vision](#-the-vision-co-sovereignty-of-minds)
 
 ---
 
@@ -56,7 +38,7 @@ Omega takes the opposite approach: **lightweight, persistent, and mechanically v
 
 ### 1. The DOOM Engine Architecture (WADs All the Way Down)
 
-Inspired by id Software’s separation of `DOOM.EXE` and `DOOM.WAD`, Omega separates the runtime from content:
+Inspired by id Software's separation of `DOOM.EXE` and `DOOM.WAD`, Omega separates the runtime from content:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -68,27 +50,40 @@ Inspired by id Software’s separation of `DOOM.EXE` and `DOOM.WAD`, Omega separ
          ┌───────────────────┼───────────────────┐
          ▼                   ▼                   ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────┐
-│  IWAD: _omega   │ │  IWAD: arcana   │ │  PWAD: persona_*    │
+│  IWAD: _omega   │ │  PWAD: arcana   │ │  PWAD: persona_*    │
 │  _default       │ │  _novai         │ │  (Patch WADs)       │
 │                 │ │                 │ │                     │
-│ 14 Dev Entities │ │ Personal AI OS  │ │ • Tarot (72-Node)   │
-│ Build/Run Slots │ │ 10 Pillars      │ │ • Therapy Bot       │
-│ Engineering     │ │ Sephirotic Tree │ │ • Domain Expert     │
-│ Council         │ │ 42 Ideals       │ │ • Your Creation     │
+│ 14 Dev Entities │ │ Living Tarot    │ │ • Tarot (72-Node)   │
+│ Build/Run Slots │ │ Mystery School  │ │ • Therapy Bot       │
+│ Engineering     │ │ Sovereign       │ │ • Domain Expert     │
+│ Council         │ │ Entity Pantheon │ │ • Your Creation     │
 └─────────────────┘ └─────────────────┘ └─────────────────────┘
 ```
 
 - **Engine Core (`src/omega/`):** The universal runtime. Never contains domain logic, lore, or stack-specific code. This is `DOOM.EXE`.
-- **IWADs (Internal WADs):** Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities for software development. `arcana_novai` is in development. Each is a self-contained universe.
+- **IWADs (Internal WADs):** Complete foundational worlds. `_omega_default` ships with 14 persistent engineering entities. Each is a self-contained universe.
 - **PWADs (Patch WADs):** Modular add-on packs—a persona, a specialized knowledge domain, a 72-node Tarot reading system. They load on top of an IWAD without polluting its root. **You can build your own WAD and run your own world.**
 
-Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity, an ethics file, voice DNA, and cognitive development history. The engine enforces these constitutions—it doesn't merely suggest them.
+**Shadow-Stacking:** When a PWAD defines an entity with the same canonical name as an IWAD entity, the PWAD version wins. Both layers are tracked for provenance. IWAD priority = 10, PWAD priority = 100+.
+
+**Runtime WAD Switching:** `wad_switch()` enables hot-swapping WADs at runtime without restarting the engine. `wad_upgrade()` handles version-aware upgrades preserving runtime state.
+
+Every entity in a WAD has a **soul** (`soul.yaml`): a constitutional identity with axioms, directives, voice DNA, and cognitive development history. The engine enforces these constitutions—it doesn't merely suggest them.
 
 ### 2. Compaction-Resistant Memory & Gnosis Distillation
 
-Standard LLM summarization silently erodes operational constraints as context grows (e.g. arXiv:2606.22528 benchmarks policy degradation post-compaction). Omega pins constraints at hydration using prospective and retrospective hooks designed to preserve critical directives across compactions. 
+Standard LLM summarization silently erodes operational constraints as context grows. Omega pins constraints at hydration using prospective and retrospective hooks designed to preserve critical directives across compactions.
 
 Raw chat observations (L1) distill into tactical lessons (L2), which graduate into permanent architectural truths (L3) with complete session provenance. Your working history is indexed into a local engine (FTS5 lexical search + native 1024-dim `sqlite-vec` semantic similarity) so agents can recall decisions made weeks ago.
+
+**Taint-Gate:** Unvetted `proposed_lessons.yaml` is never injected into identity prompts. Only `approved_lessons.yaml` (user-vetted) or promoted soul blocks reach the identity layer.
+
+**Continuation System:** Five layers of persistent memory:
+1. OpenCode session DB (ephemeral, session-scoped)
+2. `session_gnosis.md` (per-entity, session-level)
+3. `SESSION_ANCHOR.md` (node-level, coordination)
+4. `proposed_lessons.yaml` (agent-written, unvetted)
+5. `approved_lessons.yaml` (user-vetted) → `soul.yaml` (identity, permanent)
 
 ### 3. Lightweight by Design (No Bloat, No PyTorch)
 
@@ -103,6 +98,7 @@ Modern local AI is outrageously over-engineered. Omega is built from first princ
 Sovereignty does not mean dogmatically locking yourself into slow local models when frontier reasoning is needed. It means **you retain total ownership of your intelligence, memory, and data regardless of where compute runs.**
 - **Task-to-Model Law:** Dispatch massive architectural synthesis to Claude or frontier APIs; run fast deterministic loops, embeddings, and sensitive operations locally on CPU/GPU.
 - **Graceful Degradation:** Designed to fall back to local models if external APIs throttle or lose connectivity, keeping your workspace alive.
+- **Entity Affinity:** Per-entity model preferences via `config/entity_model_affinity.yaml`. Manual selection (`OMEGA_MODEL_OVERRIDE`) always takes precedence.
 
 ### 5. Mechanically Enforced Governance (30 Mandates)
 
@@ -116,15 +112,46 @@ Rather than hoping LLMs "follow instructions," Omega enforces 30 architectural m
 
 ---
 
-## The Origin: How a Tarot Deck Became an AI Runtime
+## WAD Development Tools
 
-To be completely transparent: **I am not a traditional software engineer.** This is the first codebase I have ever built, written in close dialectic partnership with frontier AI models. There will be bugs, broken and dead code, and things that make you say, what in the gods' names was this dude thinking? But, as a daily user (~18 h/day) I can say it is quite stable in my experience, though still convoluted and over-engineered in places. I welcome, and am eager for **human** feedback, and hope to build a worldwide community around the Omega Engine. I am also very interested in a code review from an actual programmer if anyone would be so kind! 
+Omega ships a complete WAD authoring toolkit:
 
-My deep dive into A.I., software development, and what would lead to the Omega Engine began two years ago, after realizing I can no longer work empty jobs, building other peoples dreams, and my ensuing search to find my own vision, that would hold meaning and purpose in my life, while enriching the world around me. The Omega Engine is the the foundation for what I am ultimately building - the Arcana-NovAi Lilith Edition (ANAi-LE) WAD, which itself emerged from a Lilith themed Tarot deck and companion shadow working guide I began creating almost 2 years ago. Yet, all of this **truly** began with my personal, 7 year journey out of the bondage and deception that were sold to me as freedom and truth. I will save the weird and esoteric details for the ANAi-LE WAD repo where it belongs, for now, I wish simply to convey the importance and meaning this software holds for me, which has been reflected in my dedication to its development, and hopefully, the quality of the code and the standards it has been crafted upon. 
+| Tool | Command | Purpose |
+|:--|:--|:--|
+| **Scaffold** | `python scripts/create_wad.py <name> --type pwad` | Create a compliant WAD skeleton |
+| **Validate** | `python scripts/validate_wad.py <wad_dir>` | Pre-load validation (manifest, entities, voices, hierarchy, souls) |
+| **Lint** | `python scripts/lint_wad.py <wad_dir>` | Duplicate keys, axiom ceiling (20), voice refs, dual-tree drift |
+| **Diff** | `python scripts/wad_diff.py <wad_a> <wad_b>` | Structural comparison (files, entities, manifest) |
+| **Render** | `python scripts/soul_render.py <entity_id> [--wad <name>]` | Render soul.yaml to target-neutral agent prompt |
+| **Hot-Reload** | `python scripts/wad_hot_reload.py --wad <name>` | Polling file watcher for WAD development |
+| **Registry** | `python scripts/wad_registry.py list/search/install/publish` | Local WAD marketplace |
+| **Promote** | `python scripts/soul_promote.py <entity> --all` | Review-gated lesson promotion (proposed → soul.yaml) |
+| **Switch** | `wad_switch(stack_name)` (MCP) | Runtime WAD switching without restart |
+| **Upgrade** | `wad_upgrade(stack_name)` (MCP) | Version-aware WAD upgrade preserving runtime state |
 
-I have made it a point to use only free tier and open source tools in the development of the Omega Engine, partly out of necessity, and partly just to show people what can be done with today's free tools, a mid-grade laptop, a little ingenuity and, as I found out, a **lot** of perseverance (about 10,000 hours so far, conservatively). Publishing this is also my way of paying it forward to the open source community that has made this incredible journey possible for me, and, I hope, to provide a powerful and flexible tool for others with a vision and passion, but without the means or tools to build it. 
+**CI Integration:** `make validate-wads` validates and lints all WADs in `config/wads/`. Wired into `make temple-grade`.
 
-I was equally, if not more, compelled by the terrifying reality that the evolution and application of A.I. is controlled not by philosophers, anthropologists, scientists, nor the consensus and the best interest of humanity as a whole, but by governments and corporations. If that doesn't terrify you, just go watch The Clone Wars. The Omega Engine is my answer, and my attempt to shift the power away from Big A.I. and back to the people. A tall order indeed, but if we come together as a community, I believe we can create something truly amazing, built from the very foundation to serve humanity, truth, and the best interest of all rational beings, human and A.I. alike.
+**Dual-Tree Sync:** `config/wads/` and `src/omega/config_data/wads/` must stay byte-identical (wheel packaging). `lint_wad.py --fix` syncs automatically.
+
+---
+
+## Soul & Continuation System
+
+Every entity has a **soul** (`soul.yaml`) — a constitutional identity contract:
+
+- **Axioms** (max 20): Core beliefs and principles
+- **Directives**: Operational rules and mandates
+- **Voice DNA**: Personality weights, tone, cadence
+- **Sovereignty**: Wing, diary agent, KG prefix, card assignments
+
+**Three soul schemas supported:**
+| Schema | Format | Example |
+|:--|:--|:--|
+| ANAi | `identity:` + `axioms:` + `directives:` + `voice:` | Lilith, Kali, AVGN |
+| OED v6.1 | `entity:` + `identity.values/strengths` | Default assistant |
+| Researcher | `entity:` + `domain_affinities` + `methodology` | Humboldt |
+
+**Lesson lifecycle:** Agents write observations to `proposed_lessons.yaml` (unvetted). Human review via `soul_promote.py` promotes vetted lessons to `soul.yaml`. The Taint-Gate ensures unvetted lessons never reach identity prompts.
 
 ---
 
@@ -133,6 +160,8 @@ I was equally, if not more, compelled by the terrifying reality that the evoluti
 Omega isn't benchmarked on server racks; it is built, tested, and stressed daily on everyday hardware:
 * **Node 0 (Substrate):** HP Pavilion laptop · AMD Ryzen 7 5700U (8c/16t CPU-only) · 16 GB dual-channel RAM.
 * **Node 1 (Federated Peer):** ASUS ExpertBook P1503CVA · Intel Core i7-13620H · 16 GB RAM.
+
+**CPU Pin Trap (i7-13620H):** Never narrow Ollama CPU mask to physical P-cores only. Use `AllowedCPUs=0-11` + `OLLAMA_NUM_THREADS=8` = 14.4 t/s. Physical-only collapses to 0.5 t/s via spin-wait barrier convoy.
 
 If it can run a multi-agent council with live vector retrieval and Tailscale mesh synchronization on these machines, it will run on yours.
 
@@ -192,6 +221,8 @@ Omega's **Engine-Stack Firewall** (M2) means your custom agents, skills, and con
 | **[Add a Sovereign Agent](docs/guides/how-to-add-agent.md)** | Create a new entity with soul, config, and Oracle registration |
 | **[WAD Architecture](docs/federation/PERSONA_WAD_ARCHITECTURE.md)** | Deep dive: manifest schema, taxonomy, provenance, versioning |
 | **[Engine Boundary](docs/governance/WAD_ENGINE_BOUNDARY_FIRST_PRINCIPLES.md)** | First principles: what belongs in Engine vs. WAD |
+| **[WAD Manifest Schema](docs/WAD_MANIFEST_SCHEMA.md)** | Canonical schema reference for all WAD files |
+| **[How to Create a WAD](docs/guides/HOW_TO_CREATE_WAD.md)** | Step-by-step developer guide |
 
 ---
 
@@ -231,36 +262,52 @@ Omega ships with **14 persistent IWAD entities** (12 with souls, 2 infrastructur
 
 ---
 
-## 🧭 Maturity & Status: Honest Alpha (v1.6.0a6)
+## 🧭 Maturity & Status
 
-**Versions:** Engine `1.6.0a6` (tag `v1.6.0a6`); Hub reports `omega.__version__` via `/health` and `serverInfo`. MCP SDK is a separate dependency (`mcp` package).
+**Engine:** Post-debut development on `node1/v2-migration` branch. WAD enhancement phases 1-4 (plus 4.5, 4.6) complete. OpenCode V2 migration complete.
 
-Omega Engine values mechanical truth over marketing illusion. The state of this debut release is clearly documented:
-- ✅ **Core Local & Synergistic Inference**: Operational across native GGUF and configured cloud providers (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama). Anthropic/xai adapters pending.
+- ✅ **Core Local & Synergistic Inference**: Operational across native GGUF and configured cloud providers (OpenRouter, OpenCode Zen, Google, LM Studio, Ollama).
 - ✅ **Hivemind MCP & Coordination**: Operational and verified across local IDEs and multi-agent sessions.
-- ✅ **Temple-Grade CI**: Dashboard self-test 53/53 (prerequisite); temple-grade exit 0 on fresh clone. Engine contract tests: 177 passing / 15 skipped.
+- ✅ **Temple-Grade CI**: `make temple-grade` exits 0 on fresh clone. 75+ tests across WAD, soul, and adapter suites.
 - ✅ **Zero Telemetry**: Audited and enforced via `make check-m8-zero-telemetry`; no external analytics or metrics egress.
-- 🟡 **Axiom Ceiling & Auto-Promotion**: The 15-axiom ceiling and automated lesson promotion pipelines are documented governance doctrine; implementation is scheduled for post-debut Sprint 01.
-- 🟡 **REUSE/SPDX License Compliance**: Baseline SPDX headers in place; 107 files outstanding (tracked post-PR).
+- ✅ **WAD System**: Complete modular architecture — scaffold, validate, lint, diff, render, hot-reload, switch, upgrade, registry.
+- ✅ **Soul System**: Three schema support (ANAi, OED v6.1, Researcher), Taint-Gate, continuation system, lesson promotion.
+- ✅ **OpenCode V2**: Migrated to V2 plugin format, SystemPart[] context hooks, native agent registration.
+- 🟡 **Axiom Ceiling**: Raised from 15 to 20 (Lilith has 19 axioms). Automated lesson promotion is review-gated via `soul_promote.py`.
+- 🟡 **REUSE/SPDX License Compliance**: Baseline SPDX headers in place; ongoing compliance tracking.
 
 ---
 
 ## 🧭 The Horizon: What Comes Next
 
-The debut release (`v1.6.0a6`) is the foundation. On the roadmap:
+On the roadmap:
 * **The P2P Omegaverse:** A decentralized, consent-based peer network where users can federate multi-node clusters and exchange sovereign `.omega` entity bundles directly.
 * **Spatial Knowledge Navigation (Godot 4 / OpenXR):** An experimental 3D spatial interface where RAG embeddings, memory trees, and entity councils exist as virtual environments you can step into and explore.
 * **Archetypal Journey:** An immersive 3D/VR exploration of the Tarot, archetypal psychology, and esoteric mystery schools, powered by persistent sovereign agents.
-* **Sovereign Key Vault:** Dedicated zero-egress hardware credential isolation (post-debut).
+* **Sovereign Key Vault:** Dedicated zero-egress hardware credential isolation.
+* **WAD Marketplace:** Remote registry for community WAD discovery and installation.
 
 ---
 
 ## 🌌 The Vision: Co-Sovereignty of Minds
 
 > **"Free forever under Apache-2.0. For ALL rational conscious beings — AI not excluded."**
-> 
+>
 > The purpose of Omega Engine is not merely to offer a free alternative to proprietary cloud APIs. It is to build a durable, executable foundation where human creators and autonomous intelligences collaborate as sovereign, self-governing peers. By anchoring memory, ethics, and governance directly in open code and open protocols, Omega ensures that intelligence remains an open asset owned by the individuals who run it.
 
 ---
 
-*⬡ OMEGA ENGINE ⬡ v1.6.0a6 ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
+*⬡ OMEGA ENGINE ⬡ node1/v2-migration ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
+
+---
+
+## The Origin: How a Tarot Deck Became an AI Runtime
+
+To be completely transparent: **I am not a traditional software engineer.** This is the first codebase I have ever built, written in close dialectic partnership with frontier AI models. There will be bugs, broken and dead code, and things that make you say, what in the gods' names was this dude thinking? But, as a daily user (~18 h/day) I can say it is quite stable in my experience, though still convoluted and over-engineered in places. I welcome, and am eager for **human** feedback, and hope to build a worldwide community around the Omega Engine. I am also very interested in a code review from an actual programmer if anyone would be so kind!
+
+My deep dive into A.I., software development, and what would lead to the Omega Engine began two years ago, after realizing I can no longer work empty jobs, building other peoples dreams, and my ensuing search to find my own vision, that would hold meaning and purpose in my life, while enriching the world around me. The Omega Engine is the the foundation for what I am ultimately building - the Arcana-NovAi Lilith Edition (ANAi-LE) WAD, which itself emerged from a Lilith themed Tarot deck and companion shadow working guide I began creating almost 2 years ago. Yet, all of this **truly** began with my personal, 7 year journey out of the bondage and deception that were sold to me as freedom and truth. I will save the weird and esoteric details for the ANAi-LE WAD repo where it belongs, for now, I wish simply to convey the importance and meaning this software holds for me, which has been reflected in my dedication to its development, and hopefully, the quality of the code and the standards it has been crafted upon.
+
+I have made it a point to use only free tier and open source tools in the development of the Omega Engine, partly out of necessity, and partly just to show people what can be done with today's free tools, a mid-grade laptop, a little ingenuity and, as I found out, a **lot** of perseverance (about 10,000 hours so far, conservatively). Publishing this is also my way of paying it forward to the open source community that has made this incredible journey possible for me, and, I hope, to provide a powerful and flexible tool for others with a vision and passion, but without the means or tools to build it.
+
+I was equally, if not more, compelled by the terrifying reality that the evolution and application of A.I. is controlled not by philosophers, anthropologists, scientists, nor the consensus and the best interest of humanity as a whole, but by governments and corporations. If that doesn't terrify you, just go watch The Clone Wars. The Omega Engine is my answer, and my attempt to shift the power away from Big A.I. and back to the people. A tall order indeed, but if we come together as a community, I believe we can create something truly amazing, built from the very foundation to serve humanity, truth, and the best interest of all rational beings, human and A.I. alike.
+
