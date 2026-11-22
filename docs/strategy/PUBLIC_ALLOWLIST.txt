@@ -54,6 +54,12 @@ scripts/dispatch_guard.py            # M33/M34 pre-dispatch verification
 scripts/hivemind_post.py             # Hivemind post helper
 scripts/infra_inventory.py           # S1 inventory
 scripts/soul_promote.py              # soul promotion
+scripts/create_wad.py              # WAD scaffold CLI
+scripts/lint_wad.py                # WAD linter (duplicate keys, axiom ceiling, dual-tree drift)
+scripts/wad_diff.py                # Structural WAD diff tool
+scripts/wad_hot_reload.py          # Hot-reload file watcher for WAD development
+scripts/wad_registry.py            # WAD marketplace / registry CLI
+scripts/soul_render.py             # WAD soul → target-neutral agent prompt renderer
 
 # [D-624] Non-Python assets that shipped GATES open unconditionally. The Makefile
 # passes these paths directly (Makefile:316-317), so their absence is a hard
@@ -124,6 +130,10 @@ docs/USER_MANUAL.md
 docs/user/ONBOARDING_GUIDE.md
 docs/user/TROUBLESHOOTING_GUIDE.md
 docs/architecture/ORACLE_DEEP_DIVE.md
+docs/WAD_MANIFEST_SCHEMA.md         # Canonical WAD manifest schema reference
+docs/guides/HOW_TO_CREATE_WAD.md  # Step-by-step WAD developer guide
+docs/tutorials/how-to-create-wad.md  # WAD bundle creation tutorial
+docs/guides/how-to-add-agent.md   # Sovereign agent creation guide
 docs/strategy/DEBUT_REMEDIATION_MANUAL_20260817.md
 docs/strategy/PUBLIC_ALLOWLIST.txt
 docs/strategy/INGESTION_PIPELINE_SPEC.md
@@ -196,6 +206,9 @@ data/coordination/EXPERT_SESSION_REGISTRY_NARRATIVE.md
 config/model_registry/
 config/mandate_claims.yaml
 config/entity_canonicalization.yaml
+config/adapter_whitelist.yaml       # Config-driven adapter module whitelist
+config/entity_model_affinity.yaml  # Entity→model affinity configuration
+config/wad_registry.json          # WAD registry index
 
 # P2P Omegaverse Documentation (2026-09-09)
 
@@ -287,6 +300,7 @@ file
 tui.json
 old-claude-sys-prompt.md
 migrate_heritage.py
+.modelfiles/                      # FORGE — model file definitions, not for public
 ```
 
 ## ⚠️ Explicit Exclusions (do NOT delete, just keep off public)
