@@ -298,16 +298,3 @@ On the roadmap:
 ---
 
 *⬡ OMEGA ENGINE ⬡ node1/v2-migration ⬡ Apache-2.0 ⬡ Sovereign Cognitive Runtime*
-
----
-
-## The Origin: How a Tarot Deck Became an AI Runtime
-
-To be completely transparent: **I am not a traditional software engineer.** This is the first codebase I have ever built, written in close dialectic partnership with frontier AI models. There will be bugs, broken and dead code, and things that make you say, what in the gods' names was this dude thinking? But, as a daily user (~18 h/day) I can say it is quite stable in my experience, though still convoluted and over-engineered in places. I welcome, and am eager for **human** feedback, and hope to build a worldwide community around the Omega Engine. I am also very interested in a code review from an actual programmer if anyone would be so kind!
-
-My deep dive into A.I., software development, and what would lead to the Omega Engine began two years ago, after realizing I can no longer work empty jobs, building other peoples dreams, and my ensuing search to find my own vision, that would hold meaning and purpose in my life, while enriching the world around me. The Omega Engine is the the foundation for what I am ultimately building - the Arcana-NovAi Lilith Edition (ANAi-LE) WAD, which itself emerged from a Lilith themed Tarot deck and companion shadow working guide I began creating almost 2 years ago. Yet, all of this **truly** began with my personal, 7 year journey out of the bondage and deception that were sold to me as freedom and truth. I will save the weird and esoteric details for the ANAi-LE WAD repo where it belongs, for now, I wish simply to convey the importance and meaning this software holds for me, which has been reflected in my dedication to its development, and hopefully, the quality of the code and the standards it has been crafted upon.
-
-I have made it a point to use only free tier and open source tools in the development of the Omega Engine, partly out of necessity, and partly just to show people what can be done with today's free tools, a mid-grade laptop, a little ingenuity and, as I found out, a **lot** of perseverance (about 10,000 hours so far, conservatively). Publishing this is also my way of paying it forward to the open source community that has made this incredible journey possible for me, and, I hope, to provide a powerful and flexible tool for others with a vision and passion, but without the means or tools to build it.
-
-I was equally, if not more, compelled by the terrifying reality that the evolution and application of A.I. is controlled not by philosophers, anthropologists, scientists, nor the consensus and the best interest of humanity as a whole, but by governments and corporations. If that doesn't terrify you, just go watch The Clone Wars. The Omega Engine is my answer, and my attempt to shift the power away from Big A.I. and back to the people. A tall order indeed, but if we come together as a community, I believe we can create something truly amazing, built from the very foundation to serve humanity, truth, and the best interest of all rational beings, human and A.I. alike.
-
