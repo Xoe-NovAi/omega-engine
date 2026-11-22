@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "wads": [
+    {
+      "name": "_omega_default \u2014 The Company",
+      "version": "1.0.0",
+      "description": "The Omega Engine's default IWAD. A software company leadership structure: Founder (Kali) directs, CTO (Ma'at) builds, CISO (Lilith) protects. 10 department heads implement.",
+      "author": "Xoe-NovAi Foundation",
+      "type": "iwad",
+      "tags": [],
+      "dependencies": [],
+      "path": "config/wads/_omega_default",
+      "checksum": "sha256:bcebc171a71810d6b40555763264c09e7b305ccb1b5ca3151b4ca0a89f651e46"
+    },
+    {
+      "name": "arcana_novai",
+      "version": "0.2.0",
+      "description": "The Living Tarot Mystery School and Sovereign Entity Pantheon",
+      "author": "Xoe-NovAi",
+      "type": "pwad",
+      "tags": [],
+      "dependencies": [],
+      "path": "config/wads/arcana_novai",
+      "checksum": "sha256:99e170e7240caad416d6128743f918beee69cfff08874fc859a6ee7fa8ae491c"
+    }
+  ]
+}
