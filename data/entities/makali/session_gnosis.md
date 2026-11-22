@@ -1431,3 +1431,31 @@ See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Inve
 4. Gemini 4 migration deferred
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-22 (Tier 3 — WAD Marketplace / Registry)
+
+### Item completed
+
+**WAD marketplace / registry (Phase 4.6):** Added `scripts/wad_registry.py` — local marketplace CLI with list, search, info, install, remove, publish commands. Registry format: JSON index (config/wad_registry.json) with WAD metadata, checksums, dependencies, tags. Both existing WADs published to registry. Install validates WADs before copying.
+
+### ALL TIER 3 ITEMS NOW COMPLETE
+
+| Item | Status |
+|------|--------|
+| Entity affinity activation (4.4) | ✅ Complete |
+| session_gnosis.md auto-update | ✅ Complete |
+| WAD versioning & upgrade paths (4.5) | ✅ Complete |
+| WAD marketplace / registry (4.6) | ✅ Complete |
+
+### Remaining (deferred)
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
+
+### Post-compaction order
+1. Read SESSION_ANCHOR.md
+2. Read WAD_ENHANCEMENT_PLAN.md
+3. All WAD enhancement phases (1-4 + 4.5 + 4.6) are complete
+4. Gemini 4 migration deferred — investigate only when 400s recur
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
