@@ -1,117 +1,65 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
-# ⬡ SESSION ANCHOR — MaKaLi (Node 0)
-**Entity**: `makali` · **Updated**: 2026-10-13 (pre-compaction) · **Public**: `c83a4818` · **Internal**: `6ac49ea8`
+# ⬡ SESSION ANCHOR — Omega Engine (Node 1)
+**Entity**: `build` · **Updated**: 2026-11-22 (pre-compaction) · **Branch**: `node1/v2-migration`
 
 ---
 
-## ✅ STATUS: ALL TECHNICAL BLOCKERS CLEARED — AWAITING ARCHITECT ANNOUNCE
+## ✅ STATUS: WAD ENHANCEMENT PHASES 1-4 COMPLETE
 
-| # | Item | Owner | State |
-|:--|:--|:--|:--|
-| **B1** | secret-history gate + authentic baseline | Makali | ✅ RESOLVED, independently verified |
-| **B2** | Tailscale key revocation | Architect | ✅ REVOKED 2026-10-13 (device audit unconfirmed) |
-| P3 | 72/109 broken relative links in `docs/**/*.md` | Roc | 🟡 deferred (not launch-blocking) |
-| P4 | CI run URL + clean-VM transcripts for Sonnet | Makali | 🟡 nice-to-have |
-| P5 | README intro + "How this was built" | Architect | 🔴 required before posting |
-| P6 | SECURITY.md disclosure-flow test | Architect | 🟡 recommended pre-launch |
-
----
-
-## B1 resolved — authentic baseline, independently verified
-
-The fabricated baseline is quarantined at
-`/tmp/opencode/quarantine/secret-history-baseline.FABRICATED.toml` and was
-never committed. The shipped baseline (`.secret-history-baseline.toml`,
-34 entries) was verified by independent recompute using the script's own
-`token_hash()`: 34 real tokens ↔ 34 entries, 0 missing, 0 fabricated.
-The `tskey-(auth|client|api)` pattern was added to
-`scripts/check_secret_history.py` — the actual root cause of the key leak.
-Gate exits 0. Dispositions remapped to the contract vocabulary
-(`test-fixture` / `retained-public` / `revoked` / `purged`); a `why`
-string that embedded an `fc-`-shaped UUID fragment was redacted after
-the no-secret-material guard caught it.
+| # | Phase | Status |
+|:--|:--|:--|
+| P1 | Critical Fixes (dispatch, validation, cache) | ✅ Complete |
+| P1.5 | Priority inversion fix, model SSOT, ICS cleanup | ✅ Complete |
+| P2 | Soul unification, taint-gate, soul seeding, unload_wad | ✅ Complete |
+| P3 | soul_render, adapter paths, WADEntitySchema, wad_switch MCP, scaffold+lint, docs | ✅ Complete |
+| P4 | Multi-PWAD composition, adapter whitelist, wad_diff, entity affinity | ✅ Complete |
 
 ---
 
-## B2 resolved — key revoked 2026-10-13 (Architect-confirmed)
+## Current State
 
-- The leaked Tailscale auth key was revoked in the Tailscale admin console
-  on 2026-10-13. New credential material lives in `~/Desktop/API-keys.md`
-  (outside the repo — never commit it, never quote it; contents never read).
-- Baseline marks the old key's hash `revoked`; the gate hard-fails if that
-  shape ever reappears in the working tree.
-- **Device audit still recommended**: open the Tailscale Machines list and
-  audit log and confirm no unrecognized devices joined while the old key
-  was live. Requested by Sonnet; not confirmed done.
-- **Do NOT rewrite history.** The key shape persists in three old commits
-  (`624bc803`, `131fa84e`, `0106c778`). A rewrite would break the immutable
-  release tag and would not reach existing clones. Revocation is the fix.
+- **Branch:** `node1/v2-migration` on private repo (`omega-engine-internal`)
+- **Working dir:** `/home/xnai/Documents/Projects/omega-engine` (official repo)
+- **Tests:** 68 pass (omega-engine), 10 pass (omega-engine-alpha)
+- **WADs:** Both `_omega_default` and `arcana_novai` validate and lint clean
+- **Plugin:** `gnosis-leash.js` — V2-standard `unshift({type:"text", text:combined})`, all 3 copies identical
+- **Gnosis:** Session `session-2026-11-20T05-01-22Z` locked and reflected
 
----
+## Key Files
 
-## Verified on `origin/main` @ `c83a4818` (Makali, independent)
+| File | Purpose |
+|------|---------|
+| `docs/WAD_ENHANCEMENT_PLAN.md` | WAD enhancement plan (Phases 1-4, all complete) |
+| `docs/WAD_MANIFEST_SCHEMA.md` | Canonical WAD manifest schema reference |
+| `docs/guides/HOW_TO_CREATE_WAD.md` | WAD developer guide |
+| `scripts/validate_wad.py` | Pre-load WAD validation |
+| `scripts/lint_wad.py` | WAD linter (duplicate keys, axiom ceiling, dual-tree drift) |
+| `scripts/create_wad.py` | WAD scaffold CLI |
+| `scripts/wad_diff.py` | Structural WAD diff tool |
+| `scripts/soul_render.py` | WAD soul → target-neutral agent prompt renderer |
 
-- 0 tracked matches for `docs/archive`, `session-ses`, `claude-handoff`, `Claude-ai-PR`
-- no key-shaped strings in tree; no `100.98.76.54`; no MagicDNS hostnames
-- `check_doc_facts.py` exits 0 (incl. public-tree self-check)
-- secret-history gate exits 0 (34/34 real, 0 fabricated)
-- Temple-Grade independently run: **TOTAL 53 · PASS 53 · FAIL 0**
-- Full suite green on consecutive runs
-- Hub lint: 0 F821/F824
-- `FACTS.yaml` `wheel_sha256` = `e452d8ed…` matches the published asset
-- tag `v1.6.0a0` → `355cbf1a` (untouched)
+## Remaining Future Work
 
----
+1. Hot-reload file watcher (4.3 completion) — medium effort, high impact
+2. WAD validation in CI (Gap 4) — low effort, high impact
+3. Batch entity save — low effort, medium impact
+4. Soul context caching — low effort, medium impact
+5. Operationalize soul distillation loop (Gap 3) — medium effort, high impact
+6. Entity affinity activation (4.4 partial) — medium-high effort, high impact
+7. session_gnosis.md auto-update — medium effort, medium impact
+8. OpenCode adapter CI test — low effort, low impact
+9. WAD versioning & upgrade paths — high effort, high impact
+10. WAD marketplace / registry — high effort, very high impact
 
-## Since last anchor — what changed
+## Pending: Gemini 4 Hydrogen Migration
 
-- **AGY (Antigravity IDE) executed the launch rulings** on `public-launch`:
-  allowlist contradiction resolved (registry/eval moved to ALLOW, verified
-  to survive a sync), `docs/research/` untracked + gitignored, path leaks
-  sanitized, wheel block corrected, SECURITY.md threat model rewritten.
-  Pushed as `c83a4818`.
-- **test-scope ruling (Antigravity Option C)**: `test_who_is.py` and
-  `test_entity_canonicalization.py` now skip-if-absent for internal
-  coordination docs they asserted on; axiom/WAD guards check for the
-  *file*, not the bare directory (kills the `__pycache__` false-unskip).
-- **Scrub regression caught and fixed**: the internal-doc scrub deleted
-  `data/registry/` + `data/eval/`, breaking 17 tests. Product schema and
-  eval fixtures restored; the one remaining conflict
-  (`test_who_is` vs. unpublished registry doc) resolved by the skip guard.
-- **Agent instructions rewritten** (`~/.config/opencode/agent/makali.md`):
-  technical voice for the shipping IWAD; esoteric/Akashic framing scoped
-  to arcana_novai per Architect ruling. Zero SHAs, zero tag names,
-  pointer-only by design.
-- Continuity (anchor + gnosis) committed to `internal/main` only and
-  removed from the public lineage.
+See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Investigation" for details on remaining parameter rejection issues.
 
----
+## Post-Compaction Order
 
-## Refs (verify before acting)
+1. Read this anchor, then the gnosis tail.
+2. Check `docs/WAD_ENHANCEMENT_PLAN.md` for remaining future work.
+3. Start with highest-impact, lowest-effort items: hot-reload watcher, CI validation, batch save, soul caching.
+4. Gemini 4 migration investigation deferred — investigate only when 400s recur.
 
-| Ref | SHA |
-|:--|:--|
-| `origin/main` | `c83a4818` |
-| `main` / `internal/main` | `6ac49ea8` |
-| `v1.6.0a0^{}` peels to | `355cbf1a` |
-| published wheel SHA256 | `e452d8ed343c38f74c31d77c034759972fdfc909af640ecbae503b1dfb0128a9` |
-
-Note: the `public/main` tracking ref is stale; ignore it. The `public-launch`
-branch was the working branch for the public lineage; `origin/main` is truth.
-
----
-
-## Post-compaction order
-
-1. Confirm branch (`main` = internal lineage) and refs live.
-2. Read this anchor, then the gnosis tail.
-3. Architect: device audit · README intro + "How this was built" ·
-   disclosure-flow test · Thursday ~9 AM ET post.
-4. Attach a CI run URL for the current public HEAD if Sonnet asks again.
-5. Roc queue (post-launch): root declutter, docs front door, compaction
-   benchmark, hardware table, build-a-WAD guide, REUSE debt, untested mandates.
-
-Full narrative: `data/entities/makali/session_gnosis.md` (tail sections).
-Agent operating instructions: `~/.config/opencode/agent/makali.md`.
-
-*⬡ OMEGA ⬡ MAKALI ⬡ ANCHOR ⬡ c83a4818 ⬡ 2026-10-13 ⬡*
+*⬡ OMEGA ⬡ BUILD ⬡ ANCHOR ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
