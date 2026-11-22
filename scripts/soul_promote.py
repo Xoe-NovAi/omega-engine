@@ -46,7 +46,7 @@ from typing import Any
 import yaml
 
 BACKUPS_TO_KEEP = 5
-CONTENT_KEYS = ("principle", "insight", "narrative")  # lesson body keys, priority order
+CONTENT_KEYS = ("L3", "principle", "insight", "narrative")  # lesson body keys, priority order (L3 for L1/L2/L3 format)
 
 
 class PromotionError(Exception):
@@ -175,12 +175,17 @@ def build_lesson_entry(proposal: dict[str, Any]) -> dict[str, Any]:
         "promoted_from": "proposed_lessons.yaml",
         "promoted_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
     }
-    # Body under its original key (principle preferred, then insight/narrative)
+    # Body under its original key (L3 preferred for L1/L2/L3 format, then principle/insight/narrative)
     for key in CONTENT_KEYS:
         val = proposal.get(key)
         if isinstance(val, str) and val.strip():
             entry[key] = val.strip()
             break
+    # Preserve L1/L2 as provenance when promoting from L1/L2/L3 format
+    for provenance_key in ("L1", "L2"):
+        val = proposal.get(provenance_key)
+        if isinstance(val, str) and val.strip():
+            entry[provenance_key] = val.strip()
     # Preserve useful provenance fields when present
     for key in ("mandates", "confidence", "source_session", "directive_provenance"):
         if proposal.get(key) is not None:
