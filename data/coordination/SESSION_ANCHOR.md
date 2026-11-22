@@ -1,65 +1,64 @@
 <!-- SPDX-FileCopyrightText: 2026 Xoe-NovAi / SPDX-License-Identifier: Apache-2.0 -->
 # ⬡ SESSION ANCHOR — Omega Engine (Node 1)
-**Entity**: `build` · **Updated**: 2026-11-22 (pre-compaction) · **Branch**: `node1/v2-migration`
+**Entity**: `build` · **Updated**: 2026-11-22 (all WAD phases complete) · **Branch**: `node1/v2-migration`
 
 ---
 
-## ✅ STATUS: WAD ENHANCEMENT PHASES 1-4 COMPLETE
+## ✅ STATUS: ALL WAD ENHANCEMENT PHASES COMPLETE
 
-| # | Phase | Status |
+| Phase | Status | Items |
 |:--|:--|:--|
-| P1 | Critical Fixes (dispatch, validation, cache) | ✅ Complete |
-| P1.5 | Priority inversion fix, model SSOT, ICS cleanup | ✅ Complete |
-| P2 | Soul unification, taint-gate, soul seeding, unload_wad | ✅ Complete |
-| P3 | soul_render, adapter paths, WADEntitySchema, wad_switch MCP, scaffold+lint, docs | ✅ Complete |
-| P4 | Multi-PWAD composition, adapter whitelist, wad_diff, entity affinity | ✅ Complete |
+| P1 | ✅ Complete | dispatch.yaml, dispatch_registry fallback + cache, validate_wad.py |
+| P1.5 | ✅ Complete | Priority inversion fix, name canonicalization, DEFAULT_ENTITY_MODEL, ICS cleanup |
+| P2 | ✅ Complete | Soul path unification, taint-gate, soul seeding, schema reconciliation, unload_wad |
+| P3 | ✅ Complete | soul_render, adapter paths, WADEntitySchema, wad_switch MCP, scaffold+lint, docs |
+| P4 | ✅ Complete | Multi-PWAD composition, adapter whitelist, wad_diff, entity affinity |
+| 4.5 | ✅ Complete | WAD versioning & upgrade paths (WADVersion, wad_upgrade, soul preservation) |
+| 4.6 | ✅ Complete | WAD marketplace / registry (wad_registry.py, JSON index) |
 
----
+### Tier 1 (quick wins) — ✅ Complete
+- WAD validation in CI (validate-wads make target)
+- Batch entity save (batch_add)
+- Soul context caching (TTL 60s)
+- Entity name canonicalization consistency
+- Hot-reload file watcher (wad_hot_reload.py)
+- Operationalize soul distillation loop (soul_promote L1/L2/L3)
+- OpenCode adapter CI tests (7 tests)
+
+### Tier 2 (medium effort) — ✅ Complete
+- Entity affinity activation (config + resolver wired)
+- session_gnosis.md auto-update (close_session → append_session_anchor)
+
+### Remaining (deferred)
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
 
 ## Current State
-
 - **Branch:** `node1/v2-migration` on private repo (`omega-engine-internal`)
-- **Working dir:** `/home/xnai/Documents/Projects/omega-engine` (official repo)
-- **Tests:** 68 pass (omega-engine), 10 pass (omega-engine-alpha)
+- **Tests:** 75 pass (68 original + 7 new adapter tests)
 - **WADs:** Both `_omega_default` and `arcana_novai` validate and lint clean
-- **Plugin:** `gnosis-leash.js` — V2-standard `unshift({type:"text", text:combined})`, all 3 copies identical
-- **Gnosis:** Session `session-2026-11-20T05-01-22Z` locked and reflected
+- **Plugin:** `gnosis-leash.js` — V2-standard `unshift`, all 3 copies identical
+- **Registry:** 2 WADs published (config/wad_registry.json)
 
 ## Key Files
-
 | File | Purpose |
 |------|---------|
-| `docs/WAD_ENHANCEMENT_PLAN.md` | WAD enhancement plan (Phases 1-4, all complete) |
+| `docs/WAD_ENHANCEMENT_PLAN.md` | Full WAD enhancement plan (all phases complete) |
 | `docs/WAD_MANIFEST_SCHEMA.md` | Canonical WAD manifest schema reference |
 | `docs/guides/HOW_TO_CREATE_WAD.md` | WAD developer guide |
 | `scripts/validate_wad.py` | Pre-load WAD validation |
-| `scripts/lint_wad.py` | WAD linter (duplicate keys, axiom ceiling, dual-tree drift) |
+| `scripts/lint_wad.py` | WAD linter |
 | `scripts/create_wad.py` | WAD scaffold CLI |
 | `scripts/wad_diff.py` | Structural WAD diff tool |
 | `scripts/soul_render.py` | WAD soul → target-neutral agent prompt renderer |
-
-## Remaining Future Work
-
-1. Hot-reload file watcher (4.3 completion) — medium effort, high impact
-2. WAD validation in CI (Gap 4) — low effort, high impact
-3. Batch entity save — low effort, medium impact
-4. Soul context caching — low effort, medium impact
-5. Operationalize soul distillation loop (Gap 3) — medium effort, high impact
-6. Entity affinity activation (4.4 partial) — medium-high effort, high impact
-7. session_gnosis.md auto-update — medium effort, medium impact
-8. OpenCode adapter CI test — low effort, low impact
-9. WAD versioning & upgrade paths — high effort, high impact
-10. WAD marketplace / registry — high effort, very high impact
-
-## Pending: Gemini 4 Hydrogen Migration
-
-See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Investigation" for details on remaining parameter rejection issues.
+| `scripts/wad_hot_reload.py` | Hot-reload file watcher |
+| `scripts/wad_registry.py` | WAD marketplace CLI |
+| `scripts/soul_promote.py` | Review-gated lesson promotion |
+| `config/wad_registry.json` | WAD registry index |
 
 ## Post-Compaction Order
-
-1. Read this anchor, then the gnosis tail.
-2. Check `docs/WAD_ENHANCEMENT_PLAN.md` for remaining future work.
-3. Start with highest-impact, lowest-effort items: hot-reload watcher, CI validation, batch save, soul caching.
-4. Gemini 4 migration investigation deferred — investigate only when 400s recur.
+1. Read this anchor for current state
+2. All WAD enhancement work is complete
+3. Gemini 4 migration deferred — investigate only when 400s recur
+4. Consider new feature work or production hardening
 
 *⬡ OMEGA ⬡ BUILD ⬡ ANCHOR ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
