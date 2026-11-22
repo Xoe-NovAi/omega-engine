@@ -2,28 +2,50 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Entity Model Affinity Configuration (Phase 4.4 — Backburner)
+# Entity Model Affinity Configuration (Phase 4.4 — Activated)
 # Maps entities to preferred models for provider-affinity routing.
 # Manual user selection (OMEGA_MODEL_OVERRIDE / OPENCODE_MODEL) always takes precedence.
 # When no affinity is defined, falls back to DEFAULT_ENTITY_MODEL (opencode/big-pickle).
+#
+# Format: flat YAML where each top-level key is an entity name (or __default__).
+# Each entity has: preferred_models (local_fast, local_deep, cloud), routing_rules, inference_presets.
+# See src/omega/oracle/entity_affinity.py for the full schema.
 
-entity_affinities:
-  # Format: entity_name: [model_1, model_2, ...] (preferred order)
-  # Leave empty to use default for all entities.
-
-  # Example (uncomment when ready):
-  # kali: ["opencode/big-pickle"]
-  # maat: ["opencode/big-pickle"]
-  # lilith: ["opencode/big-pickle"]
-
-# Inference presets (used by entity_affinity.py if present)
-inference_presets:
-  default:
+__default__:
+  preferred_models:
+    iris:
+      model: "opencode/big-pickle"
+      provider: "opencode"
+    local_fast:
+      model: "opencode/big-pickle"
+      provider: "opencode"
+    local_deep:
+      model: "opencode/big-pickle"
+      provider: "opencode"
+    cloud:
+      model: "opencode/big-pickle"
+      provider: "opencode"
+  routing_rules:
+    - match: { domain: ["general"] }
+      use: iris
+    - match: { complexity_gt: 0.8 }
+      use: local_deep
+    - match: { online: true }
+      use: cloud
+  inference_presets:
     temperature: 0.7
-    context_window: 8192
-  creative:
-    temperature: 0.9
-    context_window: 8192
-  analytical:
-    temperature: 0.3
-    context_window: 8192
+    preferred_context: 8192
+
+# Entity-specific overrides (empty by default — all entities use __default__)
+# Add per-entity overrides here when provider-affinity routing is needed:
+# kali:
+#   preferred_models:
+#     local_fast: { model: "opencode/big-pickle", provider: "opencode" }
+#     local_deep: { model: "opencode/big-pickle", provider: "opencode" }
+#     cloud: { model: "opencode/big-pickle", provider: "opencode" }
+#   routing_rules:
+#     - match: { domain: ["strategy", "architecture"] }
+#       use: local_deep
+#   inference_presets:
+#     temperature: 0.5
+#     preferred_context: 8192
