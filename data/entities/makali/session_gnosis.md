@@ -1390,3 +1390,24 @@ See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Inve
 4. Gemini 4 migration deferred
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-22 (Tier 3 — session_gnosis.md Auto-Update)
+
+### Item completed
+
+**session_gnosis.md auto-update:** Wired `EntityWorkspaceManager.append_session_anchor()` into `Oracle.close_session()`. After compaction tracking and somatic state capture, close_session now appends a session anchor (session_id, entity, exchange_count, timestamp) to the entity's sessions.yaml. This ensures continuation data persists without manual authoring.
+
+### Remaining Tier 3 items
+- WAD versioning & upgrade paths — high effort, high impact
+- WAD marketplace / registry — high effort, very high impact
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
+
+### Post-compaction order
+1. Read SESSION_ANCHOR.md
+2. Read WAD_ENHANCEMENT_PLAN.md
+3. Continue with remaining Tier 3 items
+4. Gemini 4 migration deferred
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
