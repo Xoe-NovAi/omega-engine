@@ -1272,3 +1272,60 @@ copied forward into it). Verify every command before running.
   trails, a keep always beats a cut in the allowlist precedence chain.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP-2 ⬡ 2026-10-13 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-22 (WAD Enhancement Phases 1-4)
+
+- **Branch:** `node1/v2-migration` on private repo (`omega-engine-internal`)
+- **Session:** `session-2026-11-20T05-01-22Z` (gnosis locked, manifest reflected)
+- **All WAD Enhancement Phases 1-4 complete.** 68 tests pass. Both WADs validate and lint clean.
+
+### What was accomplished
+
+**Phase 1 (P0):** Created `dispatch.yaml` for ANAi WAD, added IWAD fallback in `dispatch_registry.py`, made cache WAD-aware, created `scripts/validate_wad.py` (manifest, entities, voices, hierarchy, souls, card assignments, world lumps).
+
+**Phase 1.5 (P0 hotfix):** Fixed IWAD/PWAD priority inversion (IWAD=10, PWAD=100+priority). Canonicalized entity names (apostrophe stripping: `Ma'at` → `maat`). Added `DEFAULT_ENTITY_MODEL = "opencode/big-pickle"` SSOT. Removed hardcoded `qwen3-1.7b` from entity_registry, orchestrator, model_gateway, wad_loader. Cleaned `dispatch_registry.py`. Added `tests/test_wad_sync.py`. Removed ICS dead Priority 4.
+
+**Phase 2 (P1):** Unified soul paths via `resolve_entity_memory_paths()` helper (memory/ vs root split-brain fix). Enforced Taint-Gate in `soul_utils.py` (only `approved_lessons.yaml` injected). Added axioms extraction path. WAD-to-runtime soul seeding. Reconciled soul schemas (v6.1/ANAi/v3.0, axiom ceiling 20). Added `unload_wad()`. World lump validation.
+
+**Phase 3 (P2):** Ported `soul_render.py` (identity: + entity: schema support). Updated `soul_agents_opencode.py` paths. Consolidated entity validation via Pydantic `WADEntitySchema`. Implemented `WADLoader.wad_switch()` + Omega Hub MCP tool. Created `create_wad.py` scaffold + `lint_wad.py` linter. Published `WAD_MANIFEST_SCHEMA.md` + `HOW_TO_CREATE_WAD.md`.
+
+**Phase 4 (P3):** Multi-PWAD composition (`active_iwad` + `active_pwads` in omega.yaml). Config-driven adapter whitelist (`config/adapter_whitelist.yaml`). WAD diff tool (`scripts/wad_diff.py`). Entity affinity config (`config/entity_model_affinity.yaml`).
+
+**Plugin fix:** Adopted V2-standard `event.system.unshift({type:"text", text:combined})` for context hook (Gemini 4 Hydrogen compatibility). All 3 plugin copies byte-identical.
+
+### Key architectural decisions
+
+- **DOOM WAD backward-scan is the mental model**: PWADs override IWADs. IWAD=10, PWAD=100+. Shadow-Stacking layers merge with highest-priority-wins.
+- **Canonicalize once, reference everywhere**: Single helpers for paths, names, priorities, constants.
+- **Taint-Gate is non-negotiable**: `proposed_lessons.yaml` never injected. Only `approved_lessons.yaml` or promoted soul blocks.
+- **Compat layers are technical debt**: Remove dead code, let real code surface.
+- **Four incompatible soul.yaml schemas coexist**: OED v6.1, ANAi, Researcher-Humboldt, Legacy. All must load.
+- **Official repo has no ROADMAP.md or AGENT_RUNBOOK.md**: Uses FACTS.yaml, ACTIVE_SPRINT.json, docs/sprints/, AGENTS.md, ADRs.
+
+### Remaining future work
+
+1. Hot-reload file watcher (4.3 completion) — medium effort, high impact
+2. WAD validation in CI (Gap 4) — low effort, high impact
+3. Batch entity save — low effort, medium impact
+4. Soul context caching — low effort, medium impact
+5. Operationalize soul distillation loop (Gap 3) — medium effort, high impact
+6. Entity affinity activation (4.4 partial) — medium-high effort, high impact
+7. session_gnosis.md auto-update — medium effort, medium impact
+8. OpenCode adapter CI test — low effort, low impact
+9. WAD versioning & upgrade paths — high effort, high impact
+10. WAD marketplace / registry — high effort, very high impact
+
+### Pending: Gemini 4 Hydrogen Migration
+
+See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Investigation". Context hook fixed. Remaining: rejected parameters (temperature, top_p, top_k, thinking_budget, explicit caching). Investigate only when 400s recur.
+
+### Post-compaction order
+
+1. Read `SESSION_ANCHOR.md` for current state
+2. Read `docs/WAD_ENHANCEMENT_PLAN.md` for remaining future work
+3. Start with highest-impact, lowest-effort items
+4. Gemini 4 migration deferred — investigate only when 400s recur
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
