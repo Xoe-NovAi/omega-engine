@@ -3558,3 +3558,30 @@ async def wad_switch(
         unload_all_others=unload_all_others,
     )
     return json.dumps(result, indent=2, default=str)
+
+
+@m9_safe("wad_upgrade")
+@mcp.tool()
+async def wad_upgrade(stack_name: str, force: bool = False) -> str:
+    """Upgrade a WAD to a new version, preserving runtime state (Phase 4.5).
+
+    Checks if the WAD on disk has a newer version than the loaded one.
+    If so, unloads the current version, loads the new one, and preserves
+    runtime souls (approved_lessons.yaml is never overwritten).
+
+    Args:
+        stack_name: WAD to upgrade.
+        force: Force upgrade even if version is not newer.
+
+    Returns:
+        JSON with: success, previous_version, new_version, direction, entities_loaded.
+    """
+    _require_service()
+
+    oracle_svc = await oracle
+    loader = getattr(oracle_svc, "wad_loader", None)
+    if loader is None:
+        return json.dumps({"error": "Oracle WADLoader is not initialized"})
+
+    result = await loader.wad_upgrade(stack_name, force=force)
+    return json.dumps(result, indent=2, default=str)

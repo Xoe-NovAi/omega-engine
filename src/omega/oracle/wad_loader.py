@@ -260,6 +260,52 @@ def enforce_engine_compatibility(stack_name: str, requires_engine: Any | None) -
 logger = logging.getLogger(__name__)
 
 
+class WADVersion:
+    """Semantic version parser and comparator for WAD versioning (Phase 4.5).
+
+    Supports major.minor.patch with pre-release suffixes (e.g., "1.0.0-rc1").
+    """
+
+    def __init__(self, version_str: str):
+        self.raw = version_str.strip()
+        parts = self.raw.split("-", 1)
+        self.pre = parts[1] if len(parts) > 1 else ""
+        num_parts = parts[0].split(".")
+        self.major = int(num_parts[0]) if len(num_parts) > 0 and num_parts[0].isdigit() else 0
+        self.minor = int(num_parts[1]) if len(num_parts) > 1 and num_parts[1].isdigit() else 0
+        self.patch = int(num_parts[2]) if len(num_parts) > 2 and num_parts[2].isdigit() else 0
+
+    def __lt__(self, other: "WADVersion") -> bool:
+        if (self.major, self.minor, self.patch) != (other.major, other.minor, other.patch):
+            return (self.major, self.minor, self.patch) < (other.major, other.minor, other.patch)
+        # Pre-release versions are lower than release versions
+        if self.pre and not other.pre:
+            return True
+        if not self.pre and other.pre:
+            return False
+        return self.pre < other.pre
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, WADVersion):
+            return NotImplemented
+        return (self.major, self.minor, self.patch, self.pre) == (other.major, other.minor, other.patch, other.pre)
+
+    def __le__(self, other: "WADVersion") -> bool:
+        return self < other or self == other
+
+    def __gt__(self, other: "WADVersion") -> bool:
+        return not (self <= other)
+
+    def __ge__(self, other: "WADVersion") -> bool:
+        return not (self < other)
+
+    def __str__(self) -> str:
+        return self.raw
+
+    def __repr__(self) -> str:
+        return f"WADVersion({self.raw!r})"
+
+
 class WADLoader:
     """Loads Omega Engine stacks (WADs) from the filesystem."""
 
@@ -540,6 +586,87 @@ class WADLoader:
         logger.info(f"Loading single WAD: {stack_name} (priority {priority})")
         success, _ = await self.load_wad(stack_name, priority=priority)
         return success
+
+    def get_loaded_version(self, stack_name: str) -> Optional[str]:
+        """Return the version of a currently loaded WAD, or None."""
+        meta = self._loaded_wads.get(stack_name)
+        if meta:
+            return meta.get("version")
+        return None
+
+    def check_version_update(self, stack_name: str, new_version: str) -> dict:
+        """Check if a new WAD version is an upgrade over the currently loaded one.
+
+        Returns:
+            dict with: is_update (bool), current (str), new (str), direction (str)
+        """
+        current = self.get_loaded_version(stack_name)
+        if current is None:
+            return {"is_update": False, "current": None, "new": new_version, "direction": "not_loaded"}
+        try:
+            cur_ver = WADVersion(current)
+            new_ver = WADVersion(new_version)
+        except (ValueError, AttributeError):
+            return {"is_update": False, "current": current, "new": new_version, "direction": "unparseable"}
+        if new_ver > cur_ver:
+            return {"is_update": True, "current": current, "new": new_version, "direction": "upgrade"}
+        elif new_ver < cur_ver:
+            return {"is_update": False, "current": current, "new": new_version, "direction": "downgrade"}
+        else:
+            return {"is_update": False, "current": current, "new": new_version, "direction": "same"}
+
+    async def wad_upgrade(self, stack_name: str, *, force: bool = False) -> dict:
+        """Upgrade a WAD to a new version, preserving runtime state.
+
+        Unloads the current WAD, loads the new one, and reports what changed.
+        Runtime souls are preserved (not overwritten) during upgrade.
+
+        Args:
+            stack_name: WAD to upgrade.
+            force: Force upgrade even if version is not newer.
+
+        Returns:
+            dict with: success, previous_version, new_version, direction, entities_loaded
+        """
+        previous_version = self.get_loaded_version(stack_name)
+
+        # Read new manifest version
+        manifest_path = self.wads_dir / stack_name / "manifest.yaml"
+        if not manifest_path.exists():
+            return {"success": False, "error": f"WAD '{stack_name}' not found"}
+
+        try:
+            with open(manifest_path, encoding="utf-8") as f:
+                raw = yaml.safe_load(f) or {}
+            manifest = raw.get("wad", raw) if isinstance(raw, dict) else {}
+            new_version = manifest.get("version", "unknown")
+        except (OSError, yaml.YAMLError) as e:
+            return {"success": False, "error": f"Invalid manifest: {e}"}
+
+        check = self.check_version_update(stack_name, new_version)
+        if not force and not check["is_update"] and check["direction"] not in ("not_loaded",):
+            return {
+                "success": False,
+                "error": f"Not an upgrade: {check['direction']} ({check['current']} -> {check['new']})",
+                "previous_version": previous_version,
+                "new_version": new_version,
+            }
+
+        # Unload current (preserving runtime state)
+        if stack_name in self._loaded_wads:
+            await self.unload_wad(stack_name)
+
+        # Load new version
+        success, hierarchy_path = await self.load_wad(stack_name)
+
+        return {
+            "success": success,
+            "previous_version": previous_version,
+            "new_version": new_version,
+            "direction": check["direction"],
+            "entities_loaded": len(self.registry.list()) if success else 0,
+            "hierarchy_path": str(hierarchy_path) if hierarchy_path else None,
+        }
 
     async def unload_wad(self, stack_name: str) -> bool:
         """Unload a specific WAD and remove its entities from the registry.
@@ -828,10 +955,12 @@ class WADLoader:
             if self._adapter_registry and "adapters" in manifest:
                 await self._register_adapters(manifest["adapters"], stack_name)
 
+            wad_ver = manifest.get("version", "unknown")
             self._loaded_wads[stack_name] = {
                 "name": stack_name,
                 "type": manifest.get("type", "pwad"),
-                "version": manifest.get("version", "unknown"),
+                "version": wad_ver,
+                "version_parsed": WADVersion(wad_ver) if wad_ver != "unknown" else None,
                 "priority": priority,
                 "hierarchy_path": str(hierarchy_path) if hierarchy_path else None,
             }
@@ -1030,16 +1159,43 @@ class WADLoader:
                         priority=priority,
                     )
                     # WAD-to-runtime soul seeding: copy WAD soul.yaml to runtime if not exists
+                    # or if WAD version is newer (upgrade path). Never overwrite
+                    # operator-modified runtime souls with older WAD content.
                     wad_soul = Path(path).parent / "soul.yaml"
                     if wad_soul.exists():
                         import shutil as _shutil
                         from omega.oracle.entity_workspace import _get_entities_data_dir
                         runtime_dir = _get_entities_data_dir() / entity.name.lower().replace(" ", "_").replace("'", "")
                         runtime_soul = runtime_dir / "soul.yaml"
+                        should_seed = False
                         if not runtime_soul.exists():
+                            should_seed = True
+                        else:
+                            # Check if WAD soul is newer (compare file mtimes as proxy)
+                            try:
+                                wad_mtime = wad_soul.stat().st_mtime
+                                runtime_mtime = runtime_soul.stat().st_mtime
+                                if wad_mtime > runtime_mtime:
+                                    # WAD is newer — but preserve approved_lessons.yaml
+                                    should_seed = True
+                                    logger.info(
+                                        f"WAD soul newer than runtime for {entity.name} — upgrading (preserving approved_lessons)"
+                                    )
+                            except OSError:
+                                pass
+                        if should_seed:
                             runtime_dir.mkdir(parents=True, exist_ok=True)
+                            # Preserve approved_lessons.yaml before overwriting
+                            approved_backup = None
+                            approved_path = runtime_dir / "memory" / "approved_lessons.yaml"
+                            if approved_path.exists():
+                                approved_backup = approved_path.read_text(encoding="utf-8")
                             _shutil.copy2(wad_soul, runtime_soul)
-                            logger.info(f"Seeded soul.yaml from WAD for {entity.name}")
+                            # Restore approved_lessons.yaml if it was overwritten
+                            if approved_backup is not None and not approved_path.exists():
+                                approved_path.parent.mkdir(parents=True, exist_ok=True)
+                                approved_path.write_text(approved_backup, encoding="utf-8")
+                            logger.info(f"Seeded/upgraded soul.yaml from WAD for {entity.name}")
 
                     collected.append(entity)
                     logger.info(f"Collected entity {entity.name} from WAD {wad_source}")
