@@ -112,7 +112,7 @@ async def with_soul_lock(entity_name: str, action):
     Prevents 'Lost Updates' during parallel agent operations (MaKaLi).
     M1 compliant: fcntl.flock wrapped in anyio.to_thread.run_sync().
     """
-    safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
+    safe_name = entity_name.strip().lower().replace("'", "").replace(" ", "_")
     lock_path = Path(f"data/entities/{safe_name}/.soul.lock")
     lock_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -698,6 +698,60 @@ class EntityRegistry:
                 EntityWorkspaceManager.scaffold_workspace, entity.name, entity.role, entity.slots
             )
             await anyio.to_thread.run_sync(scaffold_fn)
+
+
+    async def batch_add(self, entities: List[Entity]) -> None:
+        """Add multiple entities in a single transaction, saving once.
+
+        Phase 4 efficiency: avoids N disk writes per WAD load.
+        All entities are validated, registered, and scaffolded, then a single
+        _save() persists the entire batch.
+
+        Args:
+            entities: List of Entity objects to add.
+        """
+        if self._lock is None:
+            self._lock = anyio.Lock()
+        async with self._lock:
+            for entity in entities:
+                name_key = self._validate_name(entity.name)
+                entity.name = name_key
+
+                if entity.wad_source:
+                    entity.flags |= EntityRegistry.FLAG_WAD
+                    entity.__engine_zone__["flags"] = entity.flags
+
+                key = name_key
+
+                if entity.wad_source:
+                    if key not in self._wad_sources:
+                        self._wad_sources[key] = []
+                    if entity.wad_source not in self._wad_sources[key]:
+                        self._wad_sources[key].append(entity.wad_source)
+
+                for cap in entity.domains + entity.capabilities:
+                    cap_lower = cap.lower()
+                    if cap_lower not in self._capability_index:
+                        self._capability_index[cap_lower] = []
+                    if key not in self._capability_index[cap_lower]:
+                        self._capability_index[cap_lower].append(key)
+
+                entity.magic = ZONEID_ENTITY
+
+                if key not in self._entities:
+                    self._entities[key] = []
+                self._entities[key].append(entity)
+                self._entities[key].sort(key=lambda e: e.priority, reverse=True)
+
+            # Single save for the entire batch
+            await self._save()
+
+            # Scaffold workspaces for all entities (batched)
+            for entity in entities:
+                scaffold_fn = functools.partial(
+                    EntityWorkspaceManager.scaffold_workspace, entity.name, entity.role, entity.slots
+                )
+                await anyio.to_thread.run_sync(scaffold_fn)
 
     async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed.

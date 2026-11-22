@@ -935,11 +935,14 @@ class WADLoader:
     ) -> None:
         """Load all .yaml files from the entities directory.
 
+        Uses batch_add() for efficiency (single disk write per WAD).
+
         Args:
             entities_dir: Path to the entities directory
             wad_source: WAD name to tag entities with (for IWAD tracking)
             priority: Override priority — higher priority can replace lower priority
         """
+        collected: list = []
         async for path in anyio.Path(entities_dir).glob("**/*.yaml"):
             # Accept any .yaml file. Extract name from parent dir (if soul.yaml) or filename stem.
             if path.name == "soul.yaml":
@@ -955,7 +958,7 @@ class WADLoader:
             # Collision detection with priority resolution
             existing = self.registry.get(entity_name)
             if existing:
-                existing_priority = getattr(existing, "priority", 0)  # read from projected entity
+                existing_priority = getattr(existing, "priority", 0)
                 if existing.wad_source and existing.wad_source == wad_source:
                     logger.warning(
                         f"Entity {entity_name} already registered from WAD {wad_source}. Skipping duplicate."
@@ -1038,10 +1041,15 @@ class WADLoader:
                             _shutil.copy2(wad_soul, runtime_soul)
                             logger.info(f"Seeded soul.yaml from WAD for {entity.name}")
 
-                    await self.registry.add(entity)
-                    logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
+                    collected.append(entity)
+                    logger.info(f"Collected entity {entity.name} from WAD {wad_source}")
             except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
                 logger.warning(f"Failed to load entity from {path}: {e}")
+
+        # Batch add all collected entities (single disk write)
+        if collected:
+            await self.registry.batch_add(collected)
+            logger.info(f"Batch-registered {len(collected)} entities from WAD {wad_source}")
 
     async def _load_voices(self, voices_dir: Path, wad_source: str = "") -> None:
         """Load voice configurations from the voices directory."""

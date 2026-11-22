@@ -587,7 +587,7 @@ check-workflow-triggers:
 	@$(PYTHON_ABS) scripts/check_workflow_trigger_coverage.py
 
 .PHONY: temple-grade
-temple-grade: check-constraints check-engine check-hub-imports doc-llm-validate check-mandates check-mandate-compliance check-tracking-state check-workflow-triggers dashboard-self-test
+temple-grade: check-constraints check-engine check-hub-imports doc-llm-validate check-mandates check-mandate-compliance check-tracking-state check-workflow-triggers dashboard-self-test validate-wads
 
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	@echo "$(GREEN)Temple-grade complete (Hub Imports + LLM doc validation + Mandates + Compliance + Tracking State + Engine Subset + Dashboard)$(NC)"
@@ -718,6 +718,23 @@ check-metaframe:
 	@echo "$(YELLOW)Running L3-MetaFrameVerification (0.92) cross-verification...$(NC)"
 	@$(PYTHON) scripts/metaframe_verification.py --stdin --agent kali --json < /dev/null 2>&1 | $(PYTHON) -c "import sys, json; data=json.load(sys.stdin); sys.exit(0 if data.get('result')=='PASS' else 1)" || (echo "$(RED)FAIL: MetaFrame verification failed$(NC)" && false)
 	@echo "$(GREEN)L3-MetaFrameVerification (0.92) passed: No spoofable metadata detected$(NC)"
+
+# WAD Validation Gate (Gap 4): validate all WADs in config/wads/
+validate-wads:
+	@echo "$(YELLOW)Validating all WADs in config/wads/...$(NC)"
+	@failed=0; \
+	for wad_dir in config/wads/*/; do \
+		if [ -d "$$wad_dir" ]; then \
+			echo "  Validating $$(basename $$wad_dir)..."; \
+			$(PYTHON) scripts/validate_wad.py "$$wad_dir" || failed=1; \
+			$(PYTHON) scripts/lint_wad.py "$$wad_dir" || failed=1; \
+		fi; \
+	done; \
+	if [ $$failed -eq 1 ]; then \
+		echo "$(RED)WAD validation FAILED$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(GREEN)All WADs valid and lint-clean$(NC)"
 
 # P0 CI Gates — Broken imports detection
 check-broken-imports:

@@ -13,10 +13,16 @@ and integrates approved lessons from proposed_lessons.yaml to close the distilla
 
 import yaml
 import logging
+import time
 from pathlib import Path
+from functools import lru_cache
 from omega.oracle.entity_workspace import resolve_entity_memory_paths
 
 logger = logging.getLogger(__name__)
+
+# Soul context cache: TTL-based, keyed by (entity_name, data_dir_str, soul_mtime)
+_soul_context_cache: dict = {}
+_SOUL_CACHE_TTL = 60  # seconds
 
 
 def extract_soul_context(soul: dict, max_items: int = 3) -> str:
@@ -68,8 +74,26 @@ def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
     """
     Load and extract soul context for an entity from disk.
     Reads both soul.yaml and proposed_lessons.yaml (approved).
+
+    Phase 4 efficiency: TTL-based cache (60s) keyed by entity name + soul file mtime.
+    Avoids repeated disk reads on every prompt construction.
     """
     entity_dir = data_dir / "entities" / entity_name.lower()
+    soul_path = entity_dir / "soul.yaml"
+
+    # Cache key: entity name + soul file mtime (invalidates on file change)
+    cache_key = (entity_name.lower(), str(data_dir))
+    try:
+        soul_mtime = soul_path.stat().st_mtime if soul_path.exists() else 0.0
+    except OSError:
+        soul_mtime = 0.0
+
+    cached = _soul_context_cache.get(cache_key)
+    if cached is not None:
+        cached_mtime, cached_result, cached_time = cached
+        if cached_mtime == soul_mtime and (time.time() - cached_time) < _SOUL_CACHE_TTL:
+            return cached_result
+
     context_lines = []
 
     # Taint-Gate: Only approved_lessons.yaml (vetted) is injected.
@@ -104,4 +128,9 @@ def load_entity_soul_context(entity_name: str, data_dir: Path) -> str:
             logger.warning("Soul load failed for '%s': %s", entity_name, e)
 
     # M18 Token Efficiency: Cap at 3 items total
-    return "\n".join(context_lines[:3])
+    result = "\n".join(context_lines[:3])
+
+    # Store in cache
+    _soul_context_cache[cache_key] = (soul_mtime, result, time.time())
+
+    return result

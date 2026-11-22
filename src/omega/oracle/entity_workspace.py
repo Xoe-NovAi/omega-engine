@@ -146,7 +146,7 @@ class EntityWorkspaceManager:
     @classmethod
     def _get_lock(cls, name: str) -> threading.Lock:
         """Get or create a thread-lock for a specific entity."""
-        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        safe_name = name.strip().lower().replace("'", "").replace(" ", "_")
         with cls._global_lock:
             if safe_name not in cls._locks:
                 cls._locks[safe_name] = threading.Lock()
@@ -166,7 +166,7 @@ class EntityWorkspaceManager:
         Returns:
             Path to the entity's root workspace directory.
         """
-        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        safe_name = name.strip().lower().replace("'", "").replace(" ", "_")
         workspace_dir = _get_entities_data_dir() / safe_name
 
         # Create directories
@@ -359,7 +359,7 @@ class EntityWorkspaceManager:
 
         [id-soft: vet-023] Precomputed Lookup — O(1) append with bounded growth
         """
-        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        safe_name = name.strip().lower().replace("'", "").replace(" ", "_")
         workspace_dir = _get_entities_data_dir() / safe_name
         sessions_file = workspace_dir / "sessions.yaml"
 
@@ -419,7 +419,7 @@ class EntityWorkspaceManager:
         - v6.2 (lilith): minimal entity block only
         - custom (grokster): traits, fleet, integration, campaign, mandates, boundaries, heartbeat, lessons
         """
-        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        safe_name = name.strip().lower().replace("'", "").replace(" ", "_")
         entity_dir = _get_entities_data_dir() / safe_name
         soul_file = entity_dir / "soul.yaml"
 
@@ -618,7 +618,7 @@ class EntityWorkspaceManager:
         """
 
         def _sync_update():
-            safe_name = name.lower().replace(" ", "_").replace("'", "")
+            safe_name = name.strip().lower().replace("'", "").replace(" ", "_")
             workspace_dir = _get_entities_data_dir() / safe_name
             soul_file = workspace_dir / "soul.yaml"
 
