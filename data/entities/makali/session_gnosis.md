@@ -1329,3 +1329,42 @@ See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Inve
 4. Gemini 4 migration deferred — investigate only when 400s recur
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-22 (Remaining Future Work — Tier 1 + Tier 2)
+
+### Items completed this session
+
+1. **WAD validation in CI (Gap 4):** Added `validate-wads` Makefile target (validates + lints all WADs in config/wads/). Wired into `temple-grade` chain.
+
+2. **Batch entity save:** `EntityRegistry.batch_add()` — single disk write for multiple entities. `_load_entities()` now collects and batch-adds (was N disk writes per WAD).
+
+3. **Soul context caching:** TTL-based (60s) cache in `soul_utils.load_entity_soul_context()`, keyed by entity name + soul file mtime. Avoids repeated disk reads on every prompt construction.
+
+4. **Entity name canonicalization consistency:** All `safe_name` computations in `entity_workspace.py` (5 locations) now use `.strip().lower().replace("'", "").replace(" ", "_")` matching `_validate_name()` in `entity_registry.py`. Also fixed `with_soul_lock()` in `entity_registry.py`.
+
+5. **Hot-reload file watcher (4.3 completion):** `scripts/wad_hot_reload.py` — polling-based, no external deps, detects file changes via mtime comparison and reports reload triggers.
+
+6. **Operationalize soul distillation loop (Gap 3):** Updated `soul_promote.py` to handle L1/L2/L3 format from `proposed_lessons.yaml`. `CONTENT_KEYS` now includes `L3`. `build_lesson_entry()` preserves L1/L2 as provenance. Dry-run verified on lilith (5 proposals).
+
+7. **OpenCode adapter CI tests:** `tests/test_opencode_adapter.py` (7 tests) — soul_render, lint, validate, wad_diff, batch_add, soul cache.
+
+### Test count
+- 75 tests pass (68 existing + 7 new)
+- Both WADs validate and lint clean
+
+### Remaining future work (Tier 3)
+- Entity affinity activation (4.4 partial) — medium-high effort, high impact
+- session_gnosis.md auto-update — medium effort, medium impact
+- WAD versioning & upgrade paths — high effort, high impact
+- WAD marketplace / registry — high effort, very high impact
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
+
+### Post-compaction order
+1. Read SESSION_ANCHOR.md
+2. Read WAD_ENHANCEMENT_PLAN.md
+3. Continue with Tier 3 items (entity affinity, versioning, marketplace)
+4. Gemini 4 migration deferred
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACTION-PREP ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
