@@ -279,6 +279,12 @@ docs/architecture/DYNAMIC_HARDWARE_ADAPTATION_LAYER_SPEC.md
 src/omega/vault/             # D-565: Vault excluded from debut (no code changes)
 tests/unit/test_vault_core.py   # D-565 — vault excluded from debut; test cannot import the cut src/omega/vault/
 tests/test_entity_roc_racoon.py   # all 24 tests import the private arcana_novai WAD plugin (host paths /media/arcana-novai/*) — plugin stays private
+# [RELEASE-HARDENING P1] arcana_novai is a private showcase WAD. G10's wheel gate
+# forbids it outright, and lint_wad.py's dual-tree gate requires config/wads/ and
+# the packaged tree to match — so cut it from BOTH (24/24 _omega_default parity).
+# FORGE beats every broader ALLOW entry, including root's granular ones.
+config/wads/arcana_novai/
+src/omega/config_data/wads/arcana_novai/
 docs/research/
 docs/archive/
 docs/strategy/                # EXCEPT the allowlisted files above
