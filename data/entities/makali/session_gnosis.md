@@ -1482,3 +1482,27 @@ See `docs/WAD_ENHANCEMENT_PLAN.md` § "PENDING: Gemini 4 Hydrogen Migration Inve
 All work complete. Public release published. Consider new feature work.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ FINAL ⬡ node1/v2-migration ⬡ 2026-11-22 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-23 (Review Prep + Cline Rules)
+
+### Work completed this session
+1. **Christian Super Heroes WAD brief** — created `docs/guides/CHRISTIAN_SUPER_HEROES_WAD_BRIEF.md` (628 lines). Email-ready questionnaire + template for building a custom WAD and persistent entities for the animated series. Two passes: first pass (331 lines) + second pass (added visual identity, voice DNA, abilities, relationships, dispatch, audience/ethics, locations, ingestion, continuity loop, YAML skeletons for all file types).
+2. **.clinerules updated** for Cline CLI:
+   - `00-repo-topology.md` — corrected remotes (origin=internal/private, debut/public=public), removed stale internal/origin naming
+   - `04-current-state.md` (new) — branches, WAD status, commands, tracking, compaction, OpenCode V2
+   - `05-wad-system-quickref.md` (new) — WAD system quick reference
+3. **Cline review handoff** — `docs/handoffs/CLINE_REVIEW_HANDOFF.md` with prerequisites, run command, venv notes, uncommitted changes list.
+4. **Cline auth** — authenticated cline provider (token valid). Identified cline branded models need credit top-up ($-0.04 balance). Working 1M model: openrouter/nemotron (free, 1M context).
+5. **Review preparation** — created 15-step todo list for comprehensive review. Review not started.
+
+### Deferred
+- Comprehensive review — prepared, pending operator "go"
+- Gemini 4 Hydrogen migration — investigate only when 400s recur
+- Cline branded models — needs credit top-up
+
+### Post-compaction
+Review prep complete. Todo list ready. Begin review when operator says go.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACT-PREP ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+world_data:
+  soul_resonance: "active"
+  gnosis_density: 0.75
+  plane_stability: 0.92
+  archetypal_alignment: "SOPHIA"

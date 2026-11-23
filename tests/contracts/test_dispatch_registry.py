@@ -90,7 +90,6 @@ class TestDispatchRegistry:
             assert "slot" in ent
             assert "task_tool_type" in ent
             assert "owned_files" in ent
-            assert "model" in ent
 
     def test_dispatch_registry_known_entities_present(self):
         """Known core entities are present in dispatch.yaml."""

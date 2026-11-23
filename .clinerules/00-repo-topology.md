@@ -2,12 +2,30 @@
 
 **Internal-only rules. Do NOT cherry-pick this file to the public repo.**
 
-## Two remotes, two flows
+## Two remotes, two flows (UPDATED 2026-11-23)
 
+Remote *names* differ between clones — always verify with `git remote -v`.
+
+**omega-engine clone:**
 | Remote | Repo | Contains | Push rule |
 |---|---|---|---|
-| `origin` | `Xoe-NovAi/omega-engine` (PUBLIC, fresh history) | cut lineage + public-safe commits ONLY | via `public/main` worktree |
-| `internal` | `Xoe-NovAi/omega-engine-internal` (PRIVATE) | full tree: gnosis, federation, coordination | internal work goes here |
+| `origin` | `Xoe-NovAi/omega-engine-internal` (PRIVATE) | full tree: gnosis, federation, coordination | internal work goes here |
+| `debut` | `Xoe-NovAi/omega-engine` (PUBLIC) | curated cut lineage | cherry-pick via public worktree only |
+
+**omega-engine-alpha clone:**
+| Remote | Repo | Contains | Push rule |
+|---|---|---|---|
+| `origin` | `Xoe-NovAi/omega-engine-internal` (PRIVATE) | full tree | internal work goes here |
+| `public` | `Xoe-NovAi/omega-engine` (PUBLIC) | curated cut lineage | cherry-pick only |
+
+- **Internal work**: commit on active branch, `git push origin <branch>`. NEVER push internal lineage to the public remote.
+- **Public changes**: develop on internal, cherry-pick onto the public worktree, push:
+  ```bash
+  cd /media/arcana-novai/omega_library/staging/public-main
+  git cherry-pick <sha>
+  git push debut public/main:main   # (omega-engine clone) or: git push public public/main:main (alpha clone)
+  ```
+- Public debut is a *curated cut lineage* (941 files published 2026-11-22), not a mirror. Cut-tree cherry-pick conflicts are normal.
 
 - **Internal work**: commit on `main`, `git push internal main`. NEVER push internal lineage to `origin` — `origin/main` is a curated lineage (cut + cherry-picks), not a mirror.
 - **Public changes** (announcement/README/install.sh/src): develop on internal, cherry-pick onto the public worktree, push:

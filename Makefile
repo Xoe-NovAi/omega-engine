@@ -437,6 +437,9 @@ DOC_FRONTMATTER_SCHEMA := schemas/llm_doc_frontmatter.json
 
 # Validate all LLM-friendly docs in a sprint directory
 doc-llm-validate:
+
+docs: doc-llm-validate
+	@echo "$(GREEN)Docs validated$(NC)"
 	@echo "$(YELLOW)Validating LLM-friendly documentation...$(NC)"
 	@$(PYTHON) scripts/validate_llm_docs.py \
 		--frontmatter-schema $(DOC_FRONTMATTER_SCHEMA) \

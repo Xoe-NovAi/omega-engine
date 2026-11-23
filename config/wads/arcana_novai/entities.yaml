@@ -15,7 +15,7 @@ lilith:
     - "sovereign_creativity"
     - "dream_navigation"
     - "feminine_sovereignty"
-  model: "qwen2.5-coder:7b"
+  model: "opencode/big-pickle"
   personality: "lilith_empress"
   temperature: 0.8
   context_window: 8192

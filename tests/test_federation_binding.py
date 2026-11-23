@@ -41,6 +41,9 @@ def bound(tmp_path, monkeypatch):
     store = fst.FederationStore(root)
     store.ensure_layout()
     monkeypatch.setattr(state, "HANDOFF_BASE", root)
+    # Mock opencode.db lookup so the well-formed SESSION id is treated as known
+    import mcp_servers.omega_hub.federation_session as _fs
+    monkeypatch.setattr(_fs, "_lookup_readonly", lambda sid: True)
     prev = state._init_complete, state._init_error
     state._init_complete, state._init_error = True, None
 

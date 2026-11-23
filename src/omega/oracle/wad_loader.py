@@ -60,8 +60,8 @@ def _load_adapter_whitelist() -> Set[str]:
             modules = data.get("adapter_modules", [])
             if isinstance(modules, list):
                 return set(str(m) for m in modules)
-    except (OSError, yaml.YAMLError, ImportError):
-        pass
+    except (OSError, yaml.YAMLError, ImportError) as e:
+        logger.debug(f"Failed to load adapter whitelist: {e}")
     # Hardcoded fallback
     return {
         "omega.memory.adapters",
@@ -713,8 +713,8 @@ class WADLoader:
             try:
                 from omega.governance.dispatch_registry import invalidate_cache
                 invalidate_cache()
-            except ImportError:
-                pass
+            except ImportError as e:
+                logger.debug(f"dispatch_registry not available: {e}")
 
             logger.info(f"Unloaded WAD: {stack_name} (removed {len(to_remove)} entity keys)")
             return True
@@ -801,8 +801,8 @@ class WADLoader:
         try:
             from omega.governance.dispatch_registry import invalidate_cache
             invalidate_cache()
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug(f"dispatch_registry not available: {e}")
 
         success, hierarchy_path = await self.load_wad(stack_name, priority=effective_priority)
         return {
@@ -858,8 +858,8 @@ class WADLoader:
                     f"(max {MAX_YAML_SIZE_BYTES}). Possible DoS attempt."
                 )
                 return False, None
-        except OSError:
-            pass  # stat() failure is non-fatal; yaml.safe_load will catch truncation
+        except OSError as e:
+            logger.debug(f"stat() failure (non-fatal): {e}")
 
         try:
             async with await anyio.open_file(str(manifest_path), "r") as f:
@@ -1111,8 +1111,8 @@ class WADLoader:
                             f"Entity file {path.name} too large: {file_stat.st_size} bytes. Skipping."
                         )
                         continue
-                except OSError:
-                    pass  # Non-fatal; yaml.safe_load will handle truncation
+                except OSError as e:
+                    logger.debug(f"stat() failure (non-fatal): {e}")
 
                 async with await anyio.open_file(str(path), "r") as f:
                     data = yaml.safe_load(await f.read())
@@ -1181,8 +1181,8 @@ class WADLoader:
                                     logger.info(
                                         f"WAD soul newer than runtime for {entity.name} — upgrading (preserving approved_lessons)"
                                     )
-                            except OSError:
-                                pass
+                            except OSError as e:
+                                logger.debug(f"OSError during soul seeding (non-fatal): {e}")
                         if should_seed:
                             runtime_dir.mkdir(parents=True, exist_ok=True)
                             # Preserve approved_lessons.yaml before overwriting

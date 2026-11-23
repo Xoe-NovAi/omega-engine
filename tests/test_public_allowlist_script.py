@@ -81,6 +81,11 @@ def _make_repo(tmp_path: Path) -> Path:
     (repo / "keep.txt").write_text("public\n")
     (repo / "secret.txt").write_text("private\n")
     (repo / "allowlist.txt").write_text(MINIMAL_ALLOWLIST)
+    # Copy redaction scripts so the script's redaction gate passes
+    (repo / "scripts").mkdir()
+    import shutil
+    shutil.copy(REPO_ROOT / "scripts" / "cut_redact.py", repo / "scripts" / "cut_redact.py")
+    shutil.copy(REPO_ROOT / "scripts" / "cut_redaction_patterns.tsv", repo / "scripts" / "cut_redaction_patterns.tsv")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-qm", "seed")
     return repo

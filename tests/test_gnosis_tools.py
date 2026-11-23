@@ -180,8 +180,8 @@ KNOWN_TABLE = SPDX + """
 
 | Date | Session ID | Summary |
 |------|------------|---------|
-| 2026-09-25 | maat_gates_20260925 | Gate hardening sprint |
-| 2026-09-28 | maat_seam_repair_20260928 | Seam repair |
+| 2026-11-20 | maat_gates_20261120 | Gate hardening sprint |
+| 2026-11-22 | maat_seam_repair_20261122 | Seam repair |
 """
 
 
@@ -190,10 +190,10 @@ def test_timeline_parses_known_table(fake_repo):
     _write_gnosis(fake_repo, "maat", KNOWN_TABLE)
     entries = gt.parse_gnosis("maat", fake_repo / "maat" / "session_gnosis.md")
     assert len(entries) == 2
-    assert entries[0]["date"] == "2026-09-25"
-    assert entries[0]["session_id"] == "maat_gates_20260925"
+    assert entries[0]["date"] == "2026-11-20"
+    assert entries[0]["session_id"] == "maat_gates_20261120"
     assert "Gate hardening" in entries[0]["summary"]
-    assert entries[1]["date"] == "2026-09-28"
+    assert entries[1]["date"] == "2026-11-22"
 
 
 def test_timeline_heading_fallback(fake_repo):
@@ -226,10 +226,10 @@ def test_timeline_filters_and_ordering(fake_repo, capsys):
     dates = [e["date"] for e in payload["entries"]]
     assert dates == sorted(dates, reverse=True), "newest first"
 
-    rc = gt.main(["--entity", "m", "--since", "2026-09-27",
+    rc = gt.main(["--entity", "m", "--since", "2026-11-21",
                  "--format", "json", "--no-orphan-check"])
     payload = _json.loads(capsys.readouterr().out)
-    assert [e["date"] for e in payload["entries"]] == ["2026-09-28"]
+    assert [e["date"] for e in payload["entries"]] == ["2026-11-22"]
 
 
 def test_orphan_session_ids_detected(fake_repo, tmp_path, monkeypatch, capsys):
