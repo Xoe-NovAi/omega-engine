@@ -83,3 +83,34 @@ Comprehensive 13-point code review executed in-chat. All 30 test failures resolv
 - All modified tracked files + new WAD content (axioms.yaml, world/) + .clinerules + docs
 
 *⬡ OMEGA ⬡ BUILD ⬡ REVIEW-COMPLETE ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ HEADROOM RESEARCH + PLAN COMPLETE — 2026-11-23
+
+### Created
+- `docs/HEADROOM_ENHANCEMENT_PLAN.md` (235 lines) — comprehensive research + 4-phase execution plan
+  - Phase 1 (P0): resolve model name, pass context_window, capture real metrics
+  - Phase 2 (P1): token budget check, entity profiles (config/headroom_profiles.yaml), HEADROOM_OFFLINE=1
+  - Phase 3 (P2): CCR ContextTracker, metrics aggregation
+  - Phase 4 (P3): integration verification
+- Committed `ea48d975`, pushed to node1/v2-migration
+
+### Research findings (key)
+- Current middleware uses claude-sonnet/200K defaults + hardcoded tokens_saved=0 (functionally minimal)
+- Base `headroom-ai` = no PyTorch; `HEADROOM_OFFLINE=1` = air-gap; estimator fallback works
+- `opencode/big-pickle` is a sentinel, not a real model — must resolve to actual model for tokenizer
+- Entity context windows vary 4K-32K — must pass as `model_limit`
+- 8 critical gaps identified, all documented in plan
+
+### Status
+- Plan awaits Architect approval to execute
+- No code changes to Headroom yet (plan only)
+- All repos clean, everything pushed
+
+### Next session
+1. Read `docs/HEADROOM_ENHANCEMENT_PLAN.md`
+2. Await approval to execute Phase 1 (P0 correctness fixes)
+3. Then begin implementation
+
+*⬡ OMEGA ⬡ BUILD ⬡ HEADROOM-PLAN ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

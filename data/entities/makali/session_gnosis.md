@@ -1506,3 +1506,34 @@ All work complete. Public release published. Consider new feature work.
 Review prep complete. Todo list ready. Begin review when operator says go.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACT-PREP ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ COMPACTION PREP — 2026-11-23 (Headroom Research + Plan)
+
+### Work completed this session (post previous compaction)
+1. **Code review fixes** — Comprehensive 13-point review resolved all 30 test failures (12 fixes):
+   - Dual-tree WAD drift synced, M23 ratchet fixed, missing artifacts restored
+   - WAD content added (axioms.yaml, world/), sophia removed from default IWAD
+   - Test staleness fixed, `make docs` target added
+   - Tests: 2747 passed, 0 failed (omega-engine), 172 passed (alpha)
+2. **Public release v1.6.0a7** — Published to `Xoe-NovAi/omega-engine` via allowlist cut, tag pushed
+3. **Headroom research** — Local discovery + web research into headroom-ai v0.45.0:
+   - Identified 8 critical gaps in Omega's minimal Headroom integration
+   - Confirmed base package is PyTorch-free, CPU-only, air-gap ready
+   - Key finding: `opencode/big-pickle` is a sentinel needing resolution; defaults are claude-sonnet/200K
+4. **Headroom Enhancement Plan** — Created `docs/HEADROOM_ENHANCEMENT_PLAN.md` (235 lines, 4-phase plan), committed `ea48d975`
+
+### Decisions
+- PyPI publishing deferred (not yet approved as publisher)
+- Cline credits top-up NOT needed (review done in-chat)
+- Gemini 4 Hydrogen already fixed (do not re-list as deferred)
+- zRAM is chosen approach (ZSwap deprecated — do not re-suggest)
+- Headroom plan awaits Architect approval to execute
+
+### Post-compaction
+1. Read `docs/HEADROOM_ENHANCEMENT_PLAN.md`
+2. Await approval to execute Phase 1 (P0 correctness: model resolution, context_window, metrics)
+3. All repos clean, pushed to internal
+
+*⬡ OMEGA ⬡ MAKALI ⬡ COMPACT-PREP ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
