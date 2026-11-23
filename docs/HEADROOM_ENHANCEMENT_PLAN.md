@@ -10,6 +10,7 @@ SPDX-License-Identifier: Apache-2.0
 **Date**: 2026-11-23
 **Research sources**: local discovery + web research (docs.headroomlabs.ai, GitHub headroomlabs-ai/headroom)
 **Related**: `docs/WAD_ENHANCEMENT_PLAN.md`, `docs/research/R_HEADROOM_Sovereign_Analysis.md`
+**Research sources**: see §9 "Web Research Sources" below — RE-FETCH THESE post-compaction to re-hydrate before executing Phase 1.
 
 ---
 
@@ -229,6 +230,52 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 - Headroom MCP server — Omega has its own tool system
 - Multi-node shared CCR — local-only per node for now
 - `[ml]` extras / ONNX Kompress — CPU-only estimator sufficient for v1
+
+---
+
+## 9. Web Research Sources — RE-FETCH POST-COMPACTION
+
+> These are the highest-value sources found during research. Before executing Phase 1,
+> re-fetch the **Primary** set to re-hydrate with current API details. Use `webfetch` or
+> the `exa`/`context7` MCP tools. Version note: docs reflect headroom-ai **v0.45.0**
+> (2026); re-check for breaking changes if the installed version differs.
+
+### Primary (re-fetch first — deterministic API truth)
+
+| # | Source | URL | What it answers |
+|---|--------|-----|-----------------|
+| 1 | **Compress source** (`compress.py`) | https://github.com/headroomlabs-ai/headroom/blob/main/headroom/compress.py | `CompressConfig` all 12 fields, `CompressResult` fields, `compress()` signature, `mode='agent'` behavior, inflation guard. **Critical for Phase 1.3 + 2.2.** |
+| 2 | **Tokenizer registry** (`registry.py`) | https://github.com/headroomlabs-ai/headroom/blob/main/headroom/tokenizers/registry.py | `MODEL_PATTERNS` (qwen→huggingface etc.), fallback chain, `register_tokenizer()` custom backend. **Critical for Phase 1.1 model resolution.** |
+| 3 | **Estimator source** (`estimator.py`) | https://github.com/headroomlabs-ai/headroom/blob/main/headroom/tokenizers/estimator.py | `EstimatingTokenCounter` content-type ratios (JSON 3.2/code 3.5/English 4.0/CJK 1.5), `count_text`/`count_messages`. **Critical for PyTorch-free fallback.** |
+| 4 | **Architecture docs** | https://docs.headroomlabs.ai/docs/architecture | Pipeline stages, ContentRouter routing table, `cache` vs `token` mode, what is NOT rewritten. Confirms RollingWindow/IntelligentContext retired. |
+| 5 | **Installation docs** | https://docs.headroomlabs.ai/docs/installation | Extras matrix: base = no heavy deps, `[all]` = no PyTorch, `[ml]` = PyTorch (AVOID), `[lean]` = torch-free. Python 3.14 caveat (ONNX backends omitted). |
+| 6 | **Smart Crusher docs** | https://docs.headroomlabs.ai/docs/smart-crusher | Lossless table compaction first, then scored keep/drop; `SmartCrusherConfig` fields; JSON schema preservation. |
+| 7 | **OpenAI-compatible provider** | https://github.com/headroomlabs-ai/headroom/blob/main/headroom/providers/openai_compatible.py | `get_token_counter()`, `get_context_limit()` with default limits map, Ollama/vLLM factories. **Relevant if Omega routes through Ollama.** |
+
+### Secondary (deeper dives, as needed)
+
+| # | Source | URL | What it answers |
+|---|--------|-----|-----------------|
+| 8 | **API reference** | https://docs.headroomlabs.ai/docs/api-reference | `HeadroomClient`, `simulate()`, config objects; note `headroom_tool_profiles` is accepted but NOT wired. |
+| 9 | **Config wiki** | https://github.com/headroomlabs-ai/headroom/blob/main/wiki/configuration.md | Kompress backend selection: `HEADROOM_KOMPRESS_BACKEND=onnx_cpu` (CPU-first) vs `pytorch` (AVOID). |
+| 10 | **Local LLM prefill** | https://docs.headroomlabs.ai/docs/local-llm-prefill | Methodology to benchmark prefill savings on local models (baseline `--no-optimize` vs optimized). |
+| 11 | **Offline air-gap PR #3729** | https://app.devin.ai/review/headroomlabs-ai/headroom/pull/3729 | What `HEADROOM_OFFLINE=1` truly blocks vs the 4 allowed exceptions; tokenizer/model download behavior. |
+| 12 | **Quickstart** | https://docs.headroomlabs.ai/docs/quickstart | `HEADROOM_OFFLINE=1` zero-network verification one-liner; basic `compress()` flow. |
+| 13 | **llms.txt** | https://github.com/headroomlabs-ai/headroom/blob/main/llms.txt | Condensed LLM-friendly index of the whole docs set — fastest re-orientation. |
+| 14 | **CCR module** (local installed) | `.venv/lib/python3.14/site-packages/headroom/ccr/` | `ContextTracker`, `CCRResponseHandler`, `CCRToolInjector`, `CompressedContext` (requires `workspace_key`). **For Phase 3.1.** |
+
+### Fast re-hydration command (post-compaction)
+
+```bash
+# Re-fetch primary sources into /tmp for quick reading (no install needed)
+# Use the exa web_fetch_exa tool in Code Mode with these URLs:
+#   https://github.com/headroomlabs-ai/headroom/blob/main/headroom/compress.py
+#   https://github.com/headroomlabs-ai/headroom/blob/main/headroom/tokenizers/registry.py
+#   https://docs.headroomlabs.ai/docs/architecture
+#   https://docs.headroomlabs.ai/docs/installation
+# Local truth (installed package) — always authoritative for the pinned version:
+#   .venv/bin/python -c "import headroom, dataclasses; from headroom import CompressConfig, CompressResult; print([f.name for f in dataclasses.fields(CompressConfig)]); print([f.name for f in dataclasses.fields(CompressResult)])"
+```
 
 ---
 
