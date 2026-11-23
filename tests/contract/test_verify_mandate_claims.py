@@ -45,7 +45,7 @@ class TestSanitationDetector:
         f = tmp_path / "ok.md"
         f.write_text(
             "Legit content:\n"
-            "- host path /home/arcana-novai/Documents/Xoe-NovAi\n"
+            "- host path /home/USER/Documents/Xoe-NovAi\n"
             "- root path /root/something\n"
             "- contact: someone@example.com\n"
             "- ping @kali and @roc_racoon for review\n"

@@ -126,30 +126,30 @@ from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 _transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
-        "192.168.10.168", "192.168.10.168:*",
+        "192.168.1.100", "192.168.1.100:*",
         "127.0.0.1", "127.0.0.1:*",
         "localhost", "localhost:*",
         "[::1]", "[::1]:*",
         # Tailscale L2 federation (C6 v1.1 / L2_ACCEPTANCE.md FED-L2-001)
-        "100.123.51.67", "100.123.51.67:*",
+        "100.64.0.1", "100.64.0.1:*",
         # n0 — current hostname (renamed from omega-hub 2026-09-19)
         "n0", "n0:*",
-        "n0.tail51f14a.ts.net", "n0.tail51f14a.ts.net:*",
+        "n0.example.invalid", "n0.example.invalid:*",
         # omega-hub — legacy hostname (retained for backward compat with older clients)
-        "omega-hub.tail51f14a.ts.net", "omega-hub.tail51f14a.ts.net:*",
-        "*.tail51f14a.ts.net", "*.tail51f14a.ts.net:*",
+        "omega-hub.example.invalid", "omega-hub.example.invalid:*",
+        "*.example.invalid", "*.example.invalid:*",
     ],
     allowed_origins=[
-        "http://192.168.10.168:*",
+        "http://192.168.1.100:*",
         "http://localhost:*",
         "http://127.0.0.1:*",
-        "http://100.123.51.67:*",
+        "http://100.64.0.1:*",
         # n0 origins
         "http://n0:*",
-        "http://n0.tail51f14a.ts.net:*",
+        "http://n0.example.invalid:*",
         # omega-hub origins (legacy)
-        "http://omega-hub.tail51f14a.ts.net:*",
-        "http://*.tail51f14a.ts.net:*",
+        "http://omega-hub.example.invalid:*",
+        "http://*.example.invalid:*",
     ],
 )
 
