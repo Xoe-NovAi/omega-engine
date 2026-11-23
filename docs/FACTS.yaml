@@ -12,11 +12,14 @@
 # actually-built artifact, never from a previous release.
 
 release:
-  tag: "v1.6.0a8"
-  commit: "8ba1f1db"
+  tag: "v1.6.0a9"
+  # Public cut commit is created at release time; internal HEAD is the parent.
+  commit: "c75468a4"
   date: "2026-11-23"
-  wheel_filename: "the_omega_engine-1.6.0a8-py3-none-any.whl"
-  # Last VERIFIED published wheel SHA (v1.6.0a6). The v1.6.0a8 SHA must be
+  wheel_filename: "the_omega_engine-1.6.0a9-py3-none-any.whl"
+  # v1.6.0a8 was tagged but never produced a GitHub Release (curated cut omitted
+  # CI-required scripts); per D1 the tag is NOT moved — a9 supersedes it.
+  # Last VERIFIED published wheel SHA (v1.6.0a6). The v1.6.0a9 SHA must be
   # recorded here after the release workflow publishes and the asset is verified
   # byte-for-byte (D-628 / PL-ROC-402-028).
   wheel_sha256: "4fe6af0e9159786a5e6a9fc1fe982f8f2d9ccdd053b625650cd8ceac00ef8629"

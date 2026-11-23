@@ -5,7 +5,27 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a9] - 2026-11-23
+
+Release-pipeline repair. The curated public cut omitted seven CI-required scripts
+invoked by `release.yml` and the public `Makefile`, so the tag-push release
+workflow failed before `gh release create` — no GitHub Release or wheel assets
+were published for `v1.6.0a7` or `v1.6.0a8`. This release restores the cut↔CI
+contract and makes the gate fail closed.
+
+### Fixed
+- **Cut↔CI contract** — allowlisted the 7 release-critical scripts in both
+  `PUBLIC_ALLOWLIST.txt` and `docs/strategy/PUBLIC_ALLOWLIST.txt`.
+- **Fail-closed pre-flight** — `release.yml` now aborts when any workflow or
+  Makefile recipe references a script absent from the curated cut.
+- **`v1.6.0a8` superseded** — that tag was pushed but never produced a GitHub
+  Release; per release-hardening decision D1 the tag is not moved, and this new
+  patch version carries the repaired pipeline.
+
 ## [v1.6.0a8] - 2026-11-23
+
+> **SUPERSEDED by v1.6.0a9** — the tag was pushed but no GitHub Release or wheel
+> assets were created (the curated cut omitted CI-required scripts).
 
 Headroom context-compression release. Executes the 4-phase Headroom Enhancement
 Plan: correct tokenizer/context-window handling, real compression metrics,
