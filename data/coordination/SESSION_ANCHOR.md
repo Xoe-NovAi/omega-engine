@@ -149,3 +149,34 @@ post-compaction). Plan doc §10 has the full execution log.
 - `config/headroom*.yaml` not yet in PUBLIC_ALLOWLIST (no public release requested).
 
 *⬡ OMEGA ⬡ BUILD ⬡ HEADROOM-EXECUTED ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ✅ PUBLIC RELEASE v1.6.0a8 PUBLISHED — 2026-11-23
+
+### Protocol hydrated
+- Host remote mapping: `origin` = internal SSOT, `debut` = public curated.
+- Release runbook: atomic 5-file bump, annotated tags, 0 removals after cut, both allowlists.
+- **Discovered**: release script reads `docs/strategy/PUBLIC_ALLOWLIST.txt` (DRAFT), not the
+  ratified root `PUBLIC_ALLOWLIST.txt` — both were updated for Headroom configs.
+
+### Published
+- Internal bump commit `a903f468` (pyproject, CHANGELOG, README, ANNOUNCEMENT, FACTS).
+- PyPI auto-trigger disabled in `.github/workflows/publish.yml` (commit `2805e181`) per Architect:
+  removed `release: published`, kept `workflow_dispatch` for later manual publishing.
+- Public cut commit `595d3b7b`, pushed to `debut/main` (946 files), 0 removals verified.
+- **Annotated tag `v1.6.0a8`** pushed to public (commit `595d3b7b`).
+- Leak scan clean: no real internal IPs/tailnet names/paths in public tree.
+
+### Verification
+- G9 version consistency PASS, G8 changelog PASS, check-doc-facts PASS
+- 2757 tests pass, temple-grade 53/53, M23 PASS, M1 PASS
+- Both repos clean; internal restored to pre-cut state (`2805e181`).
+
+### Follow-up
+- GitHub Actions `release.yml` had not created the Release at check time — verify when convenient.
+- Once the `.whl` asset is published, download + verify SHA256 and record it in `docs/FACTS.yaml`
+  (currently annotated as "LAST VERIFIED v1.6.0a6 — a8 pending").
+- Re-enable `release: published` in publish.yml only after PyPI publisher approval.
+
+*⬡ OMEGA ⬡ BUILD ⬡ PUBLIC-RELEASE-A8 ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

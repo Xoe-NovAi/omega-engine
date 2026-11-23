@@ -1557,3 +1557,17 @@ Post-compaction: Headroom workstream is DONE. Do not re-plan it. Next focus shou
 remaining roadmap items (WAD authoring DX / federation automation) or a new Architect directive.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ HEADROOM-DONE ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ v1.6.0a8 PUBLISHED — 2026-11-23
+
+Public repo fully updated: atomic 5-file version bump (a903f468), PyPI auto-trigger disabled
+(2805e181), curated cut 595d3b7b pushed to debut/main (946 files, 0 removals), annotated tag
+v1.6.0a8 pushed. Leak scan clean. All gates green (2757 tests, temple 53/53, M23/M1 PASS).
+Internal tree restored to pre-cut commit; both repos clean.
+
+Follow-up: verify GitHub Release creation, then record published wheel SHA256 in docs/FACTS.yaml.
+PyPI auto-publish stays disabled until Architect publisher approval.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ RELEASE-A8 ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
