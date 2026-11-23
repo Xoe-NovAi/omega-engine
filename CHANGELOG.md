@@ -5,6 +5,27 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a7] - 2026-11-23
+
+Code review and WAD system hardening release. Comprehensive 13-point review
+resolved all test failures, synced dual-tree WAD drift, fixed M23 soft-failure
+ratchet violations, and restored missing historical artifacts.
+
+### Fixed
+- **Dual-Tree WAD Drift** — `config/wads/` and `src/omega/config_data/wads/` now byte-identical.
+- **M23 Soft-Failure Ratchet** — Added logging to 4 try-except-pass blocks in `wad_loader.py`.
+- **WAD Content** — Added `axioms.yaml` and `world/` to `arcana_novai` WAD.
+- **Default IWAD** — Removed `sophia` entity (belongs to Arcana-NovAi WAD).
+- **Hardcoded Model** — `arcana_novai` entity model changed to `opencode/big-pickle`.
+- **Test Staleness** — Updated date-dependent tests to use current dates.
+
+### Added
+- **`make docs` target** — Alias for `doc-llm-validate`.
+- **Restored Artifacts** — `ENTITY_CANONICALIZATION_20261005.json`, `TASK_REGISTRY.json`, `EXPERT_SESSION_REGISTRY.md`, `makali/soul.yaml`.
+
+### Changed
+- **Tracking** — Updated test references from deprecated `AGENT_RUNBOOK.md` to current `AGENTS.md`.
+
 ## [v1.6.0a6] - 2026-10-17
 
 Second post-cut release of the allowlist debut. Adds the Sovereign Ark corpus
