@@ -36,7 +36,7 @@ FORBIDDEN_ENDPOINTS = [
 # Hub base for the zero-inference-egress probe. OMEGA_HUB_BASE wins (third-party
 # deployments differ); the default is this fleet's hub and is rewritten to a
 # placeholder in the public cut (P0-2).
-HUB_BASE = os.environ.get("OMEGA_HUB_BASE", "http://omega-hub.tail51f14a.ts.net:8016")
+HUB_BASE = os.environ.get("OMEGA_HUB_BASE", "http://omega-hub.example.invalid:8016")
 
 
 async def verify_zero_inference_egress() -> dict[str, Any]:

@@ -1,5 +1,0 @@
-# SPDX-License-Identifier: Apache-2.0
-# Disposable hierarchy override fixture; no production hierarchy.
-n0_disposable_probe:
-  rank: 3
-  role: disposable-test

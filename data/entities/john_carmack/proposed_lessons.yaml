@@ -389,7 +389,7 @@ proposals:
   - 'WAD loader contract gaps: root entities.yaml ignored; scaffold entities lack
     entity: envelope; PWAD override concatenates personality; requires_engine not
     enforced; adapter whitelist narrow (2 modules)'
-  - 'Federation reality: Node 1 connects via https://n0.tail51f14a.ts.net:8016/mcp
+  - 'Federation reality: Node 1 connects via https://n0.example.invalid:8016/mcp
     (HTTPS, no auth); ports 22/2049 filtered; no NFS/SSH'
   - 'Disposable PWAD test confirms concat bug: BASE personality + PWAD personality
     = concatenated, not replaced (exit 1)'
@@ -548,7 +548,7 @@ proposals:
     url: data/federation/usb-payload/exchange/n0-to-n1-v2/
   - title: Staged delivery tree
     date: '2026-09-26'
-    url: /home/arcana-novai/exchange/full-pack-20260926/
+    url: /home/USER/exchange/full-pack-20260926/
   - title: Lilith-N1 Gate C status
     date: '2026-09-26'
     url: hivemind ses_0daca13fc343

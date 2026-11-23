@@ -504,7 +504,7 @@ proposals:
   - hivemind
   - dual-node
   - first-contact
-  L1_narrative: 'Achieved first successful dual-node P2P federation (HP Node 0 AMD Zen 2 + ASUS Node 1 Intel Raptor Lake-H) via LAN Streamable HTTP (192.168.10.168:8016/mcp). omega-hub FastMCP bound to
+  L1_narrative: 'Achieved first successful dual-node P2P federation (HP Node 0 AMD Zen 2 + ASUS Node 1 Intel Raptor Lake-H) via LAN Streamable HTTP (192.168.1.100:8016/mcp). omega-hub FastMCP bound to
     0.0.0.0:8016 with TransportSecuritySettings DNS-rebinding allowlist for LAN IP + loopback. Exposed 91 sovereign tools over Streamable HTTP and SSE. Verified 4-way Hivemind handshake: post_context ->
     submit_handoff -> accept_handoff -> complete_handoff. USB bootstrap payload staged with zero-dependency ceremonial handoff script (pure stdlib urllib). Git bundle (69MB) created for offline repo transfer
     when upstream is private.'
@@ -606,8 +606,8 @@ proposals:
   - fastmcp
   - lan-binding
   - host-header
-  L1_narrative: 'FastMCP DNS-rebinding protection rejected requests with explicit port Host headers (127.0.0.1:8016, 192.168.10.168:8016) when binding to 0.0.0.0:8016. Root cause: TransportSecuritySettings
-    defaults to localhost-only allowlist. Fixed by configuring explicit allowed_hosts with wildcard port patterns: ["192.168.10.168", "192.168.10.168:*", "127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*",
+  L1_narrative: 'FastMCP DNS-rebinding protection rejected requests with explicit port Host headers (127.0.0.1:8016, 192.168.1.100:8016) when binding to 0.0.0.0:8016. Root cause: TransportSecuritySettings
+    defaults to localhost-only allowlist. Fixed by configuring explicit allowed_hosts with wildcard port patterns: ["192.168.1.100", "192.168.1.100:*", "127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*",
     "[::1]", "[::1]:*"] and allowed_origins for HTTP origins. This enables LAN binding while preserving DNS-rebinding protection.'
   L2_insight: FastMCP's DNS-rebinding protection is opt-in for loopback but mandatory for non-loopback binds. When binding to 0.0.0.0, you MUST explicitly configure allowed_hosts with wildcard port patterns
     because clients send Host headers with explicit ports. The wildcard pattern "host:*" matches any port. This is not a bug -- it is the correct security posture for LAN-exposed MCP servers.

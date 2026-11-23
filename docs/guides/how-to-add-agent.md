@@ -22,7 +22,7 @@ This guide walks through adding a new **sovereign agent** (entity) to the Omega 
 ## Prerequisites
 
 ```bash
-cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+cd /home/USER/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # Verify Oracle works

@@ -88,7 +88,7 @@ class TestKnownCorruptionPinned:
     def test_correction_banner_states_the_real_endpoint(self):
         report = RECEIVED_DIR / "GE-N1-to-Makali-09-29-2026.md"
         head = report.read_text(encoding="utf-8", errors="replace")[:3000]
-        assert "n0.tail51f14a.ts.net:8019" in head, (
+        assert "n0.example.invalid:8019" in head, (
             "banner must carry the real endpoint so the correction is usable, "
             "not merely a retraction"
         )
