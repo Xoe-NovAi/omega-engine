@@ -210,6 +210,8 @@ class Oracle:
         )
         self.context_builder = ContextBuilder(
             selective_hydration=self.selective_hydration,
+            # Headroom Phase 1.2: supplies entity.context_window -> headroom model_limit
+            entity_registry=self.registry,
         )
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()

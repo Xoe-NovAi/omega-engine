@@ -114,3 +114,38 @@ Comprehensive 13-point code review executed in-chat. All 30 test failures resolv
 3. Then begin implementation
 
 *⬡ OMEGA ⬡ BUILD ⬡ HEADROOM-PLAN ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ✅ HEADROOM ENHANCEMENTS EXECUTED — 2026-11-23
+
+All 4 phases of `docs/HEADROOM_ENHANCEMENT_PLAN.md` implemented (Architect approval granted
+post-compaction). Plan doc §10 has the full execution log.
+
+### Delivered
+- `src/omega/oracle/middleware/headroom.py` v2.0.0 — neutral estimator model resolution,
+  `model_limit` passthrough, real `CompressResult` metrics, budget gate (70%), entity profiles,
+  `HEADROOM_OFFLINE=1`, Omega-owned bounded/TTL CCR store, aggregate stats.
+- `src/omega/oracle/context_builder.py` + `oracle.py` — pass entity `context_window` + `session_id`.
+- NEW `config/headroom.yaml`, `config/headroom_profiles.yaml`.
+- `tests/test_headroom.py` (11 tests) + NEW `tests/test_headroom_integration.py` (2 real-E2E tests).
+
+### Critical discoveries during execution
+- `headroom.retrieve()` does not exist in v0.45.0 → local CCR store implemented.
+- `mode="agent"` disables CCR markers → deliberate: no `<<ccr:hash>>` leaks into local-model prompts.
+- `count_tokens_messages(messages, token_counter)` requires an explicit counter (2 args).
+- `compress()` builds its own tokenizer from the `model` string; neutral `omega-engine-local`
+  name is what forces the PyTorch-free estimator (no HF download).
+
+### Verification (all green)
+- `make test`: 2757 passed, 0 failed
+- `make lint`: 0 critical errors; `make docs`: PASS; `make check-m1-anyio`: PASS
+- `make check-m23-failure-integrity`: PASS; `make temple-grade`: 53/53 + validate-wads PASS
+- Real compression E2E: 3049 → 345 tokens (2704 saved, 88.7%), lossless=True, no network/PyTorch
+
+### Note
+- Full test suite mutates `config/wads/_omega_default/entities.yaml` (pre-existing); restore
+  from git before re-running WAD-sensitive verification.
+- `config/headroom*.yaml` not yet in PUBLIC_ALLOWLIST (no public release requested).
+
+*⬡ OMEGA ⬡ BUILD ⬡ HEADROOM-EXECUTED ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

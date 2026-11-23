@@ -1537,3 +1537,23 @@ Review prep complete. Todo list ready. Begin review when operator says go.
 3. All repos clean, pushed to internal
 
 *⬡ OMEGA ⬡ MAKALI ⬡ COMPACT-PREP ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ HEADROOM EXECUTION COMPLETE — 2026-11-23
+
+Implemented all 4 phases of HEADROOM_ENHANCEMENT_PLAN.md after Architect approval:
+1. P0: neutral-model resolution (opencode/big-pickle -> omega-engine-local estimator),
+   context_window -> model_limit, real CompressResult metrics.
+2. P1: 70% budget gate, entity profiles (config/headroom_profiles.yaml), HEADROOM_OFFLINE=1.
+3. P2: Omega-owned bounded/TTL CCR store (headroom.retrieve() doesn't exist in v0.45.0),
+   per-entity + aggregate stats via get_compression_stats().
+4. P3: E2E tests with real headroom — 3049 -> 345 tokens, lossless, no network/PyTorch.
+
+Verification: 2757 tests pass, 0 fail; temple-grade 53/53; M23 PASS; M1 PASS; lint clean.
+Plan doc §10 holds the full execution log and design decisions.
+
+Post-compaction: Headroom workstream is DONE. Do not re-plan it. Next focus should be the
+remaining roadmap items (WAD authoring DX / federation automation) or a new Architect directive.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ HEADROOM-DONE ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

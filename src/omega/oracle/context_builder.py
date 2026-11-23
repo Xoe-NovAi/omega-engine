@@ -190,10 +190,13 @@ class ContextBuilder:
         memory_store: Optional[MemoryStore] = None,
         selective_hydration: Optional[SelectiveHydration] = None,
         l3_top_k: int = 5,
+        entity_registry: Optional[Any] = None,
     ):
         self.memory_store = memory_store or get_memory_store()
         self._selective_hydration = selective_hydration
         self._l3_top_k = l3_top_k
+        # Headroom Phase 1.2: entity context_window is passed to headroom as model_limit.
+        self._entity_registry = entity_registry
         # Memory blocks (D-283 Mnemosyne)
         self._block_store = get_block_store()
         self._block_tools = BlockTools(self._block_store)
@@ -302,7 +305,9 @@ class ContextBuilder:
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
             memory_block = (
-                await self._compact_and_format_exchanges(entity_name, exchanges, token_limit)
+                await self._compact_and_format_exchanges(
+                    entity_name, exchanges, token_limit, session_id=session_id
+                )
                 if exchanges
                 else ""
             )
@@ -397,7 +402,9 @@ class ContextBuilder:
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
             memory_block = (
-                await self._compact_and_format_exchanges("user", exchanges, token_limit)
+                await self._compact_and_format_exchanges(
+                    "user", exchanges, token_limit, session_id=session_id
+                )
                 if exchanges
                 else ""
             )
@@ -466,6 +473,7 @@ class ContextBuilder:
         exchanges: List[Dict[str, Any]],
         token_limit: int,
         quality_weighted: bool = False,
+        session_id: str = "",
     ) -> str:
         """Format exchanges into a context block using the ACON compaction pipeline.
 
@@ -503,11 +511,23 @@ class ContextBuilder:
         await obs_masking(messages, token_limit)
 
         # ── Semantic Compression (Headroom) ──────────────────────────────────
-        # Apply semantic/structural compression to the messages.
-        # This reduces token usage by 60-95% while preserving meaning.
+        # Apply lossless semantic/structural compression (mode='agent').
+        # Phase 1.2: pass the entity's real context_window as `model_limit` —
+        # headroom's 200K default would make every budget decision meaningless.
+        context_window: Optional[int] = None
+        if self._entity_registry is not None:
+            try:
+                entity = self._entity_registry.get(entity_name)
+                if entity is not None:
+                    context_window = entity.context_window
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning("Headroom context_window lookup failed for %s: %s", entity_name, e)
         headroom_mw = get_headroom_middleware()
         compressed_messages, _ = await headroom_mw.compress_context(
-            entity_name, [{"role": m.role, "content": m.content} for m in messages]
+            entity_name,
+            [{"role": m.role, "content": m.content} for m in messages],
+            context_window=context_window,
+            session_id=session_id,
         )
 
         # Update messages with compressed content

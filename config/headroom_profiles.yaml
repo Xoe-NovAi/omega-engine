@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Headroom — entity compression profiles
+# Consumed by src/omega/oracle/middleware/headroom.py.
+#
+# All profiles use mode: "agent" (headroom-ai v0.45.0+): lossless densification
+# only, no CCR removal markers, prompt-cache-safe, forces verify_lossless.
+# This is the correct regime for live Omega context: no `<<ccr:hash>>` markers
+# can leak into a local model's prompt. Omega's own local CCR store still keeps
+# originals retrievable via retrieve_original().
+#
+# NOTE: `target_ratio` only affects the Kompress ML text path, which agent mode
+# disables. Tune `min_tokens_to_compress`, `protect_recent` and
+# `compress_user_messages` instead. Full CompressConfig field set (v0.45.0):
+#   compress_user_messages, compress_system_messages, protect_recent,
+#   protect_analysis_context, frozen_message_count, target_ratio,
+#   min_tokens_to_compress, kompress_model, savings_profile, diagnostics,
+#   mode, verify_lossless
+
+profiles:
+  default:
+    mode: "agent"
+    compress_user_messages: false
+    compress_system_messages: true
+    protect_recent: 4
+    protect_analysis_context: true
+    min_tokens_to_compress: 250
+
+  # Code-oriented entities: protect the active code window even longer.
+  code_agent:
+    mode: "agent"
+    compress_user_messages: false
+    protect_recent: 6
+    protect_analysis_context: true
+    min_tokens_to_compress: 200
+
+  # Log/metrics entities: user messages often carry JSON/log tool payloads.
+  log_analysis:
+    mode: "agent"
+    compress_user_messages: true
+    compress_system_messages: true
+    protect_recent: 2
+    min_tokens_to_compress: 120
+
+  # Research entities: preserve analysis context, only compress large payloads.
+  research:
+    mode: "agent"
+    compress_user_messages: false
+    protect_recent: 4
+    protect_analysis_context: true
+    min_tokens_to_compress: 400
+
+# Entity name (lowercase) -> profile name. Unlisted entities use `default`.
+entity_profiles:
+  john_carmack: code_agent
+  doom_guy: code_agent
+  jem: code_agent
+  researcher: research
+  researcher_humboldt: research
+  grokster: research
+  lilith: log_analysis
+  roc_racoon: log_analysis
+  iris: default
+  makali: default

@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 # 🔱 Headroom Enhancement Plan — Sovereign Context Compression
 
 **AP Token**: `AP-HEADROOM-PLAN-v1.0.0`
-**Status**: PLANNED — awaiting Architect approval to execute
+**Status**: IN EXECUTION — Architect approval granted 2026-11-23 (post-compaction)
 **Date**: 2026-11-23
 **Research sources**: local discovery + web research (docs.headroomlabs.ai, GitHub headroomlabs-ai/headroom)
 **Related**: `docs/WAD_ENHANCEMENT_PLAN.md`, `docs/research/R_HEADROOM_Sovereign_Analysis.md`
@@ -67,13 +67,22 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 
 #### 1.1 Resolve entity model → Headroom model name
 - **File**: `src/omega/oracle/middleware/headroom.py` + new helper
-- Implement `resolve_headroom_model(entity_name) -> (model, backend)`:
-  1. Look up entity model from `EntityRegistry` (e.g., `opencode/big-pickle`)
-  2. Resolve sentinel → actual model via `ProviderSelector` / `config/models.yaml`
-  3. Map to Headroom tokenizer pattern (qwen3-1.7b → huggingface, etc.)
-  4. Cache resolution result
-- **Fallback**: if unresolvable, use `EstimatingTokenCounter` with a neutral model name (`"omega-engine-local"`)
-- **Acceptance**: unit test that `opencode/big-pickle` resolves to a usable tokenizer backend without network
+- **RE-HYDRATION CORRECTION (v0.45.0)**: `compress()` builds its own tokenizer internally via
+  `pipeline._get_tokenizer(model)`; there is NO top-level `headroom.tokenizer()` helper and no
+  way to inject one into `compress()`. Model selection is therefore entirely through the `model`
+  string. `opencode/big-pickle` is a *provider alias* (config/providers.yaml), not a real model —
+  feeding it (or any `qwen*`/`llama*` name) to Headroom can trigger HuggingFace tokenizer downloads
+  (gated 403s observed in research), which is unacceptable for air-gap.
+- Implement `resolve_headroom_model(entity_name) -> str`:
+  1. Look up entity model from `EntityRegistry` (e.g., `opencode/big-pickle`), cache the result.
+  2. Return the configured neutral tokenizer model (`config/headroom.yaml:
+     tokenizer_model: "omega-engine-local"`) — it matches no `MODEL_PATTERN`, so Headroom selects
+     `EstimatingTokenCounter` with **zero network, zero PyTorch**.
+  3. A real model name is used only if explicitly allowlisted in config (`tokenizer_model_override`);
+     default is the neutral estimator. Resolve backend label locally by regex (classification only,
+     never a Headroom call) for logging.
+- **Acceptance**: unit test that `opencode/big-pickle` maps to the neutral model and that
+  `compress()` reports real token counts with no network/transformers warning.
 
 #### 1.2 Pass correct `model_limit` from entity context_window
 - **File**: `src/omega/oracle/context_builder.py` (call site) + middleware signature
@@ -82,8 +91,11 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 
 #### 1.3 Capture real compression metrics
 - **File**: `src/omega/oracle/middleware/headroom.py`
-- Read `CompressResult.tokens_before/after/saved/ratio/transforms_applied`
-- Populate `HeadroomResult` with real values; aggregate into a `CompressionSummary`
+- Read `CompressResult.tokens_before/after/saved/ratio/transforms_applied/lossless/reverted_messages`
+- Populate `HeadroomResult` with real values; aggregate into a `CompressionSummary` per call
+  and per-entity cumulative totals for `get_compression_stats()`.
+- Per-message `tokens_saved` computed locally with the same estimator counter (before vs after
+  text), while batch-level authoritative metrics come from `CompressResult`.
 - Add structured log line: `compression entity=%s before=%d after=%d saved=%d ratio=%.2f transforms=%s`
 - **Acceptance**: test that `tokens_saved` reflects actual `CompressResult` (not hardcoded 0)
 
@@ -95,8 +107,11 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 
 #### 2.1 Token budget check
 - **File**: `src/omega/oracle/middleware/headroom.py`
-- Before compressing, call `headroom.count_tokens_messages()` (or use `result` from a simulate pass)
-- If token count < 70% of `model_limit`, skip compression (pass-through)
+- **RE-HYDRATION CORRECTION (v0.45.0)**: `headroom.count_tokens_messages(messages, token_counter)`
+  REQUIRES an explicit `TokenCounter` — it is not a one-argument helper. Build the counter once
+  via `headroom.tokenizers.get_tokenizer(model, fallback=True)` (neutral model → estimator, no
+  network) and pass it to `count_tokens_messages()`.
+- If token count < 70% of `model_limit`, skip compression (pass-through, no overhead)
 - Configurable threshold via `config/headroom.yaml`
 - **Acceptance**: test that short message list under threshold is not compressed
 
@@ -125,12 +140,19 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
     lilith: log_analysis
     iris: default
   ```
-- Load in middleware; build `CompressConfig` from profile
-- **Acceptance**: test that a log_analysis entity gets `target_ratio=0.2`
+- Load in middleware via `CONFIG_DIR`; build `CompressConfig` from profile
+- **RE-HYDRATION CORRECTION**: default every profile to `mode: "agent"` — v0.45.0 confirms
+  `mode="agent"` = lossless densification only, no CCR removal markers, prompt-cache-safe, forces
+  `verify_lossless`. This is the correct regime for Omega's live context (and avoids local-model
+  confusion from `<<ccr:hash>>` markers). `target_ratio` only affects the Kompress ML path, which
+  agent mode disables — profiles therefore tune `min_tokens_to_compress`/`protect_recent`/
+  `compress_user_messages` instead.
+- **Acceptance**: test that a log_analysis entity gets `compress_user_messages=true` + agent mode
 
 #### 2.3 `HEADROOM_OFFLINE=1` default
 - **File**: `src/omega/oracle/middleware/headroom.py` or env bootstrap
-- Set `HEADROOM_OFFLINE=1` in Omega's env config to enforce air-gap
+- Set `HEADROOM_OFFLINE=1` via `os.environ.setdefault(...)` AND call
+  `headroom.offline.apply_offline_env()` (idempotent, `setdefault`-based — operator override wins).
 - Ensures no beacon, no update check, no model download — aligns with M8 Zero Telemetry
 - **Acceptance**: test that compression works with offline env set
 
@@ -140,12 +162,18 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 
 **Goal**: Enable CCR and track compression over time.
 
-#### 3.1 CCR ContextTracker per session
+#### 3.1 CCR (Compress-Cache-Retrieve) local store per session
 - **File**: `src/omega/oracle/middleware/headroom.py`
-- Instantiate `headroom.ccr.ContextTracker` keyed by `workspace_key` (session_id + entity)
-- Wire `retrieve_original(ref_id)` to tracker's cached originals
-- Replace error-only stub with actual retrieval
-- **Acceptance**: test that a compressed reference can be retrieved within TTL
+- **RE-HYDRATION CORRECTION**: `headroom.retrieve()` does NOT exist in v0.45.0 (current stub would
+  always fail), and `mode="agent"` deliberately suppresses Headroom's CCR removal markers.
+  `ContextTracker.track_compression()` stores only metadata (hash, counts, sample), NOT the full
+  original content, and has a 5-minute default `max_context_age_seconds`.
+- Implement an Omega-owned, bounded, TTL'd `hash → original text` store in the middleware
+  (`OrderedDict`, keyed `ccr:<sha256[:16]>`, `max_cached_originals` + `ttl_seconds` from config),
+  scoped by `workspace_key = f"{entity_name}:{session_id}"`. Feed `ContextTracker` the metadata
+  for relevance/expansion stats; `retrieve_original(ref_id)` reads the local store (no network).
+- Ref IDs are returned on `HeadroomResult.original_ref` for changed messages.
+- **Acceptance**: test that a compressed reference can be retrieved within TTL and expires after.
 
 #### 3.2 Metrics aggregation
 - Extend `CompressionSummary` with per-session totals
@@ -276,6 +304,58 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 # Local truth (installed package) — always authoritative for the pinned version:
 #   .venv/bin/python -c "import headroom, dataclasses; from headroom import CompressConfig, CompressResult; print([f.name for f in dataclasses.fields(CompressConfig)]); print([f.name for f in dataclasses.fields(CompressResult)])"
 ```
+
+---
+
+## 10. Execution Log — 2026-11-23 (COMPLETE)
+
+All 4 phases executed. Architect approval granted post-compaction.
+
+### Key implementation decisions (beyond §2 corrections)
+- **`compress()` builds its own tokenizer** from the `model` string (`pipeline._get_tokenizer(model)`).
+  There is no injection point, so the neutral model name `omega-engine-local` is the whole
+  strategy: no `MODEL_PATTERN` match → `EstimatingTokenCounter` → no HF download, no PyTorch.
+- **`mode="agent"` everywhere** (all profiles): lossless densification only, no CCR removal
+  markers, prompt-cache-safe, forces `verify_lossless`. This resolves the Phase 3 tension —
+  Omega's own bounded/TTL store handles retrieval, so `<<ccr:hash>>` never reaches a local model.
+- **`headroom.retrieve()` does not exist** in v0.45.0. `ContextTracker.track_compression()` stores
+  only metadata (hash/counts/sample), never the original text. Implemented an Omega-owned
+  `OrderedDict` store (sha256 ref, entity:session scope, TTL + LRU bound) instead.
+- **Per-message vs batch metrics**: per-message `tokens_saved` is estimated locally with the same
+  estimator counter (before/after text); batch `summary` carries authoritative `CompressResult`
+  metrics (`tokens_before/after/saved/ratio/transforms_applied/lossless/reverted_messages`).
+- **Budget gate** uses `headroom.tokenizers.get_tokenizer(model, fallback=True)` cached once,
+  then `headroom.count_tokens_messages(messages, counter)` — verified explicit 2-arg signature.
+
+### Files delivered
+| File | Change |
+|------|--------|
+| `src/omega/oracle/middleware/headroom.py` | v2.0.0 rewrite — all Phases 1–3 |
+| `src/omega/oracle/context_builder.py` | passes `context_window` + `session_id`; optional `entity_registry` |
+| `src/omega/oracle/oracle.py` | injects `self.registry` into `ContextBuilder` |
+| `config/headroom.yaml` | NEW — global settings |
+| `config/headroom_profiles.yaml` | NEW — 4 profiles + entity map |
+| `tests/test_headroom.py` | expanded to 11 tests |
+| `tests/test_headroom_integration.py` | NEW — 2 end-to-end tests (real headroom, no mocks) |
+
+### Verification (all green)
+- `make test`: **2757 passed, 0 failed**, 50 skipped, 8 xfailed
+- `make lint`: 0 critical errors (E9/F63/F7/F82)
+- `make docs`: PASS
+- `make check-m1-anyio`: PASS
+- `make check-m23-failure-integrity`: PASS (current 285 / baseline 336, delta −51)
+- `make temple-grade`: **53/53 PASS** + `validate-wads` PASS
+- Real end-to-end compression: 3049 → 345 tokens (2704 saved, 88.7% ratio), `lossless=True`,
+  transform `router:smart_crusher:0.40`, zero network, zero PyTorch
+
+### Known pre-existing issue (not introduced here)
+The full test suite mutates `config/wads/_omega_default/entities.yaml` (domain ordering),
+causing dual-tree drift on a *second* consecutive run. Restoring the file from git before a
+verification run resolves it. Out of scope for this workstream.
+
+### Follow-up (not done)
+- Add `config/headroom.yaml` + `config/headroom_profiles.yaml` to `PUBLIC_ALLOWLIST.txt`
+  before the next public cut (no public release requested in this session).
 
 ---
 

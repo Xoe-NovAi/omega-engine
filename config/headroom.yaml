@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Xoe-NovAi
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# 🔱 Headroom — global sovereign compression settings
+# Consumed by src/omega/oracle/middleware/headroom.py (AP-HEADROOM-MIDDLEWARE-v2.0.0)
+# Platform-agnostic: base `headroom-ai` only (NO PyTorch), air-gap ready.
+
+version: 1
+
+# Master switch. false => pure pass-through (no headroom calls at all).
+enabled: true
+
+# M8 Zero Telemetry: HEADROOM_OFFLINE=1 blocks Headroom-initiated egress.
+# Applied via os.environ.setdefault + headroom.offline.apply_offline_env().
+offline: true
+
+# Entity models are provider aliases (e.g. opencode/big-pickle), NOT tokenizer names.
+# This neutral name matches no headroom MODEL_PATTERN -> EstimatingTokenCounter:
+# zero network, zero PyTorch, ~90% accuracy with conservative over-estimation.
+tokenizer_model: "omega-engine-local"
+
+# OPTIONAL operator override. Leave null for the estimator. Set only if you
+# intentionally allow a real tokenizer (may download model files on first use).
+tokenizer_model_override: null
+
+# Fallback when an entity has no context_window in its WAD definition.
+default_context_window: 8192
+
+# Skip compression entirely below this fraction of the model limit.
+# Avoids compression overhead (and possible token inflation) on short contexts.
+budget_threshold: 0.70
+
+# Local CCR (Compress-Cache-Retrieve) store for original content.
+max_cached_originals: 256
+ttl_seconds: 1800
