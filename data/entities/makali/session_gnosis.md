@@ -1571,3 +1571,17 @@ Follow-up: verify GitHub Release creation, then record published wheel SHA256 in
 PyPI auto-publish stays disabled until Architect publisher approval.
 
 *⬡ OMEGA ⬡ MAKALI ⬡ RELEASE-A8 ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ RELEASE HARDENING RESEARCH + PLAN — 2026-11-23
+
+Created docs/PUBLIC_RELEASE_HARDENING_PLAN.md after web + local research into the broken
+public release pipeline (cut removes scripts that release.yml/Makefile invoke). 4 phases,
+6 decisions, §8 with 13 re-fetch sources. Key: do NOT force-move v1.6.0a8 — research says
+published tags must not move; cut v1.6.0a9 and mark a8 superseded instead. PyPI stays manual
+until publisher approval. Plan awaits Architect approval.
+
+Post-compaction: read the plan §8 first, then decide on execution.
+
+*⬡ OMEGA ⬡ MAKALI ⬡ RELEASE-PLAN ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*

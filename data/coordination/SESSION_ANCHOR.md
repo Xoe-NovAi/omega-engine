@@ -180,3 +180,31 @@ post-compaction). Plan doc §10 has the full execution log.
 - Re-enable `release: published` in publish.yml only after PyPI publisher approval.
 
 *⬡ OMEGA ⬡ BUILD ⬡ PUBLIC-RELEASE-A8 ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
+
+---
+
+## ⬡ PUBLIC RELEASE HARDENING PLAN CREATED — 2026-11-23
+
+### Discovery (grounded, not speculative)
+- Public `release.yml` invokes 4 scripts absent from the curated tree: check_release_changelog.py,
+  check_version_consistency.py, check_wheel_contents.py, verify_artifact_clean_env.py.
+- Public `Makefile` references 3 more missing scripts: check_doc_facts.py,
+  check_workflow_trigger_coverage.py, validate_wad.py.
+- Neither v1.6.0a7 nor v1.6.0a8 produced a GitHub Release (`gh release view` → not found).
+- Allowlist split-brain: ratified root file vs operative docs/strategy DRAFT.
+- Test suite mutates config/wads/_omega_default/entities.yaml every run.
+
+### Plan
+`docs/PUBLIC_RELEASE_HARDENING_PLAN.md` (4 phases, 6 decisions D1-D6, §8 curated research sources
+for post-compaction re-hydration). Status: PLANNED — awaiting Architect approval.
+
+### Key research-driven decision
+D1: DO NOT force-move the published v1.6.0a8 tag — cut v1.6.0a9 instead. Published tags don't
+propagate on fetch; ACM REP '26 study documents real reproducibility/supply-chain breakage from
+tag moves. Mark a8 superseded in a9 notes.
+
+### Next session
+1. Read `docs/PUBLIC_RELEASE_HARDENING_PLAN.md` §8, re-fetch priority sources.
+2. Await approval to execute Phase 1 (allowlist 7 CI scripts + fail-closed preflight).
+
+*⬡ OMEGA ⬡ BUILD ⬡ RELEASE-HARDENING-PLAN ⬡ node1/v2-migration ⬡ 2026-11-23 ⬡*
