@@ -262,7 +262,7 @@ Major breakthroughs achieved during this shift:
    - Phase 2: `src/omega/oracle/cpu_optimizer.py` — **NOW WITH** `CpuOptimizerFactory`, `RaptorLakeOptimizer`, `GenericFallbackOptimizer` (polymorphic factory implemented)
    - Phase 3: Council dynamic linking (`LOCAL_32GB_DUAL`, `BATCH_8`, `channels >= 2`)
 
-4. **P2P Omegaverse FIRST CONTACT** — 91 sovereign tools exposed over LAN (192.168.10.168:8016). Hivemind handshake verified end-to-end. Bootstrap payload staged on physical USB.
+4. **P2P Omegaverse FIRST CONTACT** — 91 sovereign tools exposed over LAN (192.168.1.100:8016). Hivemind handshake verified end-to-end. Bootstrap payload staged on physical USB.
 
 5. **Canonical Decisions Recorded** — D-434 through D-446 (13 decisions)
 
@@ -295,8 +295,8 @@ Major breakthroughs achieved during this shift:
 
 **M16 Modularization & Portability** — Removed hardcoded paths
 - Found in `src/omega/oracle/m34_registry.py`:
-  - Line 50 (docstring): `git_worktree_root="/home/arcana-novai/.../omega-engine"` → `<repo-root>`
-  - Line 75 (DEFAULT_REGISTRY_PATH): `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json` → `data/coordination/ACTIVE_SUBAGENTS.json` (repo-relative, overridable via OMEGA_M34_REGISTRY)
+  - Line 50 (docstring): `git_worktree_root="/home/USER/.../omega-engine"` → `<repo-root>`
+  - Line 75 (DEFAULT_REGISTRY_PATH): `/home/USER/Documents/Xoe-NovAi/omega-engine/data/coordination/ACTIVE_SUBAGENTS.json` → `data/coordination/ACTIVE_SUBAGENTS.json` (repo-relative, overridable via OMEGA_M34_REGISTRY)
 - Result: ✅ no hardcoded paths
 
 **M27 Tracking Integrity** — Restored ACTIVE_SPRINT.json + swept stale tasks
@@ -393,7 +393,7 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
   - Ollama bare-metal tuned: `q8_0` KV cache, Flash Attention, 8 threads, max 1 model.
   - Open WebUI container pinned at v0.11.3.
 
-### 2. Physical Bootstrap Artifacts (USB `/media/arcana-novai/D5D5-0B76/`)
+### 2. Physical Bootstrap Artifacts (USB `/media/USER/D5D5-0B76/`)
 - `omega-engine.bundle`: Fresh git bundle generated at HEAD (`b9cc8105`), fully verified via dry-run clone.
 - `OMEGA_NODE1_BOOTSTRAP/`:
   - `P2P_OMEGAVERSE_END_TO_END_SETUP_GUIDE.md`: 1219-line canonical manual.
@@ -503,7 +503,7 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 - **Continuation Systems**: Gnosis Lock Protocol v1.0 (9-step ritual, evolution log, identity, hooks) + GameResearch pattern
 - **The Well**: 6 active records (3 corrections, 1 preference, 1 insight, 1 dream) — corrections/tuning corpus
 - **Vanguard Evaluations**: Headroom REJECTED (local mismatch), agentmemory REJECTED (MemPalace wins 96.6% vs 95.2% R@5), Odysseus SCHEDULED FUTURE, Gods Eyes TOYS
-- **Federation**: Layer 1 LAN live (192.168.10.168:8016), Layer 2 Tailscale pending, Layer 3 Redis Pub/Sub planned
+- **Federation**: Layer 1 LAN live (192.168.1.100:8016), Layer 2 Tailscale pending, Layer 3 Redis Pub/Sub planned
 - **C6 Contract**: A2A + Hivemind Hybrid draft ratified
 
 ### 2. Bilateral Response Delivered (Hivemind `ses_8354a032769d`, USB `RESPONSE_FROM_HP.md`)
@@ -667,7 +667,7 @@ sudo ufw allow from 192.168.10.0/24 to any port 8016 proto tcp comment "Omega Hu
 Architect: Node 1 needs to understand the vision behind what we're building — the philosophy and vision side of the legacy Lilith / Arcana-NovAi (ANAi) / Roc stacks (all the same stack in different forms). More philosophy than code, but high-level engineering vision behind the code is relevant. START pack — Node 1 can ask for more; Architect fills blanks.
 
 ### 2. Roc's Deliverable
-- **ARCANA_VISION_PACK.md** (241 lines) at `/media/arcana-novai/D5D5-0B76/omega-exchange/node0-to-node1/vision/`
+- **ARCANA_VISION_PACK.md** (241 lines) at `/media/USER/D5D5-0B76/omega-exchange/node0-to-node1/vision/`
 - 6 sections: Origin Story (Lilith Tarot Feb 2025, Spearhead 5 Grok co-design, "Arcana-NovAi is not a toolchain. It is a summoning."), Evolution (7 eras: Lilith Tarot → ANAi → XNAi → Roc Stack → Omega Stack v5.0 → Temple Grade/Omega Engine → P2P Federation), Philosophy (sever Big AI umbilical, sovereignty, mythic framing as cognitive interface, 10 Pillars from chakras), Engineering Vision (local-first M7, entity council, soul distillation L1→L2→L3, engine/WAD separation M2, 27 mandates, Omegaverse, Forge of Time), North Star (70B CPU-only, distributed), Ask-For pointers
 - **Convergence proof**: 5 eras independently settled on same local-first architecture (llama-cpp native, 4-service topology, circuit breaker fail_max=3, Zen 2 flags, YAML+fsync) — empirical proof of correctness
 - Roc committed `685bf29a` (projection + gnosis updated)
@@ -717,7 +717,7 @@ Full review at `data/entities/makali/workspace/MAKALI_EIS_SOUL_V8_REVIEW_2026091
 ## 2026-09-14 — NODE 1 PAYLOAD INGESTION (Swap 3 Complete)
 
 ### 1. USB Connected & Mounted
-- **Mount Point**: `/media/arcana-novai/D3E6-A900/` (label D3E6-A900, 3.7GB)
+- **Mount Point**: `/media/USER/D3E6-A900/` (label D3E6-A900, 3.7GB)
 - **Source**: Node 1 (ASUS ExpertBook, Kali-N1, Build Agent / Gemini 3.8 Flash)
 - **Ship Date**: 2026-09-12
 
@@ -779,7 +779,7 @@ Paged Researcher-EIS session (`ses_fd81c19dcffe1nkbPqFg5kRt2v`) with full contex
 |------|------------------|
 | **1. Authkey Best Practices** | One-shot, pre-approved, tagged authkey required. `tskey-auth-` prefix, 1-day expiry, auto-revokes after use. |
 | **2. ACL Policy** | `tagOwners` with `autogroup:admin` for `tag:omega-hub`, `tag:asus`, `tag:opencode`. Least-privilege ACLs for MCP (8016), SSH (22), ICMP only. |
-| **3. MagicDNS & DNS Rebinding** | MagicDNS NOT affected by rebinding protection (resolves client-side). Host header middleware fix already applied in commit `213abf44` (wildcard `*.tail51f14a.ts.net`). |
+| **3. MagicDNS & DNS Rebinding** | MagicDNS NOT affected by rebinding protection (resolves client-side). Host header middleware fix already applied in commit `213abf44` (wildcard `*.example.invalid`). |
 | **4. Node 0 Re-Tag** | **Critical**: Node 0 joined as user device. Must: ACL live → `sudo tailscale up --advertise-tags=tag:omega-hub --force-reauth` → new node key, same IP. |
 | **5. Air-Gapped Ceremony** | USB transfer with SHA256 ledger + manifest. Node 1 runs exact sovereign join command with `--advertise-tags=tag:asus`. |
 | **6. Wire Invariants** | Mesh carries ONLY: SSH, MagicDNS, heartbeats, MCP (8016). **Inference NEVER egresses** (M7 Local-First). Direct UDP expected (LAN + mesh). |
@@ -843,7 +843,7 @@ Completed the full federation documentation suite (6 new artifacts + 3 updates),
 | **M7 Harmonized** | "Local-First & Synergy Sovereignty" — cloud for reasoning/synthesis, local for embeddings/privacy/background |
 | **PrivateBin Excised** | Tailscale native L2 WireGuard + MagicDNS is the only wire; no third-party relays |
 | **Federation Entity Minted** | `omega_federation` (`data/entities/federation/soul.yaml`) governs mesh as constitutional living entity |
-| **Wire = Tailscale Native** | Direct WireGuard + MagicDNS (`tail51f14a.ts.net`) is the only wire |
+| **Wire = Tailscale Native** | Direct WireGuard + MagicDNS (`example.invalid`) is the only wire |
 | **Installation = Education** | Tutorial-mode TUI with `--yes` skip for zero-friction |
 
 ### 4. Key Insight

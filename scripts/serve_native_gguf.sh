@@ -33,7 +33,7 @@
 set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────────────────────
-MODELS_DIR="${OMEGA_MODELS_DIR:-/media/arcana-novai/omega_library/models/gguf}"
+MODELS_DIR="${OMEGA_MODELS_DIR:-/media/USER/omega_library/models/gguf}"
 # v2.0.0: LFM2.5-2.6B (1.67GB Q4_K_M) is the new agentic_local default.
 # Lower memory footprint + purpose-built for tool use + open weights (M7).
 EXTRACTOR_MODEL="${MODELS_DIR}/LFM2.5-2.6B-Q4_K_M.gguf"

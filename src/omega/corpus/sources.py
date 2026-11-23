@@ -80,7 +80,7 @@ CORPUS_SOURCES: List[CorpusSource] = [
         label="Sonnet-4.6 extended vision corpus (The Living Word, The Deepening, The Origin)",
         roots=_p(
             "~/Documents/Xoe-NovAi/omega_library/intake/inbox/omega-mission-clarification",
-            "/media/arcana-novai/omega_library/intake/inbox/omega-mission-clarification",
+            "/media/USER/omega_library/intake/inbox/omega-mission-clarification",
         ),
         suffixes=[".md", ".html", ".txt"],
     ),
@@ -90,7 +90,7 @@ CORPUS_SOURCES: List[CorpusSource] = [
         label="Pre-engine origins 2025 (heart_of_omega)",
         roots=_p(
             "~/Documents/Xoe-NovAi/omega_vault/ANCESTRAL_HUB/origins/heart_of_omega",
-            "/media/arcana-novai/omega_vault/ANCESTRAL_HUB/origins/heart_of_omega",
+            "/media/USER/omega_vault/ANCESTRAL_HUB/origins/heart_of_omega",
         ),
         suffixes=[".md", ".txt", ".py"],
     ),
@@ -117,7 +117,7 @@ CORPUS_SOURCES: List[CorpusSource] = [
         label="First build record (XNAi blueprints, early setup)",
         roots=_p(
             "~/Documents/Xoe-NovAi/omega_library/intake/mining_queue/Omega-Early-Material",
-            "/media/arcana-novai/omega_library/intake/mining_queue/Omega-Early-Material",
+            "/media/USER/omega_library/intake/mining_queue/Omega-Early-Material",
         ),
         # The early tree is 2.3GB / mostly .py vendor + png; keep text + blueprints.
         exclude=["site-packages", "node_modules", ".venv", "__pycache__", "images", "assets"],

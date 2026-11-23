@@ -208,7 +208,7 @@ Fixed P1-1 latent defect in `src/omega/cli/oracle_cli.py`:
 ### Work Summary
 
 #### kq5-godot Project Analysis
-- **Location**: `/media/arcana-novai/omega_library/games/kq5-godot` (separate partition)
+- **Location**: `/media/USER/omega_library/games/kq5-godot` (separate partition)
 - **Nature**: Personal KQ5 CD Talkie remake in Godot 4.7.2, non-shipping, canon lane = SCI1.1
 - **Hidden Gem**: VNR (Von-Neu-Ryan Vision) — complete computer vision pipeline in `scripts/vnr_render.py` (398 lines, numpy+Pillow only, zero neural networks)
 - **VNR Capabilities**: Semantic tokenization, texture analysis, overlay/disagreement maps, color-find, diff/motion detection, trajectory tracking, photo mode, gist/histogram, multi-model stereoscopy
@@ -478,7 +478,7 @@ Per MaKaLi: *"Your kq5-godot Day 3-5 protocol development is the fleet's experim
    - PWAD override concatenates personality (not clean replacement)
    - `requires_engine` not semantically enforced
    - Adapter whitelist narrow (2 modules)
-4. **Federation Reality** (Cline §6): Node 1 connects via `https://n0.tail51f14a.ts.net:8016/mcp` (HTTPS, no auth); ports 22/2049 filtered
+4. **Federation Reality** (Cline §6): Node 1 connects via `https://n0.example.invalid:8016/mcp` (HTTPS, no auth); ports 22/2049 filtered
 5. **Disposable PWAD Test**: Confirms concat bug — `BASE\n\nPWAD` instead of clean replacement
 
 ### Validation
@@ -529,7 +529,7 @@ Per MaKaLi: *"Your kq5-godot Day 3-5 protocol development is the fleet's experim
 - Nested SHA ledger: 4/4 PASS, including nested `MANIFEST.yaml`.
 - YAML/JSON parse: 12/12 PASS.
 - M35 secret scan: 33 files, 0 violations.
-- Raw `/home/arcana-novai`: 0 matches.
+- Raw `/home/USER`: 0 matches.
 - Trailing `/mcp/`: 0 matches.
 - Blind `sed -i`: 0 matches.
 - WAD tests: 31 PASS in 1.12s.
@@ -554,7 +554,7 @@ All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active ch
 ### Hard evidence
 
 - Node 0 Engine HEAD: `75bde939ace7ff46ed2fef0056880a0814ab0e11`, branch `release/debut-v1.6.0`; project version in `pyproject.toml` is `1.2.0`; working tree is dirty.
-- Official local runtime: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python`; CLI launcher `/home/arcana-novai/.local/bin/omega`; `omega --version` is not implemented.
+- Official local runtime: `/home/USER/Documents/Xoe-NovAi/omega-engine/.venv/bin/python`; CLI launcher `/home/USER/.local/bin/omega`; `omega --version` is not implemented.
 - Hub systemd user service active; `0.0.0.0:8016`; `/health` HTTP 200, version `2.2.0`.
 - Python `3.13.7`; SQLite `3.46.1`; sqlite-vec `0.1.9`, extension load + temporary vec0 create/insert PASS.
 - WAD loader tests: `31 passed in 1.06s`.
@@ -597,8 +597,8 @@ All prior P0 findings are fixed: lineage-only Flynn/Doom Guy boundary; active ch
 
 **Session**: `ses_fc8dca39effe3nZJp3QHx81Fy3` · **Model**: `nvidia/nemotron-3-ultra-550b-a55b:free`
 **Subject**: `data/federation/usb-payload/exchange/n0-to-n1-v2/` (renamed from `n0-to-n1` at 05:15)
-**Staging**: `/home/arcana-novai/exchange/full-pack-20260926/` (44 files, adds `DELIVERY_SHA256SUMS`)
-**USB** `/media/arcana-novai/D3E6-A900` — RETIRED/degraded, unmounted, not written.
+**Staging**: `/home/USER/exchange/full-pack-20260926/` (44 files, adds `DELIVERY_SHA256SUMS`)
+**USB** `/media/USER/D3E6-A900` — RETIRED/degraded, unmounted, not written.
 
 ### Verdicts
 
