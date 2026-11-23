@@ -227,16 +227,16 @@ This plan closes 8 critical gaps in priority order, using only the **base `headr
 
 ## 6. Success Criteria
 
-- [ ] `opencode/big-pickle` resolves to a usable tokenizer without network
-- [ ] Correct `model_limit` passed per entity (4096/8192/16384/32768)
-- [ ] `tokens_saved` reflects real `CompressResult` metrics
-- [ ] Compression skipped when under 70% token budget
-- [ ] Entity profiles loaded from `config/headroom_profiles.yaml`
-- [ ] CCR retrieval works within TTL
-- [ ] `HEADROOM_OFFLINE=1` enforced
-- [ ] Full test suite passes (2747+ tests)
-- [ ] `make temple-grade` passes (53/53)
-- [ ] No PyTorch installed
+- [x] `opencode/big-pickle` resolves to a usable tokenizer without network
+- [x] Correct `model_limit` passed per entity (4096/8192/16384/32768)
+- [x] `tokens_saved` reflects real `CompressResult` metrics
+- [x] Compression skipped when under 70% token budget
+- [x] Entity profiles loaded from `config/headroom_profiles.yaml`
+- [x] CCR retrieval works within TTL
+- [x] `HEADROOM_OFFLINE=1` enforced
+- [x] Full test suite passes (2747+ tests)
+- [x] `make temple-grade` passes (53/53)
+- [x] No PyTorch installed
 
 ---
 

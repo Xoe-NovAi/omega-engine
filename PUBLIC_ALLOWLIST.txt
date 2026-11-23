@@ -81,6 +81,8 @@ config/systemd/
 config/embedding_strategy.yaml
 config/lan_exposure_allowlist.yaml
 config/wads/arcana_novai/axioms.yaml
+config/headroom.yaml                 # Headroom global settings (offline, budget threshold, estimator model) — required by src/omega/oracle/middleware/headroom.py
+config/headroom_profiles.yaml        # Headroom per-entity compression profiles — required by the same middleware
 
 # M35 public-client catalog — MUST ship (SOVEREIGN_MANDATES.md §28.3:
 # "data/secrets-public.toml MUST be committed to git, reviewed on every PR,
