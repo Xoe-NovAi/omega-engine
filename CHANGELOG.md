@@ -5,7 +5,25 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a10] - 2026-11-23
+
+Release-pipeline repair, continued. `v1.6.0a9` reached temple-grade but the
+curated cut left a WAD dual-tree mismatch (24 packaged vs 54 config files) and
+the wheel gate forbade the private `arcana_novai` showcase WAD. This release
+cuts that WAD from both trees and keeps only the `_omega_default` IWAD.
+
+### Fixed
+- **WAD parity** — `config/wads/` and `src/omega/config_data/wads/` both carry
+  only `_omega_default` (24 files); lint dual-tree drift gate passes.
+- **Wheel gate** — `arcana_novai` no longer appears anywhere in the wheel.
+- **`v1.6.0a8`/`v1.6.0a9` superseded** — both tags were pushed but neither
+  produced a GitHub Release; per D1 the tags are not moved.
+
 ## [v1.6.0a9] - 2026-11-23
+
+> **SUPERSEDED by v1.6.0a10** — temple-grade failed on WAD dual-tree drift.
+
+
 
 Release-pipeline repair. The curated public cut omitted seven CI-required scripts
 invoked by `release.yml` and the public `Makefile`, so the tag-push release
