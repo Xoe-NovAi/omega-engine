@@ -91,7 +91,7 @@ top_findings:
   - "DHAL Phases 1-3 complete with 15/15 tests passing — polymorphic council scaling operational"
   - "omega-hub MCP restored from erroneous purge (15 modules, 5 tests) — hub serving v1.28.1"
   - "MANDATE BREAKTHROUGH: M13, M16, M27 resolved — compliance 22/28 = 78.6% (was 71.4%)"
-  - "P2P Omegaverse: 2-node sovereign cluster live — 91 tools exposed at 192.168.10.168:8016/mcp"
+  - "P2P Omegaverse: 2-node sovereign cluster live — 91 tools exposed at 192.168.1.100:8016/mcp"
   - "Big Pickle verified as GLM-4.6 (200K context) — 190K override = 85% threshold; 1M ceiling dangerous"
   - "UFW rule BLOCKING Node 1 handshake — user action required"
   - "Zero theater in CHANGELOG — dynamic threshold mechanics only"

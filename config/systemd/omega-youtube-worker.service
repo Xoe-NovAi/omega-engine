@@ -24,8 +24,8 @@ Environment=MALLOC_MMAP_THRESHOLD_=65536
 Environment=MALLOC_ARENA_MAX=2
 
 # Logs
-StandardOutput=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/youtube-worker/output.log
-StandardError=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/youtube-worker/error.log
+StandardOutput=append:/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/youtube-worker/output.log
+StandardError=append:/home/USER/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/youtube-worker/error.log
 
 # Memory protection (YouTube transcripts + synthesis can be memory-hungry)
 MemoryMax=768M

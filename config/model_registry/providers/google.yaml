@@ -14,7 +14,7 @@ description: "Google AI Studio - 8-account Active-Passive sharding (D205)"
 # 8-account rotation: 8 keys, sticky failover on 429 (D205)
 # Key 2 (xoe.nova.ai primary) is denied (HTTP 403) — skipped
 api_keys:
-  - "env:GOOGLE_API_KEY_1"  # arcana.novai@gmail.com
+  - "env:GOOGLE_API_KEY_1"  # user1@example.com
   - "env:GOOGLE_API_KEY_2"  # xoe.nova.ai (secondary)
   - "env:GOOGLE_API_KEY_3"  # TJF
   - "env:GOOGLE_API_KEY_4"  # TB27
