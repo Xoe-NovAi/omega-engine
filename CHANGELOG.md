@@ -5,6 +5,28 @@ SPDX-License-Identifier: Apache-2.0
 
 # 🔱 Omega Engine — Changelog
 
+## [v1.6.0a8] - 2026-11-23
+
+Headroom context-compression release. Executes the 4-phase Headroom Enhancement
+Plan: correct tokenizer/context-window handling, real compression metrics,
+token-budget gating, entity compression profiles, air-gap enforcement and a
+bounded local CCR store.
+
+### Added
+- **Headroom v2 middleware** — neutral estimator model resolution for the
+  `opencode/big-pickle` sentinel (no HuggingFace download, no PyTorch), real
+  `CompressResult` metrics, 70% token-budget gate, entity profiles and aggregate
+  stats. `HEADROOM_OFFLINE=1` enforced via `os.environ.setdefault` +
+  `headroom.offline.apply_offline_env()`.
+- **Local CCR store** — bounded, TTL'd `hash → original` cache scoped by
+  `entity:session` (`headroom.retrieve()` does not exist in v0.45.0).
+- **Configs** — `config/headroom.yaml`, `config/headroom_profiles.yaml`.
+- **Tests** — 11 unit + 2 real end-to-end tests (3049 → 345 tokens, lossless).
+
+### Changed
+- `ContextBuilder`/`Oracle` now pass entity `context_window` as headroom
+  `model_limit` (was the 200K library default).
+
 ## [v1.6.0a7] - 2026-11-23
 
 Code review and WAD system hardening release. Comprehensive 13-point review
