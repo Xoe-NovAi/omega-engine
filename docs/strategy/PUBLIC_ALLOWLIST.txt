@@ -61,6 +61,19 @@ scripts/wad_hot_reload.py          # Hot-reload file watcher for WAD development
 scripts/wad_registry.py            # WAD marketplace / registry CLI
 scripts/soul_render.py             # WAD soul → target-neutral agent prompt renderer
 
+# [RELEASE-HARDENING P1] CI-required release scripts. Public release.yml and the
+# public Makefile invoke these during tag-push release / temple-grade. The curated
+# cut previously omitted them, so release.yml failed before `gh release create`
+# and no GitHub Release was produced for v1.6.0a7/a8. Each is SPDX-headered and
+# verified 0 sensitive hits (no hosts/IPs/keys). Enumerated per-file by policy.
+scripts/check_release_changelog.py          # [CI-required] G8 — fail-closed CHANGELOG section gate (release.yml)
+scripts/check_version_consistency.py        # [CI-required] G9 — tag == pyproject == CHANGELOG (release.yml)
+scripts/check_wheel_contents.py             # [CI-required] G10 — wheel content gate (release.yml)
+scripts/verify_artifact_clean_env.py        # [CI-required] G11 — clean-env artifact verification (release.yml)
+scripts/check_doc_facts.py                  # [CI-required] Makefile check-doc-facts (temple-grade chain)
+scripts/check_workflow_trigger_coverage.py  # [CI-required] Makefile check-workflow-triggers (G25, temple-grade)
+scripts/validate_wad.py                     # [CI-required] Makefile validate-wads (temple-grade)
+
 # [D-624] Non-Python assets that shipped GATES open unconditionally. The Makefile
 # passes these paths directly (Makefile:316-317), so their absence is a hard
 # FileNotFoundError, not a soft skip. All 3 verified 0 sensitive hits.

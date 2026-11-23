@@ -32,6 +32,37 @@ jobs:
         with:
           fetch-depth: 0  # Full history for changelog
 
+      - name: Pre-flight — release-critical scripts present (fail closed)
+        # [RELEASE-HARDENING P1 / D2] Derive the required set from this workflow
+        # plus Makefile RECIPES (one source of truth): any newly-added script
+        # invocation is checked automatically. Three dev-only probe/observe refs
+        # are stale targets that do not exist in the source tree and are never
+        # on the release path; excluded explicitly so they cannot block a cut.
+        run: |
+          set -euo pipefail
+          mapfile -t REQUIRED < <(
+            { cat .github/workflows/release.yml; grep -P '^\t' Makefile; } \
+              | grep -oE 'scripts/[A-Za-z0-9_./-]+\.(py|sh)' | sort -u
+          )
+          DEAD=(scripts/network_metrics.sh scripts/observe-build.sh scripts/probe_free_models.sh)
+          MISSING=0
+          for s in "${REQUIRED[@]}"; do
+            skip=0
+            for d in "${DEAD[@]}"; do
+              if [[ "$s" == "$d" && ! -f "$d" ]]; then skip=1; fi
+            done
+            [[ "$skip" -eq 1 ]] && continue
+            if [[ ! -f "$s" ]]; then
+              echo "FATAL: release-critical script missing from cut: $s" >&2
+              MISSING=1
+            fi
+          done
+          if [[ "$MISSING" -ne 0 ]]; then
+            echo "FATAL: curated cut omitted scripts required by CI — refusing to release." >&2
+            exit 1
+          fi
+          echo "OK: all workflow/Makefile script references resolve ($((${#REQUIRED[@]} - 3)) required; 3 dead dev refs excluded)"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
